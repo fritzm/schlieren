@@ -10,7 +10,9 @@ from schlieren.parts.tube_clamp import build_tube_clamp, viewer_assembly
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--show", action="store_true", help="Display clamp and reference parts in OCP CAD Viewer")
+    parser.add_argument(
+        "--show", action="store_true", help="Display clamp and reference parts in OCP CAD Viewer"
+    )
     parser.add_argument("--output", type=Path, default=Path("exports"))
     args = parser.parse_args()
     clamp = build_tube_clamp()
