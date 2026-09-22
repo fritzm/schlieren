@@ -27,7 +27,7 @@ class RailShoeParameters:
     # Provisional ABS fabrication allowances (not measured compensation).
     rail_lateral_clearance_per_side: float = 0.20
     datum_disc_diametral_clearance: float = 1.0
-    post_diametral_clearance: float = 0.25
+    post_diametral_clearance: float = 0.20
     nut_across_flats_clearance: float = 0.30
     nut_axial_clearance: float = 0.30
     m5_clearance_diameter: float = 5.5
@@ -120,9 +120,7 @@ class RailShoeParameters:
             raise ValueError("Split relief must leave material below it in the skirt")
         if self.nut_pocket_depth >= self.nut_ear_thickness:
             raise ValueError("Nut pocket must leave an inner ear wall")
-        pocket_across_corners = (
-            self.clamp_nut_across_flats + self.nut_across_flats_clearance
-        ) / cos(pi / 6)
+        pocket_across_corners = (self.clamp_nut_across_flats + self.nut_across_flats_clearance) / cos(pi / 6)
         if pocket_across_corners >= self.ear_width or (
             self.clamp_nut_across_flats + self.nut_across_flats_clearance >= self.ear_height
         ):
@@ -269,7 +267,8 @@ def build_rail_shoe(p: RailShoeParameters | None = None) -> cq.Workplane:
     # Hex vertices lie along x, with horizontal flats in z.
     nut_plane = cq.Plane(
         origin=(clamp_x, nut_outer_y - p.nut_pocket_depth, clamp_z),
-        xDir=(1, 0, 0), normal=(0, 1, 0),
+        xDir=(1, 0, 0),
+        normal=(0, 1, 0),
     )
     nut = (
         cq.Workplane(nut_plane)

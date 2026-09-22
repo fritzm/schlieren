@@ -10,7 +10,9 @@ from schlieren.parts.rail_shoe import build_rail_shoe, viewer_assembly
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--show", action="store_true", help="Display shoe and reference parts in OCP CAD Viewer")
+    parser.add_argument(
+        "--show", action="store_true", help="Display shoe and reference parts in OCP CAD Viewer"
+    )
     parser.add_argument("--output", type=Path, default=Path("exports"))
     args = parser.parse_args()
     shoe = build_rail_shoe()
