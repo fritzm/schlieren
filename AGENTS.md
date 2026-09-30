@@ -35,7 +35,7 @@ Per-subsystem Markdown fragments, named `NN-*.md`; filename order is document or
 Read only the fragment(s) relevant to the task (section numbers match the BOM `Source section` column), plus
 `13-status-and-procurement.md` for cross-cutting status. Do not read the whole set unless the task needs it.
 
-`bin/build-status-doc` concatenates the fragments into `exports/docs/schlieren-project-status.md`
+`uv run build-status-doc` concatenates the fragments into `exports/docs/schlieren-project-status.md`
 (generated; never edit it).
 
 ### BOM and procurement: `bom/bom.csv`
@@ -43,7 +43,7 @@ Read only the fragment(s) relevant to the task (section numbers match the BOM `S
 Single CSV, one row per BOM line item. Authoritative for BOM contents, quantities, subsystem allocations,
 vendors, SKUs, procurement status, inventory state, and purchasing notes.
 
-`bin/build-bom-xlsx` builds `exports/bom/schlieren-bom.xlsx` (BOM tab, Summary formulas, procurement-state
+`uv run build-bom-xlsx` builds `exports/bom/schlieren-bom.xlsx` (BOM tab, Summary formulas, procurement-state
 conditional formatting) from the CSV; import that into Drive for the Sheets view.
 
 Read `bom/bom.csv` before answering or acting on procurement, BOM, inventory, vendor, quantity, or purchasing
@@ -151,9 +151,6 @@ exports/
     step/
     stl/
 
-bin/
-    ...            # generated wrappers for [project.scripts]; regenerate with bin/gen-bin
-
 AGENTS.md
 pyproject.toml
 README.md
@@ -196,16 +193,15 @@ uv sync                                               # install/update the envir
 uv run python -m unittest discover -s tests -v        # all tests
 uv run python -m unittest tests.test_carriage_2 -v    # one test module
 uvx ruff check . && uvx ruff format .                 # lint/format (line length 110, from pyproject.toml)
-bin/<command> --help                                  # part commands: build/export (--show opens the viewer)
-bin/build-status-doc                                  # docs/status/ -> exports/docs/schlieren-project-status.md
-bin/build-bom-xlsx                                    # bom/bom.csv -> exports/bom/schlieren-bom.xlsx
-bin/gen-bin                                           # regenerate bin/ after editing [project.scripts]
+uv run <command> --help                               # part commands: build/export (--show opens the viewer)
+uv run build-status-doc                               # docs/status/ -> exports/docs/schlieren-project-status.md
+uv run build-bom-xlsx                                 # bom/bom.csv -> exports/bom/schlieren-bom.xlsx
 ```
 
-Commands live in `src/schlieren/cli/` and are registered in `pyproject.toml` `[project.scripts]`. `bin/` holds
-generated shell wrappers (`uv run --project <repo> <command>`) that work from any directory; never edit them by
-hand. Output paths such as `--output` default to `exports/` relative to the current directory, so run from the
-repo root. To add a command: write `cli/<name>.py` with `main()`, register it, run `bin/gen-bin`.
+Commands live in `src/schlieren/cli/` and are registered in `pyproject.toml` `[project.scripts]`; run them with
+`uv run <command>` from the repo root. Output paths such as `--output` default to `exports/` relative to the
+current directory. To add a command: write `cli/<name>.py` with `main()` and register it in
+`[project.scripts]`.
 
 A `.claude/` PostToolUse hook auto-formats edited `.py` files with ruff, and a PreToolUse hook blocks direct
 edits to `exports/`. Project skills: `/finalize-decision` (propagate an accepted decision) and `/sync-drive`

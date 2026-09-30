@@ -21,7 +21,6 @@ rail-shoe = "schlieren.cli.rail_shoe:main"
 tube-clamp = "schlieren.cli.tube_clamp:main"
 build-bom-xlsx = "schlieren.cli.build_bom_xlsx:main"
 build-status-doc = "schlieren.cli.build_status_doc:main"
-gen-bin = "schlieren.cli.gen_bin:main"
 
 [build-system]
 requires = ["uv_build>=0.12.17,<0.13.0"]

@@ -2,8 +2,7 @@
   "permissions": {
     "allow": [
       "Bash(uv run python -m unittest:*)",
-      "Bash(bin/*)",
-      "Bash(uv run gen-bin)",
+      "Bash(uv run:*)",
       "Bash(uv sync:*)",
       "Bash(uvx ruff check:*)",
       "Bash(uvx ruff format:*)",

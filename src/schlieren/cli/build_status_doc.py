@@ -2,7 +2,7 @@
 
 The output is a generated artifact; edit the fragments, never the output.
 
-    bin/build-status-doc [-o exports/docs/schlieren-project-status.md]
+    uv run build-status-doc [-o exports/docs/schlieren-project-status.md]
 """
 
 import argparse

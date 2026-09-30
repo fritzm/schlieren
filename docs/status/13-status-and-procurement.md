@@ -142,7 +142,7 @@ Detailed BOM and procurement information is maintained separately in the canonic
 
 `bom/bom.csv`
 
-(a generated Google Sheet / .xlsx view is built from it by `bin/build-bom-xlsx`). The BOM is
+(a generated Google Sheet / .xlsx view is built from it by `uv run build-bom-xlsx`). The BOM is
 authoritative for:
 
 - BOM contents and quantities;

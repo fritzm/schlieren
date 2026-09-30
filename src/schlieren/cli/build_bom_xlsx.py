@@ -4,7 +4,7 @@ Produces a BOM tab (pure data, with procurement-state conditional formatting) an
 rollups are live formulas over the BOM tab. The .xlsx is a generated artifact; bom/bom.csv is authoritative.
 Importing the .xlsx into Google Drive yields the Sheets view. No Drive access is used here.
 
-    bin/build-bom-xlsx [-o exports/bom/schlieren-bom.xlsx]
+    uv run build-bom-xlsx [-o exports/bom/schlieren-bom.xlsx]
 """
 
 import argparse

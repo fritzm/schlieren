@@ -9,7 +9,7 @@ exports = os.path.join(os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd()), "expor
 if os.path.abspath(path).startswith(exports):
     print(
         "exports/ holds generated artifacts. Edit the source (CadQuery, docs/status/, bom/bom.csv) "
-        "and regenerate with the bin/ build commands.",
+        "and regenerate with the `uv run` build commands.",
         file=sys.stderr,
     )
     sys.exit(2)

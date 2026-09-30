@@ -10,8 +10,8 @@ forward-reaching fingers and vertical heatsink calibration.
 This remains exploratory; canonical documents and BOM are unchanged.
 
 ```sh
-bin/led-module --show --with-shoe
-bin/led-module --show --travel 3
+uv run led-module --show --with-shoe
+uv run led-module --show --travel 3
 uv run python -m unittest discover -s tests -p test_led_module.py -v
 ```
 
@@ -65,8 +65,8 @@ x is across the rail, y is along it, and z=0 is the rail top. This is an
 exploratory design, pending review and physical ABS fit/clamp testing.
 
 ```sh
-bin/rail-shoe
-bin/rail-shoe --show
+uv run rail-shoe
+uv run rail-shoe --show
 uv run python -m unittest discover -s tests -v
 ```
 
@@ -104,7 +104,7 @@ STL uses assembly coordinates; choose orientation/supports in the slicer.
 ## SM1 tube retaining clamp — prototype
 
 `src/schlieren/parts/tube_clamp.py` defines a single-split ABS retaining ring.
-Run `bin/tube-clamp --show` to export STEP/STL and view
+Run `uv run tube-clamp --show` to export STEP/STL and view
 it with a separately toggleable tube reference. Run its checks with
 `uv run python -m unittest discover -s tests -p test_tube_clamp.py -v`.
 
@@ -128,9 +128,9 @@ points toward the fine adjuster, and +Z is the loading direction; this local
 Z origin is the plate back, not the rail-top optical-height datum.
 
 ```sh
-bin/carriage --show
-bin/carriage --show --travel 5
-bin/carriage --show --retract 6
+uv run carriage --show
+uv run carriage --show --travel 5
+uv run carriage --show --retract 6
 uv run python -m unittest discover -s tests -p test_carriage.py -v
 ```
 
@@ -209,9 +209,9 @@ front is +Z. Four identical front-edge bevels match the preliminary carriage:
 remain provisional. The blank has no orientation marking.
 
 ```sh
-bin/cassette
-bin/cassette --show --with-carriage
-bin/cassette --show --with-carriage --travel 5
+uv run cassette
+uv run cassette --show --with-carriage
+uv run cassette --show --with-carriage --travel 5
 uv run python -m unittest discover -s tests -p test_cassette.py -v
 ```
 
@@ -301,8 +301,8 @@ prototype has not been promoted into the canonical Google design document.
 holder for the existing cassette. The original carriage is unchanged.
 
 ```sh
-bin/carriage-2 --show
-bin/carriage-2 --show --travel 5
+uv run carriage-2 --show
+uv run carriage-2 --show --travel 5
 uv run python -m unittest discover -s tests -p test_carriage_2.py -v
 ```
 
