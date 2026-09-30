@@ -27,7 +27,7 @@ class RailShoeParameters:
     # Provisional ABS fabrication allowances (not measured compensation).
     rail_lateral_clearance_per_side: float = 0.20
     datum_disc_diametral_clearance: float = 1.0
-    post_diametral_clearance: float = 0.20
+    post_diametral_clearance: float = 0.10
     nut_across_flats_clearance: float = 0.30
     nut_axial_clearance: float = 0.30
     m5_clearance_diameter: float = 5.5

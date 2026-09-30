@@ -4,86 +4,70 @@ This repository contains the code, CAD source, tests, tooling, and other version
 artifacts for the iPhone schlieren Deep Creek vacation project.
 
 Do not assume that repository history, chat history, generated files, or remembered context represents the
-current physical design. Refresh the canonical project resources before substantive work.
+current physical design. Read the relevant repository resources (`docs/status/`, `bom/bom.csv`) before substantive work.
 
 ## Sources of truth
 
+Git is authoritative for the design baseline and the BOM. Google Drive holds generated views for sharing and
+GUI editing only.
+
 Use the following priority order:
 
-1. Canonical Google project documents listed below.
-2. Explicit instructions from the user in the current session.
-3. This `AGENTS.md`.
-4. Current repository contents.
-5. Git history, old chats, summaries, and other historical material.
+1. Explicit instructions from the user in the current session.
+2. This `AGENTS.md`.
+3. Current repository contents (including `bom/` and `docs/status/`).
+4. Git history, old chats, summaries, and other historical material.
 
 If two sources conflict, prefer the higher-priority source.
 
 Do not resurrect superseded or rejected designs merely because they appear in Git history, comments, old
 files, or conversation history.
 
-### Canonical design status
+### Design status: `docs/status/`
 
-Google Doc:
+Per-subsystem Markdown fragments, named `NN-*.md`; filename order is document order. Authoritative for:
 
-https://docs.google.com/document/d/1pFYl58nMYCAaxzBPyxJBD6QY75xB9eNgAhpdqoRZ6-w/edit
+- current design baseline, dimensions and geometry
+- architecture, mechanical and optical concepts
+- committed design decisions and rationale
+- unresolved design work and overall project state
 
-Authoritative for:
+Read only the fragment(s) relevant to the task (section numbers match the BOM `Source section` column), plus
+`13-status-and-procurement.md` for cross-cutting status. Do not read the whole set unless the task needs it.
 
-- current design baseline
-- dimensions and geometry
-- architecture
-- mechanical and optical concepts
-- committed design decisions
-- unresolved design work
-- design rationale
-- current overall project state
+`bin/build-status-doc` concatenates the fragments into `exports/docs/schlieren-project-status.md`
+(generated; never edit it).
 
-Before substantive reasoning about the current design, implementation, geometry, or next engineering steps,
-read the current version of this document.
+### BOM and procurement: `bom/bom.csv`
 
-### Canonical BOM and procurement state
+Single CSV, one row per BOM line item. Authoritative for BOM contents, quantities, subsystem allocations,
+vendors, SKUs, procurement status, inventory state, and purchasing notes.
 
-Google Sheet:
+`bin/build-bom-xlsx` builds `exports/bom/schlieren-bom.xlsx` (BOM tab, Summary formulas, procurement-state
+conditional formatting) from the CSV; import that into Drive for the Sheets view.
 
-https://docs.google.com/spreadsheets/d/1cwbehmBOSIZI5HtxocAUK4Oh5EyEN-WdBA2T05snkiM/edit
+Read `bom/bom.csv` before answering or acting on procurement, BOM, inventory, vendor, quantity, or purchasing
+questions.
 
-Authoritative for:
+### Google Drive copies
 
-- BOM contents
-- quantities
-- subsystem allocations
-- vendors
-- SKUs and part numbers
-- procurement status
-- inventory state
-- purchasing notes
+The Google Doc "schlieren-project-status" and Sheet "schlieren-bom" (Projects/iPhone schlieren/) are working
+copies. Edits made there are not authoritative until reconciled into Git by diffing against the current
+`bom.csv` or fragment, never by blind overwrite. Archive snapshots are historical only.
 
-Before answering or acting on procurement, BOM, inventory, vendor, quantity, or purchasing questions, read the
-current Sheet.
-
-If a task materially depends on both design and procurement state, refresh both canonical resources first.
-
-If Google Drive access is unavailable, do not silently substitute an old local snapshot or remembered value.
-State that the canonical resource could not be refreshed and avoid treating potentially stale information as
-current.
+Agent access to Drive goes through the fritzm-agents isolation model: read-only pulls are fine; writes to
+Drive require explicit user confirmation each time. Do not assume any particular auth method is set up.
 
 ## Repository authority
 
 This Git repository is authoritative for version-controlled engineering artifacts, including:
 
-- CadQuery source
-- Python source
-- tests
-- CAD/build utilities
-- repository configuration
-- agent instructions
+- CadQuery source, Python source, tests, CAD/build utilities
+- the design-status fragments and `bom/bom.csv`
+- repository configuration and agent instructions
 - deliberately versioned generated outputs, if any
 
-The Google design-status Doc and BOM Sheet remain authoritative for project state even when corresponding
-information appears elsewhere in the repository.
-
-Do not create competing canonical copies of the design-status document or BOM inside Git unless the user
-explicitly changes the project workflow.
+Generated files (`exports/`, the consolidated status document, the .xlsx) are derived artifacts.
 
 ## Design decisions and canonical updates
 
@@ -94,15 +78,15 @@ Do not silently promote a proposal into the project baseline.
 When the user finalizes a design decision:
 
 1. update the applicable CAD/source/tests in this repository;
-2. update the canonical Google design-status Doc;
-3. if the decision changes procurement, quantity, allocation, vendor choice, or BOM structure, also update the
-   canonical Google BOM Sheet;
-4. verify that all affected canonical sources agree.
+2. update the applicable `docs/status/` fragment(s);
+3. if the decision changes procurement, quantity, allocation, vendor choice, or BOM structure, also update
+   `bom/bom.csv`;
+4. verify that the affected files agree.
 
-A procurement-only change normally updates the BOM Sheet without changing the design-status document unless it
+A procurement-only change normally updates `bom/bom.csv` without changing the status fragments unless it
 materially changes the engineering baseline.
 
-A CAD experiment or exploratory branch should not update the canonical Google documents unless the user
+A CAD experiment or exploratory branch should not update the status fragments or BOM unless the user
 explicitly accepts the result.
 
 ## CAD conventions
@@ -152,11 +136,13 @@ Convert deliberately at the model boundary rather than mixing implicit units.
 Prefer this structure as the project grows:
 
 ```text
-schlieren/
+src/schlieren/
     __init__.py
     standards.py
     parts/
         ...
+    cli/
+        ...        # command-line entry points, registered in pyproject.toml [project.scripts]
 
 tests/
     ...
@@ -165,8 +151,8 @@ exports/
     step/
     stl/
 
-scripts/
-    ...
+bin/
+    ...            # generated wrappers for [project.scripts]; regenerate with bin/gen-bin
 
 AGENTS.md
 pyproject.toml
@@ -201,9 +187,33 @@ Run relevant tests after modifying CAD or supporting code.
 
 Do not change a test merely to make an unintended geometry change pass.
 
+## Commands
+
+Dependencies are managed with `uv` (Python >= 3.12). Tests use `unittest`; ruff is run via `uvx`.
+
+```sh
+uv sync                                               # install/update the environment
+uv run python -m unittest discover -s tests -v        # all tests
+uv run python -m unittest tests.test_carriage_2 -v    # one test module
+uvx ruff check . && uvx ruff format .                 # lint/format (line length 110, from pyproject.toml)
+bin/<command> --help                                  # part commands: build/export (--show opens the viewer)
+bin/build-status-doc                                  # docs/status/ -> exports/docs/schlieren-project-status.md
+bin/build-bom-xlsx                                    # bom/bom.csv -> exports/bom/schlieren-bom.xlsx
+bin/gen-bin                                           # regenerate bin/ after editing [project.scripts]
+```
+
+Commands live in `src/schlieren/cli/` and are registered in `pyproject.toml` `[project.scripts]`. `bin/` holds
+generated shell wrappers (`uv run --project <repo> <command>`) that work from any directory; never edit them by
+hand. Output paths such as `--output` default to `exports/` relative to the current directory, so run from the
+repo root. To add a command: write `cli/<name>.py` with `main()`, register it, run `bin/gen-bin`.
+
+A `.claude/` PostToolUse hook auto-formats edited `.py` files with ruff, and a PreToolUse hook blocks direct
+edits to `exports/`. Project skills: `/finalize-decision` (propagate an accepted decision) and `/sync-drive`
+(diff-based Drive reconciliation).
+
 ## Working with the BOM
 
-Treat each BOM row as a distinct project allocation where the canonical Sheet does so.
+Treat each BOM row as a distinct project allocation where `bom/bom.csv` does so.
 
 Do not merge rows solely because Vendor + SKU are identical.
 
@@ -231,7 +241,7 @@ When updating it:
 - distinguish committed design from unresolved work;
 - remove or clearly supersede obsolete statements when a decision changes;
 - retain useful rationale where it explains a non-obvious current decision;
-- avoid duplicating detailed BOM data that belongs in the Sheet.
+- avoid duplicating detailed BOM data that belongs in `bom/bom.csv`.
 
 Do not turn historical alternatives into current design requirements.
 
@@ -278,8 +288,8 @@ Distinguish clearly between:
 
 Do not silently replace a measured value with a nominal catalog value.
 
-When calculations depend materially on current project dimensions, refresh the canonical design-status
-document first.
+When calculations depend materially on current project dimensions, read the relevant `docs/status/`
+fragment(s) first.
 
 When a required dimension remains unresolved, expose it as a parameter or clearly mark it as provisional
 rather than burying an assumption in geometry.
@@ -290,12 +300,12 @@ At the beginning of a substantial task:
 
 1. read this `AGENTS.md`;
 2. determine whether the task depends on current design state, BOM state, or both;
-3. refresh the applicable canonical Google resource(s);
-4. inspect the relevant repository files;
+3. read the applicable `docs/status/` fragment(s) and/or `bom/bom.csv`;
+4. inspect the relevant repository CAD/source files;
 5. make the requested change;
 6. run appropriate verification;
-7. update canonical Google resources only when the user has finalized a decision and the rules above require
-   it.
+7. update `docs/status/` and `bom/bom.csv` only when the user has finalized a decision and the rules above
+   require it; push to Drive only with explicit confirmation.
 
 The objective is to keep CAD, implementation, design state, and procurement state synchronized without
 treating exploratory work as finalized engineering.

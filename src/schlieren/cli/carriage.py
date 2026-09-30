@@ -1,10 +1,10 @@
-"""Export base, keeper, and a paired plunger print layout; optionally show assembly."""
+"""Export base, guide frame, keeper, and a paired plunger print layout; optionally show assembly."""
 import argparse
 from pathlib import Path
 
 import cadquery as cq
 
-from schlieren.parts.carriage import build_carriage
+from schlieren.parts.carriage import CarriageParameters, build_carriage
 
 
 def main():
@@ -29,7 +29,8 @@ def main():
         plungers.append(solid)
         next_y += bounds.ylen + plunger_gap
     outputs = {
-        "base_plate": assembly.objects["Base plate"].obj,
+        "base_plate": assembly.objects["Base plate"].obj.rotate((0, 0, 0), (1, 0, 0), 180).translate((0, 0, CarriageParameters().plate_thickness)),
+        "guide_frame": assembly.objects["Guide frame"].obj,
         "keeper_plate": assembly.objects["Keeper plate"].obj,
         "plungers": cq.Compound.makeCompound(plungers),
     }

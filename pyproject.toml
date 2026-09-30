@@ -12,9 +12,25 @@ dependencies = [
     "ocp-vscode>=4.1.0",
 ]
 
+[project.scripts]
+carriage = "schlieren.cli.carriage:main"
+carriage-2 = "schlieren.cli.carriage_2:main"
+cassette = "schlieren.cli.cassette:main"
+led-module = "schlieren.cli.led_module:main"
+rail-shoe = "schlieren.cli.rail_shoe:main"
+tube-clamp = "schlieren.cli.tube_clamp:main"
+build-bom-xlsx = "schlieren.cli.build_bom_xlsx:main"
+build-status-doc = "schlieren.cli.build_status_doc:main"
+gen-bin = "schlieren.cli.gen_bin:main"
+
 [build-system]
 requires = ["uv_build>=0.12.17,<0.13.0"]
 build-backend = "uv_build"
 
 [tool.ruff]
 line-length = 110
+
+[dependency-groups]
+dev = [
+    "openpyxl>=3.1.5",
+]
