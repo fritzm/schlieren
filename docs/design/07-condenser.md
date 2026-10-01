@@ -16,7 +16,8 @@ Committed optical parts:
 From the LED to the slit:
 
 1. threaded LED module (§6.5), its SM1CP2M cap threaded into the LED-side face of the SMR1/M;
-2. SMR1/M on the TR50/M (10.2 mm thick, SM1 thread through, no lip; 22.1 mm post-top-to-axis offset);
+2. SMR1/M on the TR50/M (0.400 in / 10.16 mm thick, SM1 thread through, no lip; 0.870 in / 22.10 mm
+   post-top-to-axis offset);
 3. SM1V05, its externally threaded sleeve entering the slit-side face of the SMR1/M and locked with the
    included SM1NT. The ACL2520U-A sits in the SM1V05 body with its plano face on the internal seat (toward
    the LED) and its convex face toward the open end;
@@ -27,9 +28,9 @@ The ACL2520U-A convex vertex sits about 0.7 mm inside the SM1V05 open end, so th
 ahead of the iris; the SM1D12 interferes with the lens if threaded directly into the SM1V05.
 
 The cap and the SM1V05 sleeve share the SMR1/M thread. SM1V05 engagement runs from the Thorlabs minimum of
-2.8 mm to about 5.8–5.9 mm, where the sleeve end comes within 0.3 mm of the LED board. Turning the SM1V05
-moves the lens, SM1L03, and iris together relative to the LED; the resulting few-millimeter iris shift is
-negligible against the 150 mm iris-to-slit spacing.
+0.110 in / 2.79 mm to about 5.7–5.8 mm, where the sleeve end comes within 0.3 mm of the LED board. Turning
+the SM1V05 moves the lens, SM1L03, and iris together relative to the LED; the resulting few-millimeter iris
+shift is negligible against the 150 mm iris-to-slit spacing.
 
 ### 7.2 Condenser optics
 

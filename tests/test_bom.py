@@ -43,11 +43,11 @@ class BomCsvTests(unittest.TestCase):
 
 
 class BomSectionReferenceTests(unittest.TestCase):
-    """Every BOM 'Source section' must point at a heading that exists in docs/status/."""
+    """Every BOM 'Source section' must point at a heading that exists in docs/design/."""
 
     def test_source_sections_exist_in_status_fragments(self):
         headings = set()
-        for fragment in (REPO_ROOT / "docs" / "status").glob("[0-9][0-9]-*.md"):
+        for fragment in (REPO_ROOT / "docs" / "design").glob("[0-9][0-9]-*.md"):
             for line in fragment.read_text(encoding="utf-8").splitlines():
                 m = re.match(r"#{2,6}\s+(\d+(?:\.\d+)*)\b", line)
                 if m:
@@ -59,7 +59,7 @@ class BomSectionReferenceTests(unittest.TestCase):
             for ref in re.findall(r"\d+(?:\.\d+)*", row[10]):
                 if ref not in headings:
                     missing.setdefault(ref, []).append(row[0])
-        self.assertFalse(missing, f"BOM Source section not found in docs/status headings: {missing}")
+        self.assertFalse(missing, f"BOM Source section not found in docs/design headings: {missing}")
 
 
 class BomWorkbookTests(unittest.TestCase):

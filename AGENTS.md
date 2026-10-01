@@ -4,7 +4,7 @@ This repository contains the code, CAD source, tests, tooling, and other version
 artifacts for the iPhone schlieren Deep Creek vacation project.
 
 Do not assume that repository history, chat history, generated files, or remembered context represents the
-current physical design. Read the relevant repository resources (`docs/status/`, `bom/bom.csv`) before substantive work.
+current physical design. Read the relevant repository resources (`docs/design/`, `bom/bom.csv`) before substantive work.
 
 ## Sources of truth
 
@@ -15,7 +15,7 @@ Use the following priority order:
 
 1. Explicit instructions from the user in the current session.
 2. This `AGENTS.md`.
-3. Current repository contents (including `bom/` and `docs/status/`).
+3. Current repository contents (including `bom/` and `docs/design/`).
 4. Git history, old chats, summaries, and other historical material.
 
 If two sources conflict, prefer the higher-priority source.
@@ -23,7 +23,7 @@ If two sources conflict, prefer the higher-priority source.
 Do not resurrect superseded or rejected designs merely because they appear in Git history, comments, old
 files, or conversation history.
 
-### Design status: `docs/status/`
+### Design status: `docs/design/`
 
 Per-subsystem Markdown fragments, named `NN-*.md`; filename order is document order. Authoritative for:
 
@@ -53,7 +53,7 @@ questions.
 
 Vendor drawings and datasheets for purchased parts, named `<Brand>-<part>.pdf` (see the README there).
 Consult them for catalog dimensions. They are manufacturer specifications, not measured values or committed
-project dimensions; a measurement recorded in `docs/status/` takes precedence.
+project dimensions; a measurement recorded in `docs/design/` takes precedence.
 
 ### Google Drive copies
 
@@ -84,7 +84,7 @@ Do not silently promote a proposal into the project baseline.
 When the user finalizes a design decision:
 
 1. update the applicable CAD/source/tests in this repository;
-2. update the applicable `docs/status/` fragment(s);
+2. update the applicable `docs/design/` fragment(s);
 3. if the decision changes procurement, quantity, allocation, vendor choice, or BOM structure, also update
    `bom/bom.csv`;
 4. verify that the affected files agree.
@@ -200,7 +200,7 @@ uv run python -m unittest discover -s tests -v        # all tests
 uv run python -m unittest tests.test_carriage_2 -v    # one test module
 uvx ruff check . && uvx ruff format .                 # lint/format (line length 110, from pyproject.toml)
 uv run <command> --help                               # part commands: build/export (--show opens the viewer)
-uv run build-status-doc                               # docs/status/ -> exports/docs/schlieren-project-status.md
+uv run build-status-doc                               # docs/design/ -> exports/docs/schlieren-project-status.md
 uv run build-bom-xlsx                                 # bom/bom.csv -> exports/bom/schlieren-bom.xlsx
 ```
 
@@ -290,7 +290,7 @@ Distinguish clearly between:
 
 Do not silently replace a measured value with a nominal catalog value.
 
-When calculations depend materially on current project dimensions, read the relevant `docs/status/`
+When calculations depend materially on current project dimensions, read the relevant `docs/design/`
 fragment(s) first.
 
 When a required dimension remains unresolved, expose it as a parameter or clearly mark it as provisional
@@ -302,11 +302,11 @@ At the beginning of a substantial task:
 
 1. read this `AGENTS.md`;
 2. determine whether the task depends on current design state, BOM state, or both;
-3. read the applicable `docs/status/` fragment(s) and/or `bom/bom.csv`;
+3. read the applicable `docs/design/` fragment(s) and/or `bom/bom.csv`;
 4. inspect the relevant repository CAD/source files;
 5. make the requested change;
 6. run appropriate verification;
-7. update `docs/status/` and `bom/bom.csv` only when the user has finalized a decision and the rules above
+7. update `docs/design/` and `bom/bom.csv` only when the user has finalized a decision and the rules above
    require it; push to Drive only with explicit confirmation.
 
 The objective is to keep CAD, implementation, design state, and procurement state synchronized without

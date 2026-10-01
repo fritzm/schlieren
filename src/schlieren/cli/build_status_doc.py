@@ -1,4 +1,4 @@
-"""Concatenate docs/status/NN-*.md fragments (filename order) into one consolidated status document.
+"""Concatenate docs/design/NN-*.md fragments (filename order) into one consolidated status document.
 
 The output is a generated artifact; edit the fragments, never the output.
 
@@ -11,7 +11,7 @@ from pathlib import Path
 
 # src/schlieren/cli/<module>.py -> repo root (valid for the editable install that uv sync creates)
 REPO_ROOT = Path(__file__).resolve().parents[3]
-FRAGMENT_DIR = REPO_ROOT / "docs" / "status"
+FRAGMENT_DIR = REPO_ROOT / "docs" / "design"
 DEFAULT_OUTPUT = REPO_ROOT / "exports" / "docs" / "schlieren-project-status.md"
 
 

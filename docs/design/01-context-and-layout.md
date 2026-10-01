@@ -4,7 +4,7 @@
 
 Revision: Sep 30, 2026
 
-Status: Design baseline, maintained as Markdown fragments in Git (`docs/status/`). The companion BOM is
+Status: Design baseline, maintained as Markdown fragments in Git (`docs/design/`). The companion BOM is
 `bom/bom.csv` in the same repository. Google Drive copies are generated views for sharing and GUI editing;
 they are working copies until reconciled back into Git.
 
@@ -181,8 +181,9 @@ The common post stack is:
 
 - 0.010 in / 0.254 mm metal datum shim;
 - 50 mm Thorlabs TR50/M post;
-- 22.1 mm post-top-to-optical-axis offset for the SM1 optical holders;
-- total nominal height: 72.35 mm.
+- 22.1 mm post-top-to-optical-axis offset for the SM1 optical holders (Thorlabs SMR1/M: 0.870 in /
+  22.098 mm exact);
+- total nominal height: 72.35 mm (72.352 mm with the exact SMR1/M offset; the 72.35 mm datum is unchanged).
 
 The selected datum discs are McMaster 2895T62, 3/4 in OD × 0.010 in ±0.0005 in thick, full-hard 18-8 stainless
 steel, minimum Rockwell C40. Three discs are used as post datum shims, one under each common post fixture. The

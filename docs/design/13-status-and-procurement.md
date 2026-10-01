@@ -95,7 +95,8 @@ Work still required includes:
 
 1. CAD the common post shoe first; it establishes a repeated rail interface used by three stations.
 2. Procure the SM1CP2M caps and CN40-40B heatsinks; fabricate both threaded LED modules, center each board,
-   and set focus on the slit blades.
+   and set focus on the slit blades. Confirm the white module reaches focus within its reduced (about
+   0.93 mm) long-gap margin; if not, add a thin cap-flange shim (§6.5).
 3. CAD the common slit/cutoff carriage, plunger guides, guide rod, and cassette blank.
 4. CAD the tube retaining ring.
 5. Measure the physical Stanley blades and complete the slit cassette.

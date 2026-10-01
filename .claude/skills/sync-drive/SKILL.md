@@ -10,7 +10,7 @@ Git is authoritative; Drive copies are generated views. Direction of sync reques
 1. Read the Drive file read-only (Drive connector, Projects/iPhone schlieren/).
 2. Regenerate the Git-side view: `uv run build-status-doc` (status) or compare against `bom/bom.csv` (BOM).
 3. Diff the two. Present each difference to the user as an edit made in Drive. Do not apply any of them automatically.
-4. For differences the user accepts, edit the matching `docs/status/NN-*.md` fragment or `bom/bom.csv` row, then run the tests.
+4. For differences the user accepts, edit the matching `docs/design/NN-*.md` fragment or `bom/bom.csv` row, then run the tests.
 
 **Push (Git to Drive)**
 1. Rebuild: `uv run build-status-doc` and/or `uv run build-bom-xlsx`.

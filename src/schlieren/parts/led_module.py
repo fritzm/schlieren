@@ -8,15 +8,17 @@ An Alpha CN40-40B pin-fin heatsink is bolted to the rear of the cap.
 
 Axial coordinate u (mm): u=0 at the LED-side face of the SMR1/M, +u toward
 the slit. Assembly coordinates: x transverse, +y along u, z=0 at the rail top.
-Nothing here is printed; the solids are purchased-part envelopes for viewing
-and clearance checks. Dimension sources are noted per field: catalog values
-are from the drawings in docs/reference/.
+Nothing here is printed; the solids are purchased-part envelopes or Thorlabs STEP
+models (TR50/M, SMR1/M, SM1CP2M) for viewing and clearance checks. Dimension sources
+are noted per field: catalog values are from the drawings in docs/reference/.
 """
 
 from dataclasses import dataclass
 from math import isfinite
 
 import cadquery as cq
+
+from schlieren.vendor_cad import thorlabs_sm1cp2m, thorlabs_smr1_m, thorlabs_tr50_m
 
 INCH = 25.4
 
@@ -47,22 +49,24 @@ class LEDStackParameters:
     # Frozen project datum (§3.4).
     optical_height: float = 72.35
     datum_thickness: float = 0.010 * INCH
-    post_length: float = 50.0  # Thorlabs TR50/M
+    # Thorlabs TR50/M: metric-primary; its STEP model is rounded to inches (1.969 in, 0.499 in), so the
+    # metric nominal values are exact.
+    post_length: float = 50.0
     post_diameter: float = 12.7
-    # Thorlabs SMR1/M.
-    smr1_thickness: float = 10.2
-    smr1_outer_diameter: float = 30.5
-    smr1_axis_above_post_top: float = 22.1
+    # Thorlabs SMR1/M, SM1CP2M, SM1V05: inch-primary; exact values from the STEP models in cad/vendor/
+    # (the drawings' mm values are rounded).
+    smr1_thickness: float = 0.400 * INCH
+    smr1_outer_diameter: float = 1.200 * INCH
+    smr1_axis_above_post_top: float = 0.870 * INCH
     sm1_thread_major: float = 1.035 * INCH
     sm1_thread_pitch: float = INCH / 40
-    # Thorlabs SM1CP2M.
-    cap_overall: float = 5.3
-    cap_thread_length: float = 2.5
-    cap_flange_diameter: float = 30.5
-    # Thorlabs SM1V05: overall length minus seat depth gives plano-to-sleeve-end.
-    sm1v05_overall: float = 26.2
-    sm1v05_seat_depth: float = 12.7
-    sm1v05_min_engagement: float = 2.8  # Thorlabs adjustment range 0.11 in
+    cap_overall: float = 0.210 * INCH
+    cap_thread_length: float = 0.100 * INCH
+    cap_flange_diameter: float = 1.200 * INCH
+    # SM1V05: overall length minus seat depth gives plano-to-sleeve-end.
+    sm1v05_overall: float = 1.030 * INCH
+    sm1v05_seat_depth: float = 0.500 * INCH
+    sm1v05_min_engagement: float = 0.110 * INCH  # Thorlabs adjustment range (drawing; not in the model)
     # Thorlabs ACL2520U-A.
     lens_efl: float = 20.1
     lens_bfl: float = 12.0
@@ -152,28 +156,30 @@ def _disc(diameter, u0, u1, z, inner=0.0):
 
 
 def build_led_stack_assembly(p=None, board=GREEN, engagement=None):
-    """Purchased-part envelopes in rail-top coordinates; the post is centered at the SMR1/M midplane."""
+    """Purchased parts in rail-top coordinates; the post is centered at the SMR1/M midplane."""
     p = p or LEDStackParameters()
     p.validate()
     engagement = p.focus_engagement(board) if engagement is None else engagement
     p.gap(board, engagement)  # Range check.
     z = p.optical_height
     post_y = p.smr1_thickness / 2
-    parts = {
-        "TR50 M envelope": cq.Workplane("XY", origin=(0, post_y, p.datum_thickness))
-        .circle(p.post_diameter / 2)
-        .extrude(p.post_length),
-        "SMR1 M ring envelope": _disc(p.smr1_outer_diameter, 0, p.smr1_thickness, z, p.sm1_thread_major),
-        "SM1CP2M cap": _disc(p.cap_flange_diameter, p.heatsink_front, 0, z).union(
-            _disc(p.sm1_thread_major, 0, p.cap_face, z)
-        ),
+    envelopes = {
         f"{board.name} star": _disc(board.outline_diameter, p.cap_face, p.cap_face + board.thickness, z),
         "CN40-40B envelope": _disc(
             p.heatsink_diameter, p.heatsink_front - p.heatsink_height, p.heatsink_front, z
         ),
         "Lens plano face marker": _disc(25.0, p.plano_u(engagement), p.plano_u(engagement) + 0.2, z),
     }
+    # Thorlabs models, already in their mounting frames: the post stands on the datum disc, the ring's
+    # LED-side face is u=0, and the cap seats on that face.
+    vendor_parts = {
+        "TR50 M post": (thorlabs_tr50_m(), (0, post_y, p.datum_thickness)),
+        "SMR1 M ring": (thorlabs_smr1_m(), (0, 0, z)),
+        "SM1CP2M cap": (thorlabs_sm1cp2m(), (0, 0, z)),
+    }
     assembly = cq.Assembly(name="Threaded LED module stack")
-    for name, part in parts.items():
+    for name, (part, origin) in vendor_parts.items():
+        assembly.add(part, name=name, loc=cq.Location(origin), color=cq.Color(0.75, 0.75, 0.78))
+    for name, part in envelopes.items():
         assembly.add(part, name=name, color=cq.Color(0.6, 0.62, 0.66))
     return assembly

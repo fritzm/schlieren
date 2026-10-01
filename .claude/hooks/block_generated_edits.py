@@ -8,7 +8,7 @@ path = payload.get("tool_input", {}).get("file_path", "")
 exports = os.path.join(os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd()), "exports") + os.sep
 if os.path.abspath(path).startswith(exports):
     print(
-        "exports/ holds generated artifacts. Edit the source (CadQuery, docs/status/, bom/bom.csv) "
+        "exports/ holds generated artifacts. Edit the source (CadQuery, docs/design/, bom/bom.csv) "
         "and regenerate with the `uv run` build commands.",
         file=sys.stderr,
     )

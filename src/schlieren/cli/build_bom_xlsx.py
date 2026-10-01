@@ -49,17 +49,35 @@ SUBSYSTEMS = [
 SUMMARY_NOTES_TOP = [
     ("iPhone Schlieren BOM / Procurement Tracker", None),
     (None, None),
-    ("Canonical workbook", "Generated from bom/bom.csv in Git. Edits made here are a working copy until reconciled into the CSV."),
-    ("Design baseline", "docs/status/ fragments in Git (consolidated: schlieren-project-status)."),
-    ("Quantity model", "Qty is the numeric required/allocated amount for that BOM line; package counts do not belong in Qty."),
+    (
+        "Canonical workbook",
+        "Generated from bom/bom.csv in Git. Edits made here are a working copy until reconciled into the CSV.",
+    ),
+    ("Design baseline", "docs/design/ fragments in Git (consolidated: schlieren-project-status)."),
+    (
+        "Quantity model",
+        "Qty is the numeric required/allocated amount for that BOM line; package counts do not belong in Qty.",
+    ),
     ("Blank Qty", "Quantity is not yet frozen or the item is an as-required consumable/working-stock line."),
-    ("Package fields", "Package Size is units per Purchase Unit where known. Unknown vendor package sizes are intentionally blank."),
+    (
+        "Package fields",
+        "Package Size is units per Purchase Unit where known. Unknown vendor package sizes are intentionally blank.",
+    ),
 ]
 SUMMARY_NOTES_BOTTOM = [
     ("Rollup key", "Use Vendor + SKU for procurement rollups."),
-    ("Shared parts", "Keep separate BOM rows for separate subsystem allocations; roll them up by Vendor+SKU."),
-    ("Package math", "Vendor/SKU rollups may sum Qty and divide by Package Size where Package Size is known."),
-    ("Spare/surplus", "Unavoidable package surplus is not added to required Qty; track it in procurement/inventory rollups or notes."),
+    (
+        "Shared parts",
+        "Keep separate BOM rows for separate subsystem allocations; roll them up by Vendor+SKU.",
+    ),
+    (
+        "Package math",
+        "Vendor/SKU rollups may sum Qty and divide by Package Size where Package Size is known.",
+    ),
+    (
+        "Spare/surplus",
+        "Unavoidable package surplus is not added to required Qty; track it in procurement/inventory rollups or notes.",
+    ),
     ("Data rule", "Do not insert subsystem header or separator rows inside the BOM table."),
 ]
 
@@ -90,7 +108,9 @@ def write_bom_sheet(ws, header: list[str], rows: list[list[str]]) -> None:
     for state, argb in STATE_FILLS.items():
         if argb:
             fill = PatternFill(start_color=argb, end_color=argb, fill_type="solid")
-            ws.conditional_formatting.add(state_range, CellIsRule(operator="equal", formula=[f'"{state}"'], fill=fill))
+            ws.conditional_formatting.add(
+                state_range, CellIsRule(operator="equal", formula=[f'"{state}"'], fill=fill)
+            )
 
     for col, width in zip("ABCDEFGHIJKL", (10, 16, 6, 60, 36, 14, 22, 9, 13, 17, 14, 60)):
         ws.column_dimensions[col].width = width
