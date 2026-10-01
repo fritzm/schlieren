@@ -15,11 +15,11 @@ FRM-013,Tabletop frame,3,"Adhesive-back Sorbothane bumper, 1-1/4"" OD, 10 Lbs. M
 FRM-014,Tabletop frame,1,"50 pcs 2020 M5 T nut, roll-in, spring loaded",,Amazon,B0DP6JBX4Y,1,each,In hand,§4.1,
 FRM-015,Tabletop frame,2,272 pcs M5 socket screws assortment kit 12.9 steel black zinc,,Amazon,B0FGV561HZ,2,each,In hand,§4.5,
 FRM-016,Tabletop frame,3,244 pcs M5 socket screws assortment kit 304 SS,,Amazon,B0DJP7ZLVC,3,each,In hand,§4.5,
-SUP-001,Optical supports,4,"Ø12.7 mm optical post, 50 mm, SS",,Thorlabs,TR50/M,4,each,In hand,§5.1,
-SUP-002,Optical supports,4,"Shim discs, 3/4 in OD x 0.010 ±0.0005 in, SS",Post seats,McMaster,2895T62,5,pack,In hand,§5.3,
-SUP-003,Optical supports,4,"M3 × 12 mm socket head screw, 18-8 SS",Collar clamp screws,McMaster,91292A114,100,pack,In hand,§5.3,Finalized 12 mm length.
-SUP-004,Optical supports,4,"M3 × 0.5 hex nut, 18-8 SS, 5.5 mm AF × 2.4 mm high",Collar clamp nuts,McMaster,91828A211,100,pack,In hand,§5.3,Full-height DIN 934 nut; captured in printed pocket.
-SUP-005,Optical supports,4,ABS printed post shoes,,,,,,CAD ready,§5.3,
+SUP-001,Optical supports,3,"Ø12.7 mm optical post, 50 mm, SS",,Thorlabs,TR50/M,4,each,In hand,§5.1,"Three installed (condenser, slit, cutoff stations); fourth in-hand post is spare after the threaded LED module decision."
+SUP-002,Optical supports,3,"Shim discs, 3/4 in OD x 0.010 ±0.0005 in, SS",Post seats,McMaster,2895T62,5,pack,In hand,§5.3,
+SUP-003,Optical supports,3,"M3 × 12 mm socket head screw, 18-8 SS",Collar clamp screws,McMaster,91292A114,100,pack,In hand,§5.3,Finalized 12 mm length.
+SUP-004,Optical supports,3,"M3 × 0.5 hex nut, 18-8 SS, 5.5 mm AF × 2.4 mm high",Collar clamp nuts,McMaster,91828A211,100,pack,In hand,§5.3,Full-height DIN 934 nut; captured in printed pocket.
+SUP-005,Optical supports,3,ABS printed post shoes,,,,,,CAD ready,§5.3,
 CON-001,Condenser,1,"Aspheric Condenser Lens, Ø25 mm, f=20.1 mm, NA=0.60, ARC: 350-700 nm",,Thorlabs,ACL2520U-A,1,each,In hand,§7,
 CON-002,Condenser,1,"Ø1"" Adjustable lens tube, 0.31"" travel range",,Thorlabs,SM1V05,1,each,In hand,§7,
 CON-003,Condenser,1,"SM1 lens tube, 0.30"" thread depth",Spacing between lens and iris,Thorlabs,SM1L03,1,each,In hand,§7,
@@ -29,14 +29,16 @@ CON-006,Condenser,1,Internally SM1-threaded end cap,,Thorlabs,SM1CP1,1,each,In h
 CON-007,Condenser,1,Snap-on plastic dust cap for SM1 lens tube,,Thorlabs,SM1EC2,5,pack,In hand,§7,
 LED-001,LED source,1,Nichia 519A R9080 5000K,White LED,Convoy,519A R9080 5000K,3,each,In hand,§6.2,
 LED-002,LED source,1,OSRAM LST1-01F06-GRN1-00,Green LED,Digikey,1672-1132-ND,2,each,In hand,§6.1,
-LED-003,LED source,2,"Heatsink, 6063-T5 non-anodized aluminum, Ø55 mm x 20 mm.",,HeatsinkOnline,64ASL-8-55,4,each,In hand,§6.3,
-LED-004,LED source,4,M2 × 5 mm button head hex-drive screw 18-8 SS,LED mounting screws,McMaster,92095A452,25,pack,In hand,§6.4,
+LED-003,LED source,,"Heatsink, 6063-T5 non-anodized aluminum, Ø55 mm x 20 mm.",Existing spare stock; former LED heatsink,HeatsinkOnline,64ASL-8-55,4,each,In hand,,No longer allocated after the threaded SM1 LED module decision; replaced by LED-011 (Alpha CN40-40B). Four in hand retained as spares.
+LED-004,LED source,4,M2 × 5 mm button head hex-drive screw 18-8 SS,"LED board mounting screws, tapped into SM1CP2M cap",McMaster,92095A452,25,pack,In hand,§6.4,
 LED-005,LED source,4,M2 nylon washers,LED insulating washers,McMaster,91545A410,,pack,On order,§6.4,
 LED-006,LED source,1,"ALIENTEK DP100 DC Power Supply Variable, 30V 5A",LED CC/CV power supply,Amazon,B0CWRG6YFM,1,each,In hand,§6.6,
 LED-007,LED source,2,"Cable Assembly, Micro-Fit 3.0 P-S 2ckt 150 mm",LED pigtails,Mouser,538-214758-1021,2,each,In hand,§6.6,
 LED-008,LED source,1,"Cable Assembly, Micro-Fit 3.0 R-S 2ckt 600MM",Power supply pigtail,Mouser,538-214756-1023,2,each,In hand,§6.6,
 LED-009,LED source,1,Banana plug set 1 blk 1 red,DP11 connection,Mouser,565-1825-02,1,each,In hand,§6.6,
-LED-013,LED source,2,ABS printed LED module support brackets,Mount LED/heatsink modules to dedicated TR50/M post top,,,,,CAD open,§6.5,Post behind heatsink; flat tab seats on TR50/M post-top datum and uses threaded M4 post-top attachment; forward-reaching fingers grip opposing heatsink flats; final dimensions pending physical clearance measurements.
+LED-010,LED source,2,"SM1 end cap, external threads, with center drill mark, anodized aluminum","LED carrier: board on front face, threads into condenser SMR1/M",Thorlabs,SM1CP2M,,each,To procure,§6.5,"One per LED module. Drill/tap: M2 board holes (front), M3 heatsink holes (rear, ~2.5 mm deep), lead pass-through holes at r ≈ 11 mm."
+LED-011,LED source,2,"Alpha CN40-40B natural-convection pin-fin heatsink, Ø40 × 40 mm, black anodized",LED module heatsink,Luxeon Star LEDs,CN40-40B,,each,To procure,§6.3,One per LED module; bolted to SM1CP2M rear. Drill base for M3 screws in open pin cells and for leads.
+LED-012,LED source,,M3 × 6 mm socket head screw,Heatsink-to-cap fasteners,McMaster,,,,Specified,§6.5,Provisional length (3 mm base + ~2.5 mm thread into cap). Quantity per module (2–3) and SKU to be confirmed; check existing M3 stock.
 CAR-001,Carriages,2,"SM1 lens tube, 1.50"" Thread Depth",Carriage support,Thorlabs,SM1L15,2,each,In hand,§8.1,
 CAR-002,Carriages,2,"Slip ring for SM1 lens tubes, M4 Tap",Post attachment,Thorlabs,SM1RC/M,2,each,In hand,§8.1,
 CAR-003,Carriages,4,"M3 × 12 mm socket head screw, 18-8 SS",Collar clamp screws,McMaster,91292A114,100,pack,In hand,§8.1,Finalized 12 mm length.
@@ -55,7 +57,7 @@ CAR-015,Carriages,8,"M3 × 0.5 hex nut, 18-8 SS, 5.5 mm AF × 2.4 mm high",Keepe
 CAS-001,Cassettes,6,ABS printed cassettes,,,,,,CAD ready,§8.6,
 CAS-002,Cassettes,1,Rubber/EPDM sheet,Retaining bar friction pads,McMaster,9852N37,1,sheet,In hand,§9,
 CAS-003,Cassettes,12,"M3 × 14 mm 90° flat-head socket screw, 18-8 SS",Retaining bar screws,McMaster,92125A133,100,pack,In hand,§9,Provisional 14 mm length; fit-test with 4 mm bar.
-CAS-004,Cassettes,12,"M3 × 0.5 full-height hex nut, 18-8 SS",Retaining bar nuts,McMaster,91828A211,100,pack,In hand,§9,"Shared 100-pack: 28 total nuts now allocated across split clamps, keeper frames, and cassette retaining bars; 72 spare."
+CAS-004,Cassettes,12,"M3 × 0.5 full-height hex nut, 18-8 SS",Retaining bar nuts,McMaster,91828A211,100,pack,In hand,§9,"Shared 100-pack: 27 total nuts now allocated across split clamps, keeper frames, and cassette retaining bars; 73 spare."
 CAS-005,Cassettes,12,"M3 flat washer, 3.2 mm ID × 7 mm OD, 18-8 SS",Retaining bar washers,McMaster,93475A210,100,pack,In hand,§9,"Under exposed nut, on printed retaining bar."
 CAS-006,Cassettes,6,"Razor blade, Stanley 11-515",Slit cassettes,Amazon,B000NNIIQM,100,pack,In hand,§9,
 CAS-007,Cassettes,1,"Razor blade, Stanley 11-515",Cutoff cassette,Amazon,B000NNIIQM,100,pack,In hand,§10,
@@ -100,7 +102,7 @@ SHP-001,Shop supplies,1,"Loctite 271 threadlocker, .34 fl. oz.",,McMaster,91458A
 SHP-002,Shop supplies,1,Heat-set installation tip,,McMaster,92160A327,1,each,In hand,§11.5,
 SHP-003,Shop supplies,1,Optical spanner wrench,,Amazon,B0CKSL364Q,1,each,In hand,,
 SHP-004,Shop supplies,1,Metric feeler gauge set,Source-slit blade spacing,Amazon,B07XPD9L1C,1,each,In hand,§9,
-SHP-005,Shop supplies,1,M2 tap,LED mounting,McMaster,8305A78,1,each,In hand,§6.4,
+SHP-005,Shop supplies,1,M2 tap,LED board mounting into SM1CP2M cap,McMaster,8305A78,1,each,In hand,§6.4,
 SHP-006,Shop supplies,1,"M2 tap drill, 1.6mm",LED mounting,McMaster,2979N13,1,each,In hand,§6.4,
 SHP-007,Shop supplies,,18 AWG wire,LED wiring,,,,,In hand,§6.6,
 SHP-008,Shop supplies,,Heat-shrink tubing,LED wiring,,,,,In hand,,
@@ -118,3 +120,4 @@ SHP-019,Shop supplies,1,M4 × 0.7 high-speed-steel plug-chamfer hex-bit tap,Tap 
 SHP-020,Shop supplies,1,3.3 mm black-oxide HSS jobber-length drill bit,M4 × 0.7 tap drill for CAMVATE quick-release plate,McMaster,2958A64,1,each,In hand,§12.9,Standard 3.3 mm tap-drill size for M4 × 0.7.
 SHP-021,Shop supplies,1,"Loctite 243 medium-strength removable threadlocker, 0.34 fl. oz.",Removable thread retention for quick-release plate mounting screws,McMaster,91458A115,1,each,In hand,§12.9,Apply only after fit and screw length are validated; preferred over high-strength Loctite 271 for this serviceable joint.
 SHP-022,Shop supplies,1,"Rosco Photofoil matte black aluminum wrap, 12""x10'",Opaque masking / thin-sheet cutoff experiments,Fullcompass,01001-1210,1,pack,In hand,"§§9, 10",Retained as general shop stock for opaque masking and thin-sheet cutoff experiments.
+SHP-023,Shop supplies,1,M3 × 0.5 tap and 2.5 mm tap drill,Tap SM1CP2M rear for heatsink screws,,,,,Specified,§6.5,Confirm whether already in shop stock before purchasing; vendor and SKU not yet chosen.

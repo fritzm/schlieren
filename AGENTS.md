@@ -49,6 +49,12 @@ conditional formatting) from the CSV; import that into Drive for the Sheets view
 Read `bom/bom.csv` before answering or acting on procurement, BOM, inventory, vendor, quantity, or purchasing
 questions.
 
+### Reference drawings: `docs/reference/`
+
+Vendor drawings and datasheets for purchased parts, named `<Brand>-<part>.pdf` (see the README there).
+Consult them for catalog dimensions. They are manufacturer specifications, not measured values or committed
+project dimensions; a measurement recorded in `docs/status/` takes precedence.
+
 ### Google Drive copies
 
 The Google Doc "schlieren-project-status" and Sheet "schlieren-bom" (Projects/iPhone schlieren/) are working

@@ -2,7 +2,7 @@
 
 **Project State and Baseline Design**
 
-Revision: Sep 21, 2026
+Revision: Sep 30, 2026
 
 Status: Design baseline, maintained as Markdown fragments in Git (`docs/status/`). The companion BOM is
 `bom/bom.csv` in the same repository. Google Drive copies are generated views for sharing and GUI editing;
@@ -36,7 +36,6 @@ troublesome.
 Near-term 3D printing is ABS only. Printed parts are appropriate for:
 
 - rail/post shoes;
-- LED-module fixtures;
 - slit/cutoff carriage bodies;
 - cassettes and cassette retainers;
 - plungers and guide features;
@@ -55,7 +54,7 @@ The following are out of scope:
 
 Use off-the-shelf metal parts, vendor-supplied finished dimensions, plywood, aluminum that can be
 drilled/tapped with ordinary shop tools, thin foil, or printed ABS. Simple drilling and tapping of the
-aluminum LED heatsinks is within scope.
+aluminum LED carrier caps and heatsinks is within scope.
 
 A table saw, drill press, and small hand router are available and are expected to be used for accurate working
 of Baltic birch plywood panels (thanks, Bret!).
@@ -79,7 +78,7 @@ rail follows one optical chief ray:
 
 The source rail contains, in optical order:
 
-1. interchangeable LED/heatsink source module;
+1. interchangeable threaded LED/heatsink source module, screwed into the condenser holder;
 2. condenser and adjustable iris;
 3. source-slit carriage.
 
@@ -96,13 +95,12 @@ The spherical mirror forms an image of the source slit back near the optical hea
 in the test region near the mirror deflect portions of this return beam relative to the cutoff, producing
 schlieren contrast.
 
-Several source-side and cutoff-side fixtures deliberately share common mechanics. Four locations use the
+Several source-side and cutoff-side fixtures deliberately share common mechanics. Three locations use the
 common TR50/M post + printed rail shoe concept:
 
-1. LED source module;
-2. condenser/iris;
-3. source-slit carriage;
-4. cutoff carriage.
+1. condenser/iris, which also carries the LED source module;
+2. source-slit carriage;
+3. cutoff carriage.
 
 The slit and cutoff share the same rotating carriage architecture and the same 64 mm cassette envelope,
 allowing knife-edge, wire, and color-filter experiments without changing the supporting mechanism.
@@ -187,5 +185,5 @@ The common post stack is:
 - total nominal height: 72.35 mm.
 
 The selected datum discs are McMaster 2895T62, 3/4 in OD × 0.010 in ±0.0005 in thick, full-hard 18-8 stainless
-steel, minimum Rockwell C40. Four discs are used as post datum shims, one under each common post fixture. The
+steel, minimum Rockwell C40. Three discs are used as post datum shims, one under each common post fixture. The
 discs provide a consistent metal seating surface for the posts across the central slot in the 2020 rail.

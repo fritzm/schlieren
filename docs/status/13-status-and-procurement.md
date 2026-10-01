@@ -1,38 +1,24 @@
 ## 13. Immediate outstanding procurement
 
 Detailed purchasing state remains authoritative in the canonical BOM. As of the latest BOM reconciliation, the
-workbook contains 118 entries with the following states:
+BOM contains 122 entries with the following states:
 
-- 98 In hand;
-- 12 On order;
-- 0 To procure;
-- 5 CAD ready;
-- 3 CAD open.
+- 109 In hand;
+- 1 On order;
+- 2 To procure;
+- 2 Specified;
+- 4 CAD ready;
+- 4 CAD open.
 
-There are therefore no unplaced procurement items in the current design baseline. The remaining procurement
-activity consists only of waiting for already-ordered items.
+The line On order is McMaster 91545A410 M2 nylon insulating washers.
 
-The 12 BOM lines currently On order are:
+The threaded LED module decision (§6.5) adds the remaining procurement:
 
-- Thorlabs SM1D12 adjustable iris;
-- Convoy Nichia 519A R9080 5000 K white LED stock;
-- McMaster 91545A410 M2 nylon insulating washers;
-- 44 AWG enameled copper magnet wire for experimental dark-field cutoff filaments;
-- 34 AWG enameled copper magnet wire for experimental dark-field cutoff filaments;
-- 30 AWG enameled copper magnet wire for experimental dark-field cutoff filaments;
-- McMaster 92125A194 M4 × 0.7 × 16 mm 90° flat-head screws for the quick-release plate;
-- McMaster 92125A196 M4 × 0.7 × 18 mm 90° flat-head screws for the quick-release plate;
-- Amazon B0B2WBC921 CAMVATE Manfrotto-type 577/501/504-compatible quick-release assembly;
-- McMaster 1021N23 M4 × 0.7 plug-chamfer tap;
-- McMaster 2958A64 3.3 mm tap drill;
-- McMaster 91458A115 / Loctite 243 medium-strength removable threadlocker.
+- To procure: Thorlabs SM1CP2M externally threaded end caps (2) and Alpha CN40-40B pin-fin heatsinks (2);
+- Specified, vendor/SKU or quantity still to be confirmed: M3 × 6 mm socket-head heatsink screws (provisional
+  length), and an M3 × 0.5 tap with 2.5 mm tap drill if not already in shop stock.
 
-The three cutoff-wire lines remain On order; their Amazon references are recorded in the canonical BOM. All
-other purchased physical components currently represented in the BOM are In hand. Printed custom parts remain
-tracked separately as CAD ready or CAD open rather than as procurement items.
-
-Procurement is therefore effectively complete for the currently specified design: no additional purchase
-decisions are required unless physical fit checks or later design changes introduce new hardware.
+Printed custom parts remain tracked separately as CAD ready or CAD open rather than as procurement items.
 
 ## 14. Remaining design work and recommended sequence
 
@@ -50,14 +36,11 @@ The following have sufficient requirements to begin CAD immediately:
    - 12.7 mm post bore;
    - common single-split post clamp.
 
-2. Common LED module fixture
-   - M4 threaded post-top attachment and flat post-top seating datum;
-   - LED support post behind the heatsink, with bracket reaching forward;
-   - coarse fore/aft positioning by sliding the dedicated LED rail shoe;
-   - opposed forward-reaching octagonal-heatsink guide/gripping fingers;
-   - small yaw trim by rotating the bracket about the post axis before tightening the M4 attachment;
-   - ±2–3 mm calibration travel;
-   - per-module calibrated bracket; localized CA tacks remain optional after alignment;
+2. Threaded LED modules (no printed parts; drilling and tapping only)
+   - M2 board holes in the SM1CP2M front face, laid out from its center-drill mark;
+   - blind M3 heatsink holes in the cap rear, offset from the board holes;
+   - lead pass-through holes at r ≈ 11 mm through cap and CN40 base;
+   - bench-test the CN40-40B temperature rise at 700 mA;
 
 3. Common slit/cutoff carriage
    - SM1L15 split clamp;
@@ -110,9 +93,9 @@ Work still required includes:
 
 ### 14.3 Recommended next sequence
 
-1. CAD the common post shoe first; it establishes a repeated rail interface used by four stations.
-2. CAD the LED module fixture around the M4 post-top attachment, flat post-top datum,
-   rear-post/forward-reaching bracket geometry, and actual heatsink measurements.
+1. CAD the common post shoe first; it establishes a repeated rail interface used by three stations.
+2. Procure the SM1CP2M caps and CN40-40B heatsinks; fabricate both threaded LED modules, center each board,
+   and set focus on the slit blades.
 3. CAD the common slit/cutoff carriage, plunger guides, guide rod, and cassette blank.
 4. CAD the tube retaining ring.
 5. Measure the physical Stanley blades and complete the slit cassette.

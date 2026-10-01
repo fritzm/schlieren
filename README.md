@@ -2,61 +2,27 @@
 
 Canonical project state and workflow are linked in [AGENTS.md](AGENTS.md).
 
-## LED module — initial CAD proposal
+## LED module — threaded SM1 stack-up
 
-`src/schlieren/parts/led_module.py` follows §6.5 of the design document
-refreshed September 22, 2026: a flat M4 post-top tab, rear support post,
-forward-reaching fingers and vertical heatsink calibration.
-This remains exploratory; canonical documents and BOM are unchanged.
+`src/schlieren/parts/led_module.py` encodes the §6.5/§7 threaded LED module:
+star board on a Thorlabs SM1CP2M cap threaded into the LED side of the
+condenser SMR1/M, SM1V05 focus from the slit side, Alpha CN40-40B heatsink on
+the cap rear. Nothing is printed; the command prints the focus stack-up and
+`--show` displays purchased-part envelopes.
 
 ```sh
-uv run led-module --show --with-shoe
-uv run led-module --show --travel 3
-uv run python -m unittest discover -s tests -p test_led_module.py -v
+uv run led-module
+uv run led-module --show --module white --engagement 3.0
+uv run python -m unittest tests.test_led_module -v
 ```
 
-The script exports only `led_module_bracket.step` and `.stl` into the ignored
-export directories. Local x is transverse, +y points toward the condenser,
-and z=0 is the post-top seating face. The viewer translates this to the rail
-datum: post top at 50.254 mm, nominal emitter axis at 72.35 mm. `--travel`
-moves the heatsink reference ±3 mm vertically without changing the print.
-STL retains local assembly orientation; select print orientation/supports
-in the slicer, especially under the raised arms and mounting tab.
-
-The initial bracket has a 5 mm-thick, Ø20 mm tab with a Ø4.5 mm M4 through
-bore. The heatsink rear face is provisionally 14 mm forward of the post axis.
-Two 14 mm-high side channels provide 0.15 mm lateral clearance per side,
-rear axial seating lips, and front capture lips with 0.30 mm axial clearance.
-Press the heatsink against both rear seats while tightening the opposed
-pressure screws. The channels permit vertical insertion with the screws
-retracted; friction from the screws retains the calibrated height. Actual
-holding force, fin stiffness, ABS creep, and repeatability are unqualified.
-
-Two proposed M3 × 12 socket-head pressure screws use top-loaded full-height
-M3 nuts, borrowing the common hardware standard without committing a new BOM
-allocation. Their plain tips bear directly on opposing heatsink flats;
-confirm those locations are substantial aluminum rather than vulnerable fin
-tips. Apply light pressure. The closed outside pocket walls carry the nut
-reaction; the nuts can fall out upward during handling until retained.
-Small localized CA tacks remain an optional post-calibration measure per §6.5.
-
-The model uses the document's **approximately 55 mm across flats × 20 mm**
-octagonal envelope. The BOM calls it **Ø55 mm**: measure the actual heatsink
-before trusting this fit, including across-flats/corners, front/rear bearing
-surfaces, and fin layout. The transparent reference has no modeled fins,
-MCPCB, wiring, or emitter projection. Nominal envelope center represents the
-emitter axis; actual board/emitter offset is corrected during calibration.
-The forward baffle tabs have been removed to match the updated baseline.
-LED/solder clearance, wiring restraint, and condenser clearance remain open
-pending measurements.
-
-The post-top M4 retainer is deliberately not modeled: establish whether the
-actual setup uses a retained stud/nut or a screw, then check available thread
-engagement through the 5 mm tab. The seating annulus and vertical tool access
-are checked geometrically. Tests also cover the continuous calibration sweep,
-rear seating overlap, nut loading, vertical heatsink insertion, and clearance
-from the existing rail shoe and post. They do not qualify grip force or thermal
-performance. Each LED/heatsink stays with its own calibrated bracket.
+Axial coordinate u has u=0 at the LED-side SMR1/M face; the viewer uses x
+transverse, +y toward the slit, z=0 at the rail top. Board thicknesses are
+caliper measurements; emitter heights are calculated from the LED outline
+drawings in `docs/reference/`; other dimensions are catalog values. Tests cover
+the optimum-gap calculation, focus margin for each module, SMR1/M thread
+sharing, lead annulus, heatsink-to-post clearance, and envelope interference.
+They do not qualify thermal performance.
 
 ## Common rail shoe — first CAD prototype
 
@@ -315,7 +281,7 @@ The projecting post tab, bottom bushing boss, and small channel lips require
 particular support/orientation attention. Slicer time is not yet verified.
 
 The holder mounts directly on the flat TR50/M post top through a Ø4.5 mm M4
-clearance hole and 5 mm seating pad, like the LED bracket. Use the actual
+clearance hole and 5 mm seating pad. Use the actual
 post-top attachment hardware with verified engagement; screw length is not
 assumed. The cassette optical center is 22.096 mm above that seating face,
 matching the 72.35 mm rail-top datum. There is no continuous optical-axis
