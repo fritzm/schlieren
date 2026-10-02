@@ -1,14 +1,17 @@
 ## 13. Immediate outstanding procurement
 
 Detailed purchasing state remains authoritative in the canonical BOM. As of the latest BOM reconciliation, the
-BOM contains 122 entries with the following states:
+BOM contains 131 entries with the following states:
 
-- 109 In hand;
+- 116 In hand;
 - 1 On order;
 - 2 To procure;
 - 2 Specified;
-- 4 CAD ready;
-- 4 CAD open.
+- 7 CAD ready;
+- 3 CAD open.
+
+The flexure slit head decision (§9) needs no procurement: its hardware is reallocated from in-hand carriage
+stock, and its three printed parts are tracked as CAD ready (the head has had a successful first test print).
 
 The line On order is McMaster 91545A410 M2 nylon insulating washers.
 
@@ -42,33 +45,33 @@ The following have sufficient requirements to begin CAD immediately:
    - lead pass-through holes at r ≈ 11 mm through cap and CN40 base;
    - bench-test the CN40-40B temperature rise at 700 mA;
 
-3. Common slit/cutoff carriage
-   - SM1L15 split clamp;
+3. Cutoff carriage
+   - shouldered spigot in the SM1RC/M;
    - FAS100 fine adjuster;
    - opposed spring plunger;
    - slotted plunger-guide rails;
-   - anti-buckling spring guide/retract rod;
+   - spring cups and thumb-tab retraction;
+   - rotation-envelope trim clearing the rail;
+   - eight-screw keeper;
    - rear datum seating;
    - common 64 mm cassette.
 
-4. SM1L15 tube retaining ring
-   - 4–5 mm axial width;
-   - 3–4 mm radial wall;
-   - M3 split clamp.
-
-5. Cassette blanks and derivatives
-   - source slit;
+4. Cutoff cassette blanks and derivatives
    - knife edge;
    - wire cutoff;
    - color-filter variants.
 
-6. Mirror-cell detailed CAD
+5. Mirror-cell detailed CAD
    - exact 120° adjuster coordinates;
    - spring-seat counterbore depths;
    - close-fit spherical-washer socket diameters;
    - safety retainers;
    - travel cover;
    - final tripod balance point.
+
+The source-slit flexure head (§9) is CAD complete (`src/schlieren/parts/slit_head.py`). The first test print
+of the head confirmed the insert, magnet, and spring fits and the flexure motion; adapter and clamp-bar
+assembly, preload, parallelism, and creep checks remain (§9.7).
 
 ### 14.2 Primary unresolved design cluster
 
@@ -97,15 +100,15 @@ Work still required includes:
 2. Procure the SM1CP2M caps and CN40-40B heatsinks; fabricate both threaded LED modules, center each board,
    and set focus on the slit blades. Confirm the white module reaches focus within its reduced (about
    0.93 mm) long-gap margin; if not, add a thin cap-flange shim (§6.5).
-3. CAD the common slit/cutoff carriage, plunger guides, guide rod, and cassette blank.
-4. CAD the tube retaining ring.
-5. Measure the physical Stanley blades and complete the slit cassette.
-6. Derive knife-edge, wire, and color-filter cassettes from the common blank.
-7. Develop the phone and telephoto support architecture.
-8. Complete the detailed mirror-cell drawings, including washer counterbores and safety/transport pieces.
-9. Assemble the tabletop optical head and perform a dry optical layout near 3.2 m before committing any
+3. CAD the cutoff carriage, plunger guides, guide rod, and cassette blank.
+4. Test-print the source-slit flexure head (§9.7): check flexure-blade, insert, spigot, and nut-pocket fit,
+   the width-stage preload, and slit parallelism and rotation against the first-order estimates.
+5. Derive knife-edge, wire, and color-filter cassettes from the common blank.
+6. Develop the phone and telephoto support architecture.
+7. Complete the detailed mirror-cell drawings, including washer counterbores and safety/transport pieces.
+8. Assemble the tabletop optical head and perform a dry optical layout near 3.2 m before committing any
    remaining irreversible holes or bonds.
-10. Perform mirror-cell RTV bonding only after a successful dry mechanical fit and adhesion test.
+9. Perform mirror-cell RTV bonding only after a successful dry mechanical fit and adhesion test.
 
 Build-status update: the stationary mirror-cell adjuster plate and moving mirror plate have been completed and
 assembled. The three-adjuster/spring/spherical-washer mechanism has been physically assembled and appears

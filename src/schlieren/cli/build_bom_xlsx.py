@@ -39,6 +39,7 @@ SUBSYSTEMS = [
     "Optical supports",
     "Condenser",
     "LED source",
+    "Source slit",
     "Carriages",
     "Cassettes",
     "Imager",

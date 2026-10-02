@@ -24,6 +24,29 @@ the optimum-gap calculation, focus margin for each module, SMR1/M thread
 sharing, lead annulus, heatsink-to-post clearance, and envelope interference.
 They do not qualify thermal performance.
 
+## Source-slit flexure head
+
+`src/schlieren/parts/slit_head.py` encodes the §9 source slit: one flat-printed
+ABS flexure head holding both Stanley blades, with a FAS100-driven centering
+stage (±2 mm, coaxial spring preload) and a nested FAS100-driven width stage,
+plus a flat spigot adapter (on M3 washer spacers) clamped by the SM1RC/M for
+continuous rotation, and two clamp bars. The command exports the three printed
+parts, prints travel, strain, preload, and first-order stage-rotation figures,
+and `--show` displays the assembly on the post and rail shoe.
+
+```sh
+uv run slit-head
+uv run slit-head --show --rotation 90
+uv run python -m unittest tests.test_slit_head -v
+```
+
+The local frame has x along the slit, z the adjustment axis (knobs up at
+rotation 0), and y toward the mirror, with the origin at the slit center on the
+blade-seat plane. Tests cover the optical-height datum, flexure topology
+(the blades are the only links between frame, platform, and width stage),
+strain, preload, stage rotation, the spigot fit and shoulder, hardware
+interference, and clearance to the post and shoe swept over ±110°.
+
 ## Common rail shoe — first CAD prototype
 
 Source: `src/schlieren/parts/rail_shoe.py`. All dimensions are millimeters;
@@ -67,29 +90,14 @@ Check sliding fit, post seating, clamp flexure, nut retention, and tool access
 before printing all four. No global ABS shrink compensation is assumed.
 STL uses assembly coordinates; choose orientation/supports in the slicer.
 
-## SM1 tube retaining clamp — prototype
-
-`src/schlieren/parts/tube_clamp.py` defines a single-split ABS retaining ring.
-Run `uv run tube-clamp --show` to export STEP/STL and view
-it with a separately toggleable tube reference. Run its checks with
-`uv run python -m unittest discover -s tests -p test_tube_clamp.py -v`.
-
-The nominal tube OD is 1.20 in / 30.48 mm per the
-[Thorlabs SM1 tube-mount specifications](https://punchout.thorlabs.com/NewGroupPage9.cfm?ObjectGroup_ID=1533&Visual_ID=1964).
-This is a catalog nominal, pending measurement of the actual tube. The
-prototype has a 30.73 mm bore including 0.25 mm diametral fit allowance,
-3.5 mm radial wall, 1.5 mm split, and 0.5 mm outer-rim fillets.
-The 8 mm axial width leaves 1.1 mm above and below the 5.8 mm hex pocket;
-it is an exploratory increase from the status Doc's approximate 4–5 mm.
-Tabs use the existing M3 × 12 screw and full-height M3 nut, with 1 mm root
-fillets. Apply only light clamping after checking ABS fit and axial retention.
-Canonical design documents have not been changed by this prototype.
-
 ## Slit/cutoff carriage — preliminary sandwich layout
 
+Now used for the cutoff only; the source slit uses the flexure slit head (§9).
+
 `src/schlieren/parts/carriage.py` follows the September 21 design baseline:
-base plate with clamp, separate guide frame, keeper plate, and two plungers.
-The base includes an integral rear flexure clamp for the smooth SM1L15 tube. Local XY is the cassette plane, +Y
+base plate with spigot, separate guide frame, keeper plate, and two plungers.
+The base carries an integral rear shouldered spigot that the SM1RC/M clamps directly
+(§8.1), the same interface as the slit-head adapter. Local XY is the cassette plane, +Y
 points toward the fine adjuster, and +Z is the loading direction; this local
 Z origin is the plate back, not the rail-top optical-height datum.
 
@@ -105,21 +113,43 @@ The script exports four STEP/STL pairs to ignored export folders:
 `carriage_plungers`.
 The paired plungers sit at z=0 with matching orientation and a 5 mm gap
 between their bounding boxes. The base is flipped deck-down to z=0 for
-clamp-up printing; guide frame and keeper retain assembly coordinates.
-The viewer retains its five separately selectable assembled parts; travel and
-retraction options do not affect the plunger print layout.
-The provisional plate envelope is 86 × 123.8002 mm. Open tracks accept the plungers
+spigot-up printing; guide frame and keeper retain assembly coordinates.
+The viewer retains its five separately selectable assembled parts, plus the
+SM1RC/M, TR50/M post, and rail shoe as references; travel and retraction options
+do not affect the plunger print layout.
+The provisional plate envelope is 86 × 123.8002 mm. Base, frame,
+and keeper are trimmed to a 70.35 mm radius about the optical axis (rail top
+less 2 mm), clipping the plate corners so the carriage rotates clear of the
+rail; the tracks are filled solid 1 mm beyond the outermost ear positions as
+end stops, and the four keeper screws sit on that fill at y = -53 / +52 mm. Open tracks accept the plungers
 from the front before the 3 mm keeper is installed. Its side members seat on
-continuous lands and overlap the guide ears; four M3 × 12 screws engage
+continuous lands and overlap the guide ears; the M3 × 12 keeper screws engage
 back-loaded M3 nut pockets. The stack uses a 4 mm back plate, 2 mm guide-floor
-rise, 3 mm ears, and a 3.4 mm guide channel.
+rise, 3 mm ears, and a 3.4 mm guide channel. Four more keeper
+screws sit beside the ear travel at (±42, ±37) mm, in round lugs that widen the
+base, frame, and keeper locally to 94 mm (eight M3 × 12 screws and nuts in all),
+limiting upward keeper bowing under the ear wedge reactions. If a print shows
+too much lift, `uv run carriage --keeper-side-thickness 5` exports a keeper with
+5 mm side members and deeper counterbores (same screws). Screw heads and nuts
+bear directly on the ABS (no washers); tighten only to a light snug, since a
+firm hex-key torque can crush the bearing face and the joint needs little clamp.
 
-The base has a 24 mm circular aperture centered on the fixed tube optical axis.
+The base has a 24 mm circular aperture centered on the fixed spigot optical axis.
 Cassette translation does not move this opening.
-Three pin holes form a provisional broad datum triangle. Both plungers have
+Three pin holes form a provisional broad datum triangle. They are modeled
+Ø1.75 mm: the measured 1.27 mm (0.050 in) brad shank, plus the 0.38 mm hole
+undersize measured on the first base-plate print (Ø24 mm aperture printed
+0.930 in), plus 0.1 mm fit clearance. Finish with a #54 drill if a shank binds.
+Both plungers have
 27.5° seating lips (angle from the cassette plane, 1.25 mm bevel depth).
 The spring seat provides 16.5 mm spring length at fiducial, 11.5–21.5 mm over
-normal travel, with a 4.25 mm guide hole for the 4 × 45 mm shoulder screw.
+normal travel. The coil sits in two printed cups open toward the
+deck (frame end wall, with the roof carried by the keeper, and spring plunger),
+replacing the shoulder-screw guide rod and its end-wall hole. A 20 × 3 × 6 mm
+thumb tab (0.5 mm chamfers except on its spring-facing face, Ø1.6 mm grip bead
+on its inner top edge) on
+the spring plunger's front face, pushed outboard from above the
+cassette, retracts it for loading.
 The driven plunger has a fully backed 10 × 5 × 2 mm magnet pocket with fit
 allowance; this preliminary outward-opening pocket requires a small adhesive
 tack for retention.
@@ -156,15 +186,9 @@ and ball-tip geometry still need a physical access check.
 
 The datum-pin projection, sliding fits, spring compression at loading, and
 cassette insertion/tilt trial remain provisional. Six millimeters of loading
-retraction is modeled from fiducial only. Hardware and cassette are not in
-the five-piece carriage assembly. Full SM1RC/M/post rotation clearance still
+retraction is modeled from fiducial only. `--show` adds the FAS100, bushing,
+magnet pad, and spring envelope as references; the cassette is not shown. Full SM1RC/M/post rotation clearance still
 needs checking against the physical stack.
-
-The spring plunger has a Ø3.3 mm blind M4 tapping pilot, 9 mm total depth:
-7 mm nominal engagement zone plus 2 mm tap relief. A 0.5 mm × 45° entrance
-chamfer opens to Ø4.3 mm. This leaves a 1 mm closed end wall. Verify the
-actual shoulder-screw threaded length and tap lead; the CAD pilot has a flat
-bottom, so any drill-point allowance must fit within the remaining wall.
 
 ## Common cassette blank — preliminary
 
@@ -255,68 +279,8 @@ the top of its 4 mm deck from the middle guide frame. The four M3 × 12
 corner screws clamp the base, guide frame, and keeper without increasing
 the stack height. Two Ø3 mm × 0.8 mm locating pegs beneath the guide frame
 fit Ø3.3 mm × 1 mm recesses in the base. These provisional fit allowances
-keep the base deck flat for printing. The base export is flipped clamp-up,
-with the deck at z=0 and clamp tip at z=16.25 mm. Choose guide-frame print
-orientation/supports to accommodate its downward locating pegs. Tube fit, clamp compliance, stiffness,
-and holder/rotation clearance remain physical validation items. This revised
-prototype has not been promoted into the canonical Google design document.
-
-## Carriage 2 — urgent-build finger-holder alternative
-
-`src/schlieren/parts/carriage_2.py` is a separate, provisional single-piece
-holder for the existing cassette. The original carriage is unchanged.
-
-```sh
-uv run carriage-2 --show
-uv run carriage-2 --show --travel 5
-uv run python -m unittest discover -s tests -p test_carriage_2.py -v
-```
-
-`exports/step/carriage_2.step` and `exports/stl/carriage_2.stl` contain only
-the holder. Print two for slit/cutoff stations. The viewer includes the
-existing cassette with bars/hardware, post, bottom adjuster, bushing, edge
-magnet, and pressure-screw references. Local z=0 is the post top. The export
-uses assembled coordinates; choose orientation and supports in the slicer.
-The projecting post tab, bottom bushing boss, and small channel lips require
-particular support/orientation attention. Slicer time is not yet verified.
-
-The holder mounts directly on the flat TR50/M post top through a Ø4.5 mm M4
-clearance hole and 5 mm seating pad. Use the actual
-post-top attachment hardware with verified engagement; screw length is not
-assumed. The cassette optical center is 22.096 mm above that seating face,
-matching the 72.35 mm rail-top datum. There is no continuous optical-axis
-rotation; the cassette still accepts four orientations.
-
-Two 14 mm-high fingers guide the 64 mm cassette edges over ±5 mm travel.
-They have 0.25 mm lateral clearance per side and 0.3 mm nominal axial
-clearance at the shallow retaining lips. Lips overlap only 0.5 mm of the
-outer perimeter so they clear the existing clamp bars and fasteners. The
-rear contacts are broad printed faces, not precision brass datums. Smooth
-these surfaces and fit-test the lips; they are not snap-fit features.
-
-Two M3 × 12 pressure screws and ordinary M3 nuts in top-loaded pockets lock
-the cassette sides. These are additional uses of the common hardware,
-not a confirmed spare-stock allocation. For fine adjustment loosen the
-pressure screws enough to slide freely while holding the rear face seated.
-Tighten gently after setting; excessive pressure can shift or distort the
-cassette. Gravity seats the cassette on the adjuster in upright operation;
-hold it seated during setup and do not rely on this arrangement when tilted
-or inverted. Remove the cassette for transport.
-
-The optional FAS100 below the cassette pushes on the broad face of a
-10 × 5 × 2 mm magnet bonded to the *lower edge* of the cassette (not its
-rear optical datum). Center it in x, with its 2 mm dimension vertical.
-The bevel reduces bonding contact; check this attachment physically. The
-insert flange faces downward/outboard; the nominal Ø7.9502 mm bore requires
-physical finishing/fit validation. The insert support is 8.5 mm long, with
-full-envelope screw engagement preserved over ±5 mm travel. Actual FAS100
-knob/ball geometry and finger access beneath the holder need checking;
-only the shaft is modeled. With no adjuster installed, slide the cassette
-by hand and lock it with the side screws. Reorienting the cassette may
-require moving the bonded contact to its new lower edge.
-
-This is an emergency alternative, not a finalized replacement of the
-canonical design. Tests check complete cassette hardware clearance in four
-orientations, normal travel and upward loading, post and optical clearance,
-pressure-screw clearance, and adjuster reach. Printed fit, finger stiffness,
-adhesion, and adjustment sensitivity still require a quick bench check.
+keep the base deck flat for printing. The base export is flipped spigot-up,
+with the deck at z=0 and spigot end at z=26.16 mm. Choose guide-frame print
+orientation/supports to accommodate its downward locating pegs. Spigot fit in the
+SM1RC/M and rotation clearance to the rail remain physical validation items. The
+committed design is recorded in `docs/design/08-carriages-cassettes.md` (§8).

@@ -2,15 +2,19 @@
 
 Local XY is the cassette plane, +Y points toward the FAS100, +Z is the
 cassette-loading side. Z=0 is the plate back, not the rail-height datum.
-The rear tube clamp is integral with the base. Dimensions beyond explicit baseline interfaces
-are provisional first-print targets; no purchased threads are modeled.
+The rear shouldered spigot, clamped directly by the SM1RC/M, is integral with the base. Dimensions beyond
+explicit baseline interfaces are provisional first-print targets; no purchased threads are modeled.
 """
 from dataclasses import dataclass
-from math import cos, sin, pi, tan, radians, sqrt
+from itertools import pairwise
+from math import cos, pi, radians, tan
 
 import cadquery as cq
 
-from schlieren.parts.tube_clamp import TubeClampParameters
+from schlieren.parts.rail_shoe import RailShoeParameters
+from schlieren.vendor_cad import SM1RC_M_THICKNESS, thorlabs_fas100, thorlabs_sm1rc_m, thorlabs_tr50_m
+
+INCH = 25.4
 
 
 @dataclass(frozen=True)
@@ -26,21 +30,28 @@ class CarriageParameters:
     locator_height: float = 0.8
     locator_diametral_clearance: float = 0.3
     locator_depth_clearance: float = 0.2
-    tube_diameter: float = 30.48  # Catalog nominal SM1L15 OD; measure before printing.
-    tube_diametral_clearance: float = 0.25
-    tube_clamp_depth: float = 12.25  # Rearward from the plate back / tube stop.
-    tube_clamp_band_thickness: float = 4.5
-    tube_clamp_relief_width: float = 1.25
-    tube_clamp_relief_arc: float = 240.0  # Leaves 120 degrees attached opposite +X split.
-    tube_clamp_root_fillet: float = 2.0
-    tube_clamp_root_land: float = 0.5
-    tube_clamp_ear_slit_gap: float = 0.5
-    tube_clamp_split: float = 1.5
+    # Post stack (§5) and Thorlabs SM1RC/M (vendor STEP model): Ø1.21 in bore accepting Ø1.20 in SM1 tubes.
+    optical_height: float = 72.35
+    datum_thickness: float = 0.010 * INCH
+    post_length: float = 50.0
+    post_diameter: float = 12.7
+    ring_thickness: float = SM1RC_M_THICKNESS
+    ring_bore: float = 1.21 * INCH
+    # Rear spigot, same interface as the slit-head adapter (§9.6); printed at the SM1 tube nominal.
+    spigot_diameter: float = 1.20 * INCH
+    # Plate back to ring face, set by a shoulder on the spigot that the ring seats against. Longer than the
+    # slit head's: the plate reaches below the rail-shoe top, so it must clear the shoe end, not just the post.
+    ring_gap: float = 12.0
+    spigot_shoulder_diameter: float = 34.0  # Bears on the SM1RC/M face outside its Ø30.7 mm bore.
+    post_clearance: float = 2.0  # Minimum, plate back to post and rail shoe, and rotating parts to the rail top.
 
     guide_floor_rise: float = 2.0
     ear_thickness: float = 3.0
     guide_axial_clearance: float = 0.4
     keeper_thickness: float = 3.0
+    # Side members carry the plunger-ear wedge reactions between the screws. 3 mm with the side screws; a 5 mm
+    # keeper is the fallback if the print shows too much lift (`uv run carriage --keeper-side-thickness 5`).
+    keeper_side_thickness: float = 3.0
     ear_lower_clearance: float = 0.15
     body_deck_clearance: float = 0.3  # Provisional ABS running clearance.
     body_width: float = 58.0
@@ -52,20 +63,41 @@ class CarriageParameters:
     keeper_opening_width: float = 66.0
     keeper_end_member_width: float = 5.0
     fastener_edge_margin: float = 4.5
-    datum_pin_shank: float = 1.27
-    datum_hole_diametral_clearance: float = 0.08
+    # The guide tracks are filled solid beyond the plunger ears' outermost positions, giving an end stop and a
+    # solid seat for the keeper screws, which sit inboard of the plate ends to stay inside the rotation envelope.
+    ear_stop_gap: float = 1.0  # Track end stop beyond the outermost ear position.
+    fastener_stop_margin: float = 4.0  # Screw axis beyond the track end stop; keeps the nut pocket in the fill.
+    envelope_nut_wall: float = 1.0  # Minimum ABS between a nut pocket and the rotation envelope.
+    # Side keeper screws beside each plunger's ear travel, in round lugs that widen the plate locally.
+    side_fastener_x: float = 42.0
+    side_lug_radius: float = 5.0  # Leaves ~1.65 mm ABS outside the captive nut.
+    abs_modulus: float = 2200.0  # MPa, typical (provisional), for first-order keeper estimates.
+    datum_pin_shank: float = 0.050 * INCH  # Measured (calipers), in-hand brads.
+    # Brad holes only. Measured on the first base-plate print: the Ø24 mm aperture printed Ø23.62 mm (0.930 in);
+    # brad holes with 0.08 mm diametral clearance would not start a shank. Compensate them, where a few
+    # tenths decide the fit; M3 holes and nut pockets printed snug but usable and are left as they are.
+    datum_hole_print_allowance: float = 0.38  # Diametral.
+    datum_hole_fit_clearance: float = 0.10  # Diametral, as printed; CA retains the pins.
     datum_projection: float = 1.0  # UNMEASURED domed-head contact height.
     bevel_depth: float = 1.25
     bevel_angle: float = 27.5  # Provisional convention: from cassette plane.
     spring_free_length: float = 25.5
     spring_fiducial_length: float = 16.5
-    shoulder_length: float = 45.0
-    shoulder_guide_diameter: float = 4.25
-    shoulder_thread_pilot: float = 3.3  # Drill/tap M4; verify thread engagement.
-    shoulder_thread_depth: float = 7.0  # Nominal engagement zone; measure screw threaded end.
-    shoulder_tap_relief: float = 2.0
-    shoulder_entrance_chamfer: float = 0.5  # Axial/radial size of 45-degree lead-in.
     spring_axis_z: float = 7.5
+    spring_outer_diameter: float = 0.272 * INCH  # Measured (calipers), in-hand spring (as the slit head).
+    spring_inner_diameter: float = 4.2  # Display only; the coil passes a 4 mm shoulder (§8.5).
+    # Each spring end sits in a printed cup open toward the deck: sides and roof locate the coil, the deck
+    # carries it, and nothing penetrates the frame end wall.
+    spring_cup_clearance: float = 1.0  # Diametral; printed-hole shrink and coil growth under compression.
+    spring_cup_depth: float = 3.0
+    spring_cup_wall: float = 1.2
+    spring_cup_end_gap: float = 2.0  # Minimum, cup to cup at the most-compressed pose.
+    # Retraction thumb tab on the spring plunger's front face, at its outboard end.
+    thumb_tab_width: float = 20.0
+    thumb_tab_thickness: float = 3.0
+    thumb_tab_height: float = 6.0
+    thumb_tab_chamfer: float = 0.5  # Exposed edges, for comfort; the spring-facing (outboard) face stays square.
+    thumb_tab_bead_radius: float = 0.8  # Grip bead along the inner (thumb-side) top edge; prints unsupported.
     # McMaster 98625A950 manufacturer drawing, canonical baseline §8.3.
     insert_body_diameter: float = 0.313 * 25.4
     insert_drill_diameter: float = 0.313 * 25.4
@@ -96,23 +128,26 @@ class CarriageParameters:
         return self.insert_drill_diameter
 
     @property
-    def tube_clamp_slit_front_z(self):
-        return -self.tube_clamp_root_fillet - self.tube_clamp_root_land
+    def spigot_bore(self):
+        # The light path through the spigot matches the plate aperture.
+        return self.aperture_diameter
 
     @property
-    def tube_clamp_ear_plate_gap(self):
-        return -self.tube_clamp_slit_front_z + self.tube_clamp_relief_width + self.tube_clamp_ear_slit_gap
+    def spigot_length(self):
+        # Rearward from the plate back; the spigot end is flush with the ring's rear face.
+        return self.ring_gap + self.ring_thickness
 
     @property
-    def tube_clamp_parameters(self):
-        # Reuse the common M3 x 12 / full-height captured nut interface.
-        return TubeClampParameters(
-            tube_diameter=self.tube_diameter,
-            tube_diametral_clearance=self.tube_diametral_clearance,
-            axial_width=self.tube_clamp_depth - self.tube_clamp_ear_plate_gap,
-            radial_wall=self.tube_clamp_band_thickness,
-            split_gap=self.tube_clamp_split,
-        )
+    def post_axis_z(self):
+        return -self.ring_gap - self.ring_thickness / 2
+
+    @property
+    def post_top_below_axis(self):
+        return self.optical_height - self.datum_thickness - self.post_length
+
+    @property
+    def shoe_half_length(self):
+        return RailShoeParameters().length / 2
 
     @property
     def adjuster_axis_z(self):
@@ -171,23 +206,90 @@ class CarriageParameters:
 
     @property
     def support_spans(self):
+        # Adjuster block (bored for the insert), then the solid spring end wall.
         return (
-            (self.plate_ymax - self.adjuster_support_length,
-             self.plate_ymax, self.insert_bore_diameter),
-            (self.plate_ymin, self.spring_seat_y, self.shoulder_guide_diameter),
+            (self.plate_ymax - self.adjuster_support_length, self.plate_ymax),
+            (self.plate_ymin, self.spring_seat_y),
         )
+
+    @property
+    def spring_cup_bore(self):
+        return self.spring_outer_diameter + self.spring_cup_clearance
+
+    @property
+    def spring_cup_top(self):
+        return self.spring_axis_z + self.spring_cup_bore / 2 + self.spring_cup_wall
+
+    @property
+    def rotation_envelope_radius(self):
+        # Printed parts stay within this radius of the optical axis so the carriage rotates clear of the rail.
+        return self.optical_height - self.post_clearance
+
+    @property
+    def ear_stops_y(self):
+        # Spring end (loading retraction or working travel, whichever reaches farther), then driven end.
+        reach = self.cassette_size / 2 + self.body_length + self.ear_stop_gap
+        return (-(reach + max(self.loading_retraction, self.working_half_travel)),
+                reach + self.working_half_travel)
 
     @property
     def fasteners(self):
         x = self.plate_width / 2 - self.fastener_edge_margin
-        return [(sx * x, y) for sx in (-1, 1)
-                for y in (self.plate_ymin + self.fastener_edge_margin,
-                          self.plate_ymax - self.fastener_edge_margin)]
+        spring_stop, driven_stop = self.ear_stops_y
+        ends = [(sx * x, y) for sx in (-1, 1)
+                for y in (spring_stop - self.fastener_stop_margin, driven_stop + self.fastener_stop_margin)]
+        return ends + self.side_fasteners
+
+    @property
+    def ear_center_y(self):
+        # Plunger ear center at fiducial, magnitude; spring plunger at -y, driven at +y.
+        return self.cassette_size / 2 + self.body_length / 2
+
+    @property
+    def side_fasteners(self):
+        return [(sx * self.side_fastener_x, sy * self.ear_center_y) for sx in (-1, 1) for sy in (-1, 1)]
 
     @property
     def datum_points(self):
         # Broad triangle; swept tracks clear the aperture at either travel limit.
         return [(-23.0, -20.0), (23.0, -20.0), (0.0, 23.0)]
+
+    @property
+    def datum_hole_diameter(self):
+        # As modeled; finish with a #54 (0.055 in, 1.40 mm) drill if a shank still binds.
+        return self.datum_pin_shank + self.datum_hole_print_allowance + self.datum_hole_fit_clearance
+
+    @property
+    def keeper_side_width(self):
+        return (self.plate_width - self.keeper_opening_width) / 2
+
+    @property
+    def keeper_screw_seat_z(self):
+        # Screw-head seat; thicker side members get a deeper counterbore so the M3 x 12 stack is unchanged.
+        return self.keeper_z + self.keeper_thickness - self.screw_head_recess
+
+    def keeper_side_lift(self, load, travel=0.0, retract=0.0):
+        """Largest upward keeper side-member deflection (mm) at an ear, for `load` N per ear, both plungers.
+
+        First-order beam estimate: each span between adjacent screws is simply supported (conservative:
+        ignores continuity over the screws and clamping at the heads), with the ear loads in it superposed.
+        """
+        ears = (-self.ear_center_y + travel - retract, self.ear_center_y + travel)
+        screws = sorted({y for _, y in self.fasteners})
+        inertia = self.keeper_side_width * self.keeper_side_thickness**3 / 12
+        lift = 0.0
+        for y0, y1 in pairwise(screws):
+            span = y1 - y0
+            loads = [e - y0 for e in ears if y0 < e < y1]
+            for x in loads:
+                total = 0.0
+                for a in loads:
+                    # Simply supported span, point load at a, deflection at x.
+                    near, far = sorted((x, a))
+                    total += load * near * (span - far) * (2 * span * far - far**2 - near**2) / (
+                        6 * span * self.abs_modulus * inertia)
+                lift = max(lift, total)
+        return lift
 
     def validate(self):
         if any(v <= 0 for v in vars(self).values()):
@@ -198,12 +300,18 @@ class CarriageParameters:
             raise ValueError("Insert support must meet the drawing minimum beyond the entry chamfer")
         if self.adjuster_clearance_travel >= self.adjuster_screw_length - self.insert_overall_length:
             raise ValueError("Adjuster must retain full insert engagement with end margin")
-        self.tube_clamp_parameters.validate()
-        if not 220 <= self.tube_clamp_relief_arc <= 270:
-            raise ValueError("Keep a substantial 90–140 degree tube-clamp ligament")
-        if self.tube_clamp_ear_plate_gap < self.tube_clamp_root_fillet:
-            raise ValueError("Clamp ears must remain clear of the plate-root fillet")
-        if any(end <= start for start, end, _ in self.support_spans):
+        if self.spigot_diameter >= self.ring_bore or self.spigot_bore >= self.spigot_diameter - 4:
+            raise ValueError("Spigot must slip into the SM1RC/M and keep a wall")
+        if self.spigot_shoulder_diameter < self.ring_bore + 2.0:
+            raise ValueError("Spigot shoulder needs a land on the SM1RC/M face")
+        if self.spigot_shoulder_diameter / 2 > self.post_top_below_axis - self.post_clearance:
+            raise ValueError("Spigot shoulder must clear the post top")
+        if -self.post_axis_z - max(self.post_diameter / 2, self.shoe_half_length) < self.post_clearance:
+            raise ValueError("Plate back must clear the post and rail shoe")
+        for x, y in self.datum_points:
+            if (x * x + y * y) ** 0.5 - self.datum_pin_shank < self.spigot_shoulder_diameter / 2 + 1.0:
+                raise ValueError("Datum-pin shanks must be trimmable outside the spigot shoulder")
+        if any(end <= start for start, end in self.support_spans):
             raise ValueError("Support inner faces must lie inside the plate edges")
         if self.ear_lower_clearance >= self.guide_axial_clearance:
             raise ValueError("Ears need clearance below the keeper")
@@ -211,8 +319,31 @@ class CarriageParameters:
             raise ValueError("Guide ears must fit the open tracks")
         if not self.cassette_size < self.keeper_opening_width < 2 * self.ear_outer_x:
             raise ValueError("Keeper must clear cassette and overlap ears")
-        if self.shoulder_thread_depth + self.shoulder_tap_relief >= self.body_length:
-            raise ValueError("Blind spring-rod pilot must retain a closed end wall")
+        if self.spring_axis_z - self.spring_outer_diameter / 2 < self.plate_thickness:
+            raise ValueError("Spring must ride clear of the deck")
+        shortest = self.spring_fiducial_length - max(self.working_half_travel, self.loading_retraction)
+        if shortest - 2 * self.spring_cup_depth < self.spring_cup_end_gap:
+            raise ValueError("Spring cups collide at the most-compressed pose")
+        nut_radius = self.nut_pocket_af / 2 / cos(pi / 6)
+        for x, y in self.fasteners:
+            if (x * x + y * y) ** 0.5 + nut_radius + self.envelope_nut_wall > self.rotation_envelope_radius:
+                raise ValueError("Keeper fasteners must stay inside the rotation envelope")
+        if self.fastener_stop_margin < nut_radius + 0.5:
+            raise ValueError("Nut pockets must lie within the track fill")
+        if self.side_fastener_x - self.screw_clearance / 2 < self.track_outer_x + 1.0:
+            raise ValueError("Side keeper screws must clear the plunger guide tracks")
+        if self.side_fastener_x + self.side_lug_radius <= self.plate_width / 2:
+            raise ValueError("Side lugs must widen the plate around the side screws")
+        if self.side_lug_radius < nut_radius + 1.5:
+            raise ValueError("Side lugs need ABS outside the captive nuts")
+        if self.keeper_side_thickness < self.keeper_thickness:
+            raise ValueError("Keeper side members must be at least the nominal keeper thickness")
+        if not 0 < self.thumb_tab_chamfer < min(self.thumb_tab_thickness, self.thumb_tab_height) / 2:
+            raise ValueError("Thumb-tab chamfer must fit the tab")
+        if self.thumb_tab_bead_radius >= self.thumb_tab_thickness:
+            raise ValueError("Thumb-tab bead must be smaller than the tab")
+        if self.thumb_tab_width >= self.body_width:
+            raise ValueError("Thumb tab must sit on the plunger body")
         if self.nut_pocket_depth >= self.plate_thickness:
             raise ValueError("Nut pockets need bearing roofs")
         if self.spring_fiducial_length <= max(self.working_half_travel, self.loading_retraction):
@@ -238,38 +369,47 @@ def _build_fixed_body(p=None):
         land_width = p.plate_width / 2 - p.track_outer_x
         base = base.union(_box(land_width, p.plate_length, p.keeper_z - p.plate_thickness,
                               x=sign * (p.track_outer_x + land_width / 2), y=p.plate_center_y, z=p.plate_thickness))
-    for start, end, diameter in p.support_spans:
+    for start, end in p.support_spans:
         support = _box(p.plate_width, end - start, p.support_top - p.plate_thickness,
                        y=(start + end) / 2, z=p.plate_thickness)
         base = base.union(support)
+    base = base.union(_side_lugs(p, 0, p.keeper_z))
+    spring_stop, driven_stop = p.ear_stops_y
+    for sign in (-1, 1):
+        x = sign * (p.track_inner_x + p.track_outer_x) / 2
+        for y0, y1 in ((p.plate_ymin, spring_stop), (driven_stop, p.plate_ymax)):
+            base = base.union(_box(p.track_outer_x - p.track_inner_x, y1 - y0, p.keeper_z - p.plate_thickness,
+                                   x=x, y=(y0 + y1) / 2, z=p.plate_thickness))
     # Open-top keeper seating recess: preserves front-side removal and the
     # original screw stack while the support blocks extend to all plate edges.
     base = base.cut(_keeper_envelope(p, p.support_top - p.keeper_z))
-    for start, end, diameter in p.support_spans:
-        base = base.cut(_y_hole(diameter / 2, end - start + 2, start - 1,
-                                p.adjuster_axis_z if start > 0 else p.spring_axis_z))
-    # The tube and optical axis remain fixed while the cassette translates.
+    start, end = p.support_spans[0]
+    base = base.cut(_y_hole(p.insert_bore_diameter / 2, end - start + 2, start - 1, p.adjuster_axis_z))
+    # End-wall spring cup; the guide-frame split truncates it at the keeper plane, and the keeper carries its roof.
+    base = base.union(_spring_cup(p, p.spring_seat_y, p.plate_thickness))
+    # The spigot and optical axis remain fixed while the cassette translates.
     opening = cq.Workplane("XY").circle(p.aperture_diameter / 2).extrude(p.plate_thickness)
     base = base.cut(opening)
     for x, y in p.datum_points:
         hole = cq.Workplane("XY", origin=(x, y, 0)).circle(
-            (p.datum_pin_shank + p.datum_hole_diametral_clearance) / 2).extrude(p.plate_thickness)
+            p.datum_hole_diameter / 2).extrude(p.plate_thickness)
         base = base.cut(hole)
     for x, y in p.fasteners:
         base = base.cut(cq.Workplane("XY", origin=(x, y, 0)).circle(p.screw_clearance / 2).extrude(p.keeper_z))
         base = base.cut(cq.Workplane("XY", origin=(x, y, 0)).polygon(
             6, p.nut_pocket_af / cos(pi / 6)).extrude(p.nut_pocket_depth))
-    return _add_tube_clamp(base.cut(_insert_entry(p)), p).clean()
+    return _add_spigot(base.cut(_insert_entry(p)), p).intersect(_rotation_envelope(p)).clean()
 
 
 def _split_fixed_body(p):
     stock = _build_fixed_body(p)
-    base = stock.intersect(_box(p.plate_width, p.plate_length,
-                               p.tube_clamp_depth + p.plate_thickness,
-                               y=p.plate_center_y, z=-p.tube_clamp_depth))
-    frame = stock.intersect(_box(p.plate_width, p.plate_length,
+    width = 2 * (p.side_fastener_x + p.side_lug_radius) + 2  # Includes the side lugs.
+    base = stock.intersect(_box(width, p.plate_length,
+                               p.spigot_length + p.plate_thickness,
+                               y=p.plate_center_y, z=-p.spigot_length))
+    frame = stock.intersect(_box(width, p.plate_length,
                                 p.keeper_z - p.plate_thickness, y=p.plate_center_y, z=p.plate_thickness))
-    # Male locators belong to the frame: the base deck stays flat for clamp-up printing.
+    # Male locators belong to the frame: the base deck stays flat for spigot-up printing.
     locator_x = (p.track_outer_x + p.plate_width / 2) / 2
     for x in (-locator_x, locator_x):
         pin = cq.Workplane("XY", origin=(x, 0, p.plate_thickness - p.locator_height)).circle(
@@ -290,76 +430,85 @@ def build_guide_frame(p=None):
     return _split_fixed_body(p or CarriageParameters())[1]
 
 
-def _add_tube_clamp(base, p):
-    """Rear boss with a transverse circumferential slit and rear axial split.
+def _add_spigot(base, p):
+    """Rear hollow spigot clamped by the SM1RC/M; the ring seats against the shoulder.
 
-    All compliance cuts stay behind the plate and root fillet. The tube seats
-    against the intact plate back surrounding its circular optical aperture.
+    Printed with the base deck down and the spigot up, so it needs no supports.
     """
-    c = p.tube_clamp_parameters
-    collar = cq.Workplane("XY", origin=(0, 0, -p.tube_clamp_depth)).circle(c.outer_radius).extrude(p.tube_clamp_depth)
-    ear_end = c.ear_root_x + c.ear_width
-    for sign in (-1, 1):
-        collar = collar.union(_box(ear_end, c.screw_ear_thickness, c.axial_width,
-                                  x=ear_end / 2,
-                                  y=sign * (c.split_gap + c.screw_ear_thickness) / 2,
-                                  z=-p.tube_clamp_depth))
-    root_y = c.split_gap / 2 + c.screw_ear_thickness
-    root_x = sqrt(c.outer_radius**2 - root_y**2)
-    edges = [e for e in collar.edges("|Z").vals()
-             if abs(e.Center().x - root_x) < 1e-6 and abs(abs(e.Center().y) - root_y) < 1e-6]
-    collar = collar.newObject(edges).fillet(c.ear_root_fillet)
-    base = base.union(collar).clean()
-    # Explicit revolved quarter-circle avoids a fragile edge-fillet operation
-    # on the already split collar. Relief cuts below open the compliant sector.
-    radius = p.tube_clamp_root_fillet
-    r = c.outer_radius
-    root = (cq.Workplane("XZ").moveTo(r, -radius).lineTo(r, 0).lineTo(r + radius, 0)
-            .threePointArc((r + radius * (1 - 2**-0.5), -radius * (1 - 2**-0.5)),
-                           (r, -radius)).close().revolve(360, (0, 0), (0, 1)))
-    base = base.union(root)
-
-    # Transverse slit passes radially through the boss wall, beyond the fillet.
-    # A 120-degree ligament on -X connects the rear clamping band to the boss.
-    inner = c.bore_diameter / 2 - 1
-    outer = c.outer_radius + 1
-    half_angle = radians(p.tube_clamp_relief_arc / 2)
-    def polar(radius, angle):
-        return (radius * cos(angle), radius * sin(angle))
-    z0 = p.tube_clamp_slit_front_z - p.tube_clamp_relief_width
-    relief = (cq.Workplane("XY", origin=(0, 0, z0))
-              .moveTo(*polar(inner, -half_angle))
-              .threePointArc((inner, 0), polar(inner, half_angle))
-              .lineTo(*polar(outer, half_angle))
-              .threePointArc((outer, 0), polar(outer, -half_angle)).close()
-              .extrude(p.tube_clamp_relief_width))
-    # Rounded ends across the radial wall avoid square-ended flexure cuts.
-    for angle in (-half_angle, half_angle):
-        x, y = polar(inner, angle)
-        end = cq.Solid.makeCylinder(p.tube_clamp_relief_width / 2, outer - inner,
-                                   cq.Vector(x, y, z0 + p.tube_clamp_relief_width / 2),
-                                   cq.Vector(cos(angle), sin(angle), 0))
-        relief = relief.union(end)
-    # Perpendicular axial split joins the circumferential slit, never the plate.
-    split_top = z0 + p.tube_clamp_relief_width / 2
-    split = _box(ear_end + 1, p.tube_clamp_split,
-                 p.tube_clamp_depth + 1 + split_top,
-                 x=(ear_end + 1) / 2, z=-p.tube_clamp_depth - 1)
-    bore = (cq.Workplane("XY", origin=(0, 0, -p.tube_clamp_depth - 1))
-            .circle(c.bore_diameter / 2).extrude(p.tube_clamp_depth + 1))
-    base = base.cut(bore).cut(relief.union(split))
-    screw_y = -c.split_gap / 2 - c.screw_ear_thickness
-    nut_y = c.split_gap / 2 + c.nut_ear_thickness
-    screw_z = -p.tube_clamp_depth + c.axial_width / 2
-    screw = cq.Solid.makeCylinder(c.screw_clearance_diameter / 2, nut_y - screw_y + 2,
-                                 cq.Vector(c.screw_x, screw_y - 1, screw_z), cq.Vector(0, 1, 0))
-    plane = cq.Plane(origin=(c.screw_x, nut_y - c.nut_pocket_depth, screw_z),
-                     xDir=(1, 0, 0), normal=(0, 1, 0))
-    pocket = cq.Workplane(plane).polygon(6, (c.nut_across_flats + c.nut_across_flats_clearance) / cos(pi/6)).extrude(c.nut_pocket_depth + 1)
-    base = base.cut(screw).cut(pocket).clean()
+    ring_face = -p.ring_gap
+    shoulder = cq.Workplane("XY", origin=(0, 0, ring_face)).circle(p.spigot_shoulder_diameter / 2).extrude(
+        p.ring_gap)
+    spigot = cq.Workplane("XY", origin=(0, 0, -p.spigot_length)).circle(p.spigot_diameter / 2).extrude(
+        p.ring_thickness)
+    bore = cq.Workplane("XY", origin=(0, 0, -p.spigot_length - 1)).circle(p.spigot_bore / 2).extrude(
+        p.spigot_length + 1)
+    base = base.union(shoulder).union(spigot).cut(bore).clean()
     if len(base.solids().vals()) != 1 or not base.val().isValid():
-        raise ValueError("Carriage and flexure clamp must remain one valid solid")
+        raise ValueError("Base plate and spigot must remain one valid solid")
     return base
+
+
+def support_location(p=None, rotation=0.0):
+    """Rail-assembly frame (x transverse, y along the rail, z up from the rail top, post at x=y=0) -> local
+    carriage frame, with the carriage rotated by `rotation` degrees about the optical axis.
+
+    Rotation 0 is the nominal zero of §8.1: fine adjuster (+Y) up.
+    """
+    p = p or CarriageParameters()
+    return (cq.Location((0, 0, 0), (0, 0, 1), -rotation)
+            * cq.Location((0, -p.optical_height, p.post_axis_z))
+            * cq.Location((0, 0, 0), (1, 0, 0), -90))
+
+
+def _side_lugs(p, z, height):
+    """Round lugs around the side keeper screws, kept outboard of the guide-track walls."""
+    lugs = None
+    outer = p.side_fastener_x + p.side_lug_radius
+    for x, y in p.side_fasteners:
+        sign = 1 if x > 0 else -1
+        lug = cq.Workplane("XY", origin=(x, y, z)).circle(p.side_lug_radius).extrude(height)
+        lug = lug.intersect(_box(outer - p.track_outer_x, 2 * p.side_lug_radius, height,
+                                 x=sign * (p.track_outer_x + outer) / 2, y=y, z=z))
+        lugs = lug if lugs is None else lugs.union(lug)
+    return lugs
+
+
+def _thumb_tab(p, outer_y):
+    """Tab on the spring plunger's front face at its outboard end (+Y, unmirrored), with chamfered exposed edges
+    except those of the spring-facing face, and a grip bead along the inner top edge, where the thumb pushes."""
+    tab = _box(p.thumb_tab_width, p.thumb_tab_thickness, p.thumb_tab_height,
+               y=outer_y - p.thumb_tab_thickness / 2, z=p.body_top)
+    edges = [e for e in tab.edges(">Z or |Z").vals() if e.Center().y < outer_y - 1e-6]
+    tab = tab.newObject(edges).chamfer(p.thumb_tab_chamfer)
+    top = p.body_top + p.thumb_tab_height
+    length = p.thumb_tab_width - 2 * p.thumb_tab_chamfer
+    bead = cq.Solid.makeCylinder(p.thumb_tab_bead_radius, length,
+                                 cq.Vector(-length / 2, outer_y - p.thumb_tab_thickness, top - p.thumb_tab_bead_radius),
+                                 cq.Vector(1, 0, 0))
+    return tab.union(bead)
+
+
+def _rotation_envelope(p):
+    """Cylinder about the optical axis that the fixed body and keeper are trimmed to; clips the plate corners."""
+    height = 4 * p.spigot_length + p.support_top
+    return cq.Workplane("XY", origin=(0, 0, -height / 2)).circle(p.rotation_envelope_radius).extrude(height)
+
+
+def _spring_cup(p, seat_y, bottom):
+    """Cup around one spring end, extending +Y from its seat face at seat_y (the spring plunger is built
+    unmirrored, so +Y is outboard there too).
+
+    Open toward the deck: the legs stand on the print bed and the roof bridges the coil.
+    """
+    y0 = seat_y
+    width = p.spring_cup_bore + 2 * p.spring_cup_wall
+    cup = _box(width, p.spring_cup_depth, p.spring_cup_top - bottom,
+               y=y0 + p.spring_cup_depth / 2, z=bottom)
+    pocket = cq.Workplane(obj=_y_hole(p.spring_cup_bore / 2, p.spring_cup_depth + 2, y0 - 1, p.spring_axis_z))
+    if bottom < p.spring_axis_z:
+        pocket = pocket.union(_box(p.spring_cup_bore, p.spring_cup_depth + 2, p.spring_axis_z - bottom + 1,
+                                   y=y0 + p.spring_cup_depth / 2, z=bottom - 1))
+    return cup.cut(pocket)
 
 
 def _keeper_envelope(p, height):
@@ -382,22 +531,28 @@ def build_keeper_plate(p=None):
     keeper = _keeper_envelope(p, p.keeper_thickness)
     # Concentric crown maintains the nominal keeper thickness radially over
     # the insert bore. Clip at the mating plane to keep the base unchanged.
-    start, end, _ = p.support_spans[0]
+    start, end = p.support_spans[0]
     crown_radius = p.insert_bore_diameter / 2 + p.keeper_thickness
     crown = cq.Workplane(obj=_y_hole(crown_radius, end - start, start, p.adjuster_axis_z))
     crown = crown.intersect(_box(2 * crown_radius, end - start,
                                 p.adjuster_axis_z + crown_radius - p.keeper_z,
                                 y=(start + end) / 2, z=p.keeper_z))
     keeper = keeper.union(crown)
-    for start, end, diameter in p.support_spans:
-        keeper = keeper.cut(_y_hole(diameter / 2, end - start + 2, start - 1,
-                                p.adjuster_axis_z if start > 0 else p.spring_axis_z))
+    keeper = keeper.cut(_y_hole(p.insert_bore_diameter / 2, end - start + 2, start - 1, p.adjuster_axis_z))
+    keeper = keeper.union(_spring_cup(p, p.spring_seat_y, p.keeper_z))
+    extra = p.keeper_side_thickness - p.keeper_thickness
+    for sign in (-1, 1) if extra > 0 else ():
+        keeper = keeper.union(_box(p.keeper_side_width, p.plate_length, extra,
+                                   x=sign * (p.keeper_opening_width + p.keeper_side_width) / 2,
+                                   y=p.plate_center_y, z=p.keeper_z + p.keeper_thickness))
+    keeper = keeper.union(_side_lugs(p, p.keeper_z, p.keeper_side_thickness))
+    top = p.keeper_z + p.keeper_side_thickness
     for x, y in p.fasteners:
         keeper = keeper.cut(cq.Workplane("XY", origin=(x, y, p.keeper_z)).circle(
-            p.screw_clearance / 2).extrude(p.keeper_thickness))
-        keeper = keeper.cut(cq.Workplane("XY", origin=(x, y, p.keeper_z + p.keeper_thickness - p.screw_head_recess))
-                            .circle(p.screw_head_clearance / 2).extrude(p.screw_head_recess))
-    return keeper.cut(_insert_entry(p)).clean()
+            p.screw_clearance / 2).extrude(p.keeper_side_thickness))
+        keeper = keeper.cut(cq.Workplane("XY", origin=(x, y, p.keeper_screw_seat_z))
+                            .circle(p.screw_head_clearance / 2).extrude(top - p.keeper_screw_seat_z))
+    return keeper.cut(_insert_entry(p)).intersect(_rotation_envelope(p)).clean()
 
 
 def build_plunger(p=None, *, spring=False):
@@ -422,17 +577,9 @@ def build_plunger(p=None, *, spring=False):
                               y=edge + p.body_length / 2, z=ear_bottom))
     outer_y = edge + p.body_length
     if spring:
-        pilot_depth = p.shoulder_thread_depth + p.shoulder_tap_relief
-        body = body.cut(_y_hole(p.shoulder_thread_pilot / 2, pilot_depth,
-                               outer_y - pilot_depth, p.spring_axis_z))
-        lead_in = cq.Solid.makeCone(
-            p.shoulder_thread_pilot / 2,
-            p.shoulder_thread_pilot / 2 + p.shoulder_entrance_chamfer,
-            p.shoulder_entrance_chamfer,
-            cq.Vector(0, outer_y - p.shoulder_entrance_chamfer, p.spring_axis_z),
-            cq.Vector(0, 1, 0),
-        )
-        body = body.cut(lead_in)
+        # Spring cup outboard; thumb tab on the front face, pushed outboard from above the cassette to retract.
+        body = body.union(_spring_cup(p, outer_y, bottom))
+        body = body.union(_thumb_tab(p, outer_y))
         body = body.mirror("XZ")
     else:
         # Outward-opening, fully backed magnet pocket. A small adhesive tack is
@@ -445,8 +592,11 @@ def build_plunger(p=None, *, spring=False):
     return body.clean()
 
 
-def build_carriage(p=None, *, travel=0.0, retract=0.0):
+def build_carriage(p=None, *, travel=0.0, retract=0.0, include_support=False, include_hardware=False):
     """Five independently selectable printed parts; retraction only at fiducial.
+
+    `include_support` adds the SM1RC/M, TR50/M post, and rail shoe as references; `include_hardware` adds the
+    FAS100 (vendor model), its 98625A950 bushing, the magnet bearing pad, and the 2006N292 spring envelope.
 
     Spring solid height is unverified: the loading pose checks printed geometry,
     not whether the purchased spring can safely reach that compression.
@@ -467,4 +617,44 @@ def build_carriage(p=None, *, travel=0.0, retract=0.0):
         ("Spring plunger", build_plunger(p, spring=True).translate((0, travel - retract, 0)), (0.4, 0.75, 0.5)),
     ):
         assembly.add(part, name=name, color=cq.Color(*color))
+    if include_support:
+        from schlieren.parts.rail_shoe import build_rail_shoe
+
+        loc = support_location(p)
+        metal = cq.Color(0.75, 0.75, 0.78)
+        ring = cq.Location((0, -p.ring_thickness / 2, p.optical_height))
+        assembly.add(thorlabs_sm1rc_m(), name="SM1RC M ring", loc=loc * ring, color=cq.Color(0.2, 0.2, 0.22))
+        post = cq.Location((0, 0, p.datum_thickness))
+        assembly.add(thorlabs_tr50_m(), name="TR50 M post", loc=loc * post, color=metal)
+        assembly.add(build_rail_shoe(), name="Rail shoe", loc=loc, color=cq.Color(0.8, 0.4, 0.25))
+    if include_hardware:
+        for name, part, color in _adjuster_hardware(p, travel):
+            assembly.add(part, name=name, color=cq.Color(*color))
+        length = p.spring_fiducial_length + travel - retract
+        spring = cq.Workplane(obj=_y_hole(p.spring_outer_diameter / 2, length, p.spring_seat_y, p.spring_axis_z))
+        spring = spring.cut(cq.Workplane(obj=_y_hole(p.spring_inner_diameter / 2, length + 2,
+                                                     p.spring_seat_y - 1, p.spring_axis_z)))
+        assembly.add(spring, name="2006N292 spring envelope", color=cq.Color(0.5, 0.5, 0.5))
     return assembly
+
+
+def _adjuster_hardware(p, travel):
+    """FAS100, bushing, and magnet pad as (name, part, rgb); the ball tip bears on the pad face."""
+    tip_y = p.magnet_contact_y + travel
+    # Vendor model axis +Z toward the knob, turned to +Y (outboard, toward the bushing flange).
+    fas100 = cq.Workplane().add(thorlabs_fas100().val().moved(
+        cq.Location((0, tip_y, p.adjuster_axis_z)) * cq.Location((0, 0, 0), (1, 0, 0), -90)))
+    flange_face = p.plate_ymax
+    bushing = cq.Workplane(obj=_y_hole(p.insert_body_diameter / 2, p.insert_body_length,
+                                       flange_face - p.insert_body_length, p.adjuster_axis_z))
+    bushing = bushing.union(_y_hole(p.insert_flange_diameter / 2, p.insert_flange_thickness,
+                                    flange_face, p.adjuster_axis_z))
+    bushing = bushing.cut(_y_hole(0.25 * INCH / 2, p.insert_body_length + 2, flange_face - p.insert_body_length - 1,
+                                  p.adjuster_axis_z))
+    magnet = _box(p.magnet_length, p.magnet_thickness, p.magnet_width,
+                  y=tip_y - p.magnet_thickness / 2, z=p.adjuster_axis_z - p.magnet_width / 2)
+    return (
+        ("FAS100", fas100, (0.75, 0.75, 0.78)),
+        ("98625A950 bushing", bushing, (0.8, 0.65, 0.25)),
+        ("Magnet pad", magnet, (0.6, 0.6, 0.62)),
+    )

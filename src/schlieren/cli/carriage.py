@@ -1,4 +1,4 @@
-"""Export base, guide frame, keeper, and a paired plunger print layout; optionally show assembly."""
+"""Export base, guide frame, keeper, and a paired plunger print layout; optionally show it on its post."""
 import argparse
 from pathlib import Path
 
@@ -13,8 +13,12 @@ def main():
     parser.add_argument("--output", type=Path, default=Path("exports"))
     parser.add_argument("--travel", type=float, default=0.0)
     parser.add_argument("--retract", type=float, default=0.0)
+    parser.add_argument("--keeper-side-thickness", type=float, default=CarriageParameters().keeper_side_thickness,
+                        help="keeper side-member thickness in mm (5 for the stiffer fallback keeper)")
     args = parser.parse_args()
-    assembly = build_carriage(travel=args.travel, retract=args.retract)
+    params = CarriageParameters(keeper_side_thickness=args.keeper_side_thickness)
+    assembly = build_carriage(params, travel=args.travel, retract=args.retract, include_support=args.show,
+                              include_hardware=args.show)
     # Keep the viewer assembled; exports use a separate, pose-independent layout.
     plunger_gap = 5.0  # Clear space between the two bounding boxes, in mm.
     plungers = []

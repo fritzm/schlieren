@@ -197,7 +197,7 @@ Dependencies are managed with `uv` (Python >= 3.12). Tests use `unittest`; ruff 
 ```sh
 uv sync                                               # install/update the environment
 uv run python -m unittest discover -s tests -v        # all tests
-uv run python -m unittest tests.test_carriage_2 -v    # one test module
+uv run python -m unittest tests.test_carriage -v      # one test module
 uvx ruff check . && uvx ruff format .                 # lint/format (line length 110, from pyproject.toml)
 uv run <command> --help                               # part commands: build/export (--show opens the viewer)
 uv run build-status-doc                               # docs/design/ -> exports/docs/schlieren-project-status.md

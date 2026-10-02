@@ -3,7 +3,7 @@
 Three fixtures use the common post/shoe architecture:
 
 1. condenser/iris, which also carries the threaded LED module (§6.5);
-2. source-slit carriage;
+2. source-slit flexure head (§9);
 3. cutoff carriage.
 
 ### 5.1 Post
@@ -16,8 +16,8 @@ Three fixtures use the common post/shoe architecture:
 ### 5.2 Optical-holder allocation
 
 - condenser: 1 × SMR1/M
-- slit carriage: 1 × SM1RC/M
-- cutoff carriage: 1 × SM1RC/M
+- slit head: 1 × SM1RC/M, clamping the printed spigot of the slit-head adapter (§9.6)
+- cutoff carriage: 1 × SM1RC/M, clamping the printed spigot of the carriage base plate (§8.1)
 - LED source: no post of its own; the threaded LED module screws into the condenser SMR1/M
 
 The condenser/slit/cutoff holders preserve the 22.1 mm post-top-to-axis dimension.
@@ -50,15 +50,17 @@ Common split-clamp hardware for each of the three rail-shoe post collars is:
 
 M3 socket-head screw → clearance through one ear → captured M3 hex nut in the opposite ear.
 
-The common hardware selection for all seven printed split clamps is:
+The common hardware selection for the three printed rail-shoe split clamps is:
 
 - McMaster 91292A114 — M3 × 0.5 × 12 mm fully threaded 18-8 stainless socket-head screw; 5.5 mm head diameter,
-  3 mm head height, 2.5 mm hex drive; one 100-pack supplies the seven installed split-clamp screws plus
-  validation and shared-use stock;
+  3 mm head height, 2.5 mm hex drive; one 100-pack supplies the three installed split-clamp screws, eight
+  keeper-frame screws, and eight slit-head screws ([§9](09-slit-cassette.md#9-source-slit)), plus validation
+  and shared-use stock;
 - McMaster 91828A211 — full-height M3 × 0.5 18-8 stainless hex nut; 5.5 mm across flats × 2.4 mm high, DIN
-  934; the shared 100-pack supplies seven split-clamp nuts, eight keeper-frame nuts
-  ([§8.4](08-carriages-cassettes.md#84-cassette-seating)), and twelve cassette clamp-bar nuts
-  ([§9](09-slit-cassette.md#9-source-slit-cassette)), leaving 73 for validation and spares;
+  934; the shared 100-pack supplies three split-clamp nuts, eight keeper-frame nuts
+  ([§8.4](08-carriages-cassettes.md#84-cassette-seating)), twelve cassette clamp-bar nuts
+  ([§9.8](09-slit-cassette.md#98-common-cassette-clamp-bars-cutoff-cassettes)), and eight slit-head nuts
+  ([§9](09-slit-cassette.md#9-source-slit)), leaving 69 for validation and spares;
 - no washer, nyloc, or threaded insert.
 
 The 12 mm screw length is finalized for the common printed split-clamp standard. Design the ear thickness and
@@ -70,7 +72,7 @@ split clamps listed below.
 The clamp provides rotational and lateral retention; post height is still established solely by the post
 bottoming on the metal datum disc.
 
-This split-collar geometry remains the common baseline for the rail-shoe and carriage split clamps. The LED
+This split-collar geometry remains the common baseline for the rail-shoe split clamps. The LED
 module has no post of its own; it threads into the condenser SMR1/M as described in
 [§6.5](06-led-source.md#65-threaded-led-module--committed).
 

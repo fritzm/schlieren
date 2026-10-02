@@ -2,7 +2,7 @@
 
 **Project State and Baseline Design**
 
-Revision: Sep 30, 2026
+Revision: Oct 1, 2026
 
 Status: Design baseline, maintained as Markdown fragments in Git (`docs/design/`). The companion BOM is
 `bom/bom.csv` in the same repository. Google Drive copies are generated views for sharing and GUI editing;
@@ -36,7 +36,7 @@ troublesome.
 Near-term 3D printing is ABS only. Printed parts are appropriate for:
 
 - rail/post shoes;
-- slit/cutoff carriage bodies;
+- the source-slit flexure head and cutoff carriage body;
 - cassettes and cassette retainers;
 - plungers and guide features;
 - phone/lens supports;
@@ -80,7 +80,7 @@ The source rail contains, in optical order:
 
 1. interchangeable threaded LED/heatsink source module, screwed into the condenser holder;
 2. condenser and adjustable iris;
-3. source-slit carriage.
+3. source-slit flexure head.
 
 The slit is the effective optical source. The LED primarily illuminates that slit through the condenser and
 therefore does not itself require the same precision vertical positioning as the slit.
@@ -99,11 +99,13 @@ Several source-side and cutoff-side fixtures deliberately share common mechanics
 common TR50/M post + printed rail shoe concept:
 
 1. condenser/iris, which also carries the LED source module;
-2. source-slit carriage;
+2. source-slit flexure head;
 3. cutoff carriage.
 
-The slit and cutoff share the same rotating carriage architecture and the same 64 mm cassette envelope,
-allowing knife-edge, wire, and color-filter experiments without changing the supporting mechanism.
+The source slit and the cutoff both rotate about the optical axis in an SM1RC/M. The slit uses a flexure head
+with fine centering and slit-width adjustment (§9); the cutoff uses a rotating carriage with a 64 mm cassette
+envelope, allowing knife-edge, wire, and color-filter experiments without changing the supporting mechanism
+(§8).
 
 The mirror cell uses a three-point, approximately 120°-spaced fine-adjustment architecture with compression
 springs and spherical washer interfaces. The mirror is compliantly supported in the moving plate by six radial

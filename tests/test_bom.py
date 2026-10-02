@@ -79,7 +79,7 @@ class BomWorkbookTests(unittest.TestCase):
         ws = self.wb["Summary"]
         formulas = [c.value for row in ws.iter_rows() for c in row
                     if isinstance(c.value, str) and c.value.startswith("=")]
-        self.assertEqual(len(formulas), 1 + 6 + 9)
+        self.assertEqual(len(formulas), 1 + 6 + 10)
         self.assertTrue(all("BOM!" in f for f in formulas))
         self.assertEqual(ws["B8"].value, "=COUNTA(BOM!A2:A1000)")
 

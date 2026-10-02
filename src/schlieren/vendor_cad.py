@@ -15,6 +15,10 @@ INCH = 25.4
 
 # Vendor-frame features used for placement (Thorlabs drawings are inch-primary).
 SM1CP2M_SEAT_Y = 0.110 * INCH  # Flange seat face (thread shoulder) above the knurled back face.
+SM1RC_M_THICKNESS = 0.400 * INCH
+# FAS100 model: axis along +X through (y, z) = FAS100_AXIS_YZ, knob at -X, ball-tip apex at x=FAS100_TIP_X.
+FAS100_AXIS_YZ = (1.583, -2.103)
+FAS100_TIP_X = 22.013
 
 
 @cache
@@ -47,3 +51,21 @@ def thorlabs_smr1_m() -> cq.Workplane:
 def thorlabs_sm1cp2m() -> cq.Workplane:
     """Thorlabs SM1CP2M end cap; axis +Y through the origin, flange seat face at y=0, thread toward +Y."""
     return _moved("Thorlabs-SM1CP2M.step", cq.Location((0, -SM1CP2M_SEAT_Y, 0)))
+
+
+@cache
+def thorlabs_sm1rc_m() -> cq.Workplane:
+    """Thorlabs SM1RC/M slip ring; axis +Y through the origin, faces at y=0 and y=thickness, post seat -Z.
+
+    The M4 locking screw across the clamp split is at +Z.
+    """
+    rotate = cq.Location((0, 0, 0), (1, 0, 0), 90)
+    return _moved("Thorlabs-SM1RC-M.step", cq.Location((0, SM1RC_M_THICKNESS, 0)) * rotate)
+
+
+@cache
+def thorlabs_fas100() -> cq.Workplane:
+    """Thorlabs FAS100 1/4"-80 adjuster; ball-tip apex at the origin, axis +Z toward the knob."""
+    y, z = FAS100_AXIS_YZ
+    to_tip = cq.Location((-FAS100_TIP_X, -y, -z))
+    return _moved("Thorlabs-FAS100.step", cq.Location((0, 0, 0), (0, 1, 0), 90) * to_tip)

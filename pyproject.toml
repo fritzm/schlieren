@@ -14,11 +14,10 @@ dependencies = [
 
 [project.scripts]
 carriage = "schlieren.cli.carriage:main"
-carriage-2 = "schlieren.cli.carriage_2:main"
 cassette = "schlieren.cli.cassette:main"
 led-module = "schlieren.cli.led_module:main"
 rail-shoe = "schlieren.cli.rail_shoe:main"
-tube-clamp = "schlieren.cli.tube_clamp:main"
+slit-head = "schlieren.cli.slit_head:main"
 build-bom-xlsx = "schlieren.cli.build_bom_xlsx:main"
 build-status-doc = "schlieren.cli.build_status_doc:main"
 
