@@ -80,6 +80,10 @@ SUMMARY_NOTES_BOTTOM = [
         "Unavoidable package surplus is not added to required Qty; track it in procurement/inventory rollups or notes.",
     ),
     ("Data rule", "Do not insert subsystem header or separator rows inside the BOM table."),
+    (None, None),
+    ("Specified", "Part defined by the design; vendor, SKU, or quantity still to be confirmed."),
+    ("CAD ready", "Printed part with a CadQuery model in src/schlieren/parts/; ready to print and fit-test."),
+    ("CAD open", "Printed part whose custom geometry is still to be designed."),
 ]
 
 

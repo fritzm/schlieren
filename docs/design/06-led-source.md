@@ -1,6 +1,6 @@
 ## 6. LED source assemblies
 
-Two interchangeable source types are planned. Each LED board mounts on an identical threaded SM1 carrier
+There are two interchangeable LED source modules. Each LED board mounts on an identical threaded SM1 carrier
 (§6.5) so that the SM1 thread and cap flange, rather than the individual MCPCB pattern, are the interchange
 standard.
 
@@ -18,10 +18,10 @@ standard.
 - Convoy 20 mm star/DTP carrier
 - initial current approximately 500–700 mA
 
-Actual carrier-board hole geometry should be transferred from the physical board rather than assumed from the
-green module.
+Transfer each carrier board's hole geometry from the physical board rather than assuming it from the other
+module.
 
-### 6.3 Common heatsink — selected
+### 6.3 Common heatsink
 
 - Alpha CN40-40B natural-convection pin-fin heatsink, one per module
 - Ø40.0 mm (+0/−0.5) × 40 mm overall, 3.0 mm flat base, Ø2.8 mm pins on a 6.9 mm square grid
@@ -30,11 +30,11 @@ green module.
 
 At about 2 W (white module at 700 mA) the expected rise is roughly 14 °C above ambient; the green module
 dissipates about 1.1 W. The rating is the manufacturer's pins-up test; the module runs with pins horizontal,
-which pin fins tolerate well. Bench-test the temperature rise at 700 mA before relying on it.
+which pin fins tolerate well. **Provisional:** bench-test the temperature rise at 700 mA before relying on
+it.
 
 The heatsink is round so that it clears the condenser post at every rotation while the module is threaded in
-(see §6.5). It replaces the earlier Ø55 mm octagonal 64ASL-8-55, whose corners would sweep about 1.5 mm from
-the TR50/M and below the post top during threading.
+(see §6.5); a larger or non-round heatsink would sweep its corners below the post top during threading.
 
 ### 6.4 LED board mounting
 
@@ -65,7 +65,7 @@ exposed board contacts:
 
 A thin layer of thermal compound is used between board and cap.
 
-### 6.5 Threaded LED module — committed
+### 6.5 Threaded LED module
 
 Each LED module is a self-contained threaded assembly that screws into the LED-side face of the condenser
 SMR1/M (§7). There is no dedicated LED post, rail shoe, or printed bracket.
@@ -83,7 +83,8 @@ Interfaces:
   repeatable axial stop; the module's rotational position at the stop does not matter.
 - The SM1 thread centers the emitter on the condenser axis; no vertical calibration is required.
 - Heatsink fastening: socket-head screws through the CN40 base in the open cells between pins, into blind
-  M3 holes tapped about 2.5 mm deep in the cap rear face. Provisional: M3 × 6 mm. Keep the rear holes
+  M3 holes tapped about 2.5 mm deep in the cap rear face, with M3 × 6 mm screws (**provisional** length). Keep
+  the rear holes
   angularly offset from the front M2 board holes, since the cap is only 5.33 mm thick.
 - Leads drop past the board edge through the board's edge slots, through a pair of holes drilled at about
   r = 11 mm through the cap (inside the thread root) and the heatsink base, and out between the pins.
@@ -110,16 +111,14 @@ index mark per module on the SM1V05 is optional.
 
 Focus margin about the 15.04 mm optimum gap is about 1.1 mm (long-gap side) and 1.8 mm (short-gap side) for
 the green module, and only about 0.93 mm and 2.1 mm for the white module. The white module's long-gap travel
-is limited by the SM1V05 minimum engagement. This reduced margin is accepted pending the build: if the white
-module cannot reach a sharp slit image, space its cap flange off the SMR1/M face with a thin shim (about
+is limited by the SM1V05 minimum engagement. **Provisional:** the white module's reduced margin is to be
+confirmed on the build. If it cannot reach a sharp slit image, space its cap flange off the SMR1/M face with a thin shim (about
 0.1 mm restores 1.0 mm of margin). The shim moves the whole module away from the lens and keeps the flange as
 the axial stop; a shim under the star board would instead shorten the gap and make the shortfall worse.
 
 Thorlabs SM1 part dimensions in this stack-up (SMR1/M, SM1CP2M, SM1V05) are the exact inch-primary values from
 the vendor STEP models in `cad/vendor/`, not the rounded millimeter values on the drawings. The TR50/M is
-metric-primary and keeps its 50 mm / Ø12.7 mm nominals (its STEP model is rounded to inches). The SMR1/M,
-SM1CP2M, TR50/M, and Alpha CN40-40B vendor models are used directly in the `led-module` viewer assembly and
-clearance tests.
+metric-primary and keeps its 50 mm / Ø12.7 mm nominals (its STEP model is rounded to inches).
 
 Module interchange:
 
@@ -129,9 +128,6 @@ Module interchange:
 4. touch up focus on the closed slit blades if needed.
 
 `src/schlieren/parts/led_module.py` encodes this stack-up; `uv run led-module` prints the focus ranges.
-
-This architecture supersedes the rear-post module bracket with forward-reaching heatsink fingers, and the
-earlier blind post-top socket and split-clamp concepts.
 
 ### 6.6 Power and wiring
 
@@ -146,7 +142,7 @@ Connector standard:
 - 2-pin
 - 18 AWG factory pigtails
 
-Selected connector hardware:
+Connector hardware:
 
 - 2 × Molex 214758-1021, male-to-pigtail, 150 mm — module side
 - 1 × Molex 214756-1023, female-to-pigtail, 600 mm — supply side

@@ -1,4 +1,4 @@
-"""Engineering invariants for the exploratory shoe (no external test runner)."""
+"""Engineering invariants for the common rail shoe (no external test runner)."""
 
 import unittest
 from dataclasses import replace

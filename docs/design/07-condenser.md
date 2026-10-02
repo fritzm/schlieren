@@ -1,6 +1,6 @@
 ## 7. Condenser / iris assembly
 
-Committed optical parts:
+Optical parts:
 
 - Thorlabs ACL2520U-A condenser
 - Thorlabs SM1V05 adjustable lens cell

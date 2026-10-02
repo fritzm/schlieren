@@ -1,4 +1,8 @@
-## 11. Camera and telephoto support — principal remaining design cluster
+## 11. Camera and telephoto support
+
+The camera and lens are chosen (§11.1–11.2). **Provisional:** the phone cradle and telephoto saddle
+(§11.3–11.5) are defined by requirements and a concept but not yet designed in detail; this is the main
+remaining custom mechanical design work (§13).
 
 ### 11.1 Camera
 
@@ -25,7 +29,7 @@ centering minimizes vignetting.
 
 ### 11.3 Phone-cradle concept
 
-The architecture is a side-mounted rail fixture that leaves the rail top unobstructed.
+The cradle is a side-mounted rail fixture that leaves the rail top unobstructed.
 
 A floating phone cradle is supported by two vertical jacks:
 
@@ -55,9 +59,8 @@ The saddle should:
 
 A single vertical jack provides fine height/pitch adjustment. Use approximately the same useful adjustment
 envelope as the phone cradle: about ±3 mm, with roughly 7–8 mm total mechanical travel available. Center the
-jack over the imaging rail. The selected 25 mm jack can be packaged without using the rail-slot depth under
-the current nominal height stack, although the central top slot may remain available as clearance margin if
-later CAD requires it.
+jack over the imaging rail. The 25 mm jack can be packaged without using the rail-slot depth under the
+nominal height stack; the central top slot remains available as clearance margin.
 
 Provisional saddle vertical stack at nominal optical height:
 
@@ -94,19 +97,17 @@ A loose retaining strap may be used if necessary, but the lens should not be agg
 
 ### 11.5 Jack hardware
 
-Three vertical jacks are planned:
+There are three vertical jacks:
 
 - two under the phone cradle;
 - one under the telephoto saddle.
 
-Selected hardware:
+Hardware:
 
-- McMaster 93339A252, M5 × 0.8 × 25 mm ball-tip set screws — 3 used
+- McMaster 93339A252, M5 × 0.8 × 25 mm ball-tip set screws
 - McMaster 94459A797, M5 heat-set inserts
 - McMaster 92815A202, M5 thumb nuts used as threadlocked mid-screw handwheels
 - Loctite 271, McMaster 91458A160
 - heat-set installation tip 92160A327;
-- Amazon B0DMCY4FN1, N52 Bar Magnet - 10 mm L × 5 mm W × 2 mm H — 3 used as hard plated jack-contact bearing
-  inserts across the two phone-cradle jacks and the single lens-saddle jack.
-
-The phone and lens assemblies are the last major unresolved custom mechanical design cluster.
+- Amazon B0DMCY4FN1, N52 Bar Magnet - 10 mm L × 5 mm W × 2 mm H, as hard plated jack-contact bearing
+  inserts, one at each jack.

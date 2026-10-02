@@ -1,8 +1,8 @@
-"""Exploratory common rail shoe, based on canonical design-status §§3–5.
+"""Common rail shoe; design §§3–5 (§5.3).
 
 Coordinates: x across the rail, y along it, z up; rail top is z=0.
 The post is at x=y=0. Both ears point toward +x: nut at +y, screw at -y.
-Envelope, hole count/layout, and fabrication allowances are provisional.
+Envelope, hole layout, and fabrication allowances are fit-tested on printed shoes.
 No ABS lies between the post bottom and the metal datum disc.
 """
 
@@ -14,7 +14,7 @@ import cadquery as cq
 
 @dataclass(frozen=True)
 class RailShoeParameters:
-    # Physical interfaces from the canonical status document.
+    # Physical interfaces from docs/design/.
     rail_width: float = 20.0
     rail_height: float = 20.0
     post_diameter: float = 12.7
@@ -24,7 +24,7 @@ class RailShoeParameters:
     clamp_nut_across_flats: float = 5.5
     clamp_nut_thickness: float = 2.4
 
-    # Provisional ABS fabrication allowances (not measured compensation).
+    # ABS fabrication allowances, set by fit test (not measured shrink compensation).
     rail_lateral_clearance_per_side: float = 0.20
     datum_disc_diametral_clearance: float = 1.0
     post_diametral_clearance: float = 0.10
@@ -33,7 +33,7 @@ class RailShoeParameters:
     m5_clearance_diameter: float = 5.5
     m3_clearance_diameter: float = 3.3
 
-    # Provisional part geometry; tune through fit and clamp tests.
+    # Part geometry.
     length: float = 30.0
     datum_counterbore_depth: float = 1.0
     side_wall: float = 5.0

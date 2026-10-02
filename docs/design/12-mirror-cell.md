@@ -1,14 +1,12 @@
 ## 12. Mirror cell
 
-The mirror-cell mechanical architecture is substantially specified.
+### 12.1 Plates and basic architecture
 
-### 12.1 Plates and basic architecture — committed
-
-The mirror-cell plywood thicknesses and plate envelopes are committed as follows:
+The mirror-cell plywood thicknesses and plate envelopes are:
 
 - cell-adjuster plate: 11.5 in wide × 11.0 in high × 1/2 in Baltic birch;
 - base plate: 11.5 in wide × 11.0 in front-to-back × 1/2 in Baltic birch;
-- moving mirror plate: 3/4 in Baltic birch, cut to the committed truncated-hex geometry below.
+- moving mirror plate: 3/4 in Baltic birch, cut to the truncated-hex geometry below.
 
 The fixed cell-adjuster plate and the base plate therefore begin as identical 11.5 × 11.0 × 1/2 in rectangular
 blanks. The cell-adjuster plate carries the three fine-adjustment stations. The base plate provides the
@@ -17,7 +15,7 @@ in [§12.7](12-mirror-cell.md#127-structural-brackets). The 3/4 in moving mirror
 mirror and moves relative to the fixed cell-adjuster plate.
 
 The cell-adjuster plate is centered left/right on the 11.5 in-wide base. The rear face of the 1/2 in fixed
-cell-adjuster plate is committed at 4.000 in / 101.6 mm aft of the front edge of the 11.0 in-deep base. The
+cell-adjuster plate is 4.000 in / 101.6 mm aft of the front edge of the 11.0 in-deep base. The
 two McMaster 8681N11 structural angle brackets face forward, toward the moving mirror plate; their measured
 forward footprint is approximately 3.5 in from the fixed-plate rear face, leaving approximately 0.5 in of base
 margin at the front edge. This orientation places the brackets on the mirror side of the fixed plate so they
@@ -37,10 +35,10 @@ The cell uses:
 - three fine-adjustment stations arranged at 120° intervals;
 - compression-spring preload at each station;
 - spherical washer interfaces for angular accommodation and gravity-load transfer;
-- tripod interface through the selected CAMVATE 577/501/504-style quick-release system and the Sunwayfoto
+- tripod interface through the CAMVATE 577/501/504-style quick-release system and the Sunwayfoto
   LB-68R leveling base.
 
-The moving mirror plate geometry is committed as follows:
+The moving mirror plate geometry is:
 
 - start from a regular hexagon 11.000 in / 279.4 mm vertex-to-vertex, oriented with one vertex upward;
 - the corresponding normal flat radius / apothem is 4.7631 in / 120.98 mm;
@@ -56,7 +54,7 @@ The moving mirror plate geometry is committed as follows:
   the top vertex.
 
 The nominal clearance from the bottom trimmed edge of the moving mirror plate to the top surface of the base
-plate is committed at 3/8 in / 9.53 mm. This places the mirror center approximately 5.138 in / 130.51 mm above
+plate is 3/8 in / 9.53 mm. This places the mirror center approximately 5.138 in / 130.51 mm above
 the base top. The top moving-plate vertex then lies approximately 10.638 in / 270.21 mm above the base top,
 leaving approximately 0.362 in / 9.2 mm of fixed-plate height above it within the 11.0 in-high cell-adjuster
 plate.
@@ -73,7 +71,7 @@ rail-support/foot blocks.
 
 There are three equivalent adjuster stations.
 
-The selected Kozak family is:
+The adjusters are Kozak parts:
 
 - TS250-80-2500 1/4 in-80 adjuster
 - TB250-80-625 bushing
@@ -86,12 +84,12 @@ Each adjuster station includes a concentric compression spring.
 The adjuster bolt passes through the spring and therefore positively retains and laterally locates it. There
 is no separate spring pocket or spring bore in the plywood.
 
-#### Adjuster-bushing mounting — committed
+#### Adjuster-bushing mounting
 
 Each Kozak TB250-80-625 bushing is bonded directly into the 3/4 in moving mirror plate. No separate metal
 bushing carrier is used.
 
-Committed mounting details:
+Mounting details:
 
 - the bushing's narrow flange is on the mirror-facing / outboard face of the moving mirror plate, opposite the
   inter-plate spring space; spring/adjuster load therefore tends to seat the flange against the plywood rather
@@ -115,7 +113,7 @@ This arrangement adds no hardware thickness to the inter-plate gap.
 
 ### 12.3 Compression springs and seat washers
 
-Selected components:
+Components:
 
 - McMaster 2022N186 compression springs
 - McMaster 98017A199 stainless spring-seat washers
@@ -128,18 +126,18 @@ Each of the three springs is captured between two seat washers, producing:
 
 The counterbores register the washers; they are not spring pockets.
 
-The nominal wood-face-to-wood-face interplate gap is committed at 0.500 in / 12.7 mm at the neutral mirror
+The nominal wood-face-to-wood-face interplate gap is 0.500 in / 12.7 mm at the neutral mirror
 position.
 
-The spring-seat washer counterbores are committed as follows:
+The spring-seat washer counterbores are:
 
-- diameter: 5/8 in, using the selected Forstner cutter;
+- diameter: 5/8 in (Forstner cutter);
 - nominal depth: 1/32 in / 0.03125 in / 0.794 mm;
 - use the same nominal depth for all three seats in the moving mirror plate and all three corresponding seats
   in the fixed cell-adjuster plate.
 
-The selected McMaster 98017A199 washers are approximately 0.028–0.036 in thick, so the 1/32 in recess places
-them approximately flush with the plywood surfaces across their thickness tolerance. With the selected 0.750
+The McMaster 98017A199 washers are approximately 0.028–0.036 in thick, so the 1/32 in recess places
+them approximately flush with the plywood surfaces across their thickness tolerance. With the 0.750
 in-free-length McMaster 2022N186 springs and the 0.500 in nominal interplate gap, the springs operate at
 approximately 0.250 in nominal compression before small washer-thickness and adjustment-position variations.
 
@@ -165,7 +163,7 @@ Target depth:
 The diameter should be a close free fit, not a loose retention pocket. Final cutter diameter should be
 selected against measured washer OD rather than assuming a nominal oversize woodworking dimension.
 
-#### Stationary-plate adjuster through-hole — committed
+#### Stationary-plate adjuster through-hole
 
 At each adjuster station, use a 1/8 in / 3.175 mm initial alignment guide hole through the fixed 1/2 in
 cell-adjuster plate. This guide hole establishes a common center for the spring-seat counterbore on the
@@ -176,10 +174,10 @@ through-hole. This is intentionally oversized relative to the 1/4 in Kozak TS250
 plywood does not become the angular bearing as the moving mirror plate tilts. A 5/16 in hole provides 0.03125
 in radial clearance around a 0.250 in adjuster. Across a conservative full 0.500 in plate thickness, a 3°
 adjuster-axis tilt produces approximately 0.0262 in lateral displacement (0.500 × tan 3°), so the clearance
-accommodates approximately the full ±3° angular capability of the selected McMaster 91131A028 spherical-washer
+accommodates approximately the full ±3° angular capability of the McMaster 91131A028 spherical-washer
 interface. The actual effective constraining thickness is somewhat less because of the shallow counterbores.
 
-Recommended machining sequence is therefore: 1/8 in alignment guide hole → shallow counterbores from both
+The machining sequence is: 1/8 in alignment guide hole → shallow counterbores from both
 faces → 5/16 in final through-hole. The spherical washer, rather than the plywood through-hole, remains the
 intended angular bearing and load-transfer interface.
 
@@ -202,9 +200,8 @@ friction and stick-slip as the mirror plate tilts during fine adjustment.
 
 Keep the outside diameter and lower/load-transfer surfaces dry so the lower washer half continues to bear
 directly against the close-fit CA-hardened plywood counterbore. Keep grease away from plywood,
-adhesive-bonding areas, and RTV bonding surfaces. The available Lucas Oil Products NLGI #2 white lithium
-grease has been inspected and appears usable; it is the current shop-stock choice for these spherical
-interfaces. Apply only a very thin film.
+adhesive-bonding areas, and RTV bonding surfaces. The grease is Lucas Oil Products NLGI #2 white lithium
+grease from shop stock.
 
 ### 12.5 Mirror mounting
 
@@ -222,7 +219,7 @@ shims positioned between pads; do not squeeze the mirror against the plywood or 
 force centering. The pad dimensions are practical build targets rather than precision-machined features.
 No counterbores or pockets are specified for the RTV pads.
 
-The plan is to test adhesion to properly prepared Baltic birch directly before deciding whether an adhesion
+**Provisional:** test adhesion to properly prepared Baltic birch before bonding, to decide whether an adhesion
 primer is necessary.
 
 ### 12.6 RTV glue-up cure surface
@@ -230,10 +227,8 @@ primer is necessary.
 For mirror-plate glue-up and bench-top cure, use a non-stick polyethylene-family release surface beneath the
 assembly.
 
-Selected approach:
-
 - approximately 12 × 12 in UHMW sheet
-- sufficiently large for the moving mirror plate, currently targeting an approximately 250 mm maximum envelope
+- large enough for the moving mirror plate (about 279 × 261 mm)
 - flat, clean, dry
 - no release spray required
 
@@ -243,15 +238,13 @@ The release sheet is a shop supply rather than part of the finished instrument.
 
 ### 12.7 Structural brackets
 
-Selected hardware joining the 1/2 in cell-adjuster plate to the 1/2 in base plate:
+Hardware joining the 1/2 in cell-adjuster plate to the 1/2 in base plate:
 
 - 2 × McMaster 8681N11 3 in-long aluminum corner brackets;
-- primary installed screws: 6 × McMaster 90585A997, 5/16 in-18 × 1-3/8 in 316 SS 82° flat-head hex-drive
+- 6 × McMaster 90585A997, 5/16 in-18 × 1-3/8 in 316 SS 82° flat-head hex-drive
   screws;
 - 6 × McMaster 90099A030 5/16 in-18 18-8 stainless heavy-profile nylon-insert locknuts;
-- 6 × McMaster 96659A134 5/16 in stainless washers;
-- existing McMaster 90585A587 5/16 in-18 × 1-1/2 in 316 SS flat-head screws remain in hand as
-  alternate/fallback stock rather than the primary installed length.
+- 6 × McMaster 96659A134 5/16 in stainless washers.
 
 Each bracket uses a three-fastener pattern to avoid interference between perpendicular fastener stacks near
 the bracket's inside corner:
@@ -264,10 +257,10 @@ The bracket holes nearest the inside corner are only about 0.5 in from the corne
 near-corner holes on both bracket legs if the resulting nut/washer stacks would intersect. Choose the single
 horizontal/base fastener position so it clears the two vertical fasteners and their hardware.
 
-The 1-3/8 in screw length is selected specifically for the approximately 1/2 in plywood + 1/4 in bracket +
-washer + heavy nyloc stack. With the selected washer and nut, expected thread projection beyond the nut is
-approximately 0.11–0.14 in, or about 2–2.5 threads, avoiding the excessive inside-corner overhang of the 1-1/2
-in screws while preserving full locknut engagement.
+The 1-3/8 in screw length suits the approximately 1/2 in plywood + 1/4 in bracket +
+washer + heavy nyloc stack. With these washers and nuts, expected thread projection beyond the nut is
+approximately 0.11–0.14 in, or about 2–2.5 threads, preserving full locknut engagement without excessive
+overhang at the inside corner.
 
 The bracket attachments are through-bolted rather than relying on wood screws.
 
@@ -281,69 +274,30 @@ Front safety retention is intentionally non-stressing:
 
 A removable travel cover with standoffs is useful for transport.
 
-These are CAD details rather than unresolved elements of the optical support concept.
+**Provisional:** the safety retainers and travel cover are not yet designed.
 
 ### 12.9 Tripod interface
 
-The previous CAMVATE C2564 cheese-plate interface is superseded and removed from the active design. The
-selected commodity quick-release system is now:
+The mirror cell mounts on the tripod through a CAMVATE Manfrotto-type quick-release assembly with sliding plate
+(Amazon B0B2WBC921) on a Sunwayfoto LB-68R leveling base, whose top mounting stud is 3/8 in-16. The receiver
+stays on the LB-68R; the removable 501PL/577/504-compatible sliding plate stays attached to the underside of
+the 1/2 in Baltic-birch mirror-cell base.
 
-- Amazon B0B2WBC921 — CAMVATE Manfrotto-Type Quick Release Assembly with Sliding Plate Camera Mount;
-- procurement state: On order;
-- used with the existing Sunwayfoto LB-68R leveling base, whose top mounting stud is confirmed to be 3/8
-  in-16.
+The sliding plate is 7.00 in / 177.8 mm long, mounted with its forward end flush with the front edge of the
+11.0 in-deep base, so it spans 0–7.00 in / 0–177.8 mm aft of the front edge and its geometric center lies 3.50
+in / 88.9 mm aft of that edge. This is only 0.15 in / 3.8 mm aft of the estimated mirror-cell center of
+gravity (§12.1), negligible relative to the CoG uncertainty and the quick-release system's sliding adjustment.
 
-The complete quick-release assembly provides the detachable interface at the LB-68R. Its removable
-501PL/577/504-compatible sliding plate remains attached to the underside of the 1/2 in Baltic-birch
-mirror-cell base, while the receiver remains on the LB-68R. Exact receiver orientation, the receiver-to-LB-68R
-thread interface, and the final plate engagement geometry must be verified on the delivered hardware before
-drilling the mirror-cell base.
+The plate is attached by four McMaster 92125A196 M4 × 0.7 × 18 mm 90° flat-head screws:
 
-#### Provisional mirror-cell-to-quick-release-plate attachment
+flush flat-head M4 screw → countersunk 1/2 in Baltic-birch base → M4 × 0.7 tapped hole in solid aluminum of the
+sliding plate.
 
-The current provisional attachment concept is:
-
-flush 90° flat-head M4 screw → countersunk 1/2 in Baltic-birch base → M4 × 0.7 tapped hole in solid aluminum
-of the removable quick-release plate.
-
-Use four screws in a two-front / two-rear rectangular pattern. Relative to the 7.00 in removable plate, each
-screw center is 1.875 in / 47.625 mm in from its nearest longitudinal end, and the two screws at each
-longitudinal station are ±0.500 in / ±12.7 mm from the plate longitudinal centerline. Thus the two
-longitudinal screw stations are 1.875 in and 5.125 in / 47.625 mm and 130.175 mm from the plate's forward end,
-with 1.000 in / 25.4 mm transverse spacing within each pair and 3.250 in / 82.55 mm longitudinal spacing
-between pairs. With the plate's forward end flush to the plywood-base front edge, these are also the
-longitudinal hole coordinates measured aft from the base front edge. These measured locations lie in suitable
-solid aluminum; preserve clearance from sliding/clamping bearing surfaces and the central camera-screw slot.
-
-Two screw lengths are being procured as fit options:
-
-- McMaster 92125A194 — M4 × 0.7 × 16 mm, 90° flat-head hex-drive screw, 18-8 stainless;
-- McMaster 92125A196 — M4 × 0.7 × 18 mm, 90° flat-head hex-drive screw, 18-8 stainless.
-
-Use the shortest length that provides adequate aluminum thread engagement without projecting into any receiver
-clearance or sliding region. The plywood-side heads must finish flush or slightly below the top surface so
-they cannot interfere with the moving mirror plate or other mirror-cell structure.
-
-Associated tooling and thread retention:
-
-- McMaster 1021N23 — M4 × 0.7 HSS plug-chamfer hex-bit tap;
-- McMaster 2958A64 — 3.3 mm HSS tap drill;
-- McMaster 91458A115 / Loctite 243 — medium-strength removable threadlocker, applied only after fit and screw
-  length are validated.
-
-The previously purchased 1/4 in-20 flat-head screws, thin washers, and flex-top locknuts from the C2564
-concept remain in the BOM as unallocated in-hand spare stock and are not part of the active quick-release
-attachment.
-
-The delivered removable CAMVATE sliding plate is 7.00 in / 177.8 mm long. Its committed fore/aft mounting
-position places its forward end flush with the front edge of the 11.0 in-deep plywood base, so the plate spans
-0–7.00 in / 0–177.8 mm aft of the front edge and its geometric center lies 3.50 in / 88.9 mm aft of that edge.
-This is only 0.15 in / 3.8 mm aft of the estimated completed mirror-cell center of gravity at 3.35 in / 85.1
-mm, negligible relative to the approximately ±0.2 in / ±5 mm CoG uncertainty and the quick-release system's
-generous sliding adjustment. Preserve the four-M4 attachment constraints above when selecting exact hole
-coordinates.
-
-Fit validation completed: the CAMVATE removable plate is now physically mounted to the plywood base in the
-committed flush-front-edge position using four McMaster 92125A196 M4 × 0.7 × 18 mm 90° flat-head screws. The
-18 mm length is therefore the selected installed length; the 16 mm screws remain spare/alternate stock. The
-plywood clearance holes and countersinks and the tapped M4 holes in the aluminum plate have been completed.
+The screws are in a two-front / two-rear rectangular pattern. Each screw center is 1.875 in / 47.625 mm in
+from its nearest longitudinal plate end, and the two screws at each longitudinal station are ±0.500 in / ±12.7
+mm from the plate centerline. The longitudinal stations are therefore 1.875 in and 5.125 in / 47.625 mm and
+130.175 mm aft of the base front edge, with 1.000 in / 25.4 mm transverse spacing within each pair and 3.250
+in / 82.55 mm between pairs. These locations lie in solid aluminum, clear of the sliding/clamping bearing
+surfaces and the central camera-screw slot. The heads finish flush with or slightly below the plywood top
+surface. The holes are tapped with an M4 × 0.7 tap (3.3 mm tap drill), and the screws are retained with
+Loctite 243 medium-strength removable threadlocker.

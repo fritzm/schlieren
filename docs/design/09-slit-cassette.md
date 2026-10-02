@@ -4,16 +4,13 @@ The source slit is a flexure slit head: one flat-printed ABS part carrying both 
 centering perpendicular to the slit and fine slit-width adjustment, mounted for continuous rotation about
 the optical axis in an SM1RC/M on the common post and rail shoe (§5).
 
-Status: selected baseline; CAD complete in `src/schlieren/parts/slit_head.py` (`uv run slit-head`, with
-`--show` for the viewer assembly); first test print pending. The dimensions below are first-print values;
-the stage-rotation figures come from a first-order flexure model, not FEA, and are to be confirmed on the
-print.
+The model is `src/schlieren/parts/slit_head.py` (`uv run slit-head`, with `--show` for the viewer assembly).
 
-This supersedes the earlier slit cassette carried in a §8 carriage. The source slit was first designed
-around the common slit/cutoff carriage so the two stations could share mechanics; considered on its own,
-the slit needs only about ±2 mm of centering travel, one adjustment axis, and discrete orientations, so
-the carriage's plungers, guide rails, keeper frame, datum pins, and cassette are
-not needed. The cutoff keeps the §8 carriage and cassettes.
+The slit needs only about ±2 mm of centering travel, one adjustment axis, and discrete orientations, so it
+does not use the cutoff's carriage, plungers, guide rails, keeper frame, datum pins, or cassettes (§8).
+
+**Provisional:** the flexure dimensions are first-print values, and the stage-rotation figures below come
+from a first-order flexure model, not FEA; both are to be confirmed on the assembled head (§9.7).
 
 ### 9.1 Blades and slit widths
 
@@ -26,14 +23,7 @@ Measured physical blade dimensions:
 - thickness at the sharp/flat portion: 0.010 in / 0.254 mm
 - thickness at the folded spine: 0.040 in / 1.016 mm
 
-Likely operating slit widths:
-
-- 0.10 mm
-- 0.15 mm
-- 0.20 mm
-- 0.25–0.30 mm
-
-Likely practical starting region: 0.15–0.20 mm.
+Expected operating slit widths are 0.10–0.30 mm, starting around 0.15–0.20 mm.
 
 Each blade lies flat on its carrier's blade seat, cutting edge toward the slit and overhanging the carrier
 edge by about 1.5 mm. No blade pockets, holes, or spine compensation are used; a slight inclination of the
@@ -68,8 +58,9 @@ twisting the stages:
 - the two centering blades are at the top and bottom of the platform, about 63 mm apart;
 - the two width-stage blades are 12 mm apart, and FAS100 #2 pushes on the width-stage connector.
 
-The earlier compact layout (5 mm blade spacing, spring offset 23 mm from the screw) had a constant ~1°
-platform pre-twist and about 8 mrad of rotation over the centering travel; it was rejected for that reason.
+Closely spaced blades or a spring offset from the screw would not achieve this: a compact layout with 5 mm
+blade spacing and the spring 23 mm from the screw gives a constant ~1° platform pre-twist and about 8 mrad of
+rotation over the centering travel.
 
 ### 9.3 Centering stage
 
@@ -86,10 +77,10 @@ Measured spring OD: 0.272 in / 6.91 mm (calipers). Spring pockets are Ø7.91 mm 
 clearance).
 
 Spring installation: the pockets are closed on all sides except the 3.5 mm flexure gap, and the 16.5 mm
-cavity is shorter than the 25.5 mm free length, so the spring has no clear insertion path. On the first test
-print it went in by compressing it fully and working it into the pockets by hand, which is accepted as the
-assembly method. If that proves unreliable, the fallback is a bottom access bore through the frame bottom bar
-closed by a screwed cap carrying the lower guide pin (not modeled).
+cavity is shorter than the 25.5 mm free length, so the spring has no clear insertion path. It is installed by
+compressing it fully and working it into the pockets by hand. If that proves unreliable, the fallback is a
+bottom access bore through the frame bottom bar closed by a screwed cap carrying the lower guide pin (not
+modeled).
 
 Sensitivity: the iris is about 150 mm before the slit, so moving the slit by d turns the illumination cone
 by d/150; at the mirror the beam moves about 21 × d. The ±2 mm travel therefore steers the beam about
@@ -160,26 +151,25 @@ Printed parts: the flexure head, the spigot adapter, and two clamp bars.
   perimeter seams off the four flexure blades.
 - Adapter: print front face down, spigot up; no supports.
 - Clamp bars: print flat, EPDM face down.
-- Treat the insert bores as pilots and finish them with a 5/16 in drill (§8.3); flanges outboard. On the
-  first print, a light hand ream with a 5/16 in twist drill gave a good press fit.
-- The spigot is printed at the SM1 tube nominal; fit-test in the SM1RC/M and adjust if needed.
+- The insert bores are pilots, finished by a light hand ream with a 5/16 in twist drill to a press fit
+  (§8.3); flanges outboard.
+- The spigot is printed at the SM1 tube nominal.
 
 Hardware: 2 × FAS100, 2 × 98625A950 inserts, 2 × N52 10 × 5 × 2 mm magnet bearing pads (one under each
 FAS100 ball tip, §8.3), 1 × 2006N292 spring, 8 × M3 × 12 mm socket-head screws, 8 × M3 nuts, 8 × M3 flat
-washers. Quantities and allocation are in the BOM.
+washers.
 
-First test print (head, Prusa MINI+, ABS): confirmed the insert press fit (above), the magnet pockets, the
-spring pocket, and the other pockets and bores as sized; the parallelogram flexures give essentially parallel
-motion along both push axes.
+A test print of the head (Prusa MINI+, ABS) confirmed the insert press fit, the magnet, spring, and other
+pockets and bores as sized, and essentially parallel flexure motion along both push axes.
 
-Open items:
+**Provisional,** pending assembly of the complete head:
 
-- spigot fit in the SM1RC/M and the blade clamp bars, not yet assembled;
-- confirm the width-stage preload holds the stage on its adjuster at the low end of travel;
-- confirm no stage contacts the adapter plate;
-- measure blade-edge parallelism versus width setting and slit rotation versus centering travel against
+- spigot fit in the SM1RC/M, and the blade clamp bars;
+- width-stage preload holding the stage on its adjuster at the low end of travel;
+- no stage contact with the adapter plate;
+- blade-edge parallelism versus width setting, and slit rotation versus centering travel, measured against
   the first-order estimates;
-- ABS creep of the flexures over days at fixed setting.
+- ABS creep of the flexures over days at a fixed setting.
 
 ### 9.8 Common cassette clamp bars (cutoff cassettes)
 
@@ -188,15 +178,15 @@ uses its own smaller bars (§9.5).
 
 Common clamp bars:
 
-- two identical printed rigid ABS bars may be fitted to a cassette;
+- two identical printed rigid ABS bars fit each cassette;
 - each bar uses two fasteners, one toward each end, so clamp force is distributed along the element;
 - no holes are made through razor blades, filter material, or other optical elements;
 - no blade-specific locating pocket or guide is required;
 - McMaster 9852N37 adhesive-backed 1/32 in, 60A solid EPDM is applied to the removable clamp-bar face to
   provide compliance and friction;
-- the bar should bear primarily on the broad flat portion of a razor blade rather than relying on the folded
+- the bar bears primarily on the broad flat portion of a razor blade rather than relying on the folded
   spine for its clamp datum;
-- the same clamp-bar geometry is intended to hold razor knife edges, Roscolux gel/filter material, Photofoil,
+- the same clamp-bar geometry holds razor knife edges, Roscolux gel/filter material, Photofoil,
   and similar thin sheet cutoff elements.
 
 Clamp-bar fastening is from the cassette rear/datum face toward the optical/front face so no screw ends or
@@ -213,26 +203,23 @@ captive and resist rotation while the front-side nut is adjusted; it is not reli
 clamp load path. The ordinary M3 nut remains exposed and accessible on the front of the clamp bar. Place the
 washer between the nut and printed bar. Do not use prevailing-torque/nyloc nuts or threadlocker here.
 
-#### Provisional cassette clamp-bar hardware selection
+#### Cassette clamp-bar hardware
 
-Provisionally frozen for procurement, with 12 screws, 12 washers, and 12 nuts allocated in the BOM:
+| Component | McMaster part | Specification |
+|---|---|---|
+| Flat-head screw | [92125A133](https://www.mcmaster.com/92125A133/) | M3 × 0.5 × 14 mm, fully threaded 18-8 stainless, 90° countersunk head; 6 mm head diameter, 1.7 mm head height, 2 mm hex drive |
+| Flat washer | [93475A210](https://www.mcmaster.com/93475A210/) | 18-8 stainless, 3.2 mm ID × 7 mm OD × 0.4–0.6 mm thick; DIN 125 / ISO 7089 |
+| Ordinary full-height hex nut | [91828A211](https://www.mcmaster.com/91828A211/) | M3 × 0.5, 18-8 stainless, 5.5 mm across flats × 2.4 mm high; DIN 934 (the common split-clamp nut, §5.3) |
 
-| Component | Selected McMaster part | Specification | Procurement allocation |
-|---|---|---|---|
-| Flat-head screw | [92125A133](https://www.mcmaster.com/92125A133/) | M3 × 0.5 × 14 mm, fully threaded 18-8 stainless, 90° countersunk head; 6 mm head diameter, 1.7 mm head height, 2 mm hex drive | 12 required; one 100-pack |
-| Flat washer | [93475A210](https://www.mcmaster.com/93475A210/) | 18-8 stainless, 3.2 mm ID × 7 mm OD × 0.4–0.6 mm thick; DIN 125 / ISO 7089 | 12 required; one 100-pack |
-| Ordinary full-height hex nut | [91828A211](https://www.mcmaster.com/91828A211/) | M3 × 0.5, 18-8 stainless, 5.5 mm across flats × 2.4 mm high; DIN 934 | 12 required; share the split-clamp 100-pack, not a second pack |
+The clamp bars are 4 mm printed ABS. The cassette blank has four Ø3.4 mm screw holes at (±27, ±12) mm with
+rear-entry 90° countersinks matched to the 92125A133 head (Ø6.2 mm at the face: 6 mm head plus 0.2 mm
+diametral allowance), and each bar end provides a washer bearing land at least 7.2 mm across. The screw head
+finishes flush with or slightly below the rear/datum face so it cannot contact the carriage datum pins or
+interfere with cassette sliding. The fasteners, bars, nuts, cleats, and projecting screw ends are clear of the
+24 mm optical aperture and carriage interfaces. The holes and countersinks are features of the universal
+cassette blank, not blade-specific geometry.
 
-Use a 4 mm nominal printed ABS clamp-bar thickness as the initial CAD target. Provide approximately 3.3–3.4 mm
-screw clearance holes, a 90° countersink matched to the selected screw head, and a flat washer bearing area at
-least 7.2 mm across. Keep the fasteners, bars, nuts, cleats, and projecting front-side screw ends clear of the
-24 mm optical aperture and carriage interfaces. For cassette CAD, model these as rear-face 90° countersinks
-sized for the selected McMaster 92125A133 M3 × 0.5 × 14 mm flat-head screws: nominal head diameter 6 mm and
-head height 1.7 mm. The screw head must finish flush with or slightly below the rear/datum face so it cannot
-contact the carriage datum pins or interfere with cassette sliding. Treat the 3.3–3.4 mm through-hole and 90°
-countersink as explicit features of the universal cassette blank, not blade-specific geometry.
-
-The 14 mm screw length remains provisional until the first printed cassette/bar assembly is fit-tested.
-Because the clamp fasteners need not pass through the optical element, do not size the screw from a
-blade-thickness stack. Confirm full nut engagement, useful clamp travel for razor blades and thin filter/foil
-media, and a flush or recessed rear head on the printed prototype before treating 14 mm as final.
+Because the clamp fasteners do not pass through the optical element, the screw length is not sized from a
+blade-thickness stack. **Provisional:** the 14 mm screw length is pending a fit test of the first printed
+cassette/bar assembly, confirming full nut engagement, useful clamp travel for razor blades and thin
+filter/foil media, a flush or recessed rear head, and clearance over the plunger lips.

@@ -19,7 +19,7 @@ SUP-001,Optical supports,3,"Ø12.7 mm optical post, 50 mm, SS",,Thorlabs,TR50/M,
 SUP-002,Optical supports,3,"Shim discs, 3/4 in OD x 0.010 ±0.0005 in, SS",Post seats,McMaster,2895T62,5,pack,In hand,§5.3,
 SUP-003,Optical supports,3,"M3 × 12 mm socket head screw, 18-8 SS",Collar clamp screws,McMaster,91292A114,100,pack,In hand,§5.3,Finalized 12 mm length.
 SUP-004,Optical supports,3,"M3 × 0.5 hex nut, 18-8 SS, 5.5 mm AF × 2.4 mm high",Collar clamp nuts,McMaster,91828A211,100,pack,In hand,§5.3,Full-height DIN 934 nut; captured in printed pocket.
-SUP-005,Optical supports,3,ABS printed post shoes,,,,,,CAD ready,§5.3,
+SUP-005,Optical supports,3,ABS printed post shoes,,,,,,In hand,§5.3,
 CON-001,Condenser,1,"Aspheric Condenser Lens, Ø25 mm, f=20.1 mm, NA=0.60, ARC: 350-700 nm",,Thorlabs,ACL2520U-A,1,each,In hand,§7,
 CON-002,Condenser,1,"Ø1"" Adjustable lens tube, 0.31"" travel range",,Thorlabs,SM1V05,1,each,In hand,§7,
 CON-003,Condenser,1,"SM1 lens tube, 0.30"" thread depth",Spacing between lens and iris,Thorlabs,SM1L03,1,each,In hand,§7,

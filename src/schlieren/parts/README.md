@@ -58,16 +58,16 @@ blade-seat plane. Tests cover the optical-height datum, flexure topology
 strain, preload, stage rotation, the spigot fit and shoulder, hardware
 interference, and clearance to the post and shoe swept over ±110°.
 
-## Common rail shoe — first CAD prototype
+## Common rail shoe
 
-Source: `src/schlieren/parts/rail_shoe.py`. All dimensions are millimeters;
-x is across the rail, y is along it, and z=0 is the rail top. This is an
-exploratory design, pending review and physical ABS fit/clamp testing.
+Source: `src/schlieren/parts/rail_shoe.py` (§5.3). All dimensions are millimeters;
+x is across the rail, y is along it, and z=0 is the rail top. The model and its
+ABS allowances are final, fit-tested on printed shoes.
 
 ```sh
 uv run rail-shoe
 uv run rail-shoe --show
-uv run python -m unittest discover -s tests -v
+uv run python -m unittest tests.test_rail_shoe -v
 ```
 
 The first command exports STEP and STL to ignored `exports/step` and
@@ -78,28 +78,24 @@ models of purchased components. Only the shoe is exported. Toggle the `Post`
 group in the viewer tree to hide/show the post independently of the shoe,
 rail, and datum disc.
 
-The provisional bridge/skirt is 30.4 mm across × 30 mm along the rail, extending
-from z=-18 to z=23 mm. It has a 12.95 mm post bore (12.7 mm nominal plus
-0.25 mm diametral clearance) and 0.20 mm rail clearance per side.
+The bridge/skirt is 30.4 mm across × 30 mm along the rail, extending from
+z=-18 mm; the collar rises to z=20 mm. The post bore is 12.8 mm (12.7 mm
+nominal plus 0.10 mm diametral clearance), with 0.20 mm rail clearance per side.
 The bridge underside seats directly on the rail top at z=0 outside a
-22.05 mm diameter × 1.0 mm deep counterbore. This gives the 19.05 mm datum
-disc 1.5 mm radial clearance and 0.746 mm clearance above its top face.
-The post still seats directly on the disc. The 5 mm bridge retains a 4 mm
-roof above the recess. Full-width seating lands extend approximately
-3.975 mm inward from each bridge end. The existing clamp ears project
-3 mm beyond the +y end, giving a 33 mm overall envelope along the rail.
+20.05 mm diameter × 1.0 mm deep counterbore, giving the 19.05 mm datum disc
+0.5 mm radial clearance and 0.746 mm clearance above its top face. The post
+seats directly on the disc. The 5 mm bridge retains a 4 mm roof above the
+recess, and full-width seating lands extend about 5 mm inward from each bridge
+end.
 
 One M5 clearance hole per side aligns with the side-slot center at z=-10 mm.
-M5 screw length and actual T-nut/washer seating need physical verification.
-The 1.5 mm collar split has a rounded termination and a filleted root;
-the ears accommodate the specified M3 × 12 screw and full-height captured
-M3 hex nut. Load the nut from the outside +x face; the screw enters from -x.
+The Ø21 × 15 mm collar has a 1.0 mm radial split toward +x with a rounded
+relief at its foot and a 2 mm root fillet. Both clamp ears point toward +x:
+the 4.5 mm nut ear at +y holds a full-height captured M3 hex nut loaded from
+its outer face, and the M3 × 12 screw enters the 3.5 mm screw ear from -y.
 
-All envelope dimensions, ABS allowances, and the two-hole mounting layout
-are provisional parameters, separate from the canonical physical interfaces.
-Check sliding fit, post seating, clamp flexure, nut retention, and tool access
-before printing all four. No global ABS shrink compensation is assumed.
-STL uses assembly coordinates; choose orientation/supports in the slicer.
+No global ABS shrink compensation is assumed. STL uses assembly coordinates;
+choose orientation/supports in the slicer.
 
 ## Slit/cutoff carriage — preliminary sandwich layout
 

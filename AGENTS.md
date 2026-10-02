@@ -23,17 +23,19 @@ If two sources conflict, prefer the higher-priority source.
 Do not resurrect superseded or rejected designs merely because they appear in Git history, comments, old
 files, or conversation history.
 
-### Design status: `docs/design/`
+### Design description: `docs/design/`
 
 Per-subsystem Markdown fragments, named `NN-*.md`; filename order is document order. Authoritative for:
 
-- current design baseline, dimensions and geometry
+- the design baseline, dimensions and geometry
 - architecture, mechanical and optical concepts
-- committed design decisions and rationale
-- unresolved design work and overall project state
+- design decisions and rationale
+- provisional (open or evolving) design areas and next steps
 
-Read only the fragment(s) relevant to the task (section numbers match the BOM `Source section` column), plus
-`13-status-and-procurement.md` for cross-cutting status. Do not read the whole set unless the task needs it.
+Described design is the baseline unless explicitly marked **Provisional**; `13-open-work.md` rolls up the
+provisional areas and next steps. Read only the fragment(s) relevant to the task (section numbers match the
+BOM `Source section` column), plus `13-open-work.md` for cross-cutting open work. Do not read the whole set
+unless the task needs it.
 
 `uv run build-status-doc` concatenates the fragments into `exports/docs/schlieren-project-status.md`
 (generated; never edit it).
@@ -41,7 +43,8 @@ Read only the fragment(s) relevant to the task (section numbers match the BOM `S
 ### BOM and procurement: `bom/bom.csv`
 
 Single CSV, one row per BOM line item. Authoritative for BOM contents, quantities, subsystem allocations,
-vendors, SKUs, procurement status, inventory state, and purchasing notes.
+vendors, SKUs, procurement status, inventory state, purchasing notes, and the CAD state of printed parts
+(`CAD ready` / `CAD open`). The design fragments do not track procurement or CAD state.
 
 `uv run build-bom-xlsx` builds `exports/bom/schlieren-bom.xlsx` (BOM tab, Summary formulas, procurement-state
 conditional formatting) from the CSV; import that into Drive for the Sheets view.
@@ -69,11 +72,11 @@ Drive require explicit user confirmation each time. Do not assume any particular
 This Git repository is authoritative for version-controlled engineering artifacts, including:
 
 - CadQuery source, Python source, tests, CAD/build utilities
-- the design-status fragments and `bom/bom.csv`
+- the design fragments and `bom/bom.csv`
 - repository configuration and agent instructions
 - deliberately versioned generated outputs, if any
 
-Generated files (`exports/`, the consolidated status document, the .xlsx) are derived artifacts.
+Generated files (`exports/`, the consolidated design document, the .xlsx) are derived artifacts.
 
 ## Design decisions and canonical updates
 
@@ -233,17 +236,19 @@ Do not guess:
 
 If a required value is unresolved, preserve that uncertainty rather than inventing a value.
 
-## Working with the design-status document
+## Working with the design document
 
-Keep the status document focused on current engineering state and relevant rationale.
+Keep the design document a description of the design as it stands, with relevant rationale; it is not a
+status-tracking or history document.
 
 When updating it:
 
 - preserve established terminology;
-- distinguish committed design from unresolved work;
-- remove or clearly supersede obsolete statements when a decision changes;
+- state settled design plainly; mark open or evolving areas **Provisional** and keep the §13 rollup in step;
+- when a decision changes, rewrite the affected text to describe the new design; do not narrate what it
+  replaced ("previously", "no longer", "superseded");
 - retain useful rationale where it explains a non-obvious current decision;
-- avoid duplicating detailed BOM data that belongs in `bom/bom.csv`.
+- leave procurement and CAD state, and detailed BOM data, to `bom/bom.csv`.
 
 Do not turn historical alternatives into current design requirements.
 

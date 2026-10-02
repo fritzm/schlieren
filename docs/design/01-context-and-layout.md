@@ -1,21 +1,24 @@
 # Portable Single-Mirror Schlieren Apparatus
 
-**Project Baseline Design**
+**Design Description**
 
-Revision: Oct 1, 2026
+Revision: Oct 2, 2026
 
-Status: Design baseline, maintained as Markdown fragments in Git (`docs/design/`). The companion BOM is
-`bom/bom.csv` in the same repository. Google Drive copies are generated views for sharing and GUI editing;
-they are working copies until reconciled back into Git.
+This document describes the design of the apparatus. It is maintained as Markdown fragments in Git
+(`docs/design/`); Google Drive copies are generated views for sharing and are working copies until reconciled
+back into Git.
 
-## Design-state terminology
+## Conventions
 
-- Frozen / committed — treat as the design baseline unless a physical fit check forces a change.
-- Selected — a specific component or approach is chosen for the design but may still require physical fit or
-  validation.
-- CAD ready — requirements are sufficiently defined to begin detailed CAD.
-- CAD open — important custom geometry still needs to be designed.
-- Deferred pending measurement — intentionally left open until a physical part can be measured.
+- The design described here is the baseline. Unless marked otherwise, dimensions, parts, and methods are
+  settled.
+- **Provisional** marks a design area, dimension, or method that is still open or evolving, typically pending
+  a physical fit check, measurement, or further design. Provisional areas are rolled up with next steps in
+  [§13](13-open-work.md#13-provisional-areas-and-next-steps).
+- Measured values, manufacturer specifications, and calculated values are identified as such where the
+  distinction matters; a measured value takes precedence over a catalog value.
+- Quantities, vendors, part numbers beyond those needed to define the design, procurement state, and the CAD
+  state of printed parts are recorded in the BOM, `bom/bom.csv`, not here.
 
 ## 1. Project context and design constraints
 
@@ -59,8 +62,11 @@ aluminum LED carrier caps and heatsinks is within scope.
 A table saw, drill press, and small hand router are available and are expected to be used for accurate working
 of Baltic birch plywood panels (thanks, Bret!).
 
-No previous STL or exploratory CAD model should be treated as design authority. This written baseline
-supersedes exploratory models.
+The governing mechanical principle is:
+
+> Printed ABS should provide shape, capture, guidance, interchangeability, and convenient adjustment; metal
+> hardware, optical posts, shims, mechanical stops, and commercial precision components should establish the
+> important datums, threads, and wear/load-transfer interfaces.
 
 ## 2. System overview and physical layout
 
@@ -111,7 +117,7 @@ The mirror cell uses a three-point, approximately 120°-spaced fine-adjustment a
 springs and spherical washer interfaces. The mirror is compliantly supported in the moving plate by six radial
 DOWSIL 737 pads between the mirror edge and the inner surface of the plywood aperture.
 
-## 3. Frozen system-level geometry
+## 3. System-level geometry
 
 ### 3.1 Primary optic
 
@@ -165,11 +171,11 @@ $$
 
 so small source-slit displacement produces approximately equal and opposite conjugate-image displacement.
 
-A useful initial concept is about 30–40 mm total slit/cutoff longitudinal staggering, obtained by placing them
+A useful starting point is about 30–40 mm total slit/cutoff longitudinal staggering, obtained by placing them
 approximately ±15–20 mm around nominal 2f. This is an experimental setup adjustment rather than a
 fabrication-critical dimension.
 
-### 3.4 Common optical-axis datum — frozen
+### 3.4 Common optical-axis datum
 
 The common optical axis is 72.35 mm above the top surface of the 2020 extrusion.
 
@@ -185,8 +191,8 @@ The common post stack is:
 - 50 mm Thorlabs TR50/M post;
 - 22.1 mm post-top-to-optical-axis offset for the SM1 optical holders (Thorlabs SMR1/M: 0.870 in /
   22.098 mm exact);
-- total nominal height: 72.35 mm (72.352 mm with the exact SMR1/M offset; the 72.35 mm datum is unchanged).
+- total nominal height: 72.35 mm (72.352 mm with the exact SMR1/M offset; the datum is 72.35 mm).
 
-The selected datum discs are McMaster 2895T62, 3/4 in OD × 0.010 in ±0.0005 in thick, full-hard 18-8 stainless
+The datum discs are McMaster 2895T62, 3/4 in OD × 0.010 in ±0.0005 in thick, full-hard 18-8 stainless
 steel, minimum Rockwell C40. Three discs are used as post datum shims, one under each common post fixture. The
 discs provide a consistent metal seating surface for the posts across the central slot in the 2020 rail.
