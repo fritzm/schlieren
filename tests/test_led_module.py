@@ -1,10 +1,19 @@
 """Threaded LED module focus range, fit, and clearance invariants."""
 
+import math
 import unittest
 from dataclasses import replace
 
+import cadquery as cq
+
 from schlieren.parts.led_module import GREEN, MODULES, WHITE, LEDStackParameters, build_led_stack_assembly
-from schlieren.vendor_cad import thorlabs_sm1cp2m, thorlabs_smr1_m, thorlabs_tr50_m, vendor_step
+from schlieren.vendor_cad import (
+    alpha_cn40_40b,
+    thorlabs_sm1cp2m,
+    thorlabs_smr1_m,
+    thorlabs_tr50_m,
+    vendor_step,
+)
 
 USEFUL_GAP = (13.0, 17.0)  # §7: useful emitter-to-plano range
 # Required gap travel either side of the optimum. Relaxed from 1.0 mm: with exact Thorlabs dimensions the
@@ -79,6 +88,22 @@ class LEDStackTests(unittest.TestCase):
         self.assertAlmostEqual(cap.xlen, p.cap_flange_diameter, delta=MODEL_MATCH)
         sm1v05 = vendor_step("Thorlabs-SM1V05.step").val().BoundingBox()
         self.assertAlmostEqual(sm1v05.xlen, p.sm1v05_overall, delta=MODEL_MATCH)
+        heatsink = alpha_cn40_40b().val()
+        hs = heatsink.BoundingBox()
+        self.assertAlmostEqual(hs.ymax, 0, delta=MODEL_MATCH)
+        self.assertAlmostEqual(hs.ylen, p.heatsink_height, delta=MODEL_MATCH)
+        self.assertAlmostEqual(hs.xlen, p.heatsink_diameter, delta=MODEL_MATCH)
+        self.assertAlmostEqual(hs.zlen, p.heatsink_diameter, delta=MODEL_MATCH)
+
+        def section_area(y):
+            r = p.heatsink_diameter
+            return (
+                heatsink.intersect(cq.Solid.makeBox(2 * r, 0.01, 2 * r, cq.Vector(-r, y, -r))).Volume() / 0.01
+            )
+
+        # Full disc through the base, open pin field just behind it.
+        self.assertAlmostEqual(section_area(-0.5), math.pi * p.heatsink_diameter**2 / 4, delta=1.0)
+        self.assertLess(section_area(-p.heatsink_base - 0.1), 0.2 * section_area(-0.5))
 
     def test_vendor_model_placement(self):
         p = self.p
@@ -100,6 +125,11 @@ class LEDStackTests(unittest.TestCase):
         self.assertAlmostEqual(cap.ymin, p.heatsink_front, delta=MODEL_MATCH)
         self.assertAlmostEqual(cap.ymax, p.cap_face, delta=MODEL_MATCH)
         self.assertAlmostEqual(cap.center.z, p.optical_height, delta=0.01)
+        heatsink = placed("CN40-40B heatsink").BoundingBox()
+        self.assertAlmostEqual(heatsink.ymax, p.heatsink_front, delta=MODEL_MATCH)
+        self.assertAlmostEqual(heatsink.ymin, p.heatsink_front - p.heatsink_height, delta=MODEL_MATCH)
+        self.assertAlmostEqual(heatsink.zmin, p.optical_height - p.heatsink_diameter / 2, delta=0.01)
+        self.assertAlmostEqual(heatsink.zmin - p.post_top, p.heatsink_post_top_clearance, delta=0.01)
 
     def test_assembly_parts_do_not_interfere(self):
         for board in MODULES:

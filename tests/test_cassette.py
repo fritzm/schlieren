@@ -1,13 +1,19 @@
 """Cassette envelope, datum preservation, and mating-carriage checks."""
+
 import unittest
 from dataclasses import replace
 from math import radians, tan
 
 import cadquery as cq
 
-from schlieren.parts.cassette import (CassetteParameters, ClampBarParameters, build_cassette,
-                                      build_clamp_bar, build_cassette_assembly)
 from schlieren.parts.carriage import CarriageParameters, build_carriage
+from schlieren.parts.cassette import (
+    CassetteParameters,
+    ClampBarParameters,
+    build_cassette,
+    build_cassette_assembly,
+    build_clamp_bar,
+)
 
 
 class CassetteTests(unittest.TestCase):
@@ -38,9 +44,13 @@ class CassetteTests(unittest.TestCase):
     def test_carriage_fit_and_swept_datum_tracks(self):
         p = CarriageParameters()
         c = CassetteParameters()
-        for a, b in ((c.size, p.cassette_size), (c.thickness, p.cassette_thickness),
-                     (c.aperture_diameter, p.aperture_diameter),
-                     (c.bevel_depth, p.bevel_depth), (c.bevel_angle, p.bevel_angle)):
+        for a, b in (
+            (c.size, p.cassette_size),
+            (c.thickness, p.cassette_thickness),
+            (c.aperture_diameter, p.aperture_diameter),
+            (c.bevel_depth, p.bevel_depth),
+            (c.bevel_angle, p.bevel_angle),
+        ):
             self.assertEqual(a, b)
         parts = {n: o.obj.val() for n, o in build_carriage(p).objects.items() if o.obj is not None}
         for rotation in (0, 90, 180, 270):
@@ -87,8 +97,13 @@ class CassetteTests(unittest.TestCase):
         self.assertAlmostEqual(c.keeper_opening_width / 2 - p.clamp_hole_x - b.washer_od / 2, 2.5)
         # Full 7.2 mm washer-bearing lands on the bar top, excluding screw bore.
         for x in (-p.clamp_hole_x, p.clamp_hole_x):
-            land = cq.Workplane("XY", origin=(x, p.clamp_hole_y, b.thickness - 0.02)).circle(
-                3.6).circle(p.bore_diameter / 2).extrude(0.01).val()
+            land = (
+                cq.Workplane("XY", origin=(x, p.clamp_hole_y, b.thickness - 0.02))
+                .circle(3.6)
+                .circle(p.bore_diameter / 2)
+                .extrude(0.01)
+                .val()
+            )
             self.assertAlmostEqual(bar.intersect(land).Volume(), land.Volume(), places=6)
         nut_top = b.bar_bottom(p) + b.thickness + b.washer_thickness + b.nut_height
         self.assertGreater(b.screw_length + b.head_recess - nut_top, 0.5)
@@ -100,18 +115,26 @@ class CassetteTests(unittest.TestCase):
         for rotation in (0, 90, 180, 270):
             for travel in (-5, 0, 5):
                 moved = assembly.rotate((0, 0, 0), (0, 0, 1), rotation).translate(
-                    (0, travel, c.plate_thickness + c.datum_projection))
+                    (0, travel, c.plate_thickness + c.datum_projection)
+                )
                 for name, part in parts.items():
                     if "plunger" in name:
                         part = part.translate((0, travel, 0))
                     self.assertLess(moved.intersect(part).Volume(), 1e-6, (rotation, travel, name))
         # Thin media at zero lift still clears the 12 mm plunger top with relief.
-        self.assertGreater(c.plate_thickness + c.datum_projection + p.thickness
-                           + b.epdm_thickness + b.end_relief_depth, c.body_top)
+        self.assertGreater(
+            c.plate_thickness + c.datum_projection + p.thickness + b.epdm_thickness + b.end_relief_depth,
+            c.body_top,
+        )
 
     def test_invalid_parameters(self):
-        for changes in ({"bevel_angle": 90}, {"bevel_angle": 0}, {"bevel_depth": 5},
-                        {"aperture_diameter": 64}, {"size": float("nan")}):
+        for changes in (
+            {"bevel_angle": 90},
+            {"bevel_angle": 0},
+            {"bevel_depth": 5},
+            {"aperture_diameter": 64},
+            {"size": float("nan")},
+        ):
             with self.assertRaises(ValueError):
                 build_cassette(replace(CassetteParameters(), **changes))
 

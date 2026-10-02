@@ -1,11 +1,12 @@
 """Export cassette base and one clamp bar; optionally view the assembled cassette."""
+
 import argparse
 from pathlib import Path
 
 import cadquery as cq
 
-from schlieren.parts.cassette import build_cassette, build_clamp_bar, build_cassette_assembly
 from schlieren.parts.carriage import CarriageParameters, build_carriage
+from schlieren.parts.cassette import build_cassette, build_cassette_assembly, build_clamp_bar
 
 
 def main():
@@ -26,11 +27,13 @@ def main():
             print(path)
     if args.show:
         from ocp_vscode import show
+
         cassette = build_cassette_assembly()
         if args.with_carriage:
             assembly = build_carriage(p, travel=args.travel)
-            assembly.add(cassette, loc=cq.Location(cq.Vector(
-                0, args.travel, p.plate_thickness + p.datum_projection)))
+            assembly.add(
+                cassette, loc=cq.Location(cq.Vector(0, args.travel, p.plate_thickness + p.datum_projection))
+            )
             show(assembly)
         else:
             show(cassette)

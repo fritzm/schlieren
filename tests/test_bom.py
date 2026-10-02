@@ -1,4 +1,5 @@
 """BOM CSV integrity and generated-workbook invariants."""
+
 import csv
 import re
 import unittest
@@ -7,8 +8,20 @@ from pathlib import Path
 from schlieren.cli import build_bom_xlsx
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-HEADER = ["ID", "Subsystem", "Qty", "Item", "Purpose", "Vendor", "SKU", "Pkg Size", "Purchase Unit",
-          "Procurement state", "Source section", "Notes"]
+HEADER = [
+    "ID",
+    "Subsystem",
+    "Qty",
+    "Item",
+    "Purpose",
+    "Vendor",
+    "SKU",
+    "Pkg Size",
+    "Purchase Unit",
+    "Procurement state",
+    "Source section",
+    "Notes",
+]
 STATES = {"In hand", "On order", "To procure", "Specified", "CAD ready", "CAD open"}
 
 
@@ -77,8 +90,12 @@ class BomWorkbookTests(unittest.TestCase):
 
     def test_summary_formulas_reference_bom(self):
         ws = self.wb["Summary"]
-        formulas = [c.value for row in ws.iter_rows() for c in row
-                    if isinstance(c.value, str) and c.value.startswith("=")]
+        formulas = [
+            c.value
+            for row in ws.iter_rows()
+            for c in row
+            if isinstance(c.value, str) and c.value.startswith("=")
+        ]
         self.assertEqual(len(formulas), 1 + 6 + 10)
         self.assertTrue(all("BOM!" in f for f in formulas))
         self.assertEqual(ws["B8"].value, "=COUNTA(BOM!A2:A1000)")

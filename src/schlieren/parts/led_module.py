@@ -8,9 +8,10 @@ An Alpha CN40-40B pin-fin heatsink is bolted to the rear of the cap.
 
 Axial coordinate u (mm): u=0 at the LED-side face of the SMR1/M, +u toward
 the slit. Assembly coordinates: x transverse, +y along u, z=0 at the rail top.
-Nothing here is printed; the solids are purchased-part envelopes or Thorlabs STEP
-models (TR50/M, SMR1/M, SM1CP2M) for viewing and clearance checks. Dimension sources
-are noted per field: catalog values are from the drawings in docs/reference/.
+Nothing here is printed; the solids are purchased-part envelopes or vendor STEP
+models (Thorlabs TR50/M, SMR1/M, SM1CP2M; Alpha CN40-40B) for viewing and clearance
+checks. Dimension sources are noted per field: catalog values are from the drawings
+in docs/reference/.
 """
 
 from dataclasses import dataclass
@@ -18,7 +19,7 @@ from math import isfinite
 
 import cadquery as cq
 
-from schlieren.vendor_cad import thorlabs_sm1cp2m, thorlabs_smr1_m, thorlabs_tr50_m
+from schlieren.vendor_cad import alpha_cn40_40b, thorlabs_sm1cp2m, thorlabs_smr1_m, thorlabs_tr50_m
 
 INCH = 25.4
 
@@ -165,17 +166,15 @@ def build_led_stack_assembly(p=None, board=GREEN, engagement=None):
     post_y = p.smr1_thickness / 2
     envelopes = {
         f"{board.name} star": _disc(board.outline_diameter, p.cap_face, p.cap_face + board.thickness, z),
-        "CN40-40B envelope": _disc(
-            p.heatsink_diameter, p.heatsink_front - p.heatsink_height, p.heatsink_front, z
-        ),
         "Lens plano face marker": _disc(25.0, p.plano_u(engagement), p.plano_u(engagement) + 0.2, z),
     }
-    # Thorlabs models, already in their mounting frames: the post stands on the datum disc, the ring's
-    # LED-side face is u=0, and the cap seats on that face.
+    # Vendor models, already in their mounting frames: the post stands on the datum disc, the ring's
+    # LED-side face is u=0, the cap seats on that face, and the heatsink base seats on the cap's rear face.
     vendor_parts = {
         "TR50 M post": (thorlabs_tr50_m(), (0, post_y, p.datum_thickness)),
         "SMR1 M ring": (thorlabs_smr1_m(), (0, 0, z)),
         "SM1CP2M cap": (thorlabs_sm1cp2m(), (0, 0, z)),
+        "CN40-40B heatsink": (alpha_cn40_40b(), (0, p.heatsink_front, z)),
     }
     assembly = cq.Assembly(name="Threaded LED module stack")
     for name, (part, origin) in vendor_parts.items():

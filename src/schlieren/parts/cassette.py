@@ -5,6 +5,7 @@ The front is +Z. Bevel dimensions match the provisional carriage, not a
 physically qualified fit. Integral cleats and rear countersinks are universal;
 two removable clamp bars and hardware references are available as an assembly.
 """
+
 from dataclasses import dataclass
 from math import isfinite, radians, tan
 
@@ -32,8 +33,7 @@ class CassetteParameters:
 
     @property
     def clamp_holes(self):
-        return [(sx * self.clamp_hole_x, sy * self.clamp_hole_y)
-                for sx in (-1, 1) for sy in (-1, 1)]
+        return [(sx * self.clamp_hole_x, sy * self.clamp_hole_y) for sx in (-1, 1) for sy in (-1, 1)]
 
     @property
     def bore_diameter(self):
@@ -67,8 +67,11 @@ class CassetteParameters:
             raise ValueError("Countersinks must remain inside the rear perimeter")
         if self.cleat_top_diameter <= self.cleat_base_diameter:
             raise ValueError("Cleats must widen toward the top")
-        if not (self.aperture_diameter / 2 + self.cleat_top_diameter / 2 < self.cleat_x
-                < front_half - self.cleat_top_diameter / 2):
+        if not (
+            self.aperture_diameter / 2 + self.cleat_top_diameter / 2
+            < self.cleat_x
+            < front_half - self.cleat_top_diameter / 2
+        ):
             raise ValueError("Cleats must clear aperture and perimeter bevel")
         if self.cleat_top_round >= min(self.cleat_height / 2, self.cleat_base_diameter / 2):
             raise ValueError("Cleat rounding is too large")
@@ -83,21 +86,32 @@ def build_cassette(p=None):
     half = p.size / 2
     shoulder = p.thickness - p.bevel_depth
     front_half = half - p.bevel_inset
-    profile = [(-half, 0), (half, 0), (half, shoulder),
-               (front_half, p.thickness), (-front_half, p.thickness),
-               (-half, shoulder)]
+    profile = [
+        (-half, 0),
+        (half, 0),
+        (half, shoulder),
+        (front_half, p.thickness),
+        (-front_half, p.thickness),
+        (-half, shoulder),
+    ]
     pair = cq.Workplane("YZ", origin=(-half, 0, 0)).polyline(profile).close().extrude(p.size)
     blank = pair.intersect(pair.rotate((0, 0, 0), (0, 0, 1), 90))
     blank = blank.cut(cq.Workplane("XY").circle(p.aperture_diameter / 2).extrude(p.thickness))
     for x, y in p.clamp_holes:
         bore = cq.Workplane("XY", origin=(x, y, 0)).circle(p.bore_diameter / 2).extrude(p.thickness)
-        sink = cq.Solid.makeCone(p.countersink_diameter / 2, p.bore_diameter / 2,
-                                 p.countersink_depth, cq.Vector(x, y, 0))
+        sink = cq.Solid.makeCone(
+            p.countersink_diameter / 2, p.bore_diameter / 2, p.countersink_depth, cq.Vector(x, y, 0)
+        )
         blank = blank.cut(bore).cut(sink)
     for x in (-p.cleat_x, p.cleat_x):
-        cleat = cq.Workplane(obj=cq.Solid.makeCone(
-            p.cleat_base_diameter / 2, p.cleat_top_diameter / 2, p.cleat_height,
-            cq.Vector(x, 0, p.thickness)))
+        cleat = cq.Workplane(
+            obj=cq.Solid.makeCone(
+                p.cleat_base_diameter / 2,
+                p.cleat_top_diameter / 2,
+                p.cleat_height,
+                cq.Vector(x, 0, p.thickness),
+            )
+        )
         cleat = cleat.edges(">Z").fillet(p.cleat_top_round)
         blank = blank.union(cleat)
     return blank.clean()
@@ -106,6 +120,7 @@ def build_cassette(p=None):
 @dataclass(frozen=True)
 class ClampBarParameters:
     """Provisional bar geometry and simplified assembly hardware, all in mm."""
+
     thickness: float = 4.0
     end_width: float = 8.0
     inner_edge_y: float = 12.5  # Clear the Ø24 opening by 0.5 mm.
@@ -136,19 +151,27 @@ def build_clamp_bar(p=None, b=None):
     if b.end_relief_depth >= b.thickness or b.inner_edge_y <= p.aperture_diameter / 2:
         raise ValueError("Bar must retain material over the relief and clear the aperture")
     x, y, half = p.clamp_hole_x, p.clamp_hole_y, b.end_width / 2
-    points = [(-x-half, y-half), (-x+half, y-half),
-              (-b.bridge_half_length, b.inner_edge_y), (b.bridge_half_length, b.inner_edge_y),
-              (x-half, y-half), (x+half, y-half),
-              (x+half, b.outer_edge_y), (-x-half, b.outer_edge_y)]
+    points = [
+        (-x - half, y - half),
+        (-x + half, y - half),
+        (-b.bridge_half_length, b.inner_edge_y),
+        (b.bridge_half_length, b.inner_edge_y),
+        (x - half, y - half),
+        (x + half, y - half),
+        (x + half, b.outer_edge_y),
+        (-x - half, b.outer_edge_y),
+    ]
     bar = cq.Workplane("XY").polyline(points).close().extrude(b.thickness)
     bar = bar.edges("|Z").fillet(b.corner_radius)
     for sign in (-1, 1):
         relief_width = x + half - b.end_relief_start_x
-        relief = cq.Workplane("XY").box(relief_width, p.size, b.end_relief_depth,
-                                         centered=(True, True, False)).translate(
-                                             (sign * (b.end_relief_start_x + relief_width / 2), 0, 0))
+        relief = (
+            cq.Workplane("XY")
+            .box(relief_width, p.size, b.end_relief_depth, centered=(True, True, False))
+            .translate((sign * (b.end_relief_start_x + relief_width / 2), 0, 0))
+        )
         bar = bar.cut(relief)
-        bar = bar.cut(cq.Workplane("XY").center(sign*x, y).circle(p.bore_diameter / 2).extrude(b.thickness))
+        bar = bar.cut(cq.Workplane("XY").center(sign * x, y).circle(p.bore_diameter / 2).extrude(b.thickness))
     return bar.clean()
 
 
@@ -169,26 +192,46 @@ def build_cassette_assembly(p=None, b=None):
     for sign, label in ((1, "Upper clamp"), (-1, "Lower clamp")):
         clamp = cq.Assembly(name=label)
         clamp.add(bar, name="Printed bar", color=cq.Color(0.3, 0.55, 0.8))
-        pad = cq.Workplane("XY", origin=(0, (b.inner_edge_y + b.outer_edge_y) / 2,
-                                         bottom - b.epdm_thickness)).box(
-            2 * b.bridge_half_length, b.outer_edge_y - b.inner_edge_y, b.epdm_thickness,
-            centered=(True, True, False))
+        pad = cq.Workplane(
+            "XY", origin=(0, (b.inner_edge_y + b.outer_edge_y) / 2, bottom - b.epdm_thickness)
+        ).box(
+            2 * b.bridge_half_length,
+            b.outer_edge_y - b.inner_edge_y,
+            b.epdm_thickness,
+            centered=(True, True, False),
+        )
         clamp.add(pad, name="EPDM reference", color=cq.Color(0.15, 0.15, 0.15))
         for i, x in enumerate((-p.clamp_hole_x, p.clamp_hole_x), 1):
             y = p.clamp_hole_y
             washer_z = bottom + b.thickness
-            washer = cq.Workplane("XY", origin=(x, y, washer_z)).circle(b.washer_od / 2).circle(
-                b.washer_id / 2).extrude(b.washer_thickness)
-            nut = cq.Workplane("XY", origin=(x, y, washer_z + b.washer_thickness)).polygon(
-                6, b.nut_af / cos(pi / 6)).circle(p.screw_diameter / 2).extrude(b.nut_height)
+            washer = (
+                cq.Workplane("XY", origin=(x, y, washer_z))
+                .circle(b.washer_od / 2)
+                .circle(b.washer_id / 2)
+                .extrude(b.washer_thickness)
+            )
+            nut = (
+                cq.Workplane("XY", origin=(x, y, washer_z + b.washer_thickness))
+                .polygon(6, b.nut_af / cos(pi / 6))
+                .circle(p.screw_diameter / 2)
+                .extrude(b.nut_height)
+            )
             # Ideal 90° head cone and plain shank; drive socket/threads omitted.
             head_depth = (p.screw_head_diameter - p.screw_diameter) / 2
-            screw = cq.Workplane(obj=cq.Solid.makeCone(p.screw_head_diameter / 2,
-                p.screw_diameter / 2, head_depth, cq.Vector(x, y, b.head_recess)))
-            screw = screw.union(cq.Workplane("XY", origin=(x, y, b.head_recess + head_depth)).circle(
-                p.screw_diameter / 2).extrude(b.screw_length - head_depth))
+            screw = cq.Workplane(
+                obj=cq.Solid.makeCone(
+                    p.screw_head_diameter / 2,
+                    p.screw_diameter / 2,
+                    head_depth,
+                    cq.Vector(x, y, b.head_recess),
+                )
+            )
+            screw = screw.union(
+                cq.Workplane("XY", origin=(x, y, b.head_recess + head_depth))
+                .circle(p.screw_diameter / 2)
+                .extrude(b.screw_length - head_depth)
+            )
             for name, part in (("Washer", washer), ("Nut", nut), ("Screw", screw)):
                 clamp.add(part, name=f"{name} {i}", color=cq.Color(0.7, 0.7, 0.72))
-        assembly.add(clamp, loc=cq.Location(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1),
-                                          0 if sign == 1 else 180))
+        assembly.add(clamp, loc=cq.Location(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), 0 if sign == 1 else 180))
     return assembly

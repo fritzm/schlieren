@@ -69,3 +69,9 @@ def thorlabs_fas100() -> cq.Workplane:
     y, z = FAS100_AXIS_YZ
     to_tip = cq.Location((-FAS100_TIP_X, -y, -z))
     return _moved("Thorlabs-FAS100.step", cq.Location((0, 0, 0), (0, 1, 0), 90) * to_tip)
+
+
+@cache
+def alpha_cn40_40b() -> cq.Workplane:
+    """Alpha CN40-40B pin-fin heatsink; axis +Y through the origin, base mounting face at y=0, pins toward -Y."""
+    return _moved("Alpha-CN40-40B.step", cq.Location((0, 0, 0), (0, 0, 1), 180))

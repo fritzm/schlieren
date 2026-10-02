@@ -1,6 +1,6 @@
 # Portable Single-Mirror Schlieren Apparatus
 
-**Project State and Baseline Design**
+**Project Baseline Design**
 
 Revision: Oct 1, 2026
 

@@ -1,4 +1,5 @@
 """PostToolUse hook: run ruff format on edited Python files (line length comes from pyproject.toml)."""
+
 import json
 import subprocess
 import sys

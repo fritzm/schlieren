@@ -5,6 +5,7 @@ cassette-loading side. Z=0 is the plate back, not the rail-height datum.
 The rear shouldered spigot, clamped directly by the SM1RC/M, is integral with the base. Dimensions beyond
 explicit baseline interfaces are provisional first-print targets; no purchased threads are modeled.
 """
+
 from dataclasses import dataclass
 from itertools import pairwise
 from math import cos, pi, radians, tan
@@ -43,7 +44,9 @@ class CarriageParameters:
     # slit head's: the plate reaches below the rail-shoe top, so it must clear the shoe end, not just the post.
     ring_gap: float = 12.0
     spigot_shoulder_diameter: float = 34.0  # Bears on the SM1RC/M face outside its Ø30.7 mm bore.
-    post_clearance: float = 2.0  # Minimum, plate back to post and rail shoe, and rotating parts to the rail top.
+    post_clearance: float = (
+        2.0  # Minimum, plate back to post and rail shoe, and rotating parts to the rail top.
+    )
 
     guide_floor_rise: float = 2.0
     ear_thickness: float = 3.0
@@ -66,7 +69,9 @@ class CarriageParameters:
     # The guide tracks are filled solid beyond the plunger ears' outermost positions, giving an end stop and a
     # solid seat for the keeper screws, which sit inboard of the plate ends to stay inside the rotation envelope.
     ear_stop_gap: float = 1.0  # Track end stop beyond the outermost ear position.
-    fastener_stop_margin: float = 4.0  # Screw axis beyond the track end stop; keeps the nut pocket in the fill.
+    fastener_stop_margin: float = (
+        4.0  # Screw axis beyond the track end stop; keeps the nut pocket in the fill.
+    )
     envelope_nut_wall: float = 1.0  # Minimum ABS between a nut pocket and the rotation envelope.
     # Side keeper screws beside each plunger's ear travel, in round lugs that widen the plate locally.
     side_fastener_x: float = 42.0
@@ -96,7 +101,9 @@ class CarriageParameters:
     thumb_tab_width: float = 20.0
     thumb_tab_thickness: float = 3.0
     thumb_tab_height: float = 6.0
-    thumb_tab_chamfer: float = 0.5  # Exposed edges, for comfort; the spring-facing (outboard) face stays square.
+    thumb_tab_chamfer: float = (
+        0.5  # Exposed edges, for comfort; the spring-facing (outboard) face stays square.
+    )
     thumb_tab_bead_radius: float = 0.8  # Grip bead along the inner (thumb-side) top edge; prints unsupported.
     # McMaster 98625A950 manufacturer drawing, canonical baseline §8.3.
     insert_body_diameter: float = 0.313 * 25.4
@@ -181,8 +188,12 @@ class CarriageParameters:
     @property
     def plate_ymax(self):
         # Locate the flange face to retain full insert engagement at -5 mm travel.
-        return (self.magnet_contact_y - self.working_half_travel
-                + self.adjuster_clearance_travel + self.insert_overall_length)
+        return (
+            self.magnet_contact_y
+            - self.working_half_travel
+            + self.adjuster_clearance_travel
+            + self.insert_overall_length
+        )
 
     @property
     def plate_length(self):
@@ -229,15 +240,20 @@ class CarriageParameters:
     def ear_stops_y(self):
         # Spring end (loading retraction or working travel, whichever reaches farther), then driven end.
         reach = self.cassette_size / 2 + self.body_length + self.ear_stop_gap
-        return (-(reach + max(self.loading_retraction, self.working_half_travel)),
-                reach + self.working_half_travel)
+        return (
+            -(reach + max(self.loading_retraction, self.working_half_travel)),
+            reach + self.working_half_travel,
+        )
 
     @property
     def fasteners(self):
         x = self.plate_width / 2 - self.fastener_edge_margin
         spring_stop, driven_stop = self.ear_stops_y
-        ends = [(sx * x, y) for sx in (-1, 1)
-                for y in (spring_stop - self.fastener_stop_margin, driven_stop + self.fastener_stop_margin)]
+        ends = [
+            (sx * x, y)
+            for sx in (-1, 1)
+            for y in (spring_stop - self.fastener_stop_margin, driven_stop + self.fastener_stop_margin)
+        ]
         return ends + self.side_fasteners
 
     @property
@@ -286,15 +302,20 @@ class CarriageParameters:
                 for a in loads:
                     # Simply supported span, point load at a, deflection at x.
                     near, far = sorted((x, a))
-                    total += load * near * (span - far) * (2 * span * far - far**2 - near**2) / (
-                        6 * span * self.abs_modulus * inertia)
+                    total += (
+                        load
+                        * near
+                        * (span - far)
+                        * (2 * span * far - far**2 - near**2)
+                        / (6 * span * self.abs_modulus * inertia)
+                    )
                 lift = max(lift, total)
         return lift
 
     def validate(self):
         if any(v <= 0 for v in vars(self).values()):
             raise ValueError("Dimensions must be positive")
-        if self.insert_bore_diameter + 2*self.insert_entry_chamfer >= self.insert_flange_diameter:
+        if self.insert_bore_diameter + 2 * self.insert_entry_chamfer >= self.insert_flange_diameter:
             raise ValueError("Bushing flange needs a bearing land outside the chamfer")
         if self.adjuster_support_length - self.insert_entry_chamfer < self.insert_min_material_thickness:
             raise ValueError("Insert support must meet the drawing minimum beyond the entry chamfer")
@@ -364,22 +385,51 @@ def _build_fixed_body(p=None):
     base = _box(p.plate_width, p.plate_length, p.plate_thickness, y=p.plate_center_y)
     for sign in (-1, 1):
         floor_width = p.track_outer_x - p.track_inner_x
-        base = base.union(_box(floor_width, p.plate_length, p.guide_floor_rise,
-                              x=sign * (p.track_outer_x + p.track_inner_x) / 2, y=p.plate_center_y, z=p.plate_thickness))
+        base = base.union(
+            _box(
+                floor_width,
+                p.plate_length,
+                p.guide_floor_rise,
+                x=sign * (p.track_outer_x + p.track_inner_x) / 2,
+                y=p.plate_center_y,
+                z=p.plate_thickness,
+            )
+        )
         land_width = p.plate_width / 2 - p.track_outer_x
-        base = base.union(_box(land_width, p.plate_length, p.keeper_z - p.plate_thickness,
-                              x=sign * (p.track_outer_x + land_width / 2), y=p.plate_center_y, z=p.plate_thickness))
+        base = base.union(
+            _box(
+                land_width,
+                p.plate_length,
+                p.keeper_z - p.plate_thickness,
+                x=sign * (p.track_outer_x + land_width / 2),
+                y=p.plate_center_y,
+                z=p.plate_thickness,
+            )
+        )
     for start, end in p.support_spans:
-        support = _box(p.plate_width, end - start, p.support_top - p.plate_thickness,
-                       y=(start + end) / 2, z=p.plate_thickness)
+        support = _box(
+            p.plate_width,
+            end - start,
+            p.support_top - p.plate_thickness,
+            y=(start + end) / 2,
+            z=p.plate_thickness,
+        )
         base = base.union(support)
     base = base.union(_side_lugs(p, 0, p.keeper_z))
     spring_stop, driven_stop = p.ear_stops_y
     for sign in (-1, 1):
         x = sign * (p.track_inner_x + p.track_outer_x) / 2
         for y0, y1 in ((p.plate_ymin, spring_stop), (driven_stop, p.plate_ymax)):
-            base = base.union(_box(p.track_outer_x - p.track_inner_x, y1 - y0, p.keeper_z - p.plate_thickness,
-                                   x=x, y=(y0 + y1) / 2, z=p.plate_thickness))
+            base = base.union(
+                _box(
+                    p.track_outer_x - p.track_inner_x,
+                    y1 - y0,
+                    p.keeper_z - p.plate_thickness,
+                    x=x,
+                    y=(y0 + y1) / 2,
+                    z=p.plate_thickness,
+                )
+            )
     # Open-top keeper seating recess: preserves front-side removal and the
     # original screw stack while the support blocks extend to all plate edges.
     base = base.cut(_keeper_envelope(p, p.support_top - p.keeper_z))
@@ -391,32 +441,47 @@ def _build_fixed_body(p=None):
     opening = cq.Workplane("XY").circle(p.aperture_diameter / 2).extrude(p.plate_thickness)
     base = base.cut(opening)
     for x, y in p.datum_points:
-        hole = cq.Workplane("XY", origin=(x, y, 0)).circle(
-            p.datum_hole_diameter / 2).extrude(p.plate_thickness)
+        hole = (
+            cq.Workplane("XY", origin=(x, y, 0)).circle(p.datum_hole_diameter / 2).extrude(p.plate_thickness)
+        )
         base = base.cut(hole)
     for x, y in p.fasteners:
-        base = base.cut(cq.Workplane("XY", origin=(x, y, 0)).circle(p.screw_clearance / 2).extrude(p.keeper_z))
-        base = base.cut(cq.Workplane("XY", origin=(x, y, 0)).polygon(
-            6, p.nut_pocket_af / cos(pi / 6)).extrude(p.nut_pocket_depth))
+        base = base.cut(
+            cq.Workplane("XY", origin=(x, y, 0)).circle(p.screw_clearance / 2).extrude(p.keeper_z)
+        )
+        base = base.cut(
+            cq.Workplane("XY", origin=(x, y, 0))
+            .polygon(6, p.nut_pocket_af / cos(pi / 6))
+            .extrude(p.nut_pocket_depth)
+        )
     return _add_spigot(base.cut(_insert_entry(p)), p).intersect(_rotation_envelope(p)).clean()
 
 
 def _split_fixed_body(p):
     stock = _build_fixed_body(p)
     width = 2 * (p.side_fastener_x + p.side_lug_radius) + 2  # Includes the side lugs.
-    base = stock.intersect(_box(width, p.plate_length,
-                               p.spigot_length + p.plate_thickness,
-                               y=p.plate_center_y, z=-p.spigot_length))
-    frame = stock.intersect(_box(width, p.plate_length,
-                                p.keeper_z - p.plate_thickness, y=p.plate_center_y, z=p.plate_thickness))
+    base = stock.intersect(
+        _box(
+            width, p.plate_length, p.spigot_length + p.plate_thickness, y=p.plate_center_y, z=-p.spigot_length
+        )
+    )
+    frame = stock.intersect(
+        _box(width, p.plate_length, p.keeper_z - p.plate_thickness, y=p.plate_center_y, z=p.plate_thickness)
+    )
     # Male locators belong to the frame: the base deck stays flat for spigot-up printing.
     locator_x = (p.track_outer_x + p.plate_width / 2) / 2
     for x in (-locator_x, locator_x):
-        pin = cq.Workplane("XY", origin=(x, 0, p.plate_thickness - p.locator_height)).circle(
-            p.locator_diameter / 2).extrude(p.locator_height)
+        pin = (
+            cq.Workplane("XY", origin=(x, 0, p.plate_thickness - p.locator_height))
+            .circle(p.locator_diameter / 2)
+            .extrude(p.locator_height)
+        )
         pocket_depth = p.locator_height + p.locator_depth_clearance
-        pocket = cq.Workplane("XY", origin=(x, 0, p.plate_thickness - pocket_depth)).circle(
-            (p.locator_diameter + p.locator_diametral_clearance) / 2).extrude(pocket_depth)
+        pocket = (
+            cq.Workplane("XY", origin=(x, 0, p.plate_thickness - pocket_depth))
+            .circle((p.locator_diameter + p.locator_diametral_clearance) / 2)
+            .extrude(pocket_depth)
+        )
         base = base.cut(pocket)
         frame = frame.union(pin)
     return base.clean(), frame.clean()
@@ -436,12 +501,21 @@ def _add_spigot(base, p):
     Printed with the base deck down and the spigot up, so it needs no supports.
     """
     ring_face = -p.ring_gap
-    shoulder = cq.Workplane("XY", origin=(0, 0, ring_face)).circle(p.spigot_shoulder_diameter / 2).extrude(
-        p.ring_gap)
-    spigot = cq.Workplane("XY", origin=(0, 0, -p.spigot_length)).circle(p.spigot_diameter / 2).extrude(
-        p.ring_thickness)
-    bore = cq.Workplane("XY", origin=(0, 0, -p.spigot_length - 1)).circle(p.spigot_bore / 2).extrude(
-        p.spigot_length + 1)
+    shoulder = (
+        cq.Workplane("XY", origin=(0, 0, ring_face))
+        .circle(p.spigot_shoulder_diameter / 2)
+        .extrude(p.ring_gap)
+    )
+    spigot = (
+        cq.Workplane("XY", origin=(0, 0, -p.spigot_length))
+        .circle(p.spigot_diameter / 2)
+        .extrude(p.ring_thickness)
+    )
+    bore = (
+        cq.Workplane("XY", origin=(0, 0, -p.spigot_length - 1))
+        .circle(p.spigot_bore / 2)
+        .extrude(p.spigot_length + 1)
+    )
     base = base.union(shoulder).union(spigot).cut(bore).clean()
     if len(base.solids().vals()) != 1 or not base.val().isValid():
         raise ValueError("Base plate and spigot must remain one valid solid")
@@ -455,9 +529,11 @@ def support_location(p=None, rotation=0.0):
     Rotation 0 is the nominal zero of §8.1: fine adjuster (+Y) up.
     """
     p = p or CarriageParameters()
-    return (cq.Location((0, 0, 0), (0, 0, 1), -rotation)
-            * cq.Location((0, -p.optical_height, p.post_axis_z))
-            * cq.Location((0, 0, 0), (1, 0, 0), -90))
+    return (
+        cq.Location((0, 0, 0), (0, 0, 1), -rotation)
+        * cq.Location((0, -p.optical_height, p.post_axis_z))
+        * cq.Location((0, 0, 0), (1, 0, 0), -90)
+    )
 
 
 def _side_lugs(p, z, height):
@@ -467,8 +543,16 @@ def _side_lugs(p, z, height):
     for x, y in p.side_fasteners:
         sign = 1 if x > 0 else -1
         lug = cq.Workplane("XY", origin=(x, y, z)).circle(p.side_lug_radius).extrude(height)
-        lug = lug.intersect(_box(outer - p.track_outer_x, 2 * p.side_lug_radius, height,
-                                 x=sign * (p.track_outer_x + outer) / 2, y=y, z=z))
+        lug = lug.intersect(
+            _box(
+                outer - p.track_outer_x,
+                2 * p.side_lug_radius,
+                height,
+                x=sign * (p.track_outer_x + outer) / 2,
+                y=y,
+                z=z,
+            )
+        )
         lugs = lug if lugs is None else lugs.union(lug)
     return lugs
 
@@ -476,15 +560,23 @@ def _side_lugs(p, z, height):
 def _thumb_tab(p, outer_y):
     """Tab on the spring plunger's front face at its outboard end (+Y, unmirrored), with chamfered exposed edges
     except those of the spring-facing face, and a grip bead along the inner top edge, where the thumb pushes."""
-    tab = _box(p.thumb_tab_width, p.thumb_tab_thickness, p.thumb_tab_height,
-               y=outer_y - p.thumb_tab_thickness / 2, z=p.body_top)
+    tab = _box(
+        p.thumb_tab_width,
+        p.thumb_tab_thickness,
+        p.thumb_tab_height,
+        y=outer_y - p.thumb_tab_thickness / 2,
+        z=p.body_top,
+    )
     edges = [e for e in tab.edges(">Z or |Z").vals() if e.Center().y < outer_y - 1e-6]
     tab = tab.newObject(edges).chamfer(p.thumb_tab_chamfer)
     top = p.body_top + p.thumb_tab_height
     length = p.thumb_tab_width - 2 * p.thumb_tab_chamfer
-    bead = cq.Solid.makeCylinder(p.thumb_tab_bead_radius, length,
-                                 cq.Vector(-length / 2, outer_y - p.thumb_tab_thickness, top - p.thumb_tab_bead_radius),
-                                 cq.Vector(1, 0, 0))
+    bead = cq.Solid.makeCylinder(
+        p.thumb_tab_bead_radius,
+        length,
+        cq.Vector(-length / 2, outer_y - p.thumb_tab_thickness, top - p.thumb_tab_bead_radius),
+        cq.Vector(1, 0, 0),
+    )
     return tab.union(bead)
 
 
@@ -502,27 +594,35 @@ def _spring_cup(p, seat_y, bottom):
     """
     y0 = seat_y
     width = p.spring_cup_bore + 2 * p.spring_cup_wall
-    cup = _box(width, p.spring_cup_depth, p.spring_cup_top - bottom,
-               y=y0 + p.spring_cup_depth / 2, z=bottom)
+    cup = _box(width, p.spring_cup_depth, p.spring_cup_top - bottom, y=y0 + p.spring_cup_depth / 2, z=bottom)
     pocket = cq.Workplane(obj=_y_hole(p.spring_cup_bore / 2, p.spring_cup_depth + 2, y0 - 1, p.spring_axis_z))
     if bottom < p.spring_axis_z:
-        pocket = pocket.union(_box(p.spring_cup_bore, p.spring_cup_depth + 2, p.spring_axis_z - bottom + 1,
-                                   y=y0 + p.spring_cup_depth / 2, z=bottom - 1))
+        pocket = pocket.union(
+            _box(
+                p.spring_cup_bore,
+                p.spring_cup_depth + 2,
+                p.spring_axis_z - bottom + 1,
+                y=y0 + p.spring_cup_depth / 2,
+                z=bottom - 1,
+            )
+        )
     return cup.cut(pocket)
 
 
 def _keeper_envelope(p, height):
     return _box(p.plate_width, p.plate_length, height, y=p.plate_center_y, z=p.keeper_z).cut(
-        _box(p.keeper_opening_width, p.keeper_opening_length, height,
-             y=p.keeper_opening_y, z=p.keeper_z))
+        _box(p.keeper_opening_width, p.keeper_opening_length, height, y=p.keeper_opening_y, z=p.keeper_z)
+    )
 
 
 def _insert_entry(p):
-    return cq.Solid.makeCone(p.insert_bore_diameter / 2,
-                             p.insert_bore_diameter / 2 + p.insert_entry_chamfer,
-                             p.insert_entry_chamfer,
-                             cq.Vector(0, p.plate_ymax-p.insert_entry_chamfer, p.adjuster_axis_z),
-                             cq.Vector(0, 1, 0))
+    return cq.Solid.makeCone(
+        p.insert_bore_diameter / 2,
+        p.insert_bore_diameter / 2 + p.insert_entry_chamfer,
+        p.insert_entry_chamfer,
+        cq.Vector(0, p.plate_ymax - p.insert_entry_chamfer, p.adjuster_axis_z),
+        cq.Vector(0, 1, 0),
+    )
 
 
 def build_keeper_plate(p=None):
@@ -534,24 +634,43 @@ def build_keeper_plate(p=None):
     start, end = p.support_spans[0]
     crown_radius = p.insert_bore_diameter / 2 + p.keeper_thickness
     crown = cq.Workplane(obj=_y_hole(crown_radius, end - start, start, p.adjuster_axis_z))
-    crown = crown.intersect(_box(2 * crown_radius, end - start,
-                                p.adjuster_axis_z + crown_radius - p.keeper_z,
-                                y=(start + end) / 2, z=p.keeper_z))
+    crown = crown.intersect(
+        _box(
+            2 * crown_radius,
+            end - start,
+            p.adjuster_axis_z + crown_radius - p.keeper_z,
+            y=(start + end) / 2,
+            z=p.keeper_z,
+        )
+    )
     keeper = keeper.union(crown)
     keeper = keeper.cut(_y_hole(p.insert_bore_diameter / 2, end - start + 2, start - 1, p.adjuster_axis_z))
     keeper = keeper.union(_spring_cup(p, p.spring_seat_y, p.keeper_z))
     extra = p.keeper_side_thickness - p.keeper_thickness
     for sign in (-1, 1) if extra > 0 else ():
-        keeper = keeper.union(_box(p.keeper_side_width, p.plate_length, extra,
-                                   x=sign * (p.keeper_opening_width + p.keeper_side_width) / 2,
-                                   y=p.plate_center_y, z=p.keeper_z + p.keeper_thickness))
+        keeper = keeper.union(
+            _box(
+                p.keeper_side_width,
+                p.plate_length,
+                extra,
+                x=sign * (p.keeper_opening_width + p.keeper_side_width) / 2,
+                y=p.plate_center_y,
+                z=p.keeper_z + p.keeper_thickness,
+            )
+        )
     keeper = keeper.union(_side_lugs(p, p.keeper_z, p.keeper_side_thickness))
     top = p.keeper_z + p.keeper_side_thickness
     for x, y in p.fasteners:
-        keeper = keeper.cut(cq.Workplane("XY", origin=(x, y, p.keeper_z)).circle(
-            p.screw_clearance / 2).extrude(p.keeper_side_thickness))
-        keeper = keeper.cut(cq.Workplane("XY", origin=(x, y, p.keeper_screw_seat_z))
-                            .circle(p.screw_head_clearance / 2).extrude(top - p.keeper_screw_seat_z))
+        keeper = keeper.cut(
+            cq.Workplane("XY", origin=(x, y, p.keeper_z))
+            .circle(p.screw_clearance / 2)
+            .extrude(p.keeper_side_thickness)
+        )
+        keeper = keeper.cut(
+            cq.Workplane("XY", origin=(x, y, p.keeper_screw_seat_z))
+            .circle(p.screw_head_clearance / 2)
+            .extrude(top - p.keeper_screw_seat_z)
+        )
     return keeper.cut(_insert_entry(p)).intersect(_rotation_envelope(p)).clean()
 
 
@@ -565,16 +684,30 @@ def build_plunger(p=None, *, spring=False):
     bevel_z = p.plate_thickness + p.datum_projection + p.cassette_thickness - p.bevel_depth
     inset = p.bevel_depth / tan(radians(p.bevel_angle))
     front_z = bevel_z + p.bevel_depth
-    profile = [(edge, bottom), (edge + p.body_length, bottom),
-               (edge + p.body_length, p.body_top), (edge - inset, p.body_top),
-               (edge - inset, front_z), (edge, bevel_z)]
-    body = cq.Workplane("YZ", origin=(-p.body_width / 2, 0, 0)).polyline(profile).close().extrude(p.body_width)
+    profile = [
+        (edge, bottom),
+        (edge + p.body_length, bottom),
+        (edge + p.body_length, p.body_top),
+        (edge - inset, p.body_top),
+        (edge - inset, front_z),
+        (edge, bevel_z),
+    ]
+    body = (
+        cq.Workplane("YZ", origin=(-p.body_width / 2, 0, 0)).polyline(profile).close().extrude(p.body_width)
+    )
     # Overlap the body slightly to ensure a single connected printed solid.
     ear_root = p.body_width / 2 - 0.5
     for sign in (-1, 1):
-        body = body.union(_box(p.ear_outer_x - ear_root, p.body_length, p.ear_thickness,
-                              x=sign * (p.ear_outer_x + ear_root) / 2,
-                              y=edge + p.body_length / 2, z=ear_bottom))
+        body = body.union(
+            _box(
+                p.ear_outer_x - ear_root,
+                p.body_length,
+                p.ear_thickness,
+                x=sign * (p.ear_outer_x + ear_root) / 2,
+                y=edge + p.body_length / 2,
+                z=ear_bottom,
+            )
+        )
     outer_y = edge + p.body_length
     if spring:
         # Spring cup outboard; thumb tab on the front face, pushed outboard from above the cassette to retract.
@@ -584,11 +717,15 @@ def build_plunger(p=None, *, spring=False):
     else:
         # Outward-opening, fully backed magnet pocket. A small adhesive tack is
         # needed for retention; the ball bears on the exposed broad XZ face.
-        body = body.cut(_box(p.magnet_length + p.magnet_fit_clearance,
-                            p.magnet_thickness + p.magnet_fit_clearance,
-                            p.magnet_width + p.magnet_fit_clearance,
-                            y=outer_y - (p.magnet_thickness + p.magnet_fit_clearance) / 2,
-                            z=p.adjuster_axis_z - (p.magnet_width + p.magnet_fit_clearance) / 2))
+        body = body.cut(
+            _box(
+                p.magnet_length + p.magnet_fit_clearance,
+                p.magnet_thickness + p.magnet_fit_clearance,
+                p.magnet_width + p.magnet_fit_clearance,
+                y=outer_y - (p.magnet_thickness + p.magnet_fit_clearance) / 2,
+                z=p.adjuster_axis_z - (p.magnet_width + p.magnet_fit_clearance) / 2,
+            )
+        )
     return body.clean()
 
 
@@ -614,7 +751,11 @@ def build_carriage(p=None, *, travel=0.0, retract=0.0, include_support=False, in
         ("Guide frame", frame, (0.6, 0.75, 0.8)),
         ("Keeper plate", build_keeper_plate(p), (0.35, 0.5, 0.75)),
         ("Driven plunger", build_plunger(p).translate((0, travel, 0)), (0.85, 0.65, 0.25)),
-        ("Spring plunger", build_plunger(p, spring=True).translate((0, travel - retract, 0)), (0.4, 0.75, 0.5)),
+        (
+            "Spring plunger",
+            build_plunger(p, spring=True).translate((0, travel - retract, 0)),
+            (0.4, 0.75, 0.5),
+        ),
     ):
         assembly.add(part, name=name, color=cq.Color(*color))
     if include_support:
@@ -631,9 +772,14 @@ def build_carriage(p=None, *, travel=0.0, retract=0.0, include_support=False, in
         for name, part, color in _adjuster_hardware(p, travel):
             assembly.add(part, name=name, color=cq.Color(*color))
         length = p.spring_fiducial_length + travel - retract
-        spring = cq.Workplane(obj=_y_hole(p.spring_outer_diameter / 2, length, p.spring_seat_y, p.spring_axis_z))
-        spring = spring.cut(cq.Workplane(obj=_y_hole(p.spring_inner_diameter / 2, length + 2,
-                                                     p.spring_seat_y - 1, p.spring_axis_z)))
+        spring = cq.Workplane(
+            obj=_y_hole(p.spring_outer_diameter / 2, length, p.spring_seat_y, p.spring_axis_z)
+        )
+        spring = spring.cut(
+            cq.Workplane(
+                obj=_y_hole(p.spring_inner_diameter / 2, length + 2, p.spring_seat_y - 1, p.spring_axis_z)
+            )
+        )
         assembly.add(spring, name="2006N292 spring envelope", color=cq.Color(0.5, 0.5, 0.5))
     return assembly
 
@@ -642,17 +788,38 @@ def _adjuster_hardware(p, travel):
     """FAS100, bushing, and magnet pad as (name, part, rgb); the ball tip bears on the pad face."""
     tip_y = p.magnet_contact_y + travel
     # Vendor model axis +Z toward the knob, turned to +Y (outboard, toward the bushing flange).
-    fas100 = cq.Workplane().add(thorlabs_fas100().val().moved(
-        cq.Location((0, tip_y, p.adjuster_axis_z)) * cq.Location((0, 0, 0), (1, 0, 0), -90)))
+    fas100 = cq.Workplane().add(
+        thorlabs_fas100()
+        .val()
+        .moved(cq.Location((0, tip_y, p.adjuster_axis_z)) * cq.Location((0, 0, 0), (1, 0, 0), -90))
+    )
     flange_face = p.plate_ymax
-    bushing = cq.Workplane(obj=_y_hole(p.insert_body_diameter / 2, p.insert_body_length,
-                                       flange_face - p.insert_body_length, p.adjuster_axis_z))
-    bushing = bushing.union(_y_hole(p.insert_flange_diameter / 2, p.insert_flange_thickness,
-                                    flange_face, p.adjuster_axis_z))
-    bushing = bushing.cut(_y_hole(0.25 * INCH / 2, p.insert_body_length + 2, flange_face - p.insert_body_length - 1,
-                                  p.adjuster_axis_z))
-    magnet = _box(p.magnet_length, p.magnet_thickness, p.magnet_width,
-                  y=tip_y - p.magnet_thickness / 2, z=p.adjuster_axis_z - p.magnet_width / 2)
+    bushing = cq.Workplane(
+        obj=_y_hole(
+            p.insert_body_diameter / 2,
+            p.insert_body_length,
+            flange_face - p.insert_body_length,
+            p.adjuster_axis_z,
+        )
+    )
+    bushing = bushing.union(
+        _y_hole(p.insert_flange_diameter / 2, p.insert_flange_thickness, flange_face, p.adjuster_axis_z)
+    )
+    bushing = bushing.cut(
+        _y_hole(
+            0.25 * INCH / 2,
+            p.insert_body_length + 2,
+            flange_face - p.insert_body_length - 1,
+            p.adjuster_axis_z,
+        )
+    )
+    magnet = _box(
+        p.magnet_length,
+        p.magnet_thickness,
+        p.magnet_width,
+        y=tip_y - p.magnet_thickness / 2,
+        z=p.adjuster_axis_z - p.magnet_width / 2,
+    )
     return (
         ("FAS100", fas100, (0.75, 0.75, 0.78)),
         ("98625A950 bushing", bushing, (0.8, 0.65, 0.25)),

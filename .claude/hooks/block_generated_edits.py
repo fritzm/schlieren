@@ -1,4 +1,5 @@
 """PreToolUse hook: refuse direct edits to generated artifacts under exports/."""
+
 import json
 import os
 import sys

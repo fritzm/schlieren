@@ -21,6 +21,7 @@ Name files `<Brand>-<part>.step` following the `docs/reference/` convention (`/`
 | `Thorlabs-SM1CP1.step` | 0756-E0W.step (SolidWorks 2022, AP214, mm) | thorlabs.com SM1CP1, "Step" | Axis +Z through (x, y) = (14.107, 16.294) mm, off origin, z from 19.595 to 23.786 mm; one solid; not yet loaded |
 | `Thorlabs-SM1EC2.step` | CCO000389.STEP (SolidWorks 2016, AP203, mm) | thorlabs.com SM1EC2, "Step" | Axis +Z through origin; surface model only (no solids); not yet loaded |
 | `Thorlabs-ACL2520U-A.step` | CTN002256-E0W.step (SolidWorks 2014, AP203, mm) | thorlabs.com ACL2520U-A, "Step" | Axis +Y through origin, y from -6.0 to 6.0 mm; one solid; not yet loaded |
+| `Alpha-CN40-40B.step` | CN40-40B (2009, AP203 config control design, mm) | alphanovatech.com CN40-40B | Axis +Y through origin, base mounting face at y=0, 3.0 mm base, pins to y=40 mm; one solid |
 
 Thorlabs CAD downloads are listed per product through the site's GraphQL API at
 `https://www.thorlabs.com/graphql`, e.g. `{ products(storeId: "Thorlabs-Website", filter: "name:\"SM1RC/M\"")

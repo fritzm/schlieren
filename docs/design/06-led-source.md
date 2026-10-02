@@ -118,7 +118,8 @@ the axial stop; a shim under the star board would instead shorten the gap and ma
 Thorlabs SM1 part dimensions in this stack-up (SMR1/M, SM1CP2M, SM1V05) are the exact inch-primary values from
 the vendor STEP models in `cad/vendor/`, not the rounded millimeter values on the drawings. The TR50/M is
 metric-primary and keeps its 50 mm / Ø12.7 mm nominals (its STEP model is rounded to inches). The SMR1/M,
-SM1CP2M, and TR50/M vendor models are used directly in the `led-module` viewer assembly and clearance tests.
+SM1CP2M, TR50/M, and Alpha CN40-40B vendor models are used directly in the `led-module` viewer assembly and
+clearance tests.
 
 Module interchange:
 
