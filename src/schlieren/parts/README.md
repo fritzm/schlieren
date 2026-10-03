@@ -67,6 +67,7 @@ ABS allowances are final, fit-tested on printed shoes.
 ```sh
 uv run rail-shoe
 uv run rail-shoe --show
+uv run rail-shoe --figure
 uv run python -m unittest tests.test_rail_shoe -v
 ```
 
@@ -76,7 +77,8 @@ Viewer extension. Select the project's `.venv` interpreter in VS Code.
 The gray-box rail/post references are simplified envelopes, not fabrication
 models of purchased components. Only the shoe is exported. Toggle the `Post`
 group in the viewer tree to hide/show the post independently of the shoe,
-rail, and datum disc.
+rail, and datum disc. `--figure` renders the same assembly to
+`docs/design/figures/rail-shoe.png`, the §5.3 figure in the design document.
 
 The bridge/skirt is 30.4 mm across × 30 mm along the rail, extending from
 z=-18 mm; the collar rises to z=20 mm. The post bore is 12.8 mm (12.7 mm

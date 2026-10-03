@@ -31,6 +31,7 @@ This git repository is the source of truth for both the design and the BOM.
   3d-printed parts. The Python source is authoritative, and STEP/STL exports are derived files.
 - [OCP CAD Viewer](https://github.com/bernhard-42/vscode-ocp-cad-viewer) VS Code extension to display
   assemblies in-editor (`--show`).
+- [VTK](https://vtk.org/) for offscreen shaded renders of parts, used as design-document figures (`--figure`).
 - [ruff](https://docs.astral.sh/ruff/) for lint and formatting.
 
 ## Quick start
@@ -44,13 +45,14 @@ uv run led-module [--show]                       # LED focus stack-up
 uv run slit-head [--show]                        # source-slit flexure head
 uv run carriage [--show]                         # cutoff carriage
 uv run cassette [--show]                         # cassette blank and clamp bars
-uv run rail-shoe [--show]                        # common rail shoe
+uv run rail-shoe [--show] [--figure]             # common rail shoe
 
 uv run build-design-doc                          # docs/design/ -> exports/docs/schlieren-design.md
 uv run build-bom-xlsx                            # bom/bom.csv -> exports/bom/schlieren-bom.xlsx
 ```
 
-Every part command takes `--help`. The part commands write their STEP/STL files to `exports/`.
+Every part command takes `--help`. The part commands write their STEP/STL files to `exports/`. `--figure`
+re-renders the part's design-document figure in `docs/design/figures/`.
 
 Once a design element is accepted, it is propagated to the CAD source and tests, the relevant `docs/design/`
 fragment, and `bom/bom.csv`. All of these must agree. In Claude Code, the `/finalize-decision` skill does

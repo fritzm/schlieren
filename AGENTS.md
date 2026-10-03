@@ -38,7 +38,11 @@ BOM `Source section` column), plus `12-open-work.md` for cross-cutting open work
 unless the task needs it.
 
 `uv run build-design-doc` concatenates the fragments into `exports/docs/schlieren-design.md`
-(generated; never edit it).
+(generated; never edit it) and copies `docs/design/figures/` beside it.
+
+Figures in `docs/design/figures/` are PNG renders generated from the CAD by a part command's `--figure`
+option (`src/schlieren/render.py`) and versioned so the fragments display without a build. They are derived
+artifacts: regenerate one when its part's geometry changes; never edit it by hand.
 
 ### BOM and procurement: `bom/bom.csv`
 
@@ -203,6 +207,7 @@ uv run python -m unittest discover -s tests -v        # all tests
 uv run python -m unittest tests.test_carriage -v      # one test module
 uvx ruff check . && uvx ruff format .                 # lint/format (line length 110, from pyproject.toml)
 uv run <command> --help                               # part commands: build/export (--show opens the viewer)
+uv run rail-shoe --figure                             # re-render docs/design/figures/rail-shoe.png
 uv run build-design-doc                               # docs/design/ -> exports/docs/schlieren-design.md
 uv run build-bom-xlsx                                 # bom/bom.csv -> exports/bom/schlieren-bom.xlsx
 ```

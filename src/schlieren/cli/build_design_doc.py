@@ -1,17 +1,20 @@
 """Concatenate docs/design/NN-*.md fragments (filename order) into one consolidated design document.
 
-The output is a generated artifact; edit the fragments, never the output.
+The output is a generated artifact; edit the fragments, never the output. The fragments' figures are copied
+to figures/ beside it, so their relative image links resolve there too.
 
     uv run build-design-doc [-o exports/docs/schlieren-design.md]
 """
 
 import argparse
 import re
+import shutil
 from pathlib import Path
 
 # src/schlieren/cli/<module>.py -> repo root (valid for the editable install that uv sync creates)
 REPO_ROOT = Path(__file__).resolve().parents[3]
 FRAGMENT_DIR = REPO_ROOT / "docs" / "design"
+FIGURE_DIR = FRAGMENT_DIR / "figures"
 DEFAULT_OUTPUT = REPO_ROOT / "exports" / "docs" / "schlieren-design.md"
 
 
@@ -31,6 +34,10 @@ def main() -> None:
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(build_design_doc(), encoding="utf-8")
     print(f"Wrote {args.output}")
+    if FIGURE_DIR.is_dir():
+        copied = args.output.parent / FIGURE_DIR.name
+        shutil.copytree(FIGURE_DIR, copied, dirs_exist_ok=True)
+        print(f"Copied figures to {copied}")
 
 
 if __name__ == "__main__":
