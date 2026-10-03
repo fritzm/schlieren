@@ -8,8 +8,8 @@ current physical design. Read the relevant repository resources (`docs/design/`,
 
 ## Sources of truth
 
-Git is authoritative for the design baseline and the BOM. Google Drive holds generated views for sharing and
-GUI editing only.
+Git is authoritative for the design baseline and the BOM. Google Drive holds generated views only: a
+read-only PDF of the design document for sharing, and the BOM Sheet for sharing and GUI editing.
 
 Use the following priority order:
 
@@ -38,7 +38,9 @@ BOM `Source section` column), plus `12-open-work.md` for cross-cutting open work
 unless the task needs it.
 
 `uv run build-design-doc` concatenates the fragments into `exports/docs/schlieren-design.md`
-(generated; never edit it) and copies `docs/design/figures/` beside it.
+(generated; never edit it) and copies `docs/design/figures/` beside it. With `--pdf` it also writes
+`schlieren-design.html` and `schlieren-design.pdf` there; the PDF is the copy shared on Drive. The PDF step
+needs a local Chrome or Chromium and network access (KaTeX, for the formulas).
 
 Figures in `docs/design/figures/` are PNG renders generated from the CAD by a part command's `--figure`
 option (`src/schlieren/render.py`) and versioned so the fragments display without a build. They are derived
@@ -64,9 +66,13 @@ project dimensions; a measurement recorded in `docs/design/` takes precedence.
 
 ### Google Drive copies
 
-The Google Doc "schlieren-project-status" and Sheet "schlieren-bom" (Projects/iPhone schlieren/) are working
-copies. Edits made there are not authoritative until reconciled into Git by diffing against the current
-`bom.csv` or fragment, never by blind overwrite. Archive snapshots are historical only.
+The design document is shared in Projects/iPhone schlieren/ as a read-only PDF, `schlieren-design.pdf` from
+`uv run build-design-doc --pdf`, uploaded by hand from time to time. It is not edited on Drive; change the
+`docs/design/` fragments and rebuild.
+
+The Sheet "schlieren-bom" in the same folder is a working copy. Edits made there are not authoritative until
+reconciled into Git by diffing against the current `bom.csv`, never by blind overwrite. Archive snapshots are
+historical only.
 
 Agent access to Drive goes through the fritzm-agents isolation model: read-only pulls are fine; writes to
 Drive require explicit user confirmation each time. Do not assume any particular auth method is set up.
@@ -208,7 +214,7 @@ uv run python -m unittest tests.test_carriage -v      # one test module
 uvx ruff check . && uvx ruff format .                 # lint/format (line length 110, from pyproject.toml)
 uv run <command> --help                               # part commands: build/export (--show opens the viewer)
 uv run rail-shoe --figure                             # re-render docs/design/figures/rail-shoe.png
-uv run build-design-doc                               # docs/design/ -> exports/docs/schlieren-design.md
+uv run build-design-doc [--pdf]                       # docs/design/ -> exports/docs/schlieren-design.md (+ .pdf)
 uv run build-bom-xlsx                                 # bom/bom.csv -> exports/bom/schlieren-bom.xlsx
 ```
 
@@ -219,7 +225,7 @@ current directory. To add a command: write `cli/<name>.py` with `main()` and reg
 
 A `.claude/` PostToolUse hook auto-formats edited `.py` files with ruff, and a PreToolUse hook blocks direct
 edits to `exports/`. Project skills: `/finalize-decision` (propagate an accepted decision) and `/sync-drive`
-(diff-based Drive reconciliation).
+(design-document PDF for Drive; diff-based BOM Sheet reconciliation).
 
 ## Working with the BOM
 

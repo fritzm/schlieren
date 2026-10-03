@@ -47,7 +47,7 @@ uv run carriage [--show]                         # cutoff carriage
 uv run cassette [--show]                         # cassette blank and clamp bars
 uv run rail-shoe [--show] [--figure]             # common rail shoe
 
-uv run build-design-doc                          # docs/design/ -> exports/docs/schlieren-design.md
+uv run build-design-doc [--pdf]                  # docs/design/ -> exports/docs/schlieren-design.md (+ .pdf)
 uv run build-bom-xlsx                            # bom/bom.csv -> exports/bom/schlieren-bom.xlsx
 ```
 

@@ -31,5 +31,6 @@ line-length = 110
 
 [dependency-groups]
 dev = [
+    "markdown>=3.11",
     "openpyxl>=3.1.5",
 ]

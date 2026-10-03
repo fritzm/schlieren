@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from schlieren.cli.build_design_doc import FIGURE_DIR, FRAGMENT_DIR, build_design_doc
+from schlieren.cli.build_design_doc import FIGURE_DIR, FRAGMENT_DIR, build_design_doc, build_print_html
 
 # Markdown images, and the HTML <img> used where a figure is centered with a caption.
 IMAGE_LINK = re.compile(r"""!\[[^\]]*\]\(([^)]+)\)|<img\s[^>]*?src="([^"]+)\"""")
@@ -36,6 +36,13 @@ class DesignDocTests(unittest.TestCase):
             )
             for target in image_targets(output.read_text(encoding="utf-8")):
                 self.assertTrue((output.parent / target).is_file(), target)
+
+    def test_print_html_keeps_figures_tables_and_formulas(self):
+        design_doc = build_design_doc()
+        html = build_print_html(design_doc, "schlieren-design")
+        self.assertEqual(image_targets(html), image_targets(design_doc))
+        self.assertIn("<table>", html)
+        self.assertEqual(html.count("$$"), design_doc.count("$$") + 2)  # Plus the KaTeX delimiter setup.
 
 
 if __name__ == "__main__":

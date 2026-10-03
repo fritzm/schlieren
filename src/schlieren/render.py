@@ -14,7 +14,10 @@ from build123d import Shape, Vector
 
 from schlieren.cad import leaves
 
-FIGURE_WIDTH_PX = 500
+FIGURE_WIDTH_PX = 500  # On-page width; the fragment's <img width> must match.
+FIGURE_PIXEL_RATIO = (
+    2  # Rendered pixels per on-page pixel, so the figure stays sharp on high-density displays.
+)
 FIGURE_MARGIN_FRACTION = 0.03  # Of the figure width, on every side.
 MESH_TOLERANCE = 0.02  # Tessellation deviation, mm.
 MESH_ANGULAR_TOLERANCE = 0.1  # rad
@@ -22,7 +25,7 @@ FEATURE_ANGLE = (
     30.0  # deg; mesh edges sharper than this are outlined, and shading is not smoothed across them.
 )
 OUTLINE_COLOR = (0.1, 0.1, 0.1)
-OUTLINE_WIDTH_PX = 2.0
+OUTLINE_WIDTH_PX = 1.25  # On-page.
 MULTISAMPLES = 8
 # Lighting is kept bright and low-contrast so shaded faces stay distinct from a dark page background.
 SURFACE_AMBIENT = 0.2
@@ -65,7 +68,7 @@ def _actor(source: vtk.vtkAlgorithm) -> vtk.vtkActor:
 def _outline_actor(source: vtk.vtkAlgorithm) -> vtk.vtkActor:
     actor = _actor(source)
     actor.GetProperty().SetColor(*OUTLINE_COLOR)
-    actor.GetProperty().SetLineWidth(OUTLINE_WIDTH_PX)
+    actor.GetProperty().SetLineWidth(OUTLINE_WIDTH_PX * FIGURE_PIXEL_RATIO)
     actor.GetProperty().LightingOff()
     return actor
 
@@ -162,7 +165,8 @@ def render_figure(
     window.SetOffScreenRendering(True)
     window.SetAlphaBitPlanes(True)
     window.SetMultiSamples(MULTISAMPLES)
-    window.SetSize(FIGURE_WIDTH_PX, round(FIGURE_WIDTH_PX * span_y / span_x))
+    width = FIGURE_WIDTH_PX * FIGURE_PIXEL_RATIO
+    window.SetSize(width, round(width * span_y / span_x))
     window.AddRenderer(renderer)
     window.Render()
 
