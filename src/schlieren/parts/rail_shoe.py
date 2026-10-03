@@ -24,6 +24,8 @@ from build123d import (
 )
 
 from schlieren.cad import FROM_CORNER, ON_FLOOR, along_x, along_y, assembly, labeled
+from schlieren.parts.rail import build_rail
+from schlieren.vendor_cad import thorlabs_tr50_m
 
 
 @dataclass(frozen=True)
@@ -145,6 +147,7 @@ class RailShoeParameters:
 
 SHOE_COLOR = (0.8, 0.65, 0.3)
 REFERENCE_COLOR = (0.6, 0.6, 0.6)
+VIEWER_RAIL_OVERHANG = 15.0  # Rail shown beyond each end of the shoe.
 
 
 def build_rail_shoe(p: RailShoeParameters | None = None) -> Part:
@@ -259,10 +262,11 @@ def build_rail_shoe(p: RailShoeParameters | None = None) -> Part:
 
 
 def reference_parts(p: RailShoeParameters | None = None) -> dict[str, Part]:
+    """Nominal envelopes of the parts the shoe must clear; the post is its exact metric nominal cylinder."""
     p = p or RailShoeParameters()
     return {
         "rail envelope": Pos(0, 0, -p.rail_height)
-        * Box(p.rail_width, p.length + 30, p.rail_height, align=ON_FLOOR),
+        * Box(p.rail_width, p.length + 2 * VIEWER_RAIL_OVERHANG, p.rail_height, align=ON_FLOOR),
         "datum disc": Cylinder(p.datum_disc_diameter / 2, p.datum_disc_thickness, align=ON_FLOOR),
         "TR50/M post envelope": Pos(0, 0, p.datum_disc_thickness)
         * Cylinder(p.post_diameter / 2, 50.0, align=ON_FLOOR),
@@ -270,13 +274,15 @@ def reference_parts(p: RailShoeParameters | None = None) -> dict[str, Part]:
 
 
 def viewer_assembly(shoe: Part, p: RailShoeParameters | None = None) -> Compound:
+    """Shoe on a generic 2020 rail segment, with the datum disc and the vendor TR50/M model seated on it."""
+    p = p or RailShoeParameters()
     refs = reference_parts(p)
     rparts = assembly(
         "Reference parts",
         [
-            labeled(refs["rail envelope"], "Rail", REFERENCE_COLOR),
+            labeled(build_rail(p.length + 2 * VIEWER_RAIL_OVERHANG), "Rail", REFERENCE_COLOR),
             labeled(refs["datum disc"], "Datum disc", REFERENCE_COLOR),
-            labeled(refs["TR50/M post envelope"], "TR50_M", REFERENCE_COLOR),
+            labeled(thorlabs_tr50_m(), "TR50_M", REFERENCE_COLOR, Pos(0, 0, p.datum_disc_thickness)),
         ],
     )
     return assembly("Rail shoe prototype", [labeled(shoe, "Shoe", SHOE_COLOR), rparts])

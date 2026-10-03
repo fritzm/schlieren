@@ -74,8 +74,11 @@ uv run python -m unittest tests.test_rail_shoe -v
 The first command exports STEP and STL to ignored `exports/step` and
 `exports/stl` directories. `--show` also sends the assembly to the OCP CAD
 Viewer extension. Select the project's `.venv` interpreter in VS Code.
-The gray-box rail/post references are simplified envelopes, not fabrication
-models of purchased components. Only the shoe is exported. Toggle the `Post`
+The gray rail is the generic 2020 profile from `src/schlieren/parts/rail.py`
+(`build_rail(length)`, rail-top frame), a visualization model shared with any
+assembly that shows the post and shoe; it is a nominal slot-6 section, not the
+measured extrusion (§4.1). The datum disc is a simplified envelope, and the
+post is the Thorlabs TR50/M vendor model. Only the shoe is exported. Toggle the `Post`
 group in the viewer tree to hide/show the post independently of the shoe,
 rail, and datum disc. `--figure` renders the same assembly to
 `docs/design/figures/rail-shoe.png`, the §5.3 figure in the design document.

@@ -15,10 +15,9 @@ Three fixtures use the common post/shoe architecture:
 
 ### 5.2 Optical-holder allocation
 
-- condenser: 1 × SMR1/M
+- LED/condenser/iris: 1 × SMR1/M
 - slit head: 1 × SM1RC/M, clamping the printed spigot of the slit-head adapter (§8.6)
 - cutoff carriage: 1 × SM1RC/M, clamping the printed spigot of the carriage base plate (§9.1)
-- LED source: no post of its own; the threaded LED module screws into the condenser SMR1/M
 
 The condenser/slit/cutoff holders preserve the 22.1 mm post-top-to-axis dimension.
 
@@ -49,7 +48,7 @@ The clamp provides rotational and lateral retention; post height is still establ
 bottoming on the metal datum disc. The model, with its fit-tested ABS allowances, is
 `src/schlieren/parts/rail_shoe.py`.
 
-![Common rail shoe on the rail and TR50/M post envelopes: saddle body, split clamping collar, and clamp ears with the captured-nut pocket](figures/rail-shoe.png)
+![Common rail shoe on the rail and TR50/M post: saddle body, split clamping collar, and clamp ears with the captured-nut pocket](figures/rail-shoe.png)
 
 #### Common printed split-clamp hardware
 

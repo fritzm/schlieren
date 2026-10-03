@@ -9,6 +9,9 @@ from build123d import Cylinder, GeomType, Plane, RegularPolygon, extrude, sectio
 from schlieren.cad import ON_FLOOR, along_y
 from schlieren.parts.rail_shoe import RailShoeParameters, build_rail_shoe, reference_parts, viewer_assembly
 
+# The TR50/M STEP model is rounded to inches (0.499 in diameter), so it differs slightly from the nominal.
+TR50_MODEL_ROUNDING = 0.03
+
 
 def ear_x_end(p):
     """Ear tip x: ear_width beyond where the collar meets the inner ear face."""
@@ -111,6 +114,16 @@ class RailShoeTests(unittest.TestCase):
         self.assertEqual(
             [child.label for child in groups["Reference parts"].children], ["Rail", "Datum disc", "TR50_M"]
         )
+
+    def test_viewer_post_is_vendor_model_seated_on_datum_disc(self):
+        p = self.p
+        references = viewer_assembly(self.shoe, p).children[1]
+        post = {child.label: child for child in references.children}["TR50_M"]
+        body = max(post.solids(), key=lambda s: s.volume).bounding_box()  # Not the stud.
+        self.assertAlmostEqual(body.min.Z, p.datum_disc_thickness, places=5)
+        self.assertAlmostEqual(body.size.X, p.post_diameter, delta=TR50_MODEL_ROUNDING)
+        self.assertAlmostEqual(body.center().X, 0, places=5)
+        self.assertAlmostEqual(body.center().Y, 0, places=5)
 
 
 if __name__ == "__main__":
