@@ -17,8 +17,9 @@ in docs/reference/.
 from dataclasses import dataclass
 from math import isfinite
 
-import cadquery as cq
+from build123d import Cylinder, Pos
 
+from schlieren.cad import ON_FLOOR, along_y, assembly, labeled
 from schlieren.vendor_cad import alpha_cn40_40b, thorlabs_sm1cp2m, thorlabs_smr1_m, thorlabs_tr50_m
 
 INCH = 25.4
@@ -149,11 +150,10 @@ class LEDStackParameters:
 
 
 def _disc(diameter, u0, u1, z, inner=0.0):
-    plane = cq.Plane(origin=(0, u0, z), xDir=(1, 0, 0), normal=(0, 1, 0))
-    wp = cq.Workplane(plane).circle(diameter / 2)
+    disc = along_y((0, u0, z)) * Cylinder(diameter / 2, u1 - u0, align=ON_FLOOR)
     if inner:
-        wp = wp.circle(inner / 2)
-    return wp.extrude(u1 - u0)
+        disc -= along_y((0, u0, z)) * Cylinder(inner / 2, u1 - u0, align=ON_FLOOR)
+    return disc
 
 
 def build_led_stack_assembly(p=None, board=GREEN, engagement=None):
@@ -176,9 +176,8 @@ def build_led_stack_assembly(p=None, board=GREEN, engagement=None):
         "SM1CP2M cap": (thorlabs_sm1cp2m(), (0, 0, z)),
         "CN40-40B heatsink": (alpha_cn40_40b(), (0, p.heatsink_front, z)),
     }
-    assembly = cq.Assembly(name="Threaded LED module stack")
-    for name, (part, origin) in vendor_parts.items():
-        assembly.add(part, name=name, loc=cq.Location(origin), color=cq.Color(0.75, 0.75, 0.78))
-    for name, part in envelopes.items():
-        assembly.add(part, name=name, color=cq.Color(0.6, 0.62, 0.66))
-    return assembly
+    children = [
+        labeled(part, name, (0.75, 0.75, 0.78), Pos(*origin)) for name, (part, origin) in vendor_parts.items()
+    ]
+    children += [labeled(part, name, (0.6, 0.62, 0.66)) for name, part in envelopes.items()]
+    return assembly("Threaded LED module stack", children)

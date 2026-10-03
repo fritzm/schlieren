@@ -3,8 +3,7 @@
 import argparse
 from pathlib import Path
 
-import cadquery as cq
-
+from schlieren.cad import EXPORTERS
 from schlieren.parts.slit_head import (
     SlitHeadParameters,
     build_clamp_bar,
@@ -55,7 +54,7 @@ def main():
         for kind in ("step", "stl"):
             path = args.output / kind / f"{name}.{kind}"
             path.parent.mkdir(parents=True, exist_ok=True)
-            cq.exporters.export(part, str(path))
+            EXPORTERS[kind](part, path)
             print(path)
     if args.show:
         from ocp_vscode import show

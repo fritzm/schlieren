@@ -30,25 +30,15 @@ The complete system should pack into a standard airline rolling suitcase. Plan a
 kg checked-bag target unless a higher allowance applies.
 
 The design is cost-conscious rather than constrained to a fixed dollar ceiling. Commodity 2020 extrusion,
-Baltic birch, standard fasteners, and printed ABS are preferred where they are adequate. Commercial
+Baltic birch plywood, standard fasteners, and printed ABS are preferred where they are adequate. Commercial
 optomechanics are used where they materially simplify alignment or provide precision that would otherwise be
 troublesome.
 
 ### 1.1 Fabrication envelope
 
-Near-term 3D printing is ABS only. Printed parts are appropriate for:
-
-- rail/post shoes;
-- the source-slit flexure head and cutoff carriage body;
-- cassettes and cassette retainers;
-- plungers and guide features;
-- phone/lens supports;
-- mirror safety retainers;
-- other lightly loaded fitments.
-
-Critical optical heights and precision datums should preferably be established by metal posts, optical
-hardware, shim stock, mechanical stops, or adjustment mechanisms rather than relying solely on as-printed ABS
-dimensions.
+Near-term 3D printing is ABS only. Critical optical heights and precision datums should preferably be
+established by metal posts, optical hardware, shim stock, mechanical stops, or adjustment mechanisms rather
+than relying solely on as-printed ABS dimensions.
 
 The following are out of scope:
 
@@ -60,13 +50,7 @@ drilled/tapped with ordinary shop tools, thin foil, or printed ABS. Simple drill
 aluminum LED carrier caps and heatsinks is within scope.
 
 A table saw, drill press, and small hand router are available and are expected to be used for accurate working
-of Baltic birch plywood panels (thanks, Bret!).
-
-The governing mechanical principle is:
-
-> Printed ABS should provide shape, capture, guidance, interchangeability, and convenient adjustment; metal
-> hardware, optical posts, shims, mechanical stops, and commercial precision components should establish the
-> important datums, threads, and wear/load-transfer interfaces.
+of Baltic birch plywood panels (thanks, Bret!)
 
 ## 2. System overview and physical layout
 
@@ -101,17 +85,17 @@ The spherical mirror forms an image of the source slit back near the optical hea
 in the test region near the mirror deflect portions of this return beam relative to the cutoff, producing
 schlieren contrast.
 
-Several source-side and cutoff-side fixtures deliberately share common mechanics. Three locations use the
+Several source-side and cutoff-side fixtures deliberately share common mechanics. Three locations use a
 common TR50/M post + printed rail shoe concept:
 
-1. condenser/iris, which also carries the LED source module;
+1. LED/condenser/iris;
 2. source-slit flexure head;
 3. cutoff carriage.
 
-The source slit and the cutoff both rotate about the optical axis in an SM1RC/M. The slit uses a flexure head
-with fine centering and slit-width adjustment (§9); the cutoff uses a rotating carriage with a 64 mm cassette
-envelope, allowing knife-edge, wire, and color-filter experiments without changing the supporting mechanism
-(§8).
+The source slit and the cutoff both rotate about the optical axis in a Thorlabs SM1RC/M SM1 slip ring. The
+slit uses a flexure head with fine centering and slit-width adjustment (§9); the cutoff uses a rotating
+carriage with a 64 mm cassette envelope, allowing knife-edge, wire, and color-filter experiments without
+changing the supporting mechanism (§8).
 
 The mirror cell uses a three-point, approximately 120°-spaced fine-adjustment architecture with compression
 springs and spherical washer interfaces. The mirror is compliantly supported in the moving plate by six radial
@@ -147,10 +131,10 @@ The intended illumination cone is approximately ±1.8° to ±2.0°, correspondin
 Useful nominal beam diameters for a ±1.8° cone are:
 
 | Distance from source slit | Approx. beam diameter |
-|---|---|
-| 1 m | 63 mm |
-| 2 m | 127 mm |
-| 3.2 m | 203 mm |
+|---------------------------|-----------------------|
+|                       1 m |                 63 mm |
+|                       2 m |                127 mm |
+|                     3.2 m |                203 mm |
 
 The mirror's approximately f/7.9 focal ratio should not be confused with this source cone. The source operates
 near 2f, at approximately the mirror center of curvature.

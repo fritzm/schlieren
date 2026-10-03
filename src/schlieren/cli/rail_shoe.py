@@ -3,8 +3,7 @@
 import argparse
 from pathlib import Path
 
-import cadquery as cq
-
+from schlieren.cad import EXPORTERS
 from schlieren.parts.rail_shoe import build_rail_shoe, viewer_assembly
 
 
@@ -19,7 +18,7 @@ def main() -> None:
     for kind in ("step", "stl"):
         destination = args.output / kind / f"rail_shoe.{kind}"
         destination.parent.mkdir(parents=True, exist_ok=True)
-        cq.exporters.export(shoe, str(destination))
+        EXPORTERS[kind](shoe, destination)
         print(destination)
     if args.show:
         from ocp_vscode import show

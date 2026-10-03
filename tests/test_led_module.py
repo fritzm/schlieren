@@ -4,8 +4,9 @@ import math
 import unittest
 from dataclasses import replace
 
-import cadquery as cq
+from build123d import Box, Pos
 
+from schlieren.cad import FROM_CORNER, children_by_label
 from schlieren.parts.led_module import GREEN, MODULES, WHITE, LEDStackParameters, build_led_stack_assembly
 from schlieren.vendor_cad import (
     alpha_cn40_40b,
@@ -75,31 +76,29 @@ class LEDStackTests(unittest.TestCase):
 
     def test_vendor_models_match_catalog_parameters(self):
         p = self.p
-        post = max(thorlabs_tr50_m().val().Solids(), key=lambda s: s.Volume()).BoundingBox()  # Not the stud.
-        self.assertAlmostEqual(post.zlen, p.post_length, delta=TR50_MODEL_ROUNDING)
-        self.assertAlmostEqual(post.xlen, p.post_diameter, delta=TR50_MODEL_ROUNDING)
-        ring = thorlabs_smr1_m().val().BoundingBox()
-        self.assertAlmostEqual(ring.ylen, p.smr1_thickness, delta=MODEL_MATCH)
-        self.assertAlmostEqual(ring.xlen, p.smr1_outer_diameter, delta=MODEL_MATCH)
-        self.assertAlmostEqual(-ring.zmin, p.smr1_axis_above_post_top, delta=MODEL_MATCH)
-        cap = thorlabs_sm1cp2m().val().BoundingBox()
-        self.assertAlmostEqual(cap.ymax, p.cap_thread_length, delta=MODEL_MATCH)
-        self.assertAlmostEqual(cap.ylen, p.cap_overall, delta=MODEL_MATCH)
-        self.assertAlmostEqual(cap.xlen, p.cap_flange_diameter, delta=MODEL_MATCH)
-        sm1v05 = vendor_step("Thorlabs-SM1V05.step").val().BoundingBox()
-        self.assertAlmostEqual(sm1v05.xlen, p.sm1v05_overall, delta=MODEL_MATCH)
-        heatsink = alpha_cn40_40b().val()
-        hs = heatsink.BoundingBox()
-        self.assertAlmostEqual(hs.ymax, 0, delta=MODEL_MATCH)
-        self.assertAlmostEqual(hs.ylen, p.heatsink_height, delta=MODEL_MATCH)
-        self.assertAlmostEqual(hs.xlen, p.heatsink_diameter, delta=MODEL_MATCH)
-        self.assertAlmostEqual(hs.zlen, p.heatsink_diameter, delta=MODEL_MATCH)
+        post = max(thorlabs_tr50_m().solids(), key=lambda s: s.volume).bounding_box()  # Not the stud.
+        self.assertAlmostEqual(post.size.Z, p.post_length, delta=TR50_MODEL_ROUNDING)
+        self.assertAlmostEqual(post.size.X, p.post_diameter, delta=TR50_MODEL_ROUNDING)
+        ring = thorlabs_smr1_m().bounding_box()
+        self.assertAlmostEqual(ring.size.Y, p.smr1_thickness, delta=MODEL_MATCH)
+        self.assertAlmostEqual(ring.size.X, p.smr1_outer_diameter, delta=MODEL_MATCH)
+        self.assertAlmostEqual(-ring.min.Z, p.smr1_axis_above_post_top, delta=MODEL_MATCH)
+        cap = thorlabs_sm1cp2m().bounding_box()
+        self.assertAlmostEqual(cap.max.Y, p.cap_thread_length, delta=MODEL_MATCH)
+        self.assertAlmostEqual(cap.size.Y, p.cap_overall, delta=MODEL_MATCH)
+        self.assertAlmostEqual(cap.size.X, p.cap_flange_diameter, delta=MODEL_MATCH)
+        sm1v05 = vendor_step("Thorlabs-SM1V05.step").bounding_box()
+        self.assertAlmostEqual(sm1v05.size.X, p.sm1v05_overall, delta=MODEL_MATCH)
+        heatsink = alpha_cn40_40b()
+        hs = heatsink.bounding_box()
+        self.assertAlmostEqual(hs.max.Y, 0, delta=MODEL_MATCH)
+        self.assertAlmostEqual(hs.size.Y, p.heatsink_height, delta=MODEL_MATCH)
+        self.assertAlmostEqual(hs.size.X, p.heatsink_diameter, delta=MODEL_MATCH)
+        self.assertAlmostEqual(hs.size.Z, p.heatsink_diameter, delta=MODEL_MATCH)
 
         def section_area(y):
             r = p.heatsink_diameter
-            return (
-                heatsink.intersect(cq.Solid.makeBox(2 * r, 0.01, 2 * r, cq.Vector(-r, y, -r))).Volume() / 0.01
-            )
+            return (heatsink & (Pos(-r, y, -r) * Box(2 * r, 0.01, 2 * r, align=FROM_CORNER))).volume / 0.01
 
         # Full disc through the base, open pin field just behind it.
         self.assertAlmostEqual(section_area(-0.5), math.pi * p.heatsink_diameter**2 / 4, delta=1.0)
@@ -107,50 +106,45 @@ class LEDStackTests(unittest.TestCase):
 
     def test_vendor_model_placement(self):
         p = self.p
-        objects = build_led_stack_assembly(p).objects
+        placed = children_by_label(build_led_stack_assembly(p)).__getitem__
 
-        def placed(name):
-            return objects[name].obj.val().moved(objects[name].loc)
-
-        post = max(placed("TR50 M post").Solids(), key=lambda s: s.Volume()).BoundingBox()
-        self.assertAlmostEqual(post.zmin, p.datum_thickness, delta=0.01)
-        self.assertAlmostEqual(post.zmax, p.post_top, delta=TR50_MODEL_ROUNDING)
-        self.assertAlmostEqual(post.center.x, 0, delta=0.01)
-        self.assertAlmostEqual(post.center.y, p.smr1_thickness / 2, delta=MODEL_MATCH)
-        ring = placed("SMR1 M ring").BoundingBox()
-        self.assertAlmostEqual(ring.ymin, 0, delta=0.01)
-        self.assertAlmostEqual(ring.zmin, p.post_top, delta=0.01)
-        self.assertAlmostEqual((ring.xmin + ring.xmax) / 2, 0, delta=0.01)
-        cap = placed("SM1CP2M cap").BoundingBox()
-        self.assertAlmostEqual(cap.ymin, p.heatsink_front, delta=MODEL_MATCH)
-        self.assertAlmostEqual(cap.ymax, p.cap_face, delta=MODEL_MATCH)
-        self.assertAlmostEqual(cap.center.z, p.optical_height, delta=0.01)
-        heatsink = placed("CN40-40B heatsink").BoundingBox()
-        self.assertAlmostEqual(heatsink.ymax, p.heatsink_front, delta=MODEL_MATCH)
-        self.assertAlmostEqual(heatsink.ymin, p.heatsink_front - p.heatsink_height, delta=MODEL_MATCH)
-        self.assertAlmostEqual(heatsink.zmin, p.optical_height - p.heatsink_diameter / 2, delta=0.01)
-        self.assertAlmostEqual(heatsink.zmin - p.post_top, p.heatsink_post_top_clearance, delta=0.01)
+        post = max(placed("TR50 M post").solids(), key=lambda s: s.volume).bounding_box()
+        self.assertAlmostEqual(post.min.Z, p.datum_thickness, delta=0.01)
+        self.assertAlmostEqual(post.max.Z, p.post_top, delta=TR50_MODEL_ROUNDING)
+        self.assertAlmostEqual(post.center().X, 0, delta=0.01)
+        self.assertAlmostEqual(post.center().Y, p.smr1_thickness / 2, delta=MODEL_MATCH)
+        ring = placed("SMR1 M ring").bounding_box()
+        self.assertAlmostEqual(ring.min.Y, 0, delta=0.01)
+        self.assertAlmostEqual(ring.min.Z, p.post_top, delta=0.01)
+        self.assertAlmostEqual((ring.min.X + ring.max.X) / 2, 0, delta=0.01)
+        cap = placed("SM1CP2M cap").bounding_box()
+        self.assertAlmostEqual(cap.min.Y, p.heatsink_front, delta=MODEL_MATCH)
+        self.assertAlmostEqual(cap.max.Y, p.cap_face, delta=MODEL_MATCH)
+        self.assertAlmostEqual(cap.center().Z, p.optical_height, delta=0.01)
+        heatsink = placed("CN40-40B heatsink").bounding_box()
+        self.assertAlmostEqual(heatsink.max.Y, p.heatsink_front, delta=MODEL_MATCH)
+        self.assertAlmostEqual(heatsink.min.Y, p.heatsink_front - p.heatsink_height, delta=MODEL_MATCH)
+        self.assertAlmostEqual(heatsink.min.Z, p.optical_height - p.heatsink_diameter / 2, delta=0.01)
+        self.assertAlmostEqual(heatsink.min.Z - p.post_top, p.heatsink_post_top_clearance, delta=0.01)
 
     def test_assembly_parts_do_not_interfere(self):
         for board in MODULES:
             p = self.p
             for e in p.engagement_range(board):
                 assembly = build_led_stack_assembly(p, board, e)
-                parts = {
-                    n: o.obj.val().moved(o.loc) for n, o in assembly.objects.items() if o.obj is not None
-                }
-                self.assertTrue(all(s.isValid() for s in parts.values()))
+                parts = children_by_label(assembly)
+                self.assertTrue(all(s.is_valid for s in parts.values()))
                 names = list(parts)
                 for i, a in enumerate(names):
                     for b in names[i + 1 :]:
-                        overlap = parts[a].intersect(parts[b])
-                        if overlap.Volume() < 1e-6:
+                        overlap = parts[a] & parts[b]
+                        if overlap.volume < 1e-6:
                             continue
                         # Only the inch-rounded TR50/M model may overlap its seat, by that rounding.
                         self.assertIn("TR50 M post", (a, b), (board.name, e, a, b))
-                        bb = overlap.BoundingBox()
+                        bb = overlap.bounding_box()
                         self.assertLessEqual(
-                            min(bb.xlen, bb.ylen, bb.zlen), TR50_MODEL_ROUNDING, (board.name, e, a, b)
+                            min(bb.size.X, bb.size.Y, bb.size.Z), TR50_MODEL_ROUNDING, (board.name, e, a, b)
                         )
 
     def test_reject_out_of_range(self):

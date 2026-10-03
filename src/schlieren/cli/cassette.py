@@ -3,8 +3,9 @@
 import argparse
 from pathlib import Path
 
-import cadquery as cq
+from build123d import Pos
 
+from schlieren.cad import EXPORTERS, assembly, place
 from schlieren.parts.carriage import CarriageParameters, build_carriage
 from schlieren.parts.cassette import build_cassette, build_cassette_assembly, build_clamp_bar
 
@@ -23,18 +24,16 @@ def main():
         for kind in ("step", "stl"):
             path = args.output / kind / f"{name}.{kind}"
             path.parent.mkdir(parents=True, exist_ok=True)
-            cq.exporters.export(part, str(path))
+            EXPORTERS[kind](part, path)
             print(path)
     if args.show:
         from ocp_vscode import show
 
         cassette = build_cassette_assembly()
         if args.with_carriage:
-            assembly = build_carriage(p, travel=args.travel)
-            assembly.add(
-                cassette, loc=cq.Location(cq.Vector(0, args.travel, p.plate_thickness + p.datum_projection))
-            )
-            show(assembly)
+            carriage = build_carriage(p, travel=args.travel)
+            seated = Pos(0, args.travel, p.plate_thickness + p.datum_projection)
+            show(assembly(carriage.label, [*carriage.children, place(seated, cassette)]))
         else:
             show(cassette)
 

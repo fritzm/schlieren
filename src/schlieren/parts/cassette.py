@@ -7,9 +7,24 @@ two removable clamp bars and hardware references are available as an assembly.
 """
 
 from dataclasses import dataclass
-from math import isfinite, radians, tan
+from math import cos, isfinite, pi, radians, tan
 
-import cadquery as cq
+from build123d import (
+    Axis,
+    Box,
+    Circle,
+    Cone,
+    Cylinder,
+    Plane,
+    Polygon,
+    Pos,
+    RegularPolygon,
+    Rot,
+    extrude,
+    fillet,
+)
+
+from schlieren.cad import ON_FLOOR, assembly, labeled
 
 
 @dataclass(frozen=True)
@@ -94,27 +109,21 @@ def build_cassette(p=None):
         (-front_half, p.thickness),
         (-half, shoulder),
     ]
-    pair = cq.Workplane("YZ", origin=(-half, 0, 0)).polyline(profile).close().extrude(p.size)
-    blank = pair.intersect(pair.rotate((0, 0, 0), (0, 0, 1), 90))
-    blank = blank.cut(cq.Workplane("XY").circle(p.aperture_diameter / 2).extrude(p.thickness))
+    pair = extrude(Plane.YZ.offset(-half) * Polygon(*profile, align=None), amount=p.size)
+    blank = pair & (Rot(Z=90) * pair)
+    blank -= Cylinder(p.aperture_diameter / 2, p.thickness, align=ON_FLOOR)
     for x, y in p.clamp_holes:
-        bore = cq.Workplane("XY", origin=(x, y, 0)).circle(p.bore_diameter / 2).extrude(p.thickness)
-        sink = cq.Solid.makeCone(
-            p.countersink_diameter / 2, p.bore_diameter / 2, p.countersink_depth, cq.Vector(x, y, 0)
+        blank -= Pos(x, y, 0) * Cylinder(p.bore_diameter / 2, p.thickness, align=ON_FLOOR)
+        blank -= Pos(x, y, 0) * Cone(
+            p.countersink_diameter / 2, p.bore_diameter / 2, p.countersink_depth, align=ON_FLOOR
         )
-        blank = blank.cut(bore).cut(sink)
     for x in (-p.cleat_x, p.cleat_x):
-        cleat = cq.Workplane(
-            obj=cq.Solid.makeCone(
-                p.cleat_base_diameter / 2,
-                p.cleat_top_diameter / 2,
-                p.cleat_height,
-                cq.Vector(x, 0, p.thickness),
-            )
+        cleat = Pos(x, 0, p.thickness) * Cone(
+            p.cleat_base_diameter / 2, p.cleat_top_diameter / 2, p.cleat_height, align=ON_FLOOR
         )
-        cleat = cleat.edges(">Z").fillet(p.cleat_top_round)
-        blank = blank.union(cleat)
-    return blank.clean()
+        cleat = fillet(cleat.edges().sort_by(Axis.Z)[-1], p.cleat_top_round)
+        blank += cleat
+    return blank
 
 
 @dataclass(frozen=True)
@@ -161,18 +170,15 @@ def build_clamp_bar(p=None, b=None):
         (x + half, b.outer_edge_y),
         (-x - half, b.outer_edge_y),
     ]
-    bar = cq.Workplane("XY").polyline(points).close().extrude(b.thickness)
-    bar = bar.edges("|Z").fillet(b.corner_radius)
+    bar = extrude(Polygon(*points, align=None), amount=b.thickness)
+    bar = fillet(bar.edges().filter_by(Axis.Z), b.corner_radius)
     for sign in (-1, 1):
         relief_width = x + half - b.end_relief_start_x
-        relief = (
-            cq.Workplane("XY")
-            .box(relief_width, p.size, b.end_relief_depth, centered=(True, True, False))
-            .translate((sign * (b.end_relief_start_x + relief_width / 2), 0, 0))
+        bar -= Pos(sign * (b.end_relief_start_x + relief_width / 2), 0, 0) * Box(
+            relief_width, p.size, b.end_relief_depth, align=ON_FLOOR
         )
-        bar = bar.cut(relief)
-        bar = bar.cut(cq.Workplane("XY").center(sign * x, y).circle(p.bore_diameter / 2).extrude(b.thickness))
-    return bar.clean()
+        bar -= Pos(sign * x, y, 0) * Cylinder(p.bore_diameter / 2, b.thickness, align=ON_FLOOR)
+    return bar
 
 
 def build_cassette_assembly(p=None, b=None):
@@ -181,57 +187,42 @@ def build_cassette_assembly(p=None, b=None):
     Hardware is unthreaded envelope geometry, not fabrication CAD. Media is
     omitted: media_lift describes a provisional setup elevation only.
     """
-    from math import cos, pi
-
     p = p or CassetteParameters()
     b = b or ClampBarParameters()
-    assembly = cq.Assembly(name="Cassette assembly (preliminary)")
-    assembly.add(build_cassette(p), name="Cassette base", color=cq.Color(0.8, 0.4, 0.25))
     bottom = b.bar_bottom(p)
-    bar = build_clamp_bar(p, b).translate((0, 0, bottom))
-    for sign, label in ((1, "Upper clamp"), (-1, "Lower clamp")):
-        clamp = cq.Assembly(name=label)
-        clamp.add(bar, name="Printed bar", color=cq.Color(0.3, 0.55, 0.8))
-        pad = cq.Workplane(
-            "XY", origin=(0, (b.inner_edge_y + b.outer_edge_y) / 2, bottom - b.epdm_thickness)
-        ).box(
-            2 * b.bridge_half_length,
-            b.outer_edge_y - b.inner_edge_y,
-            b.epdm_thickness,
-            centered=(True, True, False),
+    bar = Pos(0, 0, bottom) * build_clamp_bar(p, b)
+    pad = Pos(0, (b.inner_edge_y + b.outer_edge_y) / 2, bottom - b.epdm_thickness) * Box(
+        2 * b.bridge_half_length, b.outer_edge_y - b.inner_edge_y, b.epdm_thickness, align=ON_FLOOR
+    )
+    hardware = []
+    for i, x in enumerate((-p.clamp_hole_x, p.clamp_hole_x), 1):
+        y = p.clamp_hole_y
+        washer_z = bottom + b.thickness
+        washer = extrude(
+            Pos(x, y, washer_z) * (Circle(b.washer_od / 2) - Circle(b.washer_id / 2)),
+            amount=b.washer_thickness,
         )
-        clamp.add(pad, name="EPDM reference", color=cq.Color(0.15, 0.15, 0.15))
-        for i, x in enumerate((-p.clamp_hole_x, p.clamp_hole_x), 1):
-            y = p.clamp_hole_y
-            washer_z = bottom + b.thickness
-            washer = (
-                cq.Workplane("XY", origin=(x, y, washer_z))
-                .circle(b.washer_od / 2)
-                .circle(b.washer_id / 2)
-                .extrude(b.washer_thickness)
-            )
-            nut = (
-                cq.Workplane("XY", origin=(x, y, washer_z + b.washer_thickness))
-                .polygon(6, b.nut_af / cos(pi / 6))
-                .circle(p.screw_diameter / 2)
-                .extrude(b.nut_height)
-            )
-            # Ideal 90° head cone and plain shank; drive socket/threads omitted.
-            head_depth = (p.screw_head_diameter - p.screw_diameter) / 2
-            screw = cq.Workplane(
-                obj=cq.Solid.makeCone(
-                    p.screw_head_diameter / 2,
-                    p.screw_diameter / 2,
-                    head_depth,
-                    cq.Vector(x, y, b.head_recess),
-                )
-            )
-            screw = screw.union(
-                cq.Workplane("XY", origin=(x, y, b.head_recess + head_depth))
-                .circle(p.screw_diameter / 2)
-                .extrude(b.screw_length - head_depth)
-            )
-            for name, part in (("Washer", washer), ("Nut", nut), ("Screw", screw)):
-                clamp.add(part, name=f"{name} {i}", color=cq.Color(0.7, 0.7, 0.72))
-        assembly.add(clamp, loc=cq.Location(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), 0 if sign == 1 else 180))
-    return assembly
+        nut = extrude(
+            Pos(x, y, washer_z + b.washer_thickness)
+            * (RegularPolygon(b.nut_af / cos(pi / 6) / 2, 6) - Circle(p.screw_diameter / 2)),
+            amount=b.nut_height,
+        )
+        # Ideal 90° head cone and plain shank; drive socket/threads omitted.
+        head_depth = (p.screw_head_diameter - p.screw_diameter) / 2
+        screw = Pos(x, y, b.head_recess) * Cone(
+            p.screw_head_diameter / 2, p.screw_diameter / 2, head_depth, align=ON_FLOOR
+        )
+        screw += Pos(x, y, b.head_recess + head_depth) * Cylinder(
+            p.screw_diameter / 2, b.screw_length - head_depth, align=ON_FLOOR
+        )
+        hardware += [(f"Washer {i}", washer), (f"Nut {i}", nut), (f"Screw {i}", screw)]
+    children = [labeled(build_cassette(p), "Cassette base", (0.8, 0.4, 0.25))]
+    for sign, label in ((1, "Upper clamp"), (-1, "Lower clamp")):
+        loc = Rot(Z=0 if sign == 1 else 180)
+        clamp = [
+            labeled(bar, "Printed bar", (0.3, 0.55, 0.8), loc),
+            labeled(pad, "EPDM reference", (0.15, 0.15, 0.15), loc),
+            *(labeled(part, name, (0.7, 0.7, 0.72), loc) for name, part in hardware),
+        ]
+        children.append(assembly(label, clamp))
+    return assembly("Cassette assembly (preliminary)", children)

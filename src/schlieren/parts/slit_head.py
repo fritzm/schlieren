@@ -32,8 +32,9 @@ with the slit post at x=y=0.
 from dataclasses import dataclass
 from math import cos, isfinite, pi
 
-import cadquery as cq
+from build123d import Axis, Box, Cylinder, Pos, RegularPolygon, Rot, extrude, fillet
 
+from schlieren.cad import FROM_CORNER, ON_FLOOR, along_y, assembly, labeled
 from schlieren.vendor_cad import SM1RC_M_THICKNESS, thorlabs_fas100, thorlabs_sm1rc_m, thorlabs_tr50_m
 
 INCH = 25.4
@@ -463,22 +464,20 @@ class SlitHeadParameters:
 
 
 def _box(x0, x1, y0, y1, z0, z1):
-    return cq.Workplane("XY").box(x1 - x0, y1 - y0, z1 - z0, centered=False).translate((x0, y0, z0))
+    return Pos(x0, y0, z0) * Box(x1 - x0, y1 - y0, z1 - z0, align=FROM_CORNER)
 
 
 def _z_cylinder(diameter, x, y, z0, z1):
-    return cq.Workplane("XY", origin=(x, y, z0)).circle(diameter / 2).extrude(z1 - z0)
+    return Pos(x, y, z0) * Cylinder(diameter / 2, z1 - z0, align=ON_FLOOR)
 
 
 def _y_cylinder(diameter, x, z, y0, y1):
-    plane = cq.Plane(origin=(x, y0, z), xDir=(1, 0, 0), normal=(0, 1, 0))
-    return cq.Workplane(plane).circle(diameter / 2).extrude(y1 - y0)
+    return along_y((x, y0, z)) * Cylinder(diameter / 2, y1 - y0, align=ON_FLOOR)
 
 
 def _y_hex(across_flats, x, z, y0, y1):
     """Hex pocket along y with flats facing ±z (the thin direction of the bars)."""
-    plane = cq.Plane(origin=(x, y0, z), xDir=(1, 0, 0), normal=(0, 1, 0))
-    return cq.Workplane(plane).polygon(6, across_flats / cos(pi / 6)).extrude(y1 - y0)
+    return extrude(along_y((x, y0, z)) * RegularPolygon(across_flats / cos(pi / 6) / 2, 6), amount=y1 - y0)
 
 
 def _magnet_pocket(p, x, z_top, well=0.0):
@@ -496,15 +495,13 @@ def _magnet_pocket(p, x, z_top, well=0.0):
     )
     if well:  # Open the well wide enough for the 1/4"-80 thread.
         thread = p.insert_bore - 0.5
-        pocket = pocket.union(
-            _box(
-                x - length / 2,
-                x + length / 2,
-                p.axis_y - thread / 2,
-                p.axis_y + thread / 2,
-                seat_top,
-                z_top + 1,
-            )
+        pocket += _box(
+            x - length / 2,
+            x + length / 2,
+            p.axis_y - thread / 2,
+            p.axis_y + thread / 2,
+            seat_top,
+            z_top + 1,
         )
     return pocket
 
@@ -546,7 +543,7 @@ def build_slit_head(p=None):
     ]
     head = parts[0]
     for part in parts[1:]:
-        head = head.union(part)
+        head += part
 
     cuts = []
     # FAS100 inserts: #1 in the frame top bar, #2 in the platform top bar; flanges outboard (+z).
@@ -576,15 +573,15 @@ def build_slit_head(p=None):
             )
         )
     for cut in cuts:
-        head = head.cut(cut)
+        head -= cut
 
     pin = p.spring_guide_pin_length
     for z0, z1 in (
         (p.frame_spring_seat_z - overlap, p.frame_spring_seat_z + pin),
         (p.platform_spring_seat_z - pin, p.platform_spring_seat_z + overlap),
     ):
-        head = head.union(_z_cylinder(p.spring_guide_pin_diameter, x, y, z0, z1))
-    return head.clean()
+        head += _z_cylinder(p.spring_guide_pin_diameter, x, y, z0, z1)
+    return head
 
 
 def build_spigot_adapter(p=None):
@@ -602,21 +599,19 @@ def build_spigot_adapter(p=None):
     plate = _box(min(xs) - m, max(xs) + m, p.adapter_back, p.adapter_front, min(zs) - m, max(zs) + m)
     spigot_back = p.adapter_back - p.spigot_length
     ring_face = p.adapter_back - p.ring_gap
-    plate = plate.union(_y_cylinder(p.spigot_shoulder_diameter, 0, 0, ring_face, p.adapter_back + 0.5))
-    plate = plate.union(_y_cylinder(p.spigot_diameter, 0, 0, spigot_back, ring_face + 0.5))
-    plate = plate.cut(_y_cylinder(p.spigot_bore, 0, 0, spigot_back - 1, p.adapter_front + 1))
+    plate += _y_cylinder(p.spigot_shoulder_diameter, 0, 0, ring_face, p.adapter_back + 0.5)
+    plate += _y_cylinder(p.spigot_diameter, 0, 0, spigot_back, ring_face + 0.5)
+    plate -= _y_cylinder(p.spigot_bore, 0, 0, spigot_back - 1, p.adapter_front + 1)
     for x, z in points:
-        plate = plate.cut(_y_cylinder(p.screw_clearance, x, z, p.adapter_back - 1, p.adapter_front + 1))
-        plate = plate.cut(
-            _y_hex(
-                p.nut_across_flats + p.nut_across_flats_clearance,
-                x,
-                z,
-                p.adapter_back - 1,
-                p.adapter_back + p.nut_thickness + p.nut_axial_clearance,
-            )
+        plate -= _y_cylinder(p.screw_clearance, x, z, p.adapter_back - 1, p.adapter_front + 1)
+        plate -= _y_hex(
+            p.nut_across_flats + p.nut_across_flats_clearance,
+            x,
+            z,
+            p.adapter_back - 1,
+            p.adapter_back + p.nut_thickness + p.nut_axial_clearance,
         )
-    return plate.clean()
+    return plate
 
 
 def build_clamp_bar(p=None):
@@ -628,9 +623,9 @@ def build_clamp_bar(p=None):
     bar = _box(
         -p.clamp_bar_half_length, p.clamp_bar_half_length, y0, p.clamp_bar_front, z0, z0 + p.clamp_bar_width
     )
-    bar = bar.edges("|Y").fillet(1.0)
+    bar = fillet(bar.edges().filter_by(Axis.Y), 1.0)
     for x in (-p.clamp_screw_x, p.clamp_screw_x):
-        bar = bar.cut(_y_cylinder(p.screw_clearance, x, p.clamp_bar_z, y0 - 1, p.clamp_bar_front + 1))
+        bar -= _y_cylinder(p.screw_clearance, x, p.clamp_bar_z, y0 - 1, p.clamp_bar_front + 1)
     return bar
 
 
@@ -648,14 +643,14 @@ def _blade(p, sign):
         min(spine_near, far),
         max(spine_near, far),
     )
-    return flat.union(spine)
+    return flat + spine
 
 
 def head_location(p, rotation=0.0):
     """Local head frame -> assembly frame; rotation in degrees about the optical axis (+y)."""
     ring_front = SM1RC_M_THICKNESS / 2
     front_y = ring_front + p.ring_gap - p.adapter_back
-    return cq.Location((0, front_y, p.optical_height)) * cq.Location((0, 0, 0), (0, 1, 0), rotation)
+    return Pos(0, front_y, p.optical_height) * Rot(Y=rotation)
 
 
 def build_slit_head_assembly(p=None, rotation=0.0, include_support=True):
@@ -663,19 +658,20 @@ def build_slit_head_assembly(p=None, rotation=0.0, include_support=True):
     p = p or SlitHeadParameters()
     p.validate()
     loc = head_location(p, rotation)
-    printed = cq.Color(0.35, 0.6, 0.8)
-    metal = cq.Color(0.75, 0.75, 0.78)
-    assembly = cq.Assembly(name="Flexure slit head (exploratory)")
-    assembly.add(build_slit_head(p), name="Flexure head", loc=loc, color=printed)
-    assembly.add(build_spigot_adapter(p), name="Spigot adapter", loc=loc, color=cq.Color(0.3, 0.5, 0.7))
+    printed = (0.35, 0.6, 0.8)
+    metal = (0.75, 0.75, 0.78)
+    children = [
+        labeled(build_slit_head(p), "Flexure head", printed, loc),
+        labeled(build_spigot_adapter(p), "Spigot adapter", (0.3, 0.5, 0.7), loc),
+    ]
     for i, (x, z) in enumerate(p.adapter_screw_xz(), 1):
         stack = _y_cylinder(p.washer_outer_diameter, x, z, p.adapter_front, -p.body_thickness)
-        stack = stack.cut(_y_cylinder(p.screw_clearance, x, z, p.adapter_front - 1, -p.body_thickness + 1))
-        assembly.add(stack, name=f"Spacer washers {i}", loc=loc, color=cq.Color(0.75, 0.75, 0.78))
+        stack -= _y_cylinder(p.screw_clearance, x, z, p.adapter_front - 1, -p.body_thickness + 1)
+        children.append(labeled(stack, f"Spacer washers {i}", metal, loc))
     bar = build_clamp_bar(p)
     for sign, name in ((1, "Width"), (-1, "Datum")):
-        placed = loc * cq.Location((0, 0, 0), (0, 1, 0), 0 if sign > 0 else 180)
-        assembly.add(bar, name=f"{name} clamp bar", loc=placed, color=printed)
+        placed = loc * Rot(Y=0 if sign > 0 else 180)
+        children.append(labeled(bar, f"{name} clamp bar", printed, placed))
         epdm = _box(
             -p.clamp_bar_half_length,
             p.clamp_bar_half_length,
@@ -684,21 +680,20 @@ def build_slit_head_assembly(p=None, rotation=0.0, include_support=True):
             p.clamp_bar_z - p.clamp_bar_width / 2,
             p.clamp_bar_z + p.clamp_bar_width / 2,
         )
-        assembly.add(epdm, name=f"{name} EPDM", loc=placed, color=cq.Color(0.15, 0.15, 0.15))
-        assembly.add(_blade(p, sign), name=f"{name} blade", loc=loc, color=metal)
+        children.append(labeled(epdm, f"{name} EPDM", (0.15, 0.15, 0.15), placed))
+        children.append(labeled(_blade(p, sign), f"{name} blade", metal, loc))
     tips = (
         ("FAS100 centering", p.centering_screw_x, p.centering_tip_z, p.frame_top_bar[1]),
         ("FAS100 width", p.width_screw_x, p.width_tip_z, p.platform_top_bar[1]),
     )
     for name, x, tip_z, insert_top in tips:
-        assembly.add(thorlabs_fas100(), name=name, loc=loc * cq.Location((x, p.axis_y, tip_z)), color=metal)
-        insert = _z_cylinder(p.insert_bore, x, p.axis_y, insert_top - p.insert_length, insert_top).union(
-            _z_cylinder(
-                p.insert_flange_diameter, x, p.axis_y, insert_top, insert_top + p.insert_flange_thickness
-            )
+        children.append(labeled(thorlabs_fas100(), name, metal, loc * Pos(x, p.axis_y, tip_z)))
+        insert = _z_cylinder(p.insert_bore, x, p.axis_y, insert_top - p.insert_length, insert_top)
+        insert += _z_cylinder(
+            p.insert_flange_diameter, x, p.axis_y, insert_top, insert_top + p.insert_flange_thickness
         )
-        insert = insert.cut(_z_cylinder(INCH / 4, x, p.axis_y, insert_top - 10, insert_top + 1))
-        assembly.add(insert, name=f"{name} insert", loc=loc, color=cq.Color(0.8, 0.65, 0.25))
+        insert -= _z_cylinder(INCH / 4, x, p.axis_y, insert_top - 10, insert_top + 1)
+        children.append(labeled(insert, f"{name} insert", (0.8, 0.65, 0.25), loc))
         magnet = _box(
             x - p.magnet_length / 2,
             x + p.magnet_length / 2,
@@ -707,23 +702,18 @@ def build_slit_head_assembly(p=None, rotation=0.0, include_support=True):
             tip_z - p.magnet_thickness,
             tip_z,
         )
-        assembly.add(magnet, name=f"{name} magnet", loc=loc, color=cq.Color(0.6, 0.6, 0.62))
+        children.append(labeled(magnet, f"{name} magnet", (0.6, 0.6, 0.62), loc))
     sx, s0, s1 = p.centering_screw_x, p.frame_spring_seat_z, p.platform_spring_seat_z
     spring = _z_cylinder(p.spring_outer_diameter, sx, p.axis_y, s0, s1)
-    spring = spring.cut(_z_cylinder(p.spring_guide_pin_diameter + 0.4, sx, p.axis_y, s0 - 1, s1 + 1))
-    assembly.add(spring, name="2006N292 spring envelope", loc=loc, color=cq.Color(0.5, 0.5, 0.5))
+    spring -= _z_cylinder(p.spring_guide_pin_diameter + 0.4, sx, p.axis_y, s0 - 1, s1 + 1)
+    children.append(labeled(spring, "2006N292 spring envelope", (0.5, 0.5, 0.5), loc))
     if include_support:
         from schlieren.parts.rail_shoe import build_rail_shoe
 
         ring_y = -SM1RC_M_THICKNESS / 2
-        assembly.add(
-            thorlabs_sm1rc_m(),
-            name="SM1RC M ring",
-            loc=cq.Location((0, ring_y, p.optical_height)),
-            color=cq.Color(0.2, 0.2, 0.22),
+        children.append(
+            labeled(thorlabs_sm1rc_m(), "SM1RC M ring", (0.2, 0.2, 0.22), Pos(0, ring_y, p.optical_height))
         )
-        assembly.add(
-            thorlabs_tr50_m(), name="TR50 M post", loc=cq.Location((0, 0, p.datum_thickness)), color=metal
-        )
-        assembly.add(build_rail_shoe(), name="Rail shoe", color=cq.Color(0.8, 0.4, 0.25))
-    return assembly
+        children.append(labeled(thorlabs_tr50_m(), "TR50 M post", metal, Pos(0, 0, p.datum_thickness)))
+        children.append(labeled(build_rail_shoe(), "Rail shoe", (0.8, 0.4, 0.25)))
+    return assembly("Flexure slit head (exploratory)", children)

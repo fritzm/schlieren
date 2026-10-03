@@ -3,8 +3,9 @@
 import argparse
 from pathlib import Path
 
-import cadquery as cq
+from build123d import Compound, Pos, Rot
 
+from schlieren.cad import EXPORTERS, children_by_label, labeled
 from schlieren.parts.carriage import CarriageParameters, build_carriage
 
 
@@ -22,7 +23,7 @@ def main():
     )
     args = parser.parse_args()
     params = CarriageParameters(keeper_side_thickness=args.keeper_side_thickness)
-    assembly = build_carriage(
+    carriage = build_carriage(
         params,
         travel=args.travel,
         retract=args.retract,
@@ -31,29 +32,30 @@ def main():
     )
     # Keep the viewer assembled; exports use a separate, pose-independent layout.
     plunger_gap = 5.0  # Clear space between the two bounding boxes, in mm.
+    parts = children_by_label(carriage)
     plungers = []
     next_y = 0.0
     for name in ("Driven plunger", "Spring plunger"):
-        solid = assembly.objects[name].obj.val()
+        solid = parts[name]
         if name == "Spring plunger":
-            solid = solid.rotate((0, 0, 0), (0, 0, 1), 180)
-        bounds = solid.BoundingBox()
-        solid = solid.translate((-(bounds.xmin + bounds.xmax) / 2, next_y - bounds.ymin, -bounds.zmin))
+            solid = Rot(Z=180) * solid
+        bounds = solid.bounding_box()
+        solid = Pos(-(bounds.min.X + bounds.max.X) / 2, next_y - bounds.min.Y, -bounds.min.Z) * solid
         plungers.append(solid)
-        next_y += bounds.ylen + plunger_gap
+        next_y += bounds.size.Y + plunger_gap
+    # Assembly children cannot be exported while attached to the assembly; export detached copies.
+    flipped = Pos(0, 0, CarriageParameters().plate_thickness) * Rot(X=180)
     outputs = {
-        "base_plate": assembly.objects["Base plate"]
-        .obj.rotate((0, 0, 0), (1, 0, 0), 180)
-        .translate((0, 0, CarriageParameters().plate_thickness)),
-        "guide_frame": assembly.objects["Guide frame"].obj,
-        "keeper_plate": assembly.objects["Keeper plate"].obj,
-        "plungers": cq.Compound.makeCompound(plungers),
+        "base_plate": labeled(parts["Base plate"], "Base plate", loc=flipped),
+        "guide_frame": labeled(parts["Guide frame"], "Guide frame"),
+        "keeper_plate": labeled(parts["Keeper plate"], "Keeper plate"),
+        "plungers": Compound([s for plunger in plungers for s in plunger.solids()]),
     }
     for name, part in outputs.items():
         for kind in ("step", "stl"):
             path = args.output / kind / f"carriage_{name}.{kind}"
             path.parent.mkdir(parents=True, exist_ok=True)
-            cq.exporters.export(part, str(path))
+            EXPORTERS[kind](part, path)
             print(path)
     # Retire only the former individual plunger exports from this exporter.
     for name in ("driven_plunger", "spring_plunger"):
@@ -62,7 +64,7 @@ def main():
     if args.show:
         from ocp_vscode import show
 
-        show(assembly)
+        show(carriage)
 
 
 if __name__ == "__main__":

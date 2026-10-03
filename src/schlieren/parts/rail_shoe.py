@@ -9,7 +9,21 @@ No ABS lies between the post bottom and the metal datum disc.
 from dataclasses import dataclass
 from math import cos, pi, sqrt
 
-import cadquery as cq
+from build123d import (
+    Align,
+    Axis,
+    Box,
+    Compound,
+    Cylinder,
+    GeomType,
+    Part,
+    Pos,
+    RegularPolygon,
+    extrude,
+    fillet,
+)
+
+from schlieren.cad import FROM_CORNER, ON_FLOOR, along_x, along_y, assembly, labeled
 
 
 @dataclass(frozen=True)
@@ -129,54 +143,38 @@ class RailShoeParameters:
             raise ValueError("Screw bore must fit within the ear face")
 
 
-def build_rail_shoe(p: RailShoeParameters | None = None) -> cq.Workplane:
+SHOE_COLOR = (0.8, 0.65, 0.3)
+REFERENCE_COLOR = (0.6, 0.6, 0.6)
+
+
+def build_rail_shoe(p: RailShoeParameters | None = None) -> Part:
     """Return one printable solid in assembly coordinates, without hardware."""
     p = p or RailShoeParameters()
     p.validate()
     overrun = 1.0
 
-    shoe = (
-        cq.Workplane("XY", origin=(0, 0, -p.skirt_depth))
-        .box(
-            p.width,
-            p.length,
-            p.skirt_depth + p.bridge_top,
-            centered=(True, True, False),
-        )
-        .edges("|Z")
-        .fillet(p.outside_corner_radius)
-    )
+    shoe = Pos(0, 0, -p.skirt_depth) * Box(p.width, p.length, p.skirt_depth + p.bridge_top, align=ON_FLOOR)
+    shoe = fillet(shoe.edges().filter_by(Axis.Z), p.outside_corner_radius)
 
-    rail_void = cq.Workplane("XY", origin=(0, 0, -p.skirt_depth - overrun)).box(
-        p.rail_opening,
-        p.length + 2 * overrun,
-        p.skirt_depth + overrun,
-        centered=(True, True, False),
+    rail_void = Pos(0, 0, -p.skirt_depth - overrun) * Box(
+        p.rail_opening, p.length + 2 * overrun, p.skirt_depth + overrun, align=ON_FLOOR
     )
-    shoe = shoe.cut(rail_void)
+    shoe -= rail_void
 
-    counterbore = (
-        cq.Workplane("XY", origin=(0, 0, -overrun))
-        .circle(p.datum_counterbore_diameter / 2)
-        .extrude(p.datum_counterbore_depth + overrun)
+    counterbore = Pos(0, 0, -overrun) * Cylinder(
+        p.datum_counterbore_diameter / 2, p.datum_counterbore_depth + overrun, align=ON_FLOOR
     )
-    shoe = shoe.cut(counterbore)
+    shoe -= counterbore
 
-    collar = (
-        cq.Workplane("XY", origin=(0, 0, p.collar_bottom))
-        .circle(p.collar_outer_radius)
-        .extrude(p.collar_height)
-    )
-    shoe = shoe.union(collar)
+    collar = Pos(0, 0, p.collar_bottom) * Cylinder(p.collar_outer_radius, p.collar_height, align=ON_FLOOR)
+    shoe += collar
 
     root = [
         e
-        for e in shoe.edges().vals()
-        if e.geomType() == "CIRCLE"
-        and abs(e.Center().z - p.bridge_top) < 1e-6
-        and abs(e.radius() - p.collar_outer_radius) < 1e-6
+        for e in shoe.edges().filter_by(GeomType.CIRCLE)
+        if abs(e.arc_center.Z - p.bridge_top) < 1e-6 and abs(e.radius - p.collar_outer_radius) < 1e-6
     ]
-    shoe = shoe.newObject(root).fillet(p.collar_root_fillet)
+    shoe = fillet(root, p.collar_root_fillet)
 
     # The collar reaches farthest in +x at the ear's inner (+y) face.
     # Measure ear_width from that circle intersection so the shortest
@@ -185,71 +183,54 @@ def build_rail_shoe(p: RailShoeParameters | None = None) -> cq.Workplane:
     ear_y_min = p.split_gap / 2
     collar_x_at_inner_face = sqrt(p.collar_outer_radius**2 - ear_y_min**2)
     ear_x_end = collar_x_at_inner_face + p.ear_width
-    nut_ear = cq.Workplane("XY", origin=(0, ear_y_min, p.ear_bottom)).box(
-        ear_x_end,
-        p.nut_ear_thickness,
-        p.ear_height,
-        centered=(False, False, False),
+    nut_ear = Pos(0, ear_y_min, p.ear_bottom) * Box(
+        ear_x_end, p.nut_ear_thickness, p.ear_height, align=FROM_CORNER
     )
-    shoe = shoe.union(nut_ear)
+    shoe += nut_ear
 
-    screw_ear = cq.Workplane("XY", origin=(0, -ear_y_min - p.screw_ear_thickness, p.ear_bottom)).box(
-        ear_x_end,
-        p.screw_ear_thickness,
-        p.ear_height,
-        centered=(False, False, False),
+    screw_ear = Pos(0, -ear_y_min - p.screw_ear_thickness, p.ear_bottom) * Box(
+        ear_x_end, p.screw_ear_thickness, p.ear_height, align=FROM_CORNER
     )
-    shoe = shoe.union(screw_ear)
+    shoe += screw_ear
 
     # Only the two outer vertical, concave ear/collar junctions. Leave the
     # split-facing edges sharp so the relaxed gap and inner width stay fixed.
     outer_root_edges = []
     for outer_y in (ear_y_min + p.nut_ear_thickness, -ear_y_min - p.screw_ear_thickness):
         root_x = sqrt(p.collar_outer_radius**2 - outer_y**2)
-        for edge in shoe.edges("|Z").vals():
-            center = edge.Center()
+        for edge in shoe.edges().filter_by(Axis.Z):
+            center = edge.center()
             if (
-                abs(center.x - root_x) < 1e-6
-                and abs(center.y - outer_y) < 1e-6
-                and abs(center.z - (p.ear_bottom + p.collar_top) / 2) < 1e-6
+                abs(center.X - root_x) < 1e-6
+                and abs(center.Y - outer_y) < 1e-6
+                and abs(center.Z - (p.ear_bottom + p.collar_top) / 2) < 1e-6
             ):
                 outer_root_edges.append(edge)
     if len(outer_root_edges) != 2:
         raise ValueError("Expected two outer ear-to-collar root edges")
-    shoe = shoe.newObject(outer_root_edges).fillet(p.ear_root_fillet)
+    shoe = fillet(outer_root_edges, p.ear_root_fillet)
 
-    bore = (
-        cq.Workplane("XY", origin=(0, 0, -overrun))
-        .circle(p.post_bore / 2)
-        .extrude(p.collar_top + 2 * overrun)
-    )
-    shoe = shoe.cut(bore)
+    bore = Pos(0, 0, -overrun) * Cylinder(p.post_bore / 2, p.collar_top + 2 * overrun, align=ON_FLOOR)
+    shoe -= bore
 
     # Radial split toward +x, centered on y=0. The rectangle ends at
     # the relief center; the circular bore extends another radius below it.
     # Include the bridge/skirt if the requested relief depth reaches them.
     split_length = max(ear_x_end, p.width / 2) + overrun
-    split = cq.Workplane("XY", origin=(0, 0, p.split_relief_z)).box(
+    split = Pos(0, 0, p.split_relief_z) * Box(
         split_length,
         p.split_gap,
         p.collar_top - p.split_relief_z + overrun,
-        centered=(False, True, False),
+        align=(Align.MIN, Align.CENTER, Align.MIN),
     )
-    relief = cq.Solid.makeCylinder(
-        p.split_relief_radius,
-        split_length,
-        cq.Vector(0, 0, p.split_relief_z),
-        cq.Vector(1, 0, 0),
-    )
-    shoe = shoe.cut(split).cut(relief)
+    relief = along_x((0, 0, p.split_relief_z)) * Cylinder(p.split_relief_radius, split_length, align=ON_FLOOR)
+    shoe -= split
+    shoe -= relief
 
-    side_holes = cq.Solid.makeCylinder(
-        p.m5_clearance_diameter / 2,
-        p.width + 2 * overrun,
-        cq.Vector(-p.width / 2 - overrun, 0, -p.rail_height / 2),
-        cq.Vector(1, 0, 0),
+    side_holes = along_x((-p.width / 2 - overrun, 0, -p.rail_height / 2)) * Cylinder(
+        p.m5_clearance_diameter / 2, p.width + 2 * overrun, align=ON_FLOOR
     )
-    shoe = shoe.cut(side_holes)
+    shoe -= side_holes
 
     # Center on the exposed rectangular inner ear faces, whose x-span is
     # collar_x_at_inner_face .. ear_x_end. Both features share a y-axis.
@@ -257,57 +238,45 @@ def build_rail_shoe(p: RailShoeParameters | None = None) -> cq.Workplane:
     clamp_z = p.ear_bottom + p.ear_height / 2
     screw_outer_y = -ear_y_min - p.screw_ear_thickness
     nut_outer_y = ear_y_min + p.nut_ear_thickness
-    clamp_hole = cq.Solid.makeCylinder(
-        p.m3_clearance_diameter / 2,
-        nut_outer_y - screw_outer_y + 2 * overrun,
-        cq.Vector(clamp_x, screw_outer_y - overrun, clamp_z),
-        cq.Vector(0, 1, 0),
+    clamp_hole = along_y((clamp_x, screw_outer_y - overrun, clamp_z)) * Cylinder(
+        p.m3_clearance_diameter / 2, nut_outer_y - screw_outer_y + 2 * overrun, align=ON_FLOOR
     )
     # Nut inserts from +y; the inner wall carries its axial clamp load.
     # Hex vertices lie along x, with horizontal flats in z.
-    nut_plane = cq.Plane(
-        origin=(clamp_x, nut_outer_y - p.nut_pocket_depth, clamp_z),
-        xDir=(1, 0, 0),
-        normal=(0, 1, 0),
+    nut_across_corners = (p.clamp_nut_across_flats + p.nut_across_flats_clearance) / cos(pi / 6)
+    nut = extrude(
+        along_y((clamp_x, nut_outer_y - p.nut_pocket_depth, clamp_z))
+        * RegularPolygon(nut_across_corners / 2, 6),
+        amount=p.nut_pocket_depth + overrun,
     )
-    nut = (
-        cq.Workplane(nut_plane)
-        .polygon(6, (p.clamp_nut_across_flats + p.nut_across_flats_clearance) / cos(pi / 6))
-        .extrude(p.nut_pocket_depth + overrun)
-    )
-    shoe = shoe.cut(clamp_hole).cut(nut)
+    shoe -= clamp_hole
+    shoe -= nut
 
-    shoe = shoe.clean()
-    if len(shoe.solids().vals()) != 1 or not shoe.val().isValid():
+    if len(shoe.solids()) != 1 or not shoe.is_valid:
         raise ValueError("Rail shoe did not produce one valid solid")
 
     return shoe
 
 
-def reference_parts(p: RailShoeParameters | None = None) -> dict[str, cq.Workplane]:
+def reference_parts(p: RailShoeParameters | None = None) -> dict[str, Part]:
     p = p or RailShoeParameters()
     return {
-        "rail envelope": cq.Workplane("XY", origin=(0, 0, -p.rail_height)).box(
-            p.rail_width, p.length + 30, p.rail_height, centered=(True, True, False)
-        ),
-        "datum disc": cq.Workplane("XY").circle(p.datum_disc_diameter / 2).extrude(p.datum_disc_thickness),
-        "TR50/M post envelope": cq.Workplane("XY", origin=(0, 0, p.datum_disc_thickness))
-        .circle(p.post_diameter / 2)
-        .extrude(50.0),
+        "rail envelope": Pos(0, 0, -p.rail_height)
+        * Box(p.rail_width, p.length + 30, p.rail_height, align=ON_FLOOR),
+        "datum disc": Cylinder(p.datum_disc_diameter / 2, p.datum_disc_thickness, align=ON_FLOOR),
+        "TR50/M post envelope": Pos(0, 0, p.datum_disc_thickness)
+        * Cylinder(p.post_diameter / 2, 50.0, align=ON_FLOOR),
     }
 
 
-def viewer_assembly(shoe: cq.Workplane, p: RailShoeParameters | None = None) -> cq.Assembly:
+def viewer_assembly(shoe: Part, p: RailShoeParameters | None = None) -> Compound:
     refs = reference_parts(p)
-    assembly = cq.Assembly(name="Rail shoe prototype")
-    assembly.add(shoe, name="Shoe", color=cq.Color(0.8, 0.65, 0.3))
-    rparts = cq.Assembly(name="Reference parts")
-    rparts.add(
-        refs["rail envelope"],
-        name="Rail",
-        color=cq.Color(0.6, 0.6, 0.6),
+    rparts = assembly(
+        "Reference parts",
+        [
+            labeled(refs["rail envelope"], "Rail", REFERENCE_COLOR),
+            labeled(refs["datum disc"], "Datum disc", REFERENCE_COLOR),
+            labeled(refs["TR50/M post envelope"], "TR50_M", REFERENCE_COLOR),
+        ],
     )
-    rparts.add(refs["datum disc"], name="Datum disc", color=cq.Color(0.6, 0.6, 0.6))
-    rparts.add(refs["TR50/M post envelope"], name="TR50_M", color=cq.Color(0.6, 0.6, 0.6))
-    assembly.add(rparts)
-    return assembly
+    return assembly("Rail shoe prototype", [labeled(shoe, "Shoe", SHOE_COLOR), rparts])

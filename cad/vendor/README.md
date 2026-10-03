@@ -25,7 +25,7 @@ Name files `<Brand>-<part>.step` following the `docs/reference/` convention (`/`
 
 Thorlabs CAD downloads are listed per product through the site's GraphQL API at
 `https://www.thorlabs.com/graphql`, e.g. `{ products(storeId: "Thorlabs-Website", filter: "name:\"SM1RC/M\"")
-{ items { name assets { group optiUrl } } } }`; the `Step` asset is the one CadQuery can read (the `CAD PDF`
+{ items { name assets { group optiUrl } } } }`; the `Step` asset is the one build123d can read (the `CAD PDF`
 asset is the drawing filed in `docs/reference/`). SolidWorks (`.sldprt`) and eDrawing files are not usable here.
 
 Project policy: where a vendor model is available, use its exact values in preference to rounded dimensions

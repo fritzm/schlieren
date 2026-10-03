@@ -71,7 +71,7 @@ Drive require explicit user confirmation each time. Do not assume any particular
 
 This Git repository is authoritative for version-controlled engineering artifacts, including:
 
-- CadQuery source, Python source, tests, CAD/build utilities
+- build123d source, Python source, tests, CAD/build utilities
 - the design fragments and `bom/bom.csv`
 - repository configuration and agent instructions
 - deliberately versioned generated outputs, if any
@@ -100,7 +100,7 @@ explicitly accepts the result.
 
 ## CAD conventions
 
-CadQuery source is the authoritative representation of programmatically generated mechanical geometry.
+build123d source is the authoritative representation of programmatically generated mechanical geometry.
 
 Generated STEP, STL, 3MF, DXF, or similar files are derived artifacts unless explicitly documented otherwise.
 

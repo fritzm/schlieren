@@ -2,7 +2,7 @@
 
 Three fixtures use the common post/shoe architecture:
 
-1. condenser/iris, which also carries the threaded LED module (§6.5);
+1. LED/condenser/iris;
 2. source-slit flexure head (§9);
 3. cutoff carriage (§8).
 

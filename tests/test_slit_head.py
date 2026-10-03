@@ -3,7 +3,7 @@
 import unittest
 from dataclasses import replace
 
-import cadquery as cq
+from build123d import Pos
 
 from schlieren.parts.rail_shoe import build_rail_shoe
 from schlieren.parts.slit_head import (
@@ -25,7 +25,7 @@ TR50_STUD_MAX = 5.2  # TR50/M drawing: setscrew stud 4.6-5.2 mm above the post t
 
 
 def _overlap(a, b):
-    return a.intersect(b).Volume()
+    return (a & b).volume
 
 
 class SlitHeadTests(unittest.TestCase):
@@ -36,7 +36,7 @@ class SlitHeadTests(unittest.TestCase):
         cls.head = build_slit_head(cls.p)
         cls.adapter = build_spigot_adapter(cls.p)
         cls.fas = [
-            thorlabs_fas100().val().moved(cq.Location((x, cls.p.axis_y, z)))
+            (Pos(x, cls.p.axis_y, z) * thorlabs_fas100())
             for x, z in (
                 (cls.p.centering_screw_x, cls.p.centering_tip_z),
                 (cls.p.width_screw_x, cls.p.width_tip_z),
@@ -45,8 +45,8 @@ class SlitHeadTests(unittest.TestCase):
 
     def test_printed_parts_are_single_valid_solids(self):
         for part in (self.head, self.adapter, build_clamp_bar(self.p)):
-            self.assertEqual(len(part.solids().vals()), 1)
-            self.assertTrue(part.val().isValid())
+            self.assertEqual(len(part.solids()), 1)
+            self.assertTrue(part.is_valid)
 
     def test_flexures_are_the_only_links(self):
         """Severing the four flexure blades leaves frame, platform, and width stage as separate bodies."""
@@ -58,8 +58,8 @@ class SlitHeadTests(unittest.TestCase):
         ):
             mid = sum(span) / 2
             for z0, z1 in blades:
-                cut = cut.cut(_box(mid - 1, mid + 1, -p.body_thickness - 1, 1, z0 - 0.1, z1 + 0.1))
-        self.assertEqual(len(cut.solids().vals()), 3)
+                cut -= _box(mid - 1, mid + 1, -p.body_thickness - 1, 1, z0 - 0.1, z1 + 0.1)
+        self.assertEqual(len(cut.solids()), 3)
 
     def test_adjustment_keeps_slit_parallel_and_square(self):
         """In-plane stage rotation from adjusting, over a 10 mm illuminated slit length (first-order model)."""
@@ -73,16 +73,16 @@ class SlitHeadTests(unittest.TestCase):
 
     def test_optical_height_datum(self):
         p = self.p
-        ring_axis = -thorlabs_sm1rc_m().val().BoundingBox().zmin  # Post seat to axis.
+        ring_axis = -thorlabs_sm1rc_m().bounding_box().min.Z  # Post seat to axis.
         self.assertAlmostEqual(p.datum_thickness + p.post_length + ring_axis, p.optical_height, delta=0.01)
 
     def test_slit_centered_on_axis_with_blades_on_seat_plane(self):
         p = self.p
-        upper, lower = _blade(p, 1).val().BoundingBox(), _blade(p, -1).val().BoundingBox()
-        self.assertAlmostEqual(upper.zmin, p.slit_width / 2, places=9)
-        self.assertAlmostEqual(lower.zmax, -p.slit_width / 2, places=9)
-        self.assertAlmostEqual(upper.ymin, 0, places=9)
-        self.assertEqual(self.head.val().BoundingBox().ymax, 0)
+        upper, lower = _blade(p, 1).bounding_box(), _blade(p, -1).bounding_box()
+        self.assertAlmostEqual(upper.min.Z, p.slit_width / 2, places=9)
+        self.assertAlmostEqual(lower.max.Z, -p.slit_width / 2, places=9)
+        self.assertAlmostEqual(upper.min.Y, 0, places=9)
+        self.assertEqual(self.head.bounding_box().max.Y, 0)
         # The blades, not the head, bound the illuminated aperture.
         self.assertGreater(p.blade_length / 2, p.spigot_bore / 2 + 3)
 
@@ -112,26 +112,24 @@ class SlitHeadTests(unittest.TestCase):
         self.assertLess(p.clamp_nut_floor, -2.0)
 
     def test_hardware_clears_printed_parts(self):
-        p, head = self.p, self.head.val()
+        p, head = self.p, self.head
         for fas in self.fas:
             self.assertAlmostEqual(_overlap(fas, head), 0, places=3)
         self.assertAlmostEqual(_overlap(self.fas[0], self.fas[1]), 0, places=3)
         for sign in (1, -1):
-            self.assertAlmostEqual(_overlap(_blade(p, sign).val(), head), 0, places=3)
-        self.assertAlmostEqual(_overlap(self.adapter.val(), head), 0, places=3)
+            self.assertAlmostEqual(_overlap(_blade(p, sign), head), 0, places=3)
+        self.assertAlmostEqual(_overlap(self.adapter, head), 0, places=3)
 
     def test_working_rotations_clear_post_ring_and_shoe(self):
         p = self.p
         support = [
-            thorlabs_tr50_m().val().moved(cq.Location((0, 0, p.datum_thickness))),
-            thorlabs_sm1rc_m().val().moved(cq.Location((0, -SM1RC_M_THICKNESS / 2, p.optical_height))),
-            build_rail_shoe().val(),
+            (Pos(0, 0, p.datum_thickness) * thorlabs_tr50_m()),
+            (Pos(0, -SM1RC_M_THICKNESS / 2, p.optical_height) * thorlabs_sm1rc_m()),
+            build_rail_shoe(),
         ]
         for rotation in WORKING_ROTATIONS:
             loc = head_location(p, rotation)
-            moving = [self.head.val().moved(loc), self.adapter.val().moved(loc)] + [
-                f.moved(loc) for f in self.fas
-            ]
+            moving = [(loc * self.head), (loc * self.adapter)] + [(loc * f) for f in self.fas]
             for part in moving:
                 for other in support:
                     self.assertAlmostEqual(_overlap(part, other), 0, places=3, msg=f"rotation {rotation}")
@@ -146,47 +144,43 @@ class SlitHeadTests(unittest.TestCase):
         # Nominal envelopes (the vendor solids make distance queries very slow): the metric post, and the M4
         # stud at its drawing maximum of 5.2 mm above the post top.
         post_top = p.datum_thickness + p.post_length
-        body = _z_cylinder(p.post_diameter, 0, 0, p.datum_thickness, post_top).val()
-        stud = _z_cylinder(4.0, 0, 0, post_top, post_top + TR50_STUD_MAX).val()
-        shoe = build_rail_shoe().val()
+        body = _z_cylinder(p.post_diameter, 0, 0, p.datum_thickness, post_top)
+        stud = _z_cylinder(4.0, 0, 0, post_top, post_top + TR50_STUD_MAX)
+        shoe = build_rail_shoe()
         for rotation in ROTATION_SWEEP:
             loc = head_location(p, rotation)
-            moving = [self.head.val().moved(loc), self.adapter.val().moved(loc)] + [
-                f.moved(loc) for f in self.fas
-            ]
+            moving = [(loc * self.head), (loc * self.adapter)] + [(loc * f) for f in self.fas]
             for name, fixed in (("post", body), ("shoe", shoe)):
-                clearance = min(part.distance(fixed) for part in moving)
+                clearance = min(part.distance_to(fixed) for part in moving)
                 self.assertGreaterEqual(clearance, p.post_clearance, msg=f"{name} at rotation {rotation}")
             self.assertGreater(
-                min(part.distance(stud) for part in moving), 1.0, msg=f"stud at rotation {rotation}"
+                min(part.distance_to(stud) for part in moving), 1.0, msg=f"stud at rotation {rotation}"
             )
 
     def test_adapter_prints_flat_on_washer_spacers(self):
         p = self.p
-        self.assertAlmostEqual(self.adapter.val().BoundingBox().ymax, p.adapter_front, places=6)
+        self.assertAlmostEqual(self.adapter.bounding_box().max.Y, p.adapter_front, places=6)
         self.assertGreaterEqual(p.spacer_washers * p.washer_thickness_min, p.stage_back_clearance)
 
     def test_spigot_shoulder_locates_ring(self):
         p = self.p
-        bb = self.adapter.val().BoundingBox()
-        self.assertAlmostEqual(bb.ymin, p.adapter_back - p.ring_gap - p.ring_thickness, places=6)
+        bb = self.adapter.bounding_box()
+        self.assertAlmostEqual(bb.min.Y, p.adapter_back - p.ring_gap - p.ring_thickness, places=6)
         ring = (
-            thorlabs_sm1rc_m()
-            .val()
-            .moved(head_location(p).inverse * cq.Location((0, -SM1RC_M_THICKNESS / 2, p.optical_height)))
+            head_location(p).inverse() * Pos(0, -SM1RC_M_THICKNESS / 2, p.optical_height) * thorlabs_sm1rc_m()
         )
-        self.assertAlmostEqual(ring.BoundingBox().ymax, p.adapter_back - p.ring_gap, places=6)
-        self.assertAlmostEqual(self.adapter.val().distance(ring), 0, places=3)  # Seated on the shoulder.
-        self.assertAlmostEqual(_overlap(self.adapter.val(), ring), 0, places=3)
+        self.assertAlmostEqual(ring.bounding_box().max.Y, p.adapter_back - p.ring_gap, places=6)
+        self.assertAlmostEqual(self.adapter.distance_to(ring), 0, places=3)  # Seated on the shoulder.
+        self.assertAlmostEqual(_overlap(self.adapter, ring), 0, places=3)
 
     def test_vendor_models_match_parameters(self):
         p = self.p
-        ring = thorlabs_sm1rc_m().val().BoundingBox()
-        self.assertAlmostEqual(ring.ymax - ring.ymin, p.ring_thickness, delta=MODEL_MATCH)
-        fas = thorlabs_fas100().val()
-        knob = max(fas.Solids(), key=lambda s: s.Volume() if s.BoundingBox().zmin > 10 else 0).BoundingBox()
-        self.assertAlmostEqual(knob.zmin, p.adjuster_thread_length, delta=MODEL_MATCH)
-        self.assertAlmostEqual(knob.xmax - knob.xmin, p.adjuster_knob_diameter, delta=0.05)
+        ring = thorlabs_sm1rc_m().bounding_box()
+        self.assertAlmostEqual(ring.max.Y - ring.min.Y, p.ring_thickness, delta=MODEL_MATCH)
+        fas = thorlabs_fas100()
+        knob = max(fas.solids(), key=lambda s: s.volume if s.bounding_box().min.Z > 10 else 0).bounding_box()
+        self.assertAlmostEqual(knob.min.Z, p.adjuster_thread_length, delta=MODEL_MATCH)
+        self.assertAlmostEqual(knob.max.X - knob.min.X, p.adjuster_knob_diameter, delta=0.05)
 
     def test_validation_rejects_bad_layouts(self):
         for change in (

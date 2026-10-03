@@ -1,6 +1,6 @@
 # Part models
 
-CadQuery models of the custom (mostly printed ABS) parts, plus purchased-part stack-ups used for clearance
+build123d models of the custom (mostly printed ABS) parts, plus purchased-part stack-ups used for clearance
 and focus calculations. Each module here has a matching command in `src/schlieren/cli/` (run as
 `uv run <command>`; `--show` sends the assembly to the OCP CAD Viewer) and a test module in `tests/`.
 
