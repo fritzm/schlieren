@@ -34,7 +34,7 @@ def main() -> None:
         from schlieren.render import render_figure
 
         args.figure.parent.mkdir(parents=True, exist_ok=True)
-        render_figure(viewer_assembly(shoe), args.figure, FIGURE_VIEW_DIRECTION)
+        render_figure(viewer_assembly(shoe), args.figure, FIGURE_VIEW_DIRECTION, perspective=True)
         print(args.figure)
     if args.show:
         from ocp_vscode import show

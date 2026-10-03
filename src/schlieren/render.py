@@ -6,6 +6,7 @@ Each part is drawn in its assembly color with its sharp edges and silhouette out
 the local OpenGL driver, so regenerating it on another machine may differ in the low bits.
 """
 
+from math import atan, degrees, sqrt
 from pathlib import Path
 
 import vtk
@@ -13,7 +14,7 @@ from build123d import Shape, Vector
 
 from schlieren.cad import leaves
 
-FIGURE_WIDTH_PX = 800
+FIGURE_WIDTH_PX = 500
 FIGURE_MARGIN_FRACTION = 0.03  # Of the figure width, on every side.
 MESH_TOLERANCE = 0.02  # Tessellation deviation, mm.
 MESH_ANGULAR_TOLERANCE = 0.1  # rad
@@ -27,7 +28,11 @@ MULTISAMPLES = 8
 SURFACE_AMBIENT = 0.2
 KEY_LIGHT_INTENSITY = 0.85
 KEY_TO_FILL_RATIO = 1.5
-VIEW_DISTANCE = 1000.0  # Camera standoff; the projection is parallel, so only direction matters.
+VIEW_DISTANCE = 1000.0  # Parallel-projection camera standoff; only the direction matters.
+PERSPECTIVE_DISTANCE = (
+    2.5  # Perspective camera standoff, in scene bounding-box diagonals; smaller is stronger.
+)
+PERSPECTIVE_CENTERING_PASSES = 8
 
 
 def _mesh(shape: Shape) -> vtk.vtkPolyData:
@@ -65,8 +70,14 @@ def _outline_actor(source: vtk.vtkAlgorithm) -> vtk.vtkActor:
     return actor
 
 
-def render_figure(assembly: Shape, path: Path, view_direction: tuple[float, float, float]) -> None:
-    """Write a shaded parallel-projection PNG of assembly, seen from view_direction (model frame, z up)."""
+def render_figure(
+    assembly: Shape, path: Path, view_direction: tuple[float, float, float], perspective: bool = False
+) -> None:
+    """Write a shaded PNG of assembly, seen from view_direction (model frame, z up).
+
+    The projection is parallel unless perspective is set, which puts the camera PERSPECTIVE_DISTANCE scene
+    diagonals away.
+    """
     toward_viewer = Vector(view_direction).normalized()
     page_x = Vector(0, 0, 1).cross(toward_viewer).normalized()
     page_y = toward_viewer.cross(page_x)
@@ -77,7 +88,7 @@ def render_figure(assembly: Shape, path: Path, view_direction: tuple[float, floa
     renderer.SetBackground(1.0, 1.0, 1.0)
     renderer.SetBackgroundAlpha(0.0)
     camera = renderer.GetActiveCamera()
-    camera.ParallelProjectionOn()
+    camera.SetParallelProjection(not perspective)
 
     extents = []  # Mesh vertices in the viewport frame: (page x, page y, depth toward viewer).
     for part in leaves(assembly):
@@ -113,14 +124,33 @@ def render_figure(assembly: Shape, path: Path, view_direction: tuple[float, floa
     low = [min(e[axis] for e in extents) for axis in range(3)]
     high = [max(e[axis] for e in extents) for axis in range(3)]
     middle = [(a + b) / 2 for a, b in zip(low, high)]
+    if perspective:
+        # Frame in tangent space: each vertex's page offset from the view axis over its distance from the
+        # camera. Slide the view axis until the vertices are centered about it, then open the lens to fit.
+        distance = PERSPECTIVE_DISTANCE * sqrt(sum((b - a) ** 2 for a, b in zip(low, high)))
+        for _ in range(PERSPECTIVE_CENTERING_PASSES):
+            tangents = [
+                ((x - middle[0]) / depth, (y - middle[1]) / depth)
+                for x, y, z in extents
+                for depth in (distance - (z - middle[2]),)
+            ]
+            low = [min(t[axis] for t in tangents) for axis in range(2)]
+            high = [max(t[axis] for t in tangents) for axis in range(2)]
+            middle[0] += distance * (low[0] + high[0]) / 2
+            middle[1] += distance * (low[1] + high[1]) / 2
+    else:
+        distance = VIEW_DISTANCE
     margin = FIGURE_MARGIN_FRACTION * (high[0] - low[0])
     span_x = high[0] - low[0] + 2 * margin
     span_y = high[1] - low[1] + 2 * margin
     focal_point = page_x * middle[0] + page_y * middle[1] + toward_viewer * middle[2]
     camera.SetFocalPoint(*focal_point)
-    camera.SetPosition(*(focal_point + toward_viewer * VIEW_DISTANCE))
+    camera.SetPosition(*(focal_point + toward_viewer * distance))
     camera.SetViewUp(*page_y)
-    camera.SetParallelScale(span_y / 2)
+    if perspective:
+        camera.SetViewAngle(degrees(2 * atan(span_y / 2)))
+    else:
+        camera.SetParallelScale(span_y / 2)
     renderer.ResetCameraClippingRange()
 
     lights = vtk.vtkLightKit()
