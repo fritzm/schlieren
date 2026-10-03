@@ -366,7 +366,7 @@ class CarriageTests(unittest.TestCase):
         for fx, fy in p.fasteners:
             self.assertFalse(keeper.is_inside((fx + 2.5, fy, p.keeper_screw_seat_z + 0.1)))
             self.assertTrue(keeper.is_inside((fx + 2.5, fy, p.keeper_screw_seat_z - 0.1)))
-        # First-order estimate (spans simply supported between screws) at the §8.4 max-compression wedge load
+        # First-order estimate (spans simply supported between screws) at the §9.4 max-compression wedge load
         # split over two ears: inside the ear play over working travel and the loading pose.
         play = p.guide_axial_clearance - p.ear_lower_clearance
         for travel, retract in ((-5, 0), (0, 0), (5, 0), (0, 6)):

@@ -40,94 +40,94 @@ LED-009,LED source,1,Banana plug set 1 blk 1 red,DP11 connection,Mouser,565-1825
 LED-010,LED source,2,"SM1 end cap, external threads, with center drill mark, anodized aluminum","LED carrier: board on front face, threads into condenser SMR1/M",Thorlabs,SM1CP2M,,each,To procure,§6.5,"One per LED module. Drill/tap: M2 board holes (front), M3 heatsink holes (rear, ~2.5 mm deep), lead pass-through holes at r ≈ 11 mm."
 LED-011,LED source,2,"Alpha CN40-40B natural-convection pin-fin heatsink, Ø40 × 40 mm, black anodized",LED module heatsink,Luxeon Star LEDs,CN40-40B,,each,To procure,§6.3,One per LED module; bolted to SM1CP2M rear. Drill base for M3 screws in open pin cells and for leads.
 LED-012,LED source,,M3 × 6 mm socket head screw,Heatsink-to-cap fasteners,McMaster,,,,Specified,§6.5,Provisional length (3 mm base + ~2.5 mm thread into cap). Quantity per module (2–3) and SKU to be confirmed; check existing M3 stock.
-SLT-001,Source slit,1,"Slip ring for SM1 lens tubes, M4 Tap",Slit-head rotation mount; clamps the adapter spigot,Thorlabs,SM1RC/M,2,each,In hand,§9.6,Second of the two in hand (CAR-002 holds the other).
-SLT-002,Source slit,2,"Fine adjustment screw with knob, 1/4""-80, 1.00"" long",Slit centering and slit-width adjusters,Thorlabs,FAS100,3,each,In hand,§§9.3–9.4,"Shared stock with CAR-005: three in hand, two here, one in the cutoff carriage; no spare."
-SLT-003,Source slit,2,1/4 in-80 inserts,Slit centering and slit-width adjusters,McMaster,98625A950,3,each,In hand,§§9.3–9.4,"Shared stock with CAR-007: three in hand, two here, one in the cutoff carriage; no spare. Finish printed bores with a 5/16 in drill; a light hand ream gave a good press fit on the first print."
-SLT-004,Source slit,1,Compression springs,"Centering-stage preload, coaxial with the centering FAS100",McMaster,2006N292,5,pack,In hand,§9.3,Measured OD 0.272 in / 6.91 mm. Installed fully compressed by hand (§9.3). Shared 5-pack with CAR-006.
-SLT-005,Source slit,2,N52 Bar Magnet - 10mm L x 5mm W x 2mm H,Hard bearing pads under the FAS100 ball tips,Amazon,B0DMCY4FN1,120,pack,In hand,§§9.3–9.4,Shared pack with CAR-012 and CAM-009.
-SLT-006,Source slit,2,"Razor blade, Stanley 11-515",Slit blades (datum and movable),Amazon,B000NNIIQM,100,pack,In hand,§9.1,Shared 100-pack with CAS-007.
-SLT-007,Source slit,8,"M3 × 12 mm socket head screw, 18-8 SS",Blade clamp bars (4) and adapter-to-head (4),McMaster,91292A114,100,pack,In hand,§§9.5–9.6,Shared common 100-pack.
-SLT-008,Source slit,8,"M3 × 0.5 hex nut, 18-8 SS, 5.5 mm AF × 2.4 mm high",Captive nuts for blade clamp bars (4) and adapter (4),McMaster,91828A211,100,pack,In hand,§§9.5–9.6,Shared common 100-pack (see CAS-004).
-SLT-009,Source slit,8,"M3 flat washer, 3.2 mm ID × 7 mm OD, 18-8 SS","Adapter spacer washers, two per adapter screw",McMaster,93475A210,100,pack,In hand,§9.6,Two stacked per screw set the ~1 mm adapter standoff. Shared 100-pack with CAS-005.
-SLT-010,Source slit,1,ABS printed flexure slit head,,,,,,CAD ready,§9.2,"CAD in src/schlieren/parts/slit_head.py; first test print successful (fits and flexure motion confirmed, §9.7)."
-SLT-011,Source slit,1,ABS printed slit-head spigot adapter,,,,,,CAD ready,§9.6,
-SLT-012,Source slit,2,ABS printed slit-head blade clamp bars,,,,,,CAD ready,§9.5,
-CAR-001,Carriages,,"SM1 lens tube, 1.50"" Thread Depth",Existing stock; former carriage-tube allocation,Thorlabs,SM1L15,2,each,In hand,,No longer allocated: the cutoff carriage mounts in the SM1RC/M on an integral printed spigot (§8.1); both tubes in hand are spare.
-CAR-002,Carriages,1,"Slip ring for SM1 lens tubes, M4 Tap",Post attachment,Thorlabs,SM1RC/M,2,each,In hand,§8.1,Cutoff carriage. The second in-hand ring is allocated to the slit head (SLT-001).
-CAR-005,Carriages,1,"Fine adjustment screw with knob, 1/4""-80, 1.00"" long",Cassette positioner,Thorlabs,FAS100,3,each,In hand,§8.3,"Three in hand: one for the cutoff carriage, two for the slit head (SLT-002); no spare."
-CAR-006,Carriages,1,Compression springs,Cassette counter-force plunger,McMaster,2006N292,5,pack,In hand,§8.3,Shared 5-pack with the slit-head preload spring (SLT-004).
-CAR-007,Carriages,1,1/4 in-80 inserts,Cassette positioner,McMaster,98625A950,3,each,In hand,§8.3,"Three in hand: one for the cutoff carriage, two for the slit head (SLT-003); no spare."
-CAR-008,Carriages,,"4 mm × 45 mm shoulder screw, 18-8 SS",Existing stock; former spring guide / retract handle,McMaster,91273A377,2,each,In hand,,"No longer allocated: the spring seats in printed cups and the plunger retracts by a thumb tab (§8.5); both screws in hand are spare."
-CAR-009,Carriages,3,Brass escutcheon pins,Cassette interface datums,McMaster,97936A109,300,pack,In hand,§8.4,Cutoff carriage only.
-CAR-010,Carriages,1,ABS printed carriage bodies,,,,,,CAD ready,§8.1,Cutoff carriage only.
-CAR-012,Carriages,1,N52 Bar Magnet - 10mm L x 5mm W x 2mm H,Hard bearing pads for FAS100-driven plungers,Amazon,B0DMCY4FN1,120,pack,In hand,§8.3,Nickel-plated rectangular magnets; one hard contact insert for the FAS100-driven ABS plunger of the cutoff carriage.
-CAR-013,Carriages,1,ABS printed open-center keeper frames,Retain plunger guide ears while leaving cassette-loading aperture open,,,,,CAD ready,§8.4,"Perimeter frame; eight M3 screws (four end, four side in lugs); 3.0 mm side members, with a 5 mm-side-member fallback keeper if lift is excessive; carries the end-wall spring-cup roof (§8.5). Cutoff carriage only."
-CAR-014,Carriages,8,"M3 × 12 mm socket head screw, 18-8 SS",Keeper-frame fasteners (four end + four side),McMaster,91292A114,100,pack,In hand,§8.4,Reuse common M3 × 12 mm stock. Heads bear directly on ABS in ~0.5 mm recesses; tighten only to a light snug; verify printed fit.
-CAR-015,Carriages,8,"M3 × 0.5 hex nut, 18-8 SS, 5.5 mm AF × 2.4 mm high",Keeper-frame captive nuts,McMaster,91828A211,100,pack,In hand,§8.4,"Full-height DIN 934 nut. ~2.5 mm captive hex pocket from carriage back, leaving ~1.5 mm ABS floor above pocket."
-CAS-001,Cassettes,6,ABS printed cassettes,,,,,,CAD ready,§8.6,The source slit no longer uses a cassette (§9); quantity to be re-confirmed for the cutoff cassettes.
-CAS-002,Cassettes,1,Rubber/EPDM sheet,Retaining bar friction pads,McMaster,9852N37,1,sheet,In hand,"§§9.5, 9.8",Also faces the two slit-head blade clamp bars (§9.5).
-CAS-003,Cassettes,12,"M3 × 14 mm 90° flat-head socket screw, 18-8 SS",Retaining bar screws,McMaster,92125A133,100,pack,In hand,§9.8,Provisional 14 mm length; fit-test with 4 mm bar.
-CAS-004,Cassettes,12,"M3 × 0.5 full-height hex nut, 18-8 SS",Retaining bar nuts,McMaster,91828A211,100,pack,In hand,§9.8,"Shared 100-pack: 31 total nuts now allocated across split clamps, keeper frames, cassette retaining bars, and the slit head; 69 spare."
-CAS-005,Cassettes,12,"M3 flat washer, 3.2 mm ID × 7 mm OD, 18-8 SS",Retaining bar washers,McMaster,93475A210,100,pack,In hand,§9.8,"Under exposed nut, on printed retaining bar. Shared 100-pack with the slit-head spacer washers (SLT-009)."
-CAS-006,Cassettes,,"Razor blade, Stanley 11-515",Existing stock; former slit-cassette allocation,Amazon,B000NNIIQM,100,pack,In hand,,No longer allocated after the flexure slit head decision (§9); the slit blades are SLT-006.
-CAS-007,Cassettes,1,"Razor blade, Stanley 11-515",Cutoff cassette,Amazon,B000NNIIQM,100,pack,In hand,§10,
-CAS-008,Cassettes,1,"Magnet wire, 44 AWG (~0.0508 mm bare conductor)",Dark-field cutoff filament,Amazon,B0F29JW8CF,,,In hand,§10.1,Enamel-coated copper. Finished outside diameter will be slightly larger than the nominal bare-conductor diameter.
-CAS-009,Cassettes,1,"Magnet wire, 34 AWG (~0.160 mm bare conductor)",Dark-field cutoff filament,Amazon,B07P2HJJP6,,,In hand,§10.1,Enamel-coated copper. Finished outside diameter will be slightly larger than the nominal bare-conductor diameter.
-CAS-010,Cassettes,1,"Magnet wire, 30 AWG (~0.255 mm bare conductor)",Dark-field cutoff filament,Amazon,B07GBMKMKY,,,In hand,§10.1,Enamel-coated copper. Finished outside diameter will be slightly larger than the nominal bare-conductor diameter.
-CAS-011,Cassettes,1,Rosco Roscolux Designer Color Selector Swatchbook - 3 x 6,Cutoff cassettes,Amazon,B074V94RNR,1,each,In hand,§10.2,
-CAM-001,Imager,1,iPhone,Imager,Apple,iPhone 17,1,each,In hand,§11.1,
-CAM-002,Imager,1,iPhone camera app,Imager,Blackmagic Design,Blackmagic Camera,1,each,In hand,§11.1,
-CAM-003,Imager,1,"Telephoto lens, 17mm",Imager,iOgrapher,proSnap 7×,1,each,In hand,§11.2,
-CAM-004,Imager,3,Ball-tip jack screws,Phone and saddle adjusters,McMaster,93339A252,4,each,In hand,§11.5,
-CAM-005,Imager,3,M5 heat-set inserts,Phone and saddle adjusters,McMaster,94459A797,,,In hand,§11.5,
-CAM-006,Imager,3,"M5 thumb nuts, low profile black oxide",Phone and saddle adjusters,McMaster,92815A202,10,pack,In hand,§11.5,
-CAM-007,Imager,1,ABS printed phone cradle assembly,,,,,,CAD open,§11.3,
-CAM-008,Imager,1,ABS printed lens saddle assembly,,,,,,CAD open,§11.4,
-CAM-009,Imager,3,N52 Bar Magnet - 10mm L x 5mm W x 2mm H,Hard bearing pads for phone/lens jack contacts,Amazon,B0DMCY4FN1,120,pack,In hand,§§11.3–11.5,Nickel-plated rectangular magnets; allocation covers the two phone-cradle jack contacts and the lens-saddle jack contact.
-CAM-010,Imager,1,"Stainless steel round rod assortment, 100 mm length",Phone-cradle / imager vertical-guide prototyping stock,Amazon,B08N4TSNPW,1,pack,In hand,§§11.3–11.5,Working-stock assortment for guide-rod prototyping; exact diameter and installed allocation remain open.
-MIR-001,Mirror cell,1,"Skyoptikst D203F1600 spherical mirror, Ø203 mm, f=1600 mm",,Amazon,B0B5RR41CT,1,each,In hand,§12.5,
-MIR-002,Mirror cell,2,Baltic birch plywood panel 12 × 12 × 1/2 in,Base and adjuster plates,Amazon,B09D941GXR,4,pack,In hand,§12.1,
-MIR-003,Mirror cell,1,Baltic birch plywood panel 12 × 12 × 3/4 in,Mirror plate,Amazon,B0GL9G45GH,1,each,In hand,§12.1,
-MIR-004,Mirror cell,3,"1/4-80 TPI Imperial fine adjustment screws, 2.5 in",,Kozak,TS250-80-2500,3,each,In hand,§12.2,
-MIR-005,Mirror cell,3,Imperial Fine Adjustment Carrier Bushings,,Kozak,TB250-80-625,3,each,In hand,§12.2,
-MIR-006,Mirror cell,3,Imperial Adjustment Knobs,,Kozak,KB250-80,3,each,In hand,§12.2,
-MIR-007,Mirror cell,3,"Leveling Washer, Two Piece, 1/4"" Screw Size, Black-Oxide Steel",Spherical washers,McMaster,91131A028,3,each,In hand,§12.4,
-MIR-008,Mirror cell,3,"Compression Springs, 0.75"" Long, 0.5"" OD, 0.424"" ID",,McMaster,2022N186,5,pack,In hand,§12.3,
-MIR-009,Mirror cell,6,"Washer for 3/8"" washer, 0.390"" ID, 0.028"" to 0.036"" thick, 18-8 SS",Spring seat washers,McMaster,98017A199,100,pack,In hand,§12.3,
-MIR-010,Mirror cell,2,"3"" Long Corner Bracket, aluminum",Adjuster plate to base plate mounting,McMaster,8681N11,2,each,In hand,§12.7,
-MIR-011,Mirror cell,,"5/16"" × 1-1/2"" hex-drive flat-head screw, 316 SS",Existing alternate/fallback bracket screw stock,McMaster,90585A587,5,pack,In hand,§12.7,Previously baseline bracket screw; retained as in-hand alternate stock after corner-clearance review.
-MIR-012,Mirror cell,6,"5/16""-18 heavy-profile nylon-insert locknut, 18-8 SS",Adjuster plate to base plate mounting,McMaster,90099A030,5,pack,In hand,§12.7,Six installed for the revised three-fastener-per-bracket pattern; existing stock confirmed in hand.
-MIR-013,Mirror cell,6,"5/16"" SAE washer, 0.344"" ID × 0.688"" OD, 18-8 SS black oxide",Adjuster plate to base plate mounting,McMaster,96659A134,25,pack,In hand,§12.7,Six installed for the revised three-fastener-per-bracket pattern.
+SLT-001,Source slit,1,"Slip ring for SM1 lens tubes, M4 Tap",Slit-head rotation mount; clamps the adapter spigot,Thorlabs,SM1RC/M,2,each,In hand,§8.6,Second of the two in hand (CAR-002 holds the other).
+SLT-002,Source slit,2,"Fine adjustment screw with knob, 1/4""-80, 1.00"" long",Slit centering and slit-width adjusters,Thorlabs,FAS100,3,each,In hand,§§8.3–8.4,"Shared stock with CAR-005: three in hand, two here, one in the cutoff carriage; no spare."
+SLT-003,Source slit,2,1/4 in-80 inserts,Slit centering and slit-width adjusters,McMaster,98625A950,3,each,In hand,§§8.3–8.4,"Shared stock with CAR-007: three in hand, two here, one in the cutoff carriage; no spare. Finish printed bores with a 5/16 in drill; a light hand ream gave a good press fit on the first print."
+SLT-004,Source slit,1,Compression springs,"Centering-stage preload, coaxial with the centering FAS100",McMaster,2006N292,5,pack,In hand,§8.3,Measured OD 0.272 in / 6.91 mm. Installed fully compressed by hand (§8.3). Shared 5-pack with CAR-006.
+SLT-005,Source slit,2,N52 Bar Magnet - 10mm L x 5mm W x 2mm H,Hard bearing pads under the FAS100 ball tips,Amazon,B0DMCY4FN1,120,pack,In hand,§§8.3–8.4,Shared pack with CAR-012 and CAM-009.
+SLT-006,Source slit,2,"Razor blade, Stanley 11-515",Slit blades (datum and movable),Amazon,B000NNIIQM,100,pack,In hand,§8.1,Shared 100-pack with CAS-007.
+SLT-007,Source slit,8,"M3 × 12 mm socket head screw, 18-8 SS",Blade clamp bars (4) and adapter-to-head (4),McMaster,91292A114,100,pack,In hand,§§8.5–8.6,Shared common 100-pack.
+SLT-008,Source slit,8,"M3 × 0.5 hex nut, 18-8 SS, 5.5 mm AF × 2.4 mm high",Captive nuts for blade clamp bars (4) and adapter (4),McMaster,91828A211,100,pack,In hand,§§8.5–8.6,Shared common 100-pack (see CAS-004).
+SLT-009,Source slit,8,"M3 flat washer, 3.2 mm ID × 7 mm OD, 18-8 SS","Adapter spacer washers, two per adapter screw",McMaster,93475A210,100,pack,In hand,§8.6,Two stacked per screw set the ~1 mm adapter standoff. Shared 100-pack with CAS-005.
+SLT-010,Source slit,1,ABS printed flexure slit head,,,,,,CAD ready,§8.2,"CAD in src/schlieren/parts/slit_head.py; first test print successful (fits and flexure motion confirmed, §8.7)."
+SLT-011,Source slit,1,ABS printed slit-head spigot adapter,,,,,,CAD ready,§8.6,
+SLT-012,Source slit,2,ABS printed slit-head blade clamp bars,,,,,,CAD ready,§8.5,
+CAR-001,Carriages,,"SM1 lens tube, 1.50"" Thread Depth",Existing stock; former carriage-tube allocation,Thorlabs,SM1L15,2,each,In hand,,No longer allocated: the cutoff carriage mounts in the SM1RC/M on an integral printed spigot (§9.1); both tubes in hand are spare.
+CAR-002,Carriages,1,"Slip ring for SM1 lens tubes, M4 Tap",Post attachment,Thorlabs,SM1RC/M,2,each,In hand,§9.1,Cutoff carriage. The second in-hand ring is allocated to the slit head (SLT-001).
+CAR-005,Carriages,1,"Fine adjustment screw with knob, 1/4""-80, 1.00"" long",Cassette positioner,Thorlabs,FAS100,3,each,In hand,§9.3,"Three in hand: one for the cutoff carriage, two for the slit head (SLT-002); no spare."
+CAR-006,Carriages,1,Compression springs,Cassette counter-force plunger,McMaster,2006N292,5,pack,In hand,§9.3,Shared 5-pack with the slit-head preload spring (SLT-004).
+CAR-007,Carriages,1,1/4 in-80 inserts,Cassette positioner,McMaster,98625A950,3,each,In hand,§9.3,"Three in hand: one for the cutoff carriage, two for the slit head (SLT-003); no spare."
+CAR-008,Carriages,,"4 mm × 45 mm shoulder screw, 18-8 SS",Existing stock; former spring guide / retract handle,McMaster,91273A377,2,each,In hand,,"No longer allocated: the spring seats in printed cups and the plunger retracts by a thumb tab (§9.5); both screws in hand are spare."
+CAR-009,Carriages,3,Brass escutcheon pins,Cassette interface datums,McMaster,97936A109,300,pack,In hand,§9.4,Cutoff carriage only.
+CAR-010,Carriages,1,ABS printed carriage bodies,,,,,,CAD ready,§9.1,Cutoff carriage only.
+CAR-012,Carriages,1,N52 Bar Magnet - 10mm L x 5mm W x 2mm H,Hard bearing pads for FAS100-driven plungers,Amazon,B0DMCY4FN1,120,pack,In hand,§9.3,Nickel-plated rectangular magnets; one hard contact insert for the FAS100-driven ABS plunger of the cutoff carriage.
+CAR-013,Carriages,1,ABS printed open-center keeper frames,Retain plunger guide ears while leaving cassette-loading aperture open,,,,,CAD ready,§9.4,"Perimeter frame; eight M3 screws (four end, four side in lugs); 3.0 mm side members, with a 5 mm-side-member fallback keeper if lift is excessive; carries the end-wall spring-cup roof (§9.5). Cutoff carriage only."
+CAR-014,Carriages,8,"M3 × 12 mm socket head screw, 18-8 SS",Keeper-frame fasteners (four end + four side),McMaster,91292A114,100,pack,In hand,§9.4,Reuse common M3 × 12 mm stock. Heads bear directly on ABS in ~0.5 mm recesses; tighten only to a light snug; verify printed fit.
+CAR-015,Carriages,8,"M3 × 0.5 hex nut, 18-8 SS, 5.5 mm AF × 2.4 mm high",Keeper-frame captive nuts,McMaster,91828A211,100,pack,In hand,§9.4,"Full-height DIN 934 nut. ~2.5 mm captive hex pocket from carriage back, leaving ~1.5 mm ABS floor above pocket."
+CAS-001,Cassettes,6,ABS printed cassettes,,,,,,CAD ready,§9.6,The source slit no longer uses a cassette (§8); quantity to be re-confirmed for the cutoff cassettes.
+CAS-002,Cassettes,1,Rubber/EPDM sheet,Retaining bar friction pads,McMaster,9852N37,1,sheet,In hand,"§§8.5, 9.7",Also faces the two slit-head blade clamp bars (§8.5).
+CAS-003,Cassettes,12,"M3 × 14 mm 90° flat-head socket screw, 18-8 SS",Retaining bar screws,McMaster,92125A133,100,pack,In hand,§9.7,Provisional 14 mm length; fit-test with 4 mm bar.
+CAS-004,Cassettes,12,"M3 × 0.5 full-height hex nut, 18-8 SS",Retaining bar nuts,McMaster,91828A211,100,pack,In hand,§9.7,"Shared 100-pack: 31 total nuts now allocated across split clamps, keeper frames, cassette retaining bars, and the slit head; 69 spare."
+CAS-005,Cassettes,12,"M3 flat washer, 3.2 mm ID × 7 mm OD, 18-8 SS",Retaining bar washers,McMaster,93475A210,100,pack,In hand,§9.7,"Under exposed nut, on printed retaining bar. Shared 100-pack with the slit-head spacer washers (SLT-009)."
+CAS-006,Cassettes,,"Razor blade, Stanley 11-515",Existing stock; former slit-cassette allocation,Amazon,B000NNIIQM,100,pack,In hand,,No longer allocated after the flexure slit head decision (§8); the slit blades are SLT-006.
+CAS-007,Cassettes,1,"Razor blade, Stanley 11-515",Cutoff cassette,Amazon,B000NNIIQM,100,pack,In hand,§9,
+CAS-008,Cassettes,1,"Magnet wire, 44 AWG (~0.0508 mm bare conductor)",Dark-field cutoff filament,Amazon,B0F29JW8CF,,,In hand,§9.8,Enamel-coated copper. Finished outside diameter will be slightly larger than the nominal bare-conductor diameter.
+CAS-009,Cassettes,1,"Magnet wire, 34 AWG (~0.160 mm bare conductor)",Dark-field cutoff filament,Amazon,B07P2HJJP6,,,In hand,§9.8,Enamel-coated copper. Finished outside diameter will be slightly larger than the nominal bare-conductor diameter.
+CAS-010,Cassettes,1,"Magnet wire, 30 AWG (~0.255 mm bare conductor)",Dark-field cutoff filament,Amazon,B07GBMKMKY,,,In hand,§9.8,Enamel-coated copper. Finished outside diameter will be slightly larger than the nominal bare-conductor diameter.
+CAS-011,Cassettes,1,Rosco Roscolux Designer Color Selector Swatchbook - 3 x 6,Cutoff cassettes,Amazon,B074V94RNR,1,each,In hand,§9.9,
+CAM-001,Imager,1,iPhone,Imager,Apple,iPhone 17,1,each,In hand,§10.1,
+CAM-002,Imager,1,iPhone camera app,Imager,Blackmagic Design,Blackmagic Camera,1,each,In hand,§10.1,
+CAM-003,Imager,1,"Telephoto lens, 17mm",Imager,iOgrapher,proSnap 7×,1,each,In hand,§10.2,
+CAM-004,Imager,3,Ball-tip jack screws,Phone and saddle adjusters,McMaster,93339A252,4,each,In hand,§10.5,
+CAM-005,Imager,3,M5 heat-set inserts,Phone and saddle adjusters,McMaster,94459A797,,,In hand,§10.5,
+CAM-006,Imager,3,"M5 thumb nuts, low profile black oxide",Phone and saddle adjusters,McMaster,92815A202,10,pack,In hand,§10.5,
+CAM-007,Imager,1,ABS printed phone cradle assembly,,,,,,CAD open,§10.3,
+CAM-008,Imager,1,ABS printed lens saddle assembly,,,,,,CAD open,§10.4,
+CAM-009,Imager,3,N52 Bar Magnet - 10mm L x 5mm W x 2mm H,Hard bearing pads for phone/lens jack contacts,Amazon,B0DMCY4FN1,120,pack,In hand,§§10.3–10.5,Nickel-plated rectangular magnets; allocation covers the two phone-cradle jack contacts and the lens-saddle jack contact.
+CAM-010,Imager,1,"Stainless steel round rod assortment, 100 mm length",Phone-cradle / imager vertical-guide prototyping stock,Amazon,B08N4TSNPW,1,pack,In hand,§§10.3–10.5,Working-stock assortment for guide-rod prototyping; exact diameter and installed allocation remain open.
+MIR-001,Mirror cell,1,"Skyoptikst D203F1600 spherical mirror, Ø203 mm, f=1600 mm",,Amazon,B0B5RR41CT,1,each,In hand,§11.5,
+MIR-002,Mirror cell,2,Baltic birch plywood panel 12 × 12 × 1/2 in,Base and adjuster plates,Amazon,B09D941GXR,4,pack,In hand,§11.1,
+MIR-003,Mirror cell,1,Baltic birch plywood panel 12 × 12 × 3/4 in,Mirror plate,Amazon,B0GL9G45GH,1,each,In hand,§11.1,
+MIR-004,Mirror cell,3,"1/4-80 TPI Imperial fine adjustment screws, 2.5 in",,Kozak,TS250-80-2500,3,each,In hand,§11.2,
+MIR-005,Mirror cell,3,Imperial Fine Adjustment Carrier Bushings,,Kozak,TB250-80-625,3,each,In hand,§11.2,
+MIR-006,Mirror cell,3,Imperial Adjustment Knobs,,Kozak,KB250-80,3,each,In hand,§11.2,
+MIR-007,Mirror cell,3,"Leveling Washer, Two Piece, 1/4"" Screw Size, Black-Oxide Steel",Spherical washers,McMaster,91131A028,3,each,In hand,§11.4,
+MIR-008,Mirror cell,3,"Compression Springs, 0.75"" Long, 0.5"" OD, 0.424"" ID",,McMaster,2022N186,5,pack,In hand,§11.3,
+MIR-009,Mirror cell,6,"Washer for 3/8"" washer, 0.390"" ID, 0.028"" to 0.036"" thick, 18-8 SS",Spring seat washers,McMaster,98017A199,100,pack,In hand,§11.3,
+MIR-010,Mirror cell,2,"3"" Long Corner Bracket, aluminum",Adjuster plate to base plate mounting,McMaster,8681N11,2,each,In hand,§11.7,
+MIR-011,Mirror cell,,"5/16"" × 1-1/2"" hex-drive flat-head screw, 316 SS",Existing alternate/fallback bracket screw stock,McMaster,90585A587,5,pack,In hand,§11.7,Previously baseline bracket screw; retained as in-hand alternate stock after corner-clearance review.
+MIR-012,Mirror cell,6,"5/16""-18 heavy-profile nylon-insert locknut, 18-8 SS",Adjuster plate to base plate mounting,McMaster,90099A030,5,pack,In hand,§11.7,Six installed for the revised three-fastener-per-bracket pattern; existing stock confirmed in hand.
+MIR-013,Mirror cell,6,"5/16"" SAE washer, 0.344"" ID × 0.688"" OD, 18-8 SS black oxide",Adjuster plate to base plate mounting,McMaster,96659A134,25,pack,In hand,§11.7,Six installed for the revised three-fastener-per-bracket pattern.
 MIR-015,Mirror cell,4,"1/4""-20 × 1-1/2"" flat-head screws",Existing spare stock; former C2564 tripod-interface hardware,McMaster,94518A525,4,each,In hand,,No longer allocated to the active tripod interface after transition to the CAMVATE 577/501/504 quick-release system; retain as in-hand spare hardware.
 MIR-017,Mirror cell,4,"1/4""-20 flex-top locknuts",Existing spare stock; former C2564 tripod-interface hardware,McMaster,91839A123,5,pack,In hand,,No longer allocated to the active tripod interface after transition to the CAMVATE 577/501/504 quick-release system; retain as in-hand spare hardware.
 MIR-018,Mirror cell,4,"1/4"" thin washers",Existing spare stock; former C2564 tripod-interface hardware,McMaster,98019A255,10,pack,In hand,,No longer allocated to the active tripod interface after transition to the CAMVATE 577/501/504 quick-release system; retain as in-hand spare hardware.
-MIR-023,Mirror cell,4,"M4 × 0.7 × 16 mm 90° flat-head hex-drive screw, 18-8 stainless",Provisional quick-release plate mounting screw; short-length option,McMaster,92125A194,100,pack,In hand,§12.9,Order one pack. Four screws are the provisional installed quantity if this length matches the measured CAMVATE plate thickness; otherwise use MIR-024.
-MIR-024,Mirror cell,4,"M4 × 0.7 × 18 mm 90° flat-head hex-drive screw, 18-8 stainless",Provisional quick-release plate mounting screw; long-length option,McMaster,92125A196,100,pack,In hand,§12.9,Order one pack. Four screws are the provisional installed quantity if this length matches the measured CAMVATE plate thickness; otherwise use MIR-023.
-MIR-025,Mirror cell,1,CAMVATE Manfrotto-Type Quick Release Assembly with Sliding Plate Camera Mount,Mirror-cell quick-release / tripod interface,Amazon,B0B2WBC921,1,each,In hand,§12.9,Complete 577/501/504-compatible quick-release assembly with removable sliding plate and receiver. Exact removable-plate hole pattern and final M4 screw length to be verified on arrival.
-MIR-019,Mirror cell,1,"DOWSIL 737 clear silicone, 3 fl. oz.",Mirror mounting,McMaster,7587A25,1,each,In hand,§12.5,
-MIR-020,Mirror cell,1,Adhesive backed F1 felt,Safety retainer padding,McMaster,8334K15,1,sheet,In hand,§12.8,
-MIR-021,Mirror cell,3,ABS printed front safety retainers,,,,,,CAD open,§12.8,
-MIR-022,Mirror cell,6,"5/16""-18 × 1-3/8"" hex-drive flat-head screw, 316 SS",Primary structural-bracket screws,McMaster,90585A997,5,pack,In hand,§12.7,Use six installed: two through the vertical plate and one through the base plate per bracket. Two 5-packs required; four spare.
-SHP-001,Shop supplies,1,"Loctite 271 threadlocker, .34 fl. oz.",,McMaster,91458A160,1,each,In hand,§11.5,
-SHP-002,Shop supplies,1,Heat-set installation tip,,McMaster,92160A327,1,each,In hand,§11.5,
+MIR-023,Mirror cell,4,"M4 × 0.7 × 16 mm 90° flat-head hex-drive screw, 18-8 stainless",Provisional quick-release plate mounting screw; short-length option,McMaster,92125A194,100,pack,In hand,§11.9,Order one pack. Four screws are the provisional installed quantity if this length matches the measured CAMVATE plate thickness; otherwise use MIR-024.
+MIR-024,Mirror cell,4,"M4 × 0.7 × 18 mm 90° flat-head hex-drive screw, 18-8 stainless",Provisional quick-release plate mounting screw; long-length option,McMaster,92125A196,100,pack,In hand,§11.9,Order one pack. Four screws are the provisional installed quantity if this length matches the measured CAMVATE plate thickness; otherwise use MIR-023.
+MIR-025,Mirror cell,1,CAMVATE Manfrotto-Type Quick Release Assembly with Sliding Plate Camera Mount,Mirror-cell quick-release / tripod interface,Amazon,B0B2WBC921,1,each,In hand,§11.9,Complete 577/501/504-compatible quick-release assembly with removable sliding plate and receiver. Exact removable-plate hole pattern and final M4 screw length to be verified on arrival.
+MIR-019,Mirror cell,1,"DOWSIL 737 clear silicone, 3 fl. oz.",Mirror mounting,McMaster,7587A25,1,each,In hand,§11.5,
+MIR-020,Mirror cell,1,Adhesive backed F1 felt,Safety retainer padding,McMaster,8334K15,1,sheet,In hand,§11.8,
+MIR-021,Mirror cell,3,ABS printed front safety retainers,,,,,,CAD open,§11.8,
+MIR-022,Mirror cell,6,"5/16""-18 × 1-3/8"" hex-drive flat-head screw, 316 SS",Primary structural-bracket screws,McMaster,90585A997,5,pack,In hand,§11.7,Use six installed: two through the vertical plate and one through the base plate per bracket. Two 5-packs required; four spare.
+SHP-001,Shop supplies,1,"Loctite 271 threadlocker, .34 fl. oz.",,McMaster,91458A160,1,each,In hand,§10.5,
+SHP-002,Shop supplies,1,Heat-set installation tip,,McMaster,92160A327,1,each,In hand,§10.5,
 SHP-003,Shop supplies,1,Optical spanner wrench,,Amazon,B0CKSL364Q,1,each,In hand,,
-SHP-004,Shop supplies,1,Metric feeler gauge set,Source-slit blade spacing,Amazon,B07XPD9L1C,1,each,In hand,§9.4,
+SHP-004,Shop supplies,1,Metric feeler gauge set,Source-slit blade spacing,Amazon,B07XPD9L1C,1,each,In hand,§8.4,
 SHP-005,Shop supplies,1,M2 tap,LED board mounting into SM1CP2M cap,McMaster,8305A78,1,each,In hand,§6.4,
 SHP-006,Shop supplies,1,"M2 tap drill, 1.6mm",LED mounting,McMaster,2979N13,1,each,In hand,§6.4,
 SHP-007,Shop supplies,,18 AWG wire,LED wiring,,,,,In hand,§6.6,
 SHP-008,Shop supplies,,Heat-shrink tubing,LED wiring,,,,,In hand,,
 SHP-009,Shop supplies,,USB-C chargers/cables,DP100 power,,,,,In hand,,
 SHP-010,Shop supplies,,Thermal compound,LED heatsink interfaces,,,,,In hand,§6.4,
-SHP-011,Shop supplies,1,"Loctite 4061 cyanoacrylate adhesive, 0.7 fl. oz., low viscosity (~20 cP)",Plywood fiber conditioning and localized tack bonds,McMaster,1818A45,1,each,In hand,"§§6.5, 8.4, 9, 12.4",Use sparingly: wick into Baltic-birch fibers for spherical-washer sockets; use needle-sized localized drops for ABS/metal calibration tacks and captive screw retention. No accelerator required.
-SHP-012,Shop supplies,1,"UHMW Sheet 1/8"" x 12"" x 12""",Mirror mount releasing assembly surface,US Plastics,46489,1,each,In hand,§12.6,
+SHP-011,Shop supplies,1,"Loctite 4061 cyanoacrylate adhesive, 0.7 fl. oz., low viscosity (~20 cP)",Plywood fiber conditioning and localized tack bonds,McMaster,1818A45,1,each,In hand,"§§6.5, 8, 9.4, 11.4",Use sparingly: wick into Baltic-birch fibers for spherical-washer sockets; use needle-sized localized drops for ABS/metal calibration tacks and captive screw retention. No accelerator required.
+SHP-012,Shop supplies,1,"UHMW Sheet 1/8"" x 12"" x 12""",Mirror mount releasing assembly surface,US Plastics,46489,1,each,In hand,§11.6,
 SHP-013,Shop supplies,,Soldering tools / supplies,LED wiring,,,,,In hand,,
-SHP-014,Shop supplies,1,"West System G/Flex 650 Epoxy Adhesive, 2 x 4 oz","Mirror cell adjuster sleeves, spring seat washer tack",Amazon,B002IZFPQE,1,each,In hand,§12.2,
-SHP-015,Shop supplies,1,"Silicone grease, clear, NLGI 1",ABS carriage sliding-interface lubricant,McMaster,1418K51,1,each,In hand,§8.4,Use only a trace film on dressed ABS-on-ABS sliding interfaces.
-SHP-016,Shop supplies,1,"White lithium grease, NLGI #2",Light grease for mirror-cell spherical washer interfaces,Lucas Oil Products,,1,each,In hand,§12.4,Existing shop stock inspected 2026-09-16 and appears usable.
-SHP-017,Shop supplies,1,"1/2"" Forstner bit, standard-point smooth-finish",Spherical-washer counterbores,McMaster,2890A56,1,each,In hand,§12.4,Use in drill press for shallow close-fit spherical-washer sockets; test in scrap Baltic birch before cutting final plate.
-SHP-018,Shop supplies,1,"5/8"" Forstner bit, standard-point smooth-finish",Spring-seat washer counterbores,McMaster,2890A58,1,each,In hand,§12.3,Use in drill press for shallow spring-seat-washer registration counterbores; test depth/fit in scrap first.
-SHP-019,Shop supplies,1,M4 × 0.7 high-speed-steel plug-chamfer hex-bit tap,Tap CAMVATE quick-release plate mounting holes,McMaster,1021N23,1,each,In hand,§12.9,Use with 3.3 mm tap drill; exact hole locations await measurement of the delivered plate.
-SHP-020,Shop supplies,1,3.3 mm black-oxide HSS jobber-length drill bit,M4 × 0.7 tap drill for CAMVATE quick-release plate,McMaster,2958A64,1,each,In hand,§12.9,Standard 3.3 mm tap-drill size for M4 × 0.7.
-SHP-021,Shop supplies,1,"Loctite 243 medium-strength removable threadlocker, 0.34 fl. oz.",Removable thread retention for quick-release plate mounting screws,McMaster,91458A115,1,each,In hand,§12.9,Apply only after fit and screw length are validated; preferred over high-strength Loctite 271 for this serviceable joint.
-SHP-022,Shop supplies,1,"Rosco Photofoil matte black aluminum wrap, 12""x10'",Opaque masking / thin-sheet cutoff experiments,Fullcompass,01001-1210,1,pack,In hand,"§§9.8, 10",Retained as general shop stock for opaque masking and thin-sheet cutoff experiments.
+SHP-014,Shop supplies,1,"West System G/Flex 650 Epoxy Adhesive, 2 x 4 oz","Mirror cell adjuster sleeves, spring seat washer tack",Amazon,B002IZFPQE,1,each,In hand,§11.2,
+SHP-015,Shop supplies,1,"Silicone grease, clear, NLGI 1",ABS carriage sliding-interface lubricant,McMaster,1418K51,1,each,In hand,§9.4,Use only a trace film on dressed ABS-on-ABS sliding interfaces.
+SHP-016,Shop supplies,1,"White lithium grease, NLGI #2",Light grease for mirror-cell spherical washer interfaces,Lucas Oil Products,,1,each,In hand,§11.4,Existing shop stock inspected 2026-09-16 and appears usable.
+SHP-017,Shop supplies,1,"1/2"" Forstner bit, standard-point smooth-finish",Spherical-washer counterbores,McMaster,2890A56,1,each,In hand,§11.4,Use in drill press for shallow close-fit spherical-washer sockets; test in scrap Baltic birch before cutting final plate.
+SHP-018,Shop supplies,1,"5/8"" Forstner bit, standard-point smooth-finish",Spring-seat washer counterbores,McMaster,2890A58,1,each,In hand,§11.3,Use in drill press for shallow spring-seat-washer registration counterbores; test depth/fit in scrap first.
+SHP-019,Shop supplies,1,M4 × 0.7 high-speed-steel plug-chamfer hex-bit tap,Tap CAMVATE quick-release plate mounting holes,McMaster,1021N23,1,each,In hand,§11.9,Use with 3.3 mm tap drill; exact hole locations await measurement of the delivered plate.
+SHP-020,Shop supplies,1,3.3 mm black-oxide HSS jobber-length drill bit,M4 × 0.7 tap drill for CAMVATE quick-release plate,McMaster,2958A64,1,each,In hand,§11.9,Standard 3.3 mm tap-drill size for M4 × 0.7.
+SHP-021,Shop supplies,1,"Loctite 243 medium-strength removable threadlocker, 0.34 fl. oz.",Removable thread retention for quick-release plate mounting screws,McMaster,91458A115,1,each,In hand,§11.9,Apply only after fit and screw length are validated; preferred over high-strength Loctite 271 for this serviceable joint.
+SHP-022,Shop supplies,1,"Rosco Photofoil matte black aluminum wrap, 12""x10'",Opaque masking / thin-sheet cutoff experiments,Fullcompass,01001-1210,1,pack,In hand,"§§9, 9.7",Retained as general shop stock for opaque masking and thin-sheet cutoff experiments.
 SHP-023,Shop supplies,1,M3 × 0.5 tap and 2.5 mm tap drill,Tap SM1CP2M rear for heatsink screws,,,,,Specified,§6.5,Confirm whether already in shop stock before purchasing; vendor and SKU not yet chosen.

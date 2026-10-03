@@ -19,7 +19,7 @@ led-module = "schlieren.cli.led_module:main"
 rail-shoe = "schlieren.cli.rail_shoe:main"
 slit-head = "schlieren.cli.slit_head:main"
 build-bom-xlsx = "schlieren.cli.build_bom_xlsx:main"
-build-status-doc = "schlieren.cli.build_status_doc:main"
+build-design-doc = "schlieren.cli.build_design_doc:main"
 
 [build-system]
 requires = ["uv_build>=0.12.17,<0.13.0"]

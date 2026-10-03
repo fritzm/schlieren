@@ -32,12 +32,12 @@ Per-subsystem Markdown fragments, named `NN-*.md`; filename order is document or
 - design decisions and rationale
 - provisional (open or evolving) design areas and next steps
 
-Described design is the baseline unless explicitly marked **Provisional**; `13-open-work.md` rolls up the
+Described design is the baseline unless explicitly marked **Provisional**; `12-open-work.md` rolls up the
 provisional areas and next steps. Read only the fragment(s) relevant to the task (section numbers match the
-BOM `Source section` column), plus `13-open-work.md` for cross-cutting open work. Do not read the whole set
+BOM `Source section` column), plus `12-open-work.md` for cross-cutting open work. Do not read the whole set
 unless the task needs it.
 
-`uv run build-status-doc` concatenates the fragments into `exports/docs/schlieren-project-status.md`
+`uv run build-design-doc` concatenates the fragments into `exports/docs/schlieren-design.md`
 (generated; never edit it).
 
 ### BOM and procurement: `bom/bom.csv`
@@ -203,7 +203,7 @@ uv run python -m unittest discover -s tests -v        # all tests
 uv run python -m unittest tests.test_carriage -v      # one test module
 uvx ruff check . && uvx ruff format .                 # lint/format (line length 110, from pyproject.toml)
 uv run <command> --help                               # part commands: build/export (--show opens the viewer)
-uv run build-status-doc                               # docs/design/ -> exports/docs/schlieren-project-status.md
+uv run build-design-doc                               # docs/design/ -> exports/docs/schlieren-design.md
 uv run build-bom-xlsx                                 # bom/bom.csv -> exports/bom/schlieren-bom.xlsx
 ```
 
@@ -244,7 +244,7 @@ status-tracking or history document.
 When updating it:
 
 - preserve established terminology;
-- state settled design plainly; mark open or evolving areas **Provisional** and keep the §13 rollup in step;
+- state settled design plainly; mark open or evolving areas **Provisional** and keep the §12 rollup in step;
 - when a decision changes, rewrite the affected text to describe the new design; do not narrate what it
   replaced ("previously", "no longer", "superseded");
 - retain useful rationale where it explains a non-obvious current decision;

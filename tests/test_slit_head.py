@@ -1,4 +1,4 @@
-"""Flexure slit head (§9): datum, flexure, adjuster, fit, and clearance invariants."""
+"""Flexure slit head (§8): datum, flexure, adjuster, fit, and clearance invariants."""
 
 import unittest
 from dataclasses import replace

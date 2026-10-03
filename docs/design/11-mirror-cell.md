@@ -1,6 +1,6 @@
-## 12. Mirror cell
+## 11. Mirror cell
 
-### 12.1 Plates and basic architecture
+### 11.1 Plates and basic architecture
 
 The mirror-cell plywood thicknesses and plate envelopes are:
 
@@ -11,7 +11,7 @@ The mirror-cell plywood thicknesses and plate envelopes are:
 The fixed cell-adjuster plate and the base plate therefore begin as identical 11.5 × 11.0 × 1/2 in rectangular
 blanks. The cell-adjuster plate carries the three fine-adjustment stations. The base plate provides the
 structural/tripod-support base and is joined to the cell-adjuster plate by the structural brackets described
-in [§12.7](12-mirror-cell.md#127-structural-brackets). The 3/4 in moving mirror plate carries the 203 mm
+in [§11.7](#117-structural-brackets). The 3/4 in moving mirror plate carries the 203 mm
 mirror and moves relative to the fixed cell-adjuster plate.
 
 The cell-adjuster plate is centered left/right on the 11.5 in-wide base. The rear face of the 1/2 in fixed
@@ -67,7 +67,7 @@ The moving mirror plate uses 3/4 in Baltic-birch sheet. The 1/2 in Baltic-birch 
 tabletop frame and is used for the cell-adjuster plate, base plate, front pivot plate, and rear
 rail-support/foot blocks.
 
-### 12.2 Three adjuster stations
+### 11.2 Three adjuster stations
 
 There are three equivalent adjuster stations.
 
@@ -111,7 +111,7 @@ Mounting details:
 
 This arrangement adds no hardware thickness to the inter-plate gap.
 
-### 12.3 Compression springs and seat washers
+### 11.3 Compression springs and seat washers
 
 Components:
 
@@ -141,7 +141,7 @@ them approximately flush with the plywood surfaces across their thickness tolera
 in-free-length McMaster 2022N186 springs and the 0.500 in nominal interplate gap, the springs operate at
 approximately 0.250 in nominal compression before small washer-thickness and adjustment-position variations.
 
-### 12.4 Spherical washer interfaces
+### 11.4 Spherical washer interfaces
 
 Each of the three adjuster locations uses:
 
@@ -203,7 +203,7 @@ directly against the close-fit CA-hardened plywood counterbore. Keep grease away
 adhesive-bonding areas, and RTV bonding surfaces. The grease is Lucas Oil Products NLGI #2 white lithium
 grease from shop stock.
 
-### 12.5 Mirror mounting
+### 11.5 Mirror mounting
 
 The 203 mm mirror is carried within the 3/4 in moving mirror-plate aperture.
 
@@ -222,7 +222,7 @@ No counterbores or pockets are specified for the RTV pads.
 **Provisional:** test adhesion to properly prepared Baltic birch before bonding, to decide whether an adhesion
 primer is necessary.
 
-### 12.6 RTV glue-up cure surface
+### 11.6 RTV glue-up cure surface
 
 For mirror-plate glue-up and bench-top cure, use a non-stick polyethylene-family release surface beneath the
 assembly.
@@ -236,7 +236,7 @@ This protects the workbench from accidental RTV creep or squeeze-out.
 
 The release sheet is a shop supply rather than part of the finished instrument.
 
-### 12.7 Structural brackets
+### 11.7 Structural brackets
 
 Hardware joining the 1/2 in cell-adjuster plate to the 1/2 in base plate:
 
@@ -264,7 +264,7 @@ overhang at the inside corner.
 
 The bracket attachments are through-bolted rather than relying on wood screws.
 
-### 12.8 Mirror safety and transport retention
+### 11.8 Mirror safety and transport retention
 
 Front safety retention is intentionally non-stressing:
 
@@ -276,7 +276,7 @@ A removable travel cover with standoffs is useful for transport.
 
 **Provisional:** the safety retainers and travel cover are not yet designed.
 
-### 12.9 Tripod interface
+### 11.9 Tripod interface
 
 The mirror cell mounts on the tripod through a CAMVATE Manfrotto-type quick-release assembly with sliding plate
 (Amazon B0B2WBC921) on a Sunwayfoto LB-68R leveling base, whose top mounting stud is 3/8 in-16. The receiver
@@ -286,7 +286,7 @@ the 1/2 in Baltic-birch mirror-cell base.
 The sliding plate is 7.00 in / 177.8 mm long, mounted with its forward end flush with the front edge of the
 11.0 in-deep base, so it spans 0–7.00 in / 0–177.8 mm aft of the front edge and its geometric center lies 3.50
 in / 88.9 mm aft of that edge. This is only 0.15 in / 3.8 mm aft of the estimated mirror-cell center of
-gravity (§12.1), negligible relative to the CoG uncertainty and the quick-release system's sliding adjustment.
+gravity (§11.1), negligible relative to the CoG uncertainty and the quick-release system's sliding adjustment.
 
 The plate is attached by four McMaster 92125A196 M4 × 0.7 × 18 mm 90° flat-head screws:
 

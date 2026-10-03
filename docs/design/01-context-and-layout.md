@@ -14,7 +14,7 @@ back into Git.
   settled.
 - **Provisional** marks a design area, dimension, or method that is still open or evolving, typically pending
   a physical fit check, measurement, or further design. Provisional areas are rolled up with next steps in
-  [§13](13-open-work.md#13-provisional-areas-and-next-steps).
+  [§12](12-open-work.md#12-provisional-areas-and-next-steps).
 - Measured values, manufacturer specifications, and calculated values are identified as such where the
   distinction matters; a measured value takes precedence over a catalog value.
 - Quantities, vendors, part numbers beyond those needed to define the design, procurement state, and the CAD
@@ -93,9 +93,9 @@ common TR50/M post + printed rail shoe concept:
 3. cutoff carriage.
 
 The source slit and the cutoff both rotate about the optical axis in a Thorlabs SM1RC/M SM1 slip ring. The
-slit uses a flexure head with fine centering and slit-width adjustment (§9); the cutoff uses a rotating
+slit uses a flexure head with fine centering and slit-width adjustment (§8); the cutoff uses a rotating
 carriage with a 64 mm cassette envelope, allowing knife-edge, wire, and color-filter experiments without
-changing the supporting mechanism (§8).
+changing the supporting mechanism (§9).
 
 The mirror cell uses a three-point, approximately 120°-spaced fine-adjustment architecture with compression
 springs and spherical washer interfaces. The mirror is compliantly supported in the moving plate by six radial

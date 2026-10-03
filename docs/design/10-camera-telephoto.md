@@ -1,10 +1,10 @@
-## 11. Camera and telephoto support
+## 10. Camera and telephoto support
 
-The camera and lens are chosen (§11.1–11.2). **Provisional:** the phone cradle and telephoto saddle
-(§11.3–11.5) are defined by requirements and a concept but not yet designed in detail; this is the main
-remaining custom mechanical design work (§13).
+The camera and lens are chosen (§10.1–10.2). **Provisional:** the phone cradle and telephoto saddle
+(§10.3–10.5) are defined by requirements and a concept but not yet designed in detail; this is the main
+remaining custom mechanical design work (§12).
 
-### 11.1 Camera
+### 10.1 Camera
 
 - Apple iPhone 17, base model, in intended protective case
 - measured camera optical axis approximately 60.6 mm above the lower long edge
@@ -17,7 +17,7 @@ Initial recording modes:
 - 4K/60 for faster flow phenomena;
 - SDR / HDR off as a stable starting point.
 
-### 11.2 Telephoto
+### 10.2 Telephoto
 
 - iOgrapher proSnap 7×
 - 17 mm mount
@@ -27,7 +27,7 @@ Initial recording modes:
 The lens barrel, rather than the phone shell, is the preferred transverse optical datum because accurate lens
 centering minimizes vignetting.
 
-### 11.3 Phone-cradle concept
+### 10.3 Phone-cradle concept
 
 The cradle is a side-mounted rail fixture that leaves the rail top unobstructed.
 
@@ -45,7 +45,7 @@ With the measured 60.6 mm camera-axis offset, a lower phone-edge elevation of ap
 rail top places the camera near the 72.35 mm common optical datum. This is a setup target rather than a
 fabrication-critical dimension because the cradle deliberately provides adjustment.
 
-### 11.4 Telephoto-saddle concept
+### 10.4 Telephoto-saddle concept
 
 The telephoto lens uses a separate rail-mounted support.
 
@@ -95,7 +95,7 @@ retention.
 
 A loose retaining strap may be used if necessary, but the lens should not be aggressively clamped.
 
-### 11.5 Jack hardware
+### 10.5 Jack hardware
 
 There are three vertical jacks:
 

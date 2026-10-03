@@ -1,4 +1,4 @@
-"""Export the flexure slit head parts (§9); print its adjustment figures; optionally show it."""
+"""Export the flexure slit head parts (§8); print its adjustment figures; optionally show it."""
 
 import argparse
 from pathlib import Path

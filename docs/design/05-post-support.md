@@ -3,8 +3,8 @@
 Three fixtures use the common post/shoe architecture:
 
 1. LED/condenser/iris;
-2. source-slit flexure head (§9);
-3. cutoff carriage (§8).
+2. source-slit flexure head (§8);
+3. cutoff carriage (§9).
 
 ### 5.1 Post
 
@@ -16,8 +16,8 @@ Three fixtures use the common post/shoe architecture:
 ### 5.2 Optical-holder allocation
 
 - condenser: 1 × SMR1/M
-- slit head: 1 × SM1RC/M, clamping the printed spigot of the slit-head adapter (§9.6)
-- cutoff carriage: 1 × SM1RC/M, clamping the printed spigot of the carriage base plate (§8.1)
+- slit head: 1 × SM1RC/M, clamping the printed spigot of the slit-head adapter (§8.6)
+- cutoff carriage: 1 × SM1RC/M, clamping the printed spigot of the carriage base plate (§9.1)
 - LED source: no post of its own; the threaded LED module screws into the condenser SMR1/M
 
 The condenser/slit/cutoff holders preserve the 22.1 mm post-top-to-axis dimension.
@@ -57,10 +57,10 @@ M3 socket-head screw → clearance through one ear → captured M3 hex nut in th
 
 - McMaster 91292A114 — M3 × 0.5 × 12 mm fully threaded 18-8 stainless socket-head screw; 5.5 mm head
   diameter, 3 mm head height, 2.5 mm hex drive. The same screw serves the carriage keeper frame
-  ([§8.4](08-carriages-cassettes.md#84-cassette-seating)) and the slit head ([§9](09-slit-cassette.md#9-source-slit)).
+  ([§9.4](09-cutoff.md#94-cassette-seating)) and the slit head ([§8](08-source-slit.md#8-source-slit)).
 - McMaster 91828A211 — full-height M3 × 0.5 18-8 stainless hex nut; 5.5 mm across flats × 2.4 mm high, DIN
   934. The same nut serves the keeper frame, the cassette clamp bars
-  ([§9.8](09-slit-cassette.md#98-common-cassette-clamp-bars-cutoff-cassettes)), and the slit head.
+  ([§9.7](09-cutoff.md#97-cassette-clamp-bars)), and the slit head.
 - No washer, nyloc, or threaded insert.
 
 Ear thickness and the approximately 1–2 mm relaxed split gap are designed around the 12 mm screw length.

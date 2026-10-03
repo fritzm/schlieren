@@ -1,4 +1,4 @@
-"""Preliminary common cassette blank, design baseline §8.6 (2026-09-21).
+"""Preliminary common cassette blank, design baseline §9.6 (2026-09-21).
 
 XY is the cassette plane; z=0 is the rear sliding datum.
 The front is +Z. Bevel dimensions match the provisional carriage, not a

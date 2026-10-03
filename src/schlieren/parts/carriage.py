@@ -1,4 +1,4 @@
-"""Preliminary five-piece slit/cutoff carriage, baseline refreshed 2026-09-22 §8.
+"""Preliminary five-piece slit/cutoff carriage, baseline refreshed 2026-09-22 §9.
 
 Local XY is the cassette plane, +Y points toward the FAS100, +Z is the
 cassette-loading side. Z=0 is the plate back, not the rail-height datum.
@@ -52,7 +52,7 @@ class CarriageParameters:
     post_diameter: float = 12.7
     ring_thickness: float = SM1RC_M_THICKNESS
     ring_bore: float = 1.21 * INCH
-    # Rear spigot, same interface as the slit-head adapter (§9.6); printed at the SM1 tube nominal.
+    # Rear spigot, same interface as the slit-head adapter (§8.6); printed at the SM1 tube nominal.
     spigot_diameter: float = 1.20 * INCH
     # Plate back to ring face, set by a shoulder on the spigot that the ring seats against. Longer than the
     # slit head's: the plate reaches below the rail-shoe top, so it must clear the shoe end, not just the post.
@@ -104,7 +104,7 @@ class CarriageParameters:
     spring_fiducial_length: float = 16.5
     spring_axis_z: float = 7.5
     spring_outer_diameter: float = 0.272 * INCH  # Measured (calipers), in-hand spring (as the slit head).
-    spring_inner_diameter: float = 4.2  # Display only; the coil passes a 4 mm shoulder (§8.5).
+    spring_inner_diameter: float = 4.2  # Display only; the coil passes a 4 mm shoulder (§9.5).
     # Each spring end sits in a printed cup open toward the deck: sides and roof locate the coil, the deck
     # carries it, and nothing penetrates the frame end wall.
     spring_cup_clearance: float = 1.0  # Diametral; printed-hole shrink and coil growth under compression.
@@ -119,7 +119,7 @@ class CarriageParameters:
         0.5  # Exposed edges, for comfort; the spring-facing (outboard) face stays square.
     )
     thumb_tab_bead_radius: float = 0.8  # Grip bead along the inner (thumb-side) top edge; prints unsupported.
-    # McMaster 98625A950 manufacturer drawing, canonical baseline §8.3.
+    # McMaster 98625A950 manufacturer drawing, canonical baseline §9.3.
     insert_body_diameter: float = 0.313 * 25.4
     insert_drill_diameter: float = 0.313 * 25.4
     insert_overall_length: float = 0.313 * 25.4  # Conservative thread-engagement envelope.
@@ -518,7 +518,7 @@ def support_location(p=None, rotation=0.0):
     """Rail-assembly frame (x transverse, y along the rail, z up from the rail top, post at x=y=0) -> local
     carriage frame, with the carriage rotated by `rotation` degrees about the optical axis.
 
-    Rotation 0 is the nominal zero of §8.1: fine adjuster (+Y) up.
+    Rotation 0 is the nominal zero of §9.1: fine adjuster (+Y) up.
     """
     p = p or CarriageParameters()
     return Rot(Z=-rotation) * Pos(0, -p.optical_height, p.post_axis_z) * Rot(X=-90)

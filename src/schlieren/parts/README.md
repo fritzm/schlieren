@@ -37,7 +37,7 @@ They do not qualify thermal performance.
 
 ## Source-slit flexure head
 
-`src/schlieren/parts/slit_head.py` encodes the §9 source slit: one flat-printed
+`src/schlieren/parts/slit_head.py` encodes the §8 source slit: one flat-printed
 ABS flexure head holding both Stanley blades, with a FAS100-driven centering
 stage (±2 mm, coaxial spring preload) and a nested FAS100-driven width stage,
 plus a flat spigot adapter (on M3 washer spacers) clamped by the SM1RC/M for
@@ -99,12 +99,12 @@ choose orientation/supports in the slicer.
 
 ## Slit/cutoff carriage — preliminary sandwich layout
 
-Now used for the cutoff only; the source slit uses the flexure slit head (§9).
+Now used for the cutoff only; the source slit uses the flexure slit head (§8).
 
 `src/schlieren/parts/carriage.py` follows the September 21 design baseline:
 base plate with spigot, separate guide frame, keeper plate, and two plungers.
 The base carries an integral rear shouldered spigot that the SM1RC/M clamps directly
-(§8.1), the same interface as the slit-head adapter. Local XY is the cassette plane, +Y
+(§9.1), the same interface as the slit-head adapter. Local XY is the cassette plane, +Y
 points toward the fine adjuster, and +Z is the loading direction; this local
 Z origin is the plate back, not the rail-top optical-height datum.
 
@@ -220,7 +220,7 @@ all four orientations at −5, 0, and +5 mm travel, printed-part interference,
 and rear datum-track support. Both carriage and cassette retain their specified
 24 mm apertures; their overlap decreases away from centered travel.
 
-The refreshed §8.6/§9 baseline adds two integral filament cleats and four
+The refreshed §9.6/§8 baseline adds two integral filament cleats and four
 clamp-bar bores to this universal blank. Provisional cleats at (±25, 0) mm
 taper from Ø3.5 mm at the face to Ø5 mm toward the top, with 0.5 mm top
 rounding and unfilleted roots so filament can seat against the plate. They rise 3 mm above the front face (8 mm overall height).
@@ -290,4 +290,4 @@ keep the base deck flat for printing. The base export is flipped spigot-up,
 with the deck at z=0 and spigot end at z=26.16 mm. Choose guide-frame print
 orientation/supports to accommodate its downward locating pegs. Spigot fit in the
 SM1RC/M and rotation clearance to the rail remain physical validation items. The
-committed design is recorded in `docs/design/08-carriages-cassettes.md` (§8).
+committed design is recorded in `docs/design/09-cutoff.md` (§9).

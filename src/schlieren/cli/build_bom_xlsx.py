@@ -54,7 +54,7 @@ SUMMARY_NOTES_TOP = [
         "Canonical workbook",
         "Generated from bom/bom.csv in Git. Edits made here are a working copy until reconciled into the CSV.",
     ),
-    ("Design baseline", "docs/design/ fragments in Git (consolidated: schlieren-project-status)."),
+    ("Design baseline", "docs/design/ fragments in Git (consolidated: schlieren-design)."),
     (
         "Quantity model",
         "Qty is the numeric required/allocated amount for that BOM line; package counts do not belong in Qty.",
