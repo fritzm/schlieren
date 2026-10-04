@@ -4,7 +4,8 @@ This repository contains the code, CAD source, tests, tooling, and other version
 artifacts for the iPhone schlieren Deep Creek vacation project.
 
 Do not assume that repository history, chat history, generated files, or remembered context represents the
-current physical design. Read the relevant repository resources (`docs/design/`, `bom/bom.csv`) before substantive work.
+current physical design. Read the relevant repository resources (`docs/design/`, `bom/bom.csv`) before
+substantive work.
 
 ## Sources of truth
 

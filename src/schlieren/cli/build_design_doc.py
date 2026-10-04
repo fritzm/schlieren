@@ -4,8 +4,9 @@ The output is a generated artifact; edit the fragments, never the output. The fr
 to figures/ beside it, so their relative image links resolve there too.
 
 --pdf also writes a print-styled HTML page and a PDF of it beside the Markdown; the PDF is the read-only copy
-shared on Google Drive. It is printed by a locally installed headless Chrome or Chromium, and its formulas are
-typeset by KaTeX loaded from a CDN, so that step needs network access. No Drive access is used here.
+shared on Google Drive. It has a linked contents list, working section links, and a heading outline
+(bookmarks). It is printed by a locally installed headless Chrome or Chromium, and its formulas are typeset by
+KaTeX loaded from a CDN, so that step needs network access. No Drive access is used here.
 
     uv run build-design-doc [--pdf] [-o exports/docs/schlieren-design.md]
 """
@@ -35,6 +36,7 @@ KATEX_CDN = "https://cdn.jsdelivr.net/npm/katex@0.16.11/dist"
 # Print layout. Sizes other than the base are relative to it, so the base alone sets how much fits on a page.
 PDF_BASE_FONT_PT = 9.5
 PDF_PAGE_MARGIN_IN = 0.8
+PDF_CONTENTS_DEPTH = "2-3"  # Heading levels listed in the contents: sections and subsections.
 PDF_STYLE = f"""
 @page {{ size: Letter; margin: {PDF_PAGE_MARGIN_IN}in; }}
 body {{ font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; font-size: {PDF_BASE_FONT_PT}pt;
@@ -55,6 +57,13 @@ pre {{ background: #f4f4f4; padding: 0.6em; break-inside: avoid; white-space: pr
 p[align=center] {{ break-inside: avoid; }}
 p:has(+ ul), p:has(+ ol), p:has(+ table), p:has(+ pre) {{ break-after: avoid; }}
 a {{ color: #1a4f8b; text-decoration: none; }}
+nav {{ break-after: page; }}
+.contents-title {{ font-size: 1.2em; font-weight: bold; margin: 1.2em 0 0.5em; }}
+.toc {{ columns: 2; column-gap: 2.5em; }}
+.toc ul {{ list-style: none; margin: 0; padding-left: 0; }}
+.toc ul ul {{ padding-left: 1.2em; margin-bottom: 0.5em; }}
+.toc > ul > li {{ font-weight: bold; break-inside: avoid-column; }}
+.toc ul ul li {{ font-weight: normal; margin-bottom: 0; }}
 """
 KATEX_HEAD = f"""
 <link rel="stylesheet" href="{KATEX_CDN}/katex.min.css">
@@ -80,7 +89,15 @@ def build_print_html(design_doc: str, title: str) -> str:
     """The consolidated Markdown as one print-styled HTML page; figure links stay relative."""
     import markdown
 
-    body = markdown.markdown(design_doc, extensions=["tables", "fenced_code", "sane_lists"])
+    converter = markdown.Markdown(
+        extensions=["tables", "fenced_code", "sane_lists", "toc"],
+        extension_configs={"toc": {"toc_depth": PDF_CONTENTS_DEPTH}},
+    )
+    body = converter.convert(design_doc)
+    # Linked contents list after the title; the toc extension also gives every heading the id that the
+    # in-document section links point at.
+    contents = f'<nav><p class="contents-title">Contents</p>{converter.toc}</nav>'
+    body = body.replace("</h1>", f"</h1>\n{contents}", 1)
     head = f'<meta charset="utf-8"><title>{title}</title><style>{PDF_STYLE}</style>{KATEX_HEAD}'
     return f"<!doctype html>\n<html><head>{head}</head>\n<body>\n{body}\n</body></html>\n"
 
@@ -100,6 +117,7 @@ def print_pdf(html: Path, pdf: Path) -> None:
             "--headless",
             "--disable-gpu",
             "--no-pdf-header-footer",
+            "--generate-pdf-document-outline",
             f"--virtual-time-budget={CHROME_LOAD_BUDGET_MS}",
             f"--print-to-pdf={pdf.resolve()}",
             html.resolve().as_uri(),

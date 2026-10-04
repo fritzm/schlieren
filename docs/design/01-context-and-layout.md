@@ -4,9 +4,8 @@
 
 Revision: Oct 2, 2026
 
-This document describes the design of the apparatus. It is maintained as Markdown fragments in Git
-(`docs/design/`); Google Drive copies are generated views for sharing and are working copies until reconciled
-back into Git.
+This document describes the design of the apparatus, and is maintained authoritatively as Markdown fragments
+in the project repo on github at https://github.com/fritzm/schlieren/tree/main/docs/design.
 
 ## Conventions
 

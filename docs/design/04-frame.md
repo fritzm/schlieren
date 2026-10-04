@@ -18,9 +18,9 @@ Measured slot geometry of the extrusion:
 | Slot depth            | 0.254 in / 6.45 mm  |
 | Lip thickness         | 0.065 in / 1.65 mm  |
 
-These dimensions suit M5 hardware for 20-series / nominal slot-6 extrusion.
-
-The T-nut hardware is Amazon B0DP6JBX4Y, a roll-in/drop-in spring-ball M5 type.
+These dimensions suit M5 hardware for 20-series / nominal slot-6 extrusion.  Ordinary attachments use M5 × 0.8
+socket-head hardware with flat washers in standard metric lengths and the roll-in/drop-in M5 T-nuts (Amazon
+B0DP6JBX4Y).
 
 ### 4.2 Front pivot plate
 
@@ -141,25 +141,17 @@ Each rear-foot screw stack, from the bottom up:
 
 socket head → flat washer → plywood foot block → M5 T-nut in the rail bottom slot
 
-As at the pivot plate (§4.3), the socket heads are beneath the plywood.
-
 A Sorbothane foot is centered on the underside of each block, directly beneath the rail centerline and midway
 between the two attachment screws. The 1-1/4 in / 31.75 mm diameter foot therefore does not obscure either
 attachment screw or washer, allowing the complete plywood/foot assembly to be removed from and reinstalled on
-the rail without disturbing the Sorbothane foot.
+the rail without disturbing the Sorbothane foot.  The blocks and feet support the rear of each rail but do not
+provide yaw lock.
 
-These blocks support the frame but do not provide the yaw lock.
-
-Three-point table support:
+The complete frame is therefore supported on the table/bench top at three points:
 
 - one centered foot beneath the front pivot plate;
 - one foot beneath each rear support block.
 
-Feet: McMaster 8215K2, 1-1/4 in OD × 5/8 in high, 30 OO Sorbothane, with a stiffer McMaster 8215K6
-(same size) as an alternative if the front foot compresses too much. Moderate static compression of the front
-foot is acceptable; the resulting small overall pitch is corrected during optical alignment.
-
-### 4.5 General 2020 fastener standard
-
-Ordinary 2020 attachments use M5 × 0.8 socket-head hardware with flat washers and the roll-in/drop-in M5
-T-nuts (§4.1), in common metric lengths set by the local stack-up.
+Feet: McMaster 8215K2, 1-1/4 in OD × 5/8 in high, 30 OO Sorbothane, with a stiffer McMaster 8215K6 (same size)
+as an alternative depending on vibration isolation needs. Moderate static compression of the front foot is
+acceptable; the resulting small overall pitch is corrected during optical alignment.

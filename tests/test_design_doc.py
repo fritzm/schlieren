@@ -44,6 +44,13 @@ class DesignDocTests(unittest.TestCase):
         self.assertIn("<table>", html)
         self.assertEqual(html.count("$$"), design_doc.count("$$") + 2)  # Plus the KaTeX delimiter setup.
 
+    def test_print_html_section_links_resolve(self):
+        html = build_print_html(build_design_doc(), "schlieren-design")
+        anchors = set(re.findall(r'id="([^"]+)"', html))
+        links = set(re.findall(r'href="#([^"]+)"', html))
+        self.assertTrue(links)
+        self.assertEqual(links - anchors, set())
+
 
 if __name__ == "__main__":
     unittest.main()
