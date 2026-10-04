@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="260.0mm" height="208.0mm" viewBox="0 0 260.0 208.0">
+<style>
+text { font-family: Helvetica, Arial, sans-serif; fill: #000; }
+.outline { fill: #f4ead6; stroke: #000; stroke-width: 0.5; }
+.hole { fill: #fff; stroke: #000; stroke-width: 0.35; }
+.mark { stroke: #000; stroke-width: 0.2; }
+.extension { stroke: #555; stroke-width: 0.15; }
+.centerline { stroke: #555; stroke-width: 0.2; stroke-dasharray: 8 1.5 1.5 1.5; }
+.hidden { fill: none; stroke: #555; stroke-width: 0.25; stroke-dasharray: 2 1.2; }
+</style>
+<rect width="260.0" height="208.0" fill="#fff"/>
+<text x="46.000" y="9.000" font-size="4.6" text-anchor="start">Front pivot plate: drilling layout, seen from above</text>
+<text x="46.000" y="15.500" font-size="2.7" text-anchor="start">180 × 150 × 12.7 mm (1/2 in) Baltic birch. Six holes Ø5.5 mm through, for M5. Dimensions in mm: x from the plate centerline, y from the mirror-facing edge.</text>
+<text x="46.000" y="20.000" font-size="2.7" text-anchor="start">Full scale when printed at 100%: check the plate width against a rule before using the sheet as a template.</text>
+<rect class="outline" x="46.0" y="30.0" width="180.0" height="150.0"/>
+<text x="136.000" y="28.000" font-size="2.7" text-anchor="middle">aft edge</text>
+<text x="224.000" y="178.000" font-size="2.7" text-anchor="end">mirror-facing edge</text>
+<line class="centerline" x1="136.000" y1="26.000" x2="136.000" y2="184.000"/>
+<text x="137.190" y="185.500" font-size="3.4" text-anchor="end" transform="rotate(-90 137.190 185.500)">0 CL</text>
+<circle class="hidden" cx="136.000" cy="155.000" r="15.875"/>
+<text x="136.000" y="137.625" font-size="2.7" text-anchor="middle">front foot, underside</text>
+<line class="extension" x1="46.000" y1="180.000" x2="46.000" y2="184.000"/>
+<text x="47.190" y="185.500" font-size="3.4" text-anchor="end" transform="rotate(-90 47.190 185.500)">-90.0</text>
+<line class="extension" x1="226.000" y1="180.000" x2="226.000" y2="184.000"/>
+<text x="227.190" y="185.500" font-size="3.4" text-anchor="end" transform="rotate(-90 227.190 185.500)">+90.0</text>
+<line class="extension" x1="46.000" y1="180.000" x2="42.000" y2="180.000"/>
+<text x="40.500" y="181.190" font-size="3.4" text-anchor="end">0.0</text>
+<line class="extension" x1="46.000" y1="30.000" x2="42.000" y2="30.000"/>
+<text x="40.500" y="31.190" font-size="3.4" text-anchor="end">150.0</text>
+<line class="extension" x1="88.500" y1="155.000" x2="88.500" y2="184.000"/>
+<text x="89.690" y="185.500" font-size="3.4" text-anchor="end" transform="rotate(-90 89.690 185.500)">-47.5</text>
+<line class="extension" x1="88.500" y1="155.000" x2="42.000" y2="155.000"/>
+<text x="40.500" y="156.190" font-size="3.4" text-anchor="end">25.0</text>
+<line class="extension" x1="67.166" y1="65.307" x2="67.166" y2="184.000"/>
+<text x="68.356" y="185.500" font-size="3.4" text-anchor="end" transform="rotate(-90 68.356 185.500)">-68.8</text>
+<line class="extension" x1="67.166" y1="65.307" x2="42.000" y2="65.307"/>
+<text x="40.500" y="66.497" font-size="3.4" text-anchor="end">114.7</text>
+<text x="40.500" y="70.007" font-size="2.7" text-anchor="end">outer yaw holes</text>
+<line class="extension" x1="107.162" y1="64.713" x2="107.162" y2="184.000"/>
+<text x="108.352" y="185.500" font-size="3.4" text-anchor="end" transform="rotate(-90 108.352 185.500)">-28.8</text>
+<line class="extension" x1="183.500" y1="155.000" x2="183.500" y2="184.000"/>
+<text x="184.690" y="185.500" font-size="3.4" text-anchor="end" transform="rotate(-90 184.690 185.500)">+47.5</text>
+<line class="extension" x1="183.500" y1="155.000" x2="230.000" y2="155.000"/>
+<text x="231.500" y="156.190" font-size="3.4" text-anchor="start">25.0</text>
+<line class="extension" x1="204.834" y1="65.307" x2="204.834" y2="184.000"/>
+<text x="206.024" y="185.500" font-size="3.4" text-anchor="end" transform="rotate(-90 206.024 185.500)">+68.8</text>
+<line class="extension" x1="204.834" y1="65.307" x2="230.000" y2="65.307"/>
+<text x="231.500" y="66.497" font-size="3.4" text-anchor="start">114.7</text>
+<line class="extension" x1="164.838" y1="64.713" x2="164.838" y2="184.000"/>
+<text x="166.028" y="185.500" font-size="3.4" text-anchor="end" transform="rotate(-90 166.028 185.500)">+28.8</text>
+<text x="136.000" y="57.713" font-size="2.7" text-anchor="middle">inner yaw holes 115.3 from the mirror-facing edge</text>
+<line class="extension" x1="107.162" y1="64.713" x2="164.838" y2="64.713"/>
+<circle class="hole" data-hole="Left pivot" cx="88.500" cy="155.000" r="2.750"/>
+<line class="mark" x1="83.500" y1="155.000" x2="93.500" y2="155.000"/>
+<line class="mark" x1="88.500" y1="150.000" x2="88.500" y2="160.000"/>
+<text x="88.500" y="163.200" font-size="2.7" text-anchor="middle">left pivot</text>
+<circle class="hole" data-hole="Left outer yaw" cx="67.166" cy="65.307" r="2.750"/>
+<line class="mark" x1="62.166" y1="65.307" x2="72.166" y2="65.307"/>
+<line class="mark" x1="67.166" y1="60.307" x2="67.166" y2="70.307"/>
+<text x="67.166" y="73.507" font-size="2.7" text-anchor="middle">left outer yaw</text>
+<circle class="hole" data-hole="Left inner yaw" cx="107.162" cy="64.713" r="2.750"/>
+<line class="mark" x1="102.162" y1="64.713" x2="112.162" y2="64.713"/>
+<line class="mark" x1="107.162" y1="59.713" x2="107.162" y2="69.713"/>
+<text x="107.162" y="72.913" font-size="2.7" text-anchor="middle">left inner yaw</text>
+<circle class="hole" data-hole="Right pivot" cx="183.500" cy="155.000" r="2.750"/>
+<line class="mark" x1="178.500" y1="155.000" x2="188.500" y2="155.000"/>
+<line class="mark" x1="183.500" y1="150.000" x2="183.500" y2="160.000"/>
+<text x="183.500" y="163.200" font-size="2.7" text-anchor="middle">right pivot</text>
+<circle class="hole" data-hole="Right outer yaw" cx="204.834" cy="65.307" r="2.750"/>
+<line class="mark" x1="199.834" y1="65.307" x2="209.834" y2="65.307"/>
+<line class="mark" x1="204.834" y1="60.307" x2="204.834" y2="70.307"/>
+<text x="204.834" y="73.507" font-size="2.7" text-anchor="middle">right outer yaw</text>
+<circle class="hole" data-hole="Right inner yaw" cx="164.838" cy="64.713" r="2.750"/>
+<line class="mark" x1="159.838" y1="64.713" x2="169.838" y2="64.713"/>
+<line class="mark" x1="164.838" y1="59.713" x2="164.838" y2="69.713"/>
+<text x="164.838" y="72.913" font-size="2.7" text-anchor="middle">right inner yaw</text>
+<text x="136.000" y="205.000" font-size="2.7" text-anchor="middle">x, from the plate centerline</text>
+</svg>

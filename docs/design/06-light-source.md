@@ -35,7 +35,7 @@ From the LED to the slit:
   <img src="figures/light-source.png" width="360" style="max-width: 80%"
        alt="Light source on its TR50/M post and rail shoe: pin-fin heatsink and LED cap behind the SMR1/M, with the SM1V05, SM1L03, and iris ahead of it">
   <br>
-  <em>Fig. 2. Light source on rail: heatsink and LED module, SMR1/M, SM1V05, SM1L03, and iris</em>
+  <em>Fig. 4. Light source on rail: heatsink and LED module, SMR1/M, SM1V05, SM1L03, and iris</em>
 </p>
 
 The ACL2520U-A convex vertex sits about 0.7 mm inside the SM1V05 open end, so the SM1L03 spacer is required

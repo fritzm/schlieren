@@ -27,6 +27,12 @@ ACL2520U_A_PLANO_Y = 6.0  # Plano face; convex vertex at y=-6.0.
 # FAS100 model: axis along +X through (y, z) = FAS100_AXIS_YZ, knob at -X, ball-tip apex at x=FAS100_TIP_X.
 FAS100_AXIS_YZ = (1.583, -2.103)
 FAS100_TIP_X = 22.013
+# McMaster 92815A202 model: axis +Z through the origin, centered on its height, collar at +Z.
+MCMASTER_92815A202_DIAMETER = 20.0
+MCMASTER_92815A202_HEIGHT = 5.0
+# McMaster 8215K2 model: hemisphere on axis +Y through the origin, adhesive face at y=-height/2, apex toward +Y.
+MCMASTER_8215K2_DIAMETER = 1.25 * INCH
+MCMASTER_8215K2_HEIGHT = 0.625 * INCH
 
 
 @cache
@@ -128,3 +134,21 @@ def thorlabs_fas100() -> Compound:
 def alpha_cn40_40b() -> Compound:
     """Alpha CN40-40B pin-fin heatsink; axis +Y through the origin, base mounting face at y=0, pins toward -Y."""
     return _moved("Alpha-CN40-40B.step", Rot(Z=180))
+
+
+@cache
+def mcmaster_92815a202() -> Compound:
+    """McMaster 92815A202 M5 low-profile knurled thumb nut (unthreaded model); axis +Z through the origin.
+
+    The collar face is at z=0, bearing downward, with the knurled head toward +Z.
+    """
+    return _moved("McMaster-92815A202.step", Pos(0, 0, MCMASTER_92815A202_HEIGHT / 2) * Rot(X=180))
+
+
+@cache
+def mcmaster_8215k2() -> Compound:
+    """McMaster 8215K2 Sorbothane bumper, a hemisphere; axis +Z through the origin.
+
+    The adhesive face is at z=0, with the dome hanging toward -Z.
+    """
+    return _moved("McMaster-8215K2.step", Pos(0, 0, -MCMASTER_8215K2_HEIGHT / 2) * Rot(X=-90))

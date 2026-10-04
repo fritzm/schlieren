@@ -1,0 +1,383 @@
+"""Tabletop optical frame; design §4.
+
+Two yaw-adjustable 2020 rails pivoted on the plywood front pivot plate, each with a pivot lug, a fixed yaw
+strap, and a rear foot block; three Sorbothane feet. Nothing here is printed: the plywood parts are cut and
+drilled, everything else is purchased.
+
+Coordinates: the §4.2 plate frame, extended up by the §3.4 datum. The origin is at the midpoint of the
+mirror-facing plate edge, x transverse to the rails, y aft (away from the mirror), and z up with the rail top
+at z=0. A rail has side -1 (left, x<0) or +1 (right).
+
+The thumb nuts and feet are the vendor models. Other fasteners, washers, and nuts are plain nominal envelopes
+without threads or sockets, and the T-nuts are not modeled.
+"""
+
+from dataclasses import dataclass
+from math import atan, cos, degrees, pi, sin
+
+from build123d import Align, Box, Compound, Cylinder, Location, Part, Pos, RegularPolygon, Rot, extrude
+
+from schlieren.cad import BLACK_ANODIZED, ON_FLOOR, assembly, labeled, place
+from schlieren.parts.rail import RailProfile, build_rail
+from schlieren.vendor_cad import (
+    MCMASTER_8215K2_DIAMETER,
+    MCMASTER_8215K2_HEIGHT,
+    MCMASTER_92815A202_HEIGHT,
+    mcmaster_8215k2,
+    mcmaster_92815a202,
+)
+
+INCH = 25.4
+SIDES = {"Left": -1, "Right": 1}
+
+# Nominal M5 hardware envelopes (ISO 4762 socket head, ISO 7089 washer, DIN 985 nyloc), for the viewer and
+# stack checks.
+M5_SHANK_DIAMETER = 5.0
+M5_HEAD_DIAMETER = 8.5
+M5_HEAD_HEIGHT = 5.0
+M5_WASHER_DIAMETER = 10.0
+M5_WASHER_THICKNESS = 1.0
+M5_NYLOC_ACROSS_FLATS = 8.0
+M5_NYLOC_HEIGHT = 5.0
+
+PLYWOOD_COLOR = (0.82, 0.68, 0.45)
+ALUMINUM_COLOR = (0.75, 0.75, 0.78)
+STEEL_COLOR = (0.6, 0.6, 0.6)
+BLACK_OXIDE_COLOR = (0.13, 0.13, 0.14)  # The pivot nylocs and the yaw thumb nuts.
+RUBBER_COLOR = (0.15, 0.15, 0.15)
+SORBOTHANE_COLOR = (0.25, 0.2, 0.3)
+
+TOP_AT_ORIGIN = (Align.CENTER, Align.CENTER, Align.MAX)
+
+
+@dataclass(frozen=True)
+class FrameParameters:
+    # Rails (§4.1); slot dimensions are the measured values.
+    rail_size: float = 20.0
+    rail_length: float = 400.0
+    rail_slot_mouth_width: float = 6.55
+    rail_slot_cavity_width: float = 11.07
+    rail_slot_depth: float = 6.45
+    rail_slot_lip_thickness: float = 1.65
+
+    # Front pivot plate (§§3.3, 4.2).
+    mirror_distance: float = 3200.0
+    pivot_separation: float = 95.0
+    pivot_setback: float = 25.0  # Pivot line (and front foot) aft of the mirror-facing edge.
+    plate_width: float = 180.0  # Transverse.
+    plate_depth: float = 150.0  # Fore/aft.
+    plywood_thickness: float = 12.7
+    yaw_station: float = 90.0  # Strap center aft of the pivot, along the nominal rail axis.
+    m5_clearance_diameter: float = 5.5
+
+    # Pivot and yaw hardware (§4.3).
+    joining_plate_length: float = 60.0
+    joining_plate_width: float = 18.0
+    joining_plate_thickness: float = 4.0
+    joining_plate_hole_pitch: float = 20.0
+    pivot_spacer_length: float = 20.0
+    pivot_spacer_outer_diameter: float = 10.0
+    pivot_spacer_inner_diameter: float = 5.3
+    oversize_washer_diameter: float = 15.0
+    oversize_washer_thickness: float = 1.2  # Nominal for an M5 × 15 mm washer; not measured.
+    pivot_screw_length: float = 50.0  # Also the yaw-clamp screw.
+    friction_strip_thickness: float = INCH / 32
+    friction_strip_length: float = 30.0
+
+    # Rear support and feet (§4.4).
+    foot_block_length: float = 75.0  # Along the rail.
+    foot_block_width: float = 50.0
+    foot_screw_spacing: float = 50.0
+    foot_screw_length: float = 20.0
+    # Two washers under each head set how far the screw enters the rail slot. With one, an M5 × 20 stops only
+    # 0.15 mm short of the measured slot floor and bottoms if the plywood runs thin; an M5 × 16 reaches barely
+    # past the slot lip to the T-nut. No standard length lies between.
+    foot_washers_per_screw: int = 2
+    foot_diameter: float = MCMASTER_8215K2_DIAMETER
+    foot_height: float = MCMASTER_8215K2_HEIGHT
+
+    # Not fixed by the design document; model assumptions.
+    rail_front_setback: float = 10.0  # Rail front end aft of the pivot, clearing the pivot spacer.
+    lug_screw_length: float = 8.0  # Lug to rail top slot, at the two lug holes behind the pivot.
+    foot_block_rear_setback: float = 0.0  # Foot-block rear edge forward of the rail rear end.
+
+    @property
+    def half_angle(self) -> float:
+        """Nominal rail half-angle, radians."""
+        return atan(self.pivot_separation / 2 / self.mirror_distance)
+
+    @property
+    def plate_top(self) -> float:
+        return -self.rail_size
+
+    @property
+    def plate_bottom(self) -> float:
+        return self.plate_top - self.plywood_thickness
+
+    @property
+    def table(self) -> float:
+        """z of the surface the three feet stand on, with the feet uncompressed."""
+        return self.plate_bottom - self.foot_height
+
+    @property
+    def strap_bottom(self) -> float:
+        return self.friction_strip_thickness
+
+    @property
+    def strap_top(self) -> float:
+        return self.strap_bottom + self.joining_plate_thickness
+
+    @property
+    def foot_block_center(self) -> float:
+        """Foot-block center aft of the pivot, along the rail."""
+        rail_rear = self.rail_front_setback + self.rail_length
+        return rail_rear - self.foot_block_rear_setback - self.foot_block_length / 2
+
+    @property
+    def pivot_screw_protrusion(self) -> float:
+        """Pivot screw tip beyond the top of its nyloc."""
+        stack = (
+            2 * self.oversize_washer_thickness
+            + self.plywood_thickness
+            + self.pivot_spacer_length
+            + self.joining_plate_thickness
+            + M5_NYLOC_HEIGHT
+        )
+        return self.pivot_screw_length - stack
+
+    @property
+    def yaw_screw_length_above_strap_washer(self) -> float:
+        """Yaw screw thread left above the strap washer, for the thumb nut."""
+        stack = (
+            2 * self.oversize_washer_thickness
+            + self.plywood_thickness
+            + self.rail_size
+            + self.friction_strip_thickness
+            + self.joining_plate_thickness
+        )
+        return self.pivot_screw_length - stack
+
+    @property
+    def foot_washer_stack(self) -> float:
+        return self.foot_washers_per_screw * M5_WASHER_THICKNESS
+
+    @property
+    def foot_screw_slot_entry(self) -> float:
+        """Foot screw tip above the rail bottom face, into the bottom slot."""
+        return self.foot_screw_length - self.foot_washer_stack - self.plywood_thickness
+
+    @property
+    def foot_screw_slot_margin(self) -> float:
+        """Foot screw tip short of the slot floor."""
+        return self.rail_slot_depth - self.foot_screw_slot_entry
+
+    def rail_profile(self) -> RailProfile:
+        return RailProfile(
+            size=self.rail_size,
+            slot_mouth_width=self.rail_slot_mouth_width,
+            cavity_width=self.rail_slot_cavity_width,
+            slot_depth=self.rail_slot_depth,
+            lip_thickness=self.rail_slot_lip_thickness,
+        )
+
+    def rail_direction(self, side: int, yaw: float = 0.0) -> tuple[float, float]:
+        """Unit vector aft along a rail, yawed outward from nominal by yaw radians."""
+        angle = self.half_angle + yaw
+        return side * sin(angle), cos(angle)
+
+    def rail_location(self, side: int, yaw: float = 0.0) -> Location:
+        """Rail frame: origin at the pivot on the rail top, y aft along the rail, x across it."""
+        x, y = self.pivot_center(side)
+        return Pos(x, y, 0) * Rot(Z=degrees(-side * (self.half_angle + yaw)))
+
+    def pivot_center(self, side: int) -> tuple[float, float]:
+        return side * self.pivot_separation / 2, self.pivot_setback
+
+    def strap_center(self, side: int) -> tuple[float, float]:
+        (x, y), (dx, dy) = self.pivot_center(side), self.rail_direction(side)
+        return x + self.yaw_station * dx, y + self.yaw_station * dy
+
+    def yaw_bolt_centers(self, side: int) -> tuple[tuple[float, float], tuple[float, float]]:
+        """The strap's two outer holes, in order of increasing x."""
+        (x, y), (dx, dy) = self.strap_center(side), self.rail_direction(side)
+        pitch = self.joining_plate_hole_pitch
+        return (x - pitch * dy, y + pitch * dx), (x + pitch * dy, y - pitch * dx)
+
+    def plate_holes(self) -> dict[str, tuple[float, float]]:
+        """Centers of the six plate holes, by name."""
+        holes = {}
+        for name, side in SIDES.items():
+            holes[f"{name} pivot"] = self.pivot_center(side)
+            bolts = self.yaw_bolt_centers(side)
+            outer, inner = bolts if side < 0 else reversed(bolts)
+            holes[f"{name} outer yaw"] = outer
+            holes[f"{name} inner yaw"] = inner
+        return holes
+
+    def validate(self) -> None:
+        if any(value < 0 for value in vars(self).values()):
+            raise ValueError("Dimensions must not be negative")
+        if self.pivot_spacer_length != self.rail_size:
+            raise ValueError("The pivot spacer must hold the lug at the rail top")
+        if self.rail_front_setback <= self.pivot_spacer_outer_diameter / 2:
+            raise ValueError("The rail front end must clear the pivot spacer")
+        if self.rail_front_setback >= self.joining_plate_hole_pitch - M5_SHANK_DIAMETER / 2:
+            raise ValueError("The rail must reach under the lug's first fixing hole")
+        if self.pivot_screw_protrusion < 0:
+            raise ValueError("The pivot screw must reach through its nyloc")
+        if self.yaw_screw_length_above_strap_washer < MCMASTER_92815A202_HEIGHT:
+            raise ValueError("The yaw screw must reach through its thumb nut")
+        if self.foot_screw_slot_entry <= self.rail_slot_lip_thickness:
+            raise ValueError("The foot screws must reach the T-nuts under the slot lips")
+        if self.foot_screw_slot_margin <= 0:
+            raise ValueError("The foot screws must not bottom in the rail slot")
+        if self.lug_screw_length - self.joining_plate_thickness >= self.rail_slot_depth:
+            raise ValueError("The lug screws must not bottom in the rail slot")
+        if self.foot_diameter >= self.foot_screw_spacing - M5_WASHER_DIAMETER:
+            raise ValueError("The rear foot must fit between its block's screw washers")
+        for x, y in self.plate_holes().values():
+            edge = min(self.plate_width / 2 - abs(x), y, self.plate_depth - y)
+            if edge <= self.oversize_washer_diameter / 2:
+                raise ValueError("Plate-hole washers must bear fully on the plate")
+
+
+def _bore(diameter: float, length: float, x: float = 0.0, y: float = 0.0, z: float = 0.0) -> Part:
+    """Through-hole cutter along +z from z, overrunning both ends."""
+    overrun = 1.0
+    return Pos(x, y, z - overrun) * Cylinder(diameter / 2, length + 2 * overrun, align=ON_FLOOR)
+
+
+def build_pivot_plate(p: FrameParameters | None = None) -> Part:
+    """The front pivot plate with its two pivot holes and four yaw-bolt holes."""
+    p = p or FrameParameters()
+    p.validate()
+    plate = Pos(0, 0, p.plate_top) * Box(
+        p.plate_width, p.plate_depth, p.plywood_thickness, align=(Align.CENTER, Align.MIN, Align.MAX)
+    )
+    for x, y in p.plate_holes().values():
+        plate -= _bore(p.m5_clearance_diameter, p.plywood_thickness, x, y, p.plate_bottom)
+    return plate
+
+
+def build_foot_block(p: FrameParameters | None = None) -> Part:
+    """One rear foot block, centered on x=y=0 with its length along y and its top (rail) face at z=0."""
+    p = p or FrameParameters()
+    p.validate()
+    block = Box(p.foot_block_width, p.foot_block_length, p.plywood_thickness, align=TOP_AT_ORIGIN)
+    for y in (-p.foot_screw_spacing / 2, p.foot_screw_spacing / 2):
+        block -= _bore(p.m5_clearance_diameter, p.plywood_thickness, 0, y, -p.plywood_thickness)
+    return block
+
+
+def build_joining_plate(p: FrameParameters | None = None) -> Part:
+    """A 3-hole joining plate, centered on x=y=0 with its length along y and its bottom face at z=0."""
+    p = p or FrameParameters()
+    plate = Box(p.joining_plate_width, p.joining_plate_length, p.joining_plate_thickness, align=ON_FLOOR)
+    for hole in (-1, 0, 1):
+        plate -= _bore(
+            p.m5_clearance_diameter, p.joining_plate_thickness, 0, hole * p.joining_plate_hole_pitch
+        )
+    return plate
+
+
+def _socket_screw(length: float) -> Part:
+    """M5 socket-head screw pointing +z, underside of the head at z=0."""
+    head = Cylinder(M5_HEAD_DIAMETER / 2, M5_HEAD_HEIGHT, align=TOP_AT_ORIGIN)
+    return head + Cylinder(M5_SHANK_DIAMETER / 2, length, align=ON_FLOOR)
+
+
+def _ring(outer_diameter: float, inner_diameter: float, height: float) -> Part:
+    return Cylinder(outer_diameter / 2, height, align=ON_FLOOR) - _bore(inner_diameter, height)
+
+
+def _rail_assembly(p: FrameParameters, name: str) -> Compound:
+    """A rail and everything that yaws with it, in the rail frame (see FrameParameters.rail_location)."""
+    lug_center = p.joining_plate_hole_pitch
+    block_y = p.foot_block_center
+    block_bottom = p.plate_bottom
+    parts = [
+        labeled(
+            build_rail(p.rail_length, p.rail_profile()),
+            "Rail",
+            BLACK_ANODIZED,
+            Pos(0, p.rail_front_setback + p.rail_length / 2, 0),
+        ),
+        labeled(build_joining_plate(p), "Pivot lug", ALUMINUM_COLOR, Pos(0, lug_center, 0)),
+        labeled(build_foot_block(p), "Foot block", PLYWOOD_COLOR, Pos(0, block_y, p.plate_top)),
+        labeled(mcmaster_8215k2(), "Foot", SORBOTHANE_COLOR, Pos(0, block_y, block_bottom)),
+    ]
+    for index, y in enumerate((lug_center, lug_center + p.joining_plate_hole_pitch), start=1):
+        head_down = Pos(0, y, p.joining_plate_thickness) * Rot(X=180)
+        parts.append(labeled(_socket_screw(p.lug_screw_length), f"Lug screw {index}", STEEL_COLOR, head_down))
+    for index, offset in enumerate((-p.foot_screw_spacing / 2, p.foot_screw_spacing / 2), start=1):
+        y = block_y + offset
+        washer = _ring(M5_WASHER_DIAMETER, p.pivot_spacer_inner_diameter, M5_WASHER_THICKNESS)
+        under_head = block_bottom - p.foot_washer_stack
+        for layer in range(p.foot_washers_per_screw):
+            z = under_head + layer * M5_WASHER_THICKNESS
+            parts.append(labeled(washer, f"Foot screw {index} washer {layer + 1}", STEEL_COLOR, Pos(0, y, z)))
+        parts.append(
+            labeled(
+                _socket_screw(p.foot_screw_length), f"Foot screw {index}", STEEL_COLOR, Pos(0, y, under_head)
+            )
+        )
+    return assembly(f"{name} rail assembly", parts)
+
+
+def _plate_assembly(p: FrameParameters) -> Compound:
+    """The pivot plate and everything fixed to it: front foot, pivot stacks, yaw straps and their bolts."""
+    washer = _ring(p.oversize_washer_diameter, p.pivot_spacer_inner_diameter, p.oversize_washer_thickness)
+    under_head = p.plate_bottom - p.oversize_washer_thickness
+    nyloc = extrude(RegularPolygon(M5_NYLOC_ACROSS_FLATS / 2 / cos(pi / 6), 6), amount=M5_NYLOC_HEIGHT)
+    nyloc -= _bore(M5_SHANK_DIAMETER, M5_NYLOC_HEIGHT)
+    spacer = _ring(p.pivot_spacer_outer_diameter, p.pivot_spacer_inner_diameter, p.pivot_spacer_length)
+    strip = Box(p.joining_plate_width, p.friction_strip_length, p.friction_strip_thickness, align=ON_FLOOR)
+
+    parts = [
+        labeled(build_pivot_plate(p), "Pivot plate", PLYWOOD_COLOR),
+        labeled(mcmaster_8215k2(), "Front foot", SORBOTHANE_COLOR, Pos(0, p.pivot_setback, p.plate_bottom)),
+    ]
+
+    def stack(label: str, x: float, y: float, top: float, nut: Part) -> None:
+        """Screw up through the plate at (x, y), with washers under the plate and on the surface at top."""
+        for part, name, z, color in (
+            (_socket_screw(p.pivot_screw_length), "screw", under_head, STEEL_COLOR),
+            (washer, "lower washer", under_head, STEEL_COLOR),
+            (washer, "upper washer", top, STEEL_COLOR),
+            (nut, "nut", top + p.oversize_washer_thickness, BLACK_OXIDE_COLOR),
+        ):
+            parts.append(labeled(part, f"{label} {name}", color, Pos(x, y, z)))
+
+    for name, side in SIDES.items():
+        x, y = p.pivot_center(side)
+        stack(f"{name} pivot", x, y, p.joining_plate_thickness, nyloc)
+        parts.append(labeled(spacer, f"{name} pivot spacer", STEEL_COLOR, Pos(x, y, p.plate_top)))
+
+        # The strap lies across the nominal rail axis and stays there when the rail is yawed.
+        x, y = p.strap_center(side)
+        across_rail = Pos(x, y, 0) * Rot(Z=degrees(-side * p.half_angle) + 90)
+        parts.append(labeled(strip, f"{name} friction strip", RUBBER_COLOR, across_rail))
+        parts.append(
+            labeled(
+                build_joining_plate(p),
+                f"{name} yaw strap",
+                ALUMINUM_COLOR,
+                across_rail * Pos(0, 0, p.strap_bottom),
+            )
+        )
+    for label, (x, y) in p.plate_holes().items():
+        if label.endswith("yaw"):
+            stack(label, x, y, p.strap_top, mcmaster_92815a202())
+    return assembly("Pivot plate assembly", parts)
+
+
+def build_frame_assembly(
+    p: FrameParameters | None = None, left_yaw: float = 0.0, right_yaw: float = 0.0
+) -> Compound:
+    """The assembled frame, each rail yawed outward from its nominal direction by the given degrees."""
+    p = p or FrameParameters()
+    p.validate()
+    children = [_plate_assembly(p)]
+    for (name, side), yaw in zip(SIDES.items(), (left_yaw, right_yaw)):
+        children.append(place(p.rail_location(side, yaw * pi / 180), _rail_assembly(p, name)))
+    return assembly("Tabletop frame", children)

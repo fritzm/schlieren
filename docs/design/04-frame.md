@@ -1,5 +1,14 @@
 ## 4. Tabletop optical frame
 
+<p align="center">
+  <img src="figures/frame.png" width="500" style="max-width: 90%"
+       alt="Tabletop frame: two 2020 rails pivoted on the plywood front pivot plate under their pivot lugs and yaw straps, each with a rear foot block">
+  <br>
+  <em>Fig. 1. Tabletop frame: rails, front pivot plate with pivot lugs and yaw straps, and rear foot blocks</em>
+</p>
+
+The model is `src/schlieren/parts/frame.py`.
+
 ### 4.1 Rails
 
 - IXGNIJ black-anodized metric 2020 extrusion, Amazon B08Y8N7FD1
@@ -50,6 +59,13 @@ Each fixed yaw strap is perpendicular to its rail at the nominal rail angle. The
 - left inner: (-28.84, 115.29) mm;
 - right inner: (+28.84, 115.29) mm;
 - right outer: (+68.83, 114.69) mm.
+
+<p align="center">
+  <img src="figures/frame-pivot-plate.svg" width="640" style="max-width: 95%"
+       alt="Front pivot plate drilling layout seen from above: the two pivot holes and four yaw-bolt holes, dimensioned in x from the plate centerline and in y from the mirror-facing edge">
+  <br>
+  <em>Fig. 2. Front pivot plate drilling layout, seen from above, in plate coordinates</em>
+</p>
 
 The four fixed yaw bolts pass through approximately 5.5 mm round clearance holes; the plywood is not slotted.
 The straps stay fixed to the pivot plate while the 20 mm rails rotate beneath them. With 40 mm yaw-bolt
@@ -132,15 +148,20 @@ Each rail has a removable 75 × 50 × 12.7 mm (3 × 2 × 1/2 in nominal) Baltic-
 the same 1/2 in sheet stock used elsewhere in the frame and mirror cell. The 75 mm dimension runs along the
 rail and the 20 mm rail is centered across the 50 mm block width.
 
-Each block attaches to the rail bottom slot with two M5 socket-head screws, flat washers, and roll-in/drop-in
-M5 T-nuts. The two screw holes lie on the rail centerline and are 50 mm apart, symmetrically placed about the
+Each block attaches to the rail bottom slot with two M5 socket-head screws, two flat washers under each head,
+and roll-in/drop-in M5 T-nuts. The two screw holes lie on the rail centerline and are 50 mm apart, symmetrically placed about the
 block center; with the 75 mm block length, each screw center is 12.5 mm from its nearest end. The screws are
-M5 from the general M5 assortment, nominally 20 mm long, through approximately 5.5 mm clearance holes in the
-plywood.
+M5 from the general M5 assortment, 20 mm long, through approximately 5.5 mm clearance holes in the plywood.
+
+The two washers set the screw's depth in the slot. With two nominal 1.0 mm washers and the 12.7 mm block, a
+20 mm screw enters the rail slot by about 5.3 mm, about 1.15 mm short of the 6.45 mm slot floor. A single
+washer leaves only about 0.15 mm, so the screw bottoms before the block clamps if the plywood runs thin; a
+16 mm screw reaches only about 0.65 mm past the slot lip, too little to engage the T-nut; no standard length
+lies between.
 
 Each rear-foot screw stack, from the bottom up:
 
-socket head → flat washer → plywood foot block → M5 T-nut in the rail bottom slot
+socket head → two flat washers → plywood foot block → M5 T-nut in the rail bottom slot
 
 A Sorbothane foot is centered on the underside of each block, directly beneath the rail centerline and midway
 between the two attachment screws. The 1-1/4 in / 31.75 mm diameter foot therefore does not obscure either

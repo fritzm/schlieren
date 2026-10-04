@@ -22,6 +22,8 @@ Name files `<Brand>-<part>.step` following the `docs/reference/` convention (`/`
 | `Thorlabs-SM1EC2.step` | CCO000389.STEP (SolidWorks 2016, AP203, mm) | thorlabs.com SM1EC2, "Step" | Axis +Z through origin; surface model only (no solids); not yet loaded |
 | `Thorlabs-ACL2520U-A.step` | CTN002256-E0W.step (SolidWorks 2014, AP203, mm) | thorlabs.com ACL2520U-A, "Step" | Axis +Y through origin, convex vertex at y=-6.0 mm, plano face at y=6.0 mm; one solid |
 | `Alpha-CN40-40B.step` | CN40-40B (2009, AP203 config control design, mm) | alphanovatech.com CN40-40B | Axis +Y through origin, base mounting face at y=0, 3.0 mm base, pins to y=40 mm; one solid |
+| `McMaster-92815A202.step` | 92815A202_NO THREADS_Low-Profile Knurled-Head Thumb Nuts.STEP (SolidWorks 2024, AP203, mm) | mcmaster.com 92815A202, "3-D STEP", no threads | Axis +Z through origin, z from -2.5 to 2.5 mm; Ø20 mm knurled head, Ø5 mm plain bore, collar at +Z; one solid |
+| `McMaster-8215K2.step` | 8215K2_Load-Rated Adhesive-Back Sorbothane Bumper.STEP (SolidWorks 2024, AP203, mm) | mcmaster.com 8215K2, "3-D STEP" | Hemisphere, axis +Y through origin, adhesive face at y=-7.9375 mm, apex at y=7.9375 mm; Ø1.25 in; one solid |
 
 Thorlabs CAD downloads are listed per product through the site's GraphQL API at
 `https://www.thorlabs.com/graphql`, e.g. `{ products(storeId: "Thorlabs-Website", filter: "name:\"SM1RC/M\"")

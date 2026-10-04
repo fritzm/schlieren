@@ -53,7 +53,7 @@ bottoming on the metal datum disc. The model, with its fit-tested ABS allowances
   <img src="figures/rail-shoe.png" width="300" style="max-width: 80%"
        alt="Common rail shoe on the rail and TR50/M post: saddle body, split clamping collar, and clamp ears with the captured-nut pocket">
   <br>
-  <em>Fig. 1. Common rail shoe on rail with TR50/M post</em>
+  <em>Fig. 3. Common rail shoe on rail with TR50/M post</em>
 </p>
 
 #### Common printed split-clamp hardware

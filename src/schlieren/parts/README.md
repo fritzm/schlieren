@@ -11,6 +11,49 @@ they disagree with `docs/design/`, the design fragments govern.
 Exports land in the ignored `exports/step` and `exports/stl` directories. Select the project's `.venv`
 interpreter in VS Code for the viewer.
 
+## Tabletop frame
+
+`src/schlieren/parts/frame.py` encodes the §4 frame: the two 400 mm rails on
+the front pivot plate, each with its pivot lug and stack, fixed yaw strap,
+friction strip, yaw bolts, rear foot block, and Sorbothane foot, plus the
+front foot. Nothing is printed. The command prints the rail half-angle, the
+six pivot-plate hole centers, and the screw-stack margins, and exports STEP
+models of the two plywood parts (`frame_pivot_plate`, `frame_foot_block`)
+and `exports/drawings/frame_pivot_plate.svg`, a full-scale drilling layout of
+the pivot plate from `frame_drawing.py`, seen from above with the six holes
+dimensioned in the §4.2 plate coordinates;
+`--show` displays the assembly, with each rail optionally yawed about its pivot.
+
+```sh
+uv run frame
+uv run frame --show --left-yaw 3 --right-yaw -3
+uv run frame --figure      # re-render docs/design/figures/frame.png and frame-pivot-plate.svg
+uv run python -m unittest tests.test_frame -v
+```
+
+Coordinates are the §4.2 plate frame (origin at the midpoint of the
+mirror-facing plate edge, x transverse, y aft) with z=0 at the rail top.
+Yaw is in degrees outward from the nominal half-angle; the straps and their
+bolts stay fixed to the plate. The rails use `rail.py` with the measured
+§4.1 slot dimensions; the slot-floor taper is still nominal. The thumb nuts
+are the McMaster 92815A202 vendor model (Ø20 × 5 mm, unthreaded), collar down
+on the strap washer, and the feet are the McMaster 8215K2 model, a Ø1.25 in
+hemisphere. Other fasteners, washers, and nuts are plain nominal envelopes,
+and the T-nuts are not modeled.
+
+Three placements are not given in §4 and are model assumptions, exposed as
+parameters: the rail front end 10 mm aft of the pivot (`rail_front_setback`),
+the lug fixed to the rail top slot by M5 × 8 screws in its two aft holes
+(`lug_screw_length`), and the foot block flush with the rail rear end
+(`foot_block_rear_setback`).
+
+Tests cover the half-angle and hole layout against §4.2, plate and foot-block
+envelopes and holes, the three-foot support plane, screw-stack lengths, the
+lug hole staying on the pivot axis, rail-to-yaw-bolt clearance at nominal and
+±3°, the drilling drawing's hole positions and figures, thumb-nut and foot
+model size and seating, and part interference across that
+range.
+
 ## Light source — threaded SM1 stack-up
 
 `src/schlieren/parts/light_source.py` encodes the §6 light source on its

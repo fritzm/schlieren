@@ -43,8 +43,8 @@ unless the task needs it.
 `schlieren-design.html` and `schlieren-design.pdf` there; the PDF is the copy shared on Drive. The PDF step
 needs a local Chrome or Chromium and network access (KaTeX, for the formulas).
 
-Figures in `docs/design/figures/` are PNG renders generated from the CAD by a part command's `--figure`
-option (`src/schlieren/render.py`) and versioned so the fragments display without a build. They are derived
+Figures in `docs/design/figures/` are PNG renders (`src/schlieren/render.py`) and SVG drawings generated from
+the CAD by a part command's `--figure` option and versioned so the fragments display without a build. They are derived
 artifacts: regenerate one when its part's geometry changes; never edit it by hand.
 
 ### BOM and procurement: `bom/bom.csv`
