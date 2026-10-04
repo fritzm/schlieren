@@ -11,6 +11,7 @@ from build123d import Align, Color, Compound, Location, Part, Plane, Shape, expo
 ON_FLOOR = (Align.CENTER, Align.CENTER, Align.MIN)  # Centered in the plane, rising from it.
 FROM_CORNER = (Align.MIN, Align.MIN, Align.MIN)
 EXPORTERS = {"step": export_step, "stl": export_stl}  # By export kind, as `EXPORTERS[kind](part, path)`.
+BLACK_ANODIZED = (0.2, 0.2, 0.22)  # Viewer color for black-anodized aluminum (Thorlabs SM1 optomechanics).
 
 
 def along_x(origin) -> Plane:

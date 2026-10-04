@@ -31,6 +31,13 @@ From the LED to the slit:
 4. SM1L03, threaded into the SM1V05 open end;
 5. SM1D12, threaded into the SM1L03.
 
+<p align="center">
+  <img src="figures/light-source.png" width="360" style="max-width: 80%"
+       alt="Light source on its TR50/M post and rail shoe: pin-fin heatsink and LED cap behind the SMR1/M, with the SM1V05, SM1L03, and iris ahead of it">
+  <br>
+  <em>Fig. 2. Light source on rail: heatsink and LED module, SMR1/M, SM1V05, SM1L03, and iris</em>
+</p>
+
 The ACL2520U-A convex vertex sits about 0.7 mm inside the SM1V05 open end, so the SM1L03 spacer is required
 ahead of the iris; the SM1D12 interferes with the lens if threaded directly into the SM1V05.
 
@@ -44,7 +51,7 @@ against the 150 mm iris-to-slit spacing.
 Thorlabs SM1 part dimensions in this stack-up (SMR1/M, SM1CP2M, SM1V05) are the exact inch-primary values from
 the vendor STEP models in `cad/vendor/`, not the rounded millimeter values on the drawings. The TR50/M is
 metric-primary and keeps its 50 mm / Ø12.7 mm nominals (its STEP model is rounded to inches).
-`src/schlieren/parts/led_module.py` encodes the stack-up; `uv run led-module` prints the focus ranges.
+`src/schlieren/parts/light_source.py` encodes the stack-up; `uv run light-source` prints the focus ranges.
 
 ### 6.2 LED modules
 

@@ -25,7 +25,7 @@ from build123d import (
     mirror,
 )
 
-from schlieren.cad import ON_FLOOR, along_x, along_y, assembly, labeled
+from schlieren.cad import BLACK_ANODIZED, ON_FLOOR, along_x, along_y, assembly, labeled
 from schlieren.parts.rail_shoe import RailShoeParameters
 from schlieren.vendor_cad import SM1RC_M_THICKNESS, thorlabs_fas100, thorlabs_sm1rc_m, thorlabs_tr50_m
 
@@ -723,7 +723,7 @@ def build_carriage(p=None, *, travel=0.0, retract=0.0, include_support=False, in
         loc = support_location(p)
         metal = (0.75, 0.75, 0.78)
         ring = Pos(0, -p.ring_thickness / 2, p.optical_height)
-        children.append(labeled(thorlabs_sm1rc_m(), "SM1RC M ring", (0.2, 0.2, 0.22), loc * ring))
+        children.append(labeled(thorlabs_sm1rc_m(), "SM1RC M ring", BLACK_ANODIZED, loc * ring))
         post = Pos(0, 0, p.datum_thickness)
         children.append(labeled(thorlabs_tr50_m(), "TR50 M post", metal, loc * post))
         children.append(labeled(build_rail_shoe(), "Rail shoe", (0.8, 0.4, 0.25), loc))

@@ -25,7 +25,7 @@ toward the knobs), y the optical axis (+y toward the mirror). The origin is the 
 blade-seat plane (the carrier front faces). The head is modeled as printed: the platform at mid travel and
 the width stage at zero flexure deflection.
 
-Assembly frame matches led_module: x transverse, y along the rail toward the mirror, z=0 at the rail top,
+Assembly frame matches light_source: x transverse, y along the rail toward the mirror, z=0 at the rail top,
 with the slit post at x=y=0.
 """
 
@@ -34,7 +34,7 @@ from math import cos, isfinite, pi
 
 from build123d import Axis, Box, Cylinder, Pos, RegularPolygon, Rot, extrude, fillet
 
-from schlieren.cad import FROM_CORNER, ON_FLOOR, along_y, assembly, labeled
+from schlieren.cad import BLACK_ANODIZED, FROM_CORNER, ON_FLOOR, along_y, assembly, labeled
 from schlieren.vendor_cad import SM1RC_M_THICKNESS, thorlabs_fas100, thorlabs_sm1rc_m, thorlabs_tr50_m
 
 INCH = 25.4
@@ -712,7 +712,7 @@ def build_slit_head_assembly(p=None, rotation=0.0, include_support=True):
 
         ring_y = -SM1RC_M_THICKNESS / 2
         children.append(
-            labeled(thorlabs_sm1rc_m(), "SM1RC M ring", (0.2, 0.2, 0.22), Pos(0, ring_y, p.optical_height))
+            labeled(thorlabs_sm1rc_m(), "SM1RC M ring", BLACK_ANODIZED, Pos(0, ring_y, p.optical_height))
         )
         children.append(labeled(thorlabs_tr50_m(), "TR50 M post", metal, Pos(0, 0, p.datum_thickness)))
         children.append(labeled(build_rail_shoe(), "Rail shoe", (0.8, 0.4, 0.25)))

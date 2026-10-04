@@ -11,19 +11,23 @@ they disagree with `docs/design/`, the design fragments govern.
 Exports land in the ignored `exports/step` and `exports/stl` directories. Select the project's `.venv`
 interpreter in VS Code for the viewer.
 
-## LED module — threaded SM1 stack-up
+## Light source — threaded SM1 stack-up
 
-`src/schlieren/parts/led_module.py` encodes the §6 threaded LED module:
-star board on a Thorlabs SM1CP2M cap threaded into the LED side of the
-condenser SMR1/M, SM1V05 focus from the slit side, Alpha CN40-40B heatsink on
-the cap rear. Nothing is printed; the command prints the focus stack-up and
-`--show` displays the vendor STEP models (`cad/vendor/`) and simple envelopes
-for the star board and lens plano face.
+`src/schlieren/parts/light_source.py` encodes the §6 light source on its
+SMR1/M: Alpha CN40-40B heatsink and star board on a Thorlabs SM1CP2M cap
+threaded into the LED side, and on the slit side the SM1V05 focus cell with
+its lock ring, the ACL2520U-A condenser under its retaining ring, the SM1L03
+tube, and the SM1D12 iris. Nothing is printed; the command prints the focus
+stack-up and `--show` displays the vendor STEP models (`cad/vendor/`), a
+representative star board and LED package built from the outline drawings,
+and the rail shoe for reference. The lens, tube, and iris move with the
+SM1V05 engagement. The SM1L03's own retaining ring is not modeled.
 
 ```sh
-uv run led-module
-uv run led-module --show --module white --engagement 3.0
-uv run python -m unittest tests.test_led_module -v
+uv run light-source
+uv run light-source --show --module white --engagement 3.0
+uv run light-source --figure      # re-render docs/design/figures/light-source.png
+uv run python -m unittest tests.test_light_source -v
 ```
 
 Axial coordinate u has u=0 at the LED-side SMR1/M face; the viewer uses x
@@ -31,8 +35,8 @@ transverse, +y toward the slit, z=0 at the rail top. Board thicknesses are
 caliper measurements; emitter heights are calculated from the LED outline
 drawings in `docs/reference/`; other dimensions are catalog values. Tests cover
 the optimum-gap calculation, focus margin for each module, SMR1/M thread
-sharing, lead annulus, heatsink-to-post clearance, vendor-model fit and
-placement, and part interference.
+sharing, lead annulus, heatsink-to-post clearance, the lens vertex position
+in the SM1V05, vendor-model fit and placement, and part interference.
 They do not qualify thermal performance.
 
 ## Source-slit flexure head

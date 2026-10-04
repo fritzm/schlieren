@@ -41,7 +41,7 @@ uv sync                                          # set up the environment
 uv run python -m unittest discover -s tests -v   # run all tests
 uvx ruff check . && uvx ruff format .            # lint and format
 
-uv run led-module [--show]                       # LED focus stack-up
+uv run light-source [--show] [--figure]          # light source focus stack-up
 uv run slit-head [--show]                        # source-slit flexure head
 uv run carriage [--show]                         # cutoff carriage
 uv run cassette [--show]                         # cassette blank and clamp bars

@@ -16,6 +16,14 @@ INCH = 25.4
 # Vendor-frame features used for placement (Thorlabs drawings are inch-primary).
 SM1CP2M_SEAT_Y = 0.110 * INCH  # Flange seat face (thread shoulder) above the knurled back face.
 SM1RC_M_THICKNESS = 0.400 * INCH
+# SM1V05 model: axis +X through (y, z) = SM1V05_AXIS_YZ, sleeve end at x=0; the SM1NT lock ring and the lens
+# retaining ring are separate solids, each with its sleeve-end-side face at the x given here.
+SM1V05_AXIS_YZ = (0.600 * INCH, 0.600 * INCH)
+SM1V05_LOCK_RING_X = 0.195 * INCH
+SM1V05_RETAINING_RING_X = 0.950 * INCH
+SM1L03_SHOULDER_X = -0.330 * INCH  # External-thread shoulder; thread end at x=-0.450 in, open end at x=0.
+SM1D12_SHOULDER_Z = 0.080 * INCH  # External-thread shoulder above the thread end at z=0.
+ACL2520U_A_PLANO_Y = 6.0  # Plano face; convex vertex at y=-6.0.
 # FAS100 model: axis along +X through (y, z) = FAS100_AXIS_YZ, knob at -X, ball-tip apex at x=FAS100_TIP_X.
 FAS100_AXIS_YZ = (1.583, -2.103)
 FAS100_TIP_X = 22.013
@@ -51,6 +59,52 @@ def thorlabs_smr1_m() -> Compound:
 def thorlabs_sm1cp2m() -> Compound:
     """Thorlabs SM1CP2M end cap; axis +Y through the origin, flange seat face at y=0, thread toward +Y."""
     return _moved("Thorlabs-SM1CP2M.step", Pos(0, -SM1CP2M_SEAT_Y, 0))
+
+
+@cache
+def thorlabs_sm1v05() -> tuple[Compound, Compound, Compound]:
+    """Thorlabs SM1V05 as (body, SM1NT lock ring, lens retaining ring), each on axis +Y through the origin.
+
+    The body has its sleeve (externally threaded) end at y=0 and its open end toward +Y. The two rings are
+    positioned along the body in use, so each is returned with its sleeve-side face at y=0.
+    """
+    y, z = SM1V05_AXIS_YZ
+    retaining_ring, lock_ring, body = sorted(
+        vendor_step("Thorlabs-SM1V05.step").solids(), key=lambda s: s.volume
+    )
+    to_axis = Rot(Z=90) * Pos(0, -y, -z)
+    return (
+        Compound([to_axis * body]),
+        Compound([to_axis * Pos(-SM1V05_LOCK_RING_X, 0, 0) * lock_ring]),
+        Compound([to_axis * Pos(-SM1V05_RETAINING_RING_X, 0, 0) * retaining_ring]),
+    )
+
+
+@cache
+def thorlabs_acl2520u_a() -> Compound:
+    """Thorlabs ACL2520U-A condenser; axis +Y through the origin, plano face at y=0, convex vertex toward +Y."""
+    return _moved("Thorlabs-ACL2520U-A.step", Pos(0, ACL2520U_A_PLANO_Y, 0) * Rot(Z=180))
+
+
+@cache
+def thorlabs_sm1l03() -> Compound:
+    """Thorlabs SM1L03 tube, without its retaining ring; axis +Y through the origin.
+
+    The external-thread shoulder is at y=0, with the thread toward -Y and the open end toward +Y.
+    """
+    tube = max(vendor_step("Thorlabs-SM1L03.step").solids(), key=lambda s: s.volume)
+    return Compound([Rot(Z=90) * Pos(-SM1L03_SHOULDER_X, 0, 0) * tube])
+
+
+@cache
+def thorlabs_sm1d12() -> tuple[Compound, Compound]:
+    """Thorlabs SM1D12 iris as (housing with leaves, actuating lever), sharing one frame.
+
+    Axis +Y through the origin, external-thread shoulder at y=0, thread toward -Y, lever at +Z.
+    """
+    iris = _moved("Thorlabs-SM1D12.step", Rot(Y=180) * Rot(X=-90) * Pos(0, 0, -SM1D12_SHOULDER_Z))
+    *rest, lever = sorted(iris.solids(), key=lambda s: s.bounding_box().max.Z)
+    return Compound(rest), Compound([lever])
 
 
 @cache
