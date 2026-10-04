@@ -1,8 +1,9 @@
 ## 9. Camera and telephoto support
 
-The camera and lens are chosen (§9.1–9.2). **Provisional:** the phone cradle and telephoto saddle
-(§9.3–9.5) are defined by requirements and a concept but not yet designed in detail; this is the main
-remaining custom mechanical design work (§11).
+The camera and lens are chosen ([§9.1](#91-camera)–[9.2](#92-telephoto)). **Provisional:** the phone cradle
+and telephoto saddle ([§9.3](#93-phone-cradle-concept)–[9.5](#95-jack-hardware)) are defined by requirements
+and a concept but not yet designed in detail; this is the main remaining custom mechanical design work
+([§11](11-open-work.md#11-provisional-areas-and-next-steps)).
 
 ### 9.1 Camera
 

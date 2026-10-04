@@ -1,15 +1,16 @@
 ## 6. Light source
 
-The light source is a single assembly on one TR50/M post and common rail shoe (§5): a Thorlabs SMR1/M holder
-that carries the condenser and iris on its slit-side face and one of two interchangeable threaded LED modules
-on its LED-side face. There is no dedicated LED post, rail shoe, or printed bracket. The condenser images the
-LED emitter onto the source slit (§7).
+The light source is a single assembly on one TR50/M post and common rail shoe
+([§5](05-post-support.md#5-common-rail-mounted-post-support)): a Thorlabs SMR1/M holder that carries the
+condenser and iris on its slit-side face and one of two interchangeable threaded LED modules on its LED-side
+face. There is no dedicated LED post, rail shoe, or printed bracket. The condenser images the LED emitter onto
+the source slit ([§7](07-source-slit.md#7-source-slit)).
 
 ### 6.1 Assembly and stack order
 
 Parts:
 
-- threaded LED module, green or white (§6.3)
+- threaded LED module, green or white ([§6.3](#63-led-modules))
 - Thorlabs SMR1/M fixed threaded holder
 - Thorlabs SM1V05 adjustable lens cell
 - Thorlabs ACL2520U-A condenser
@@ -34,10 +35,11 @@ The ACL2520U-A convex vertex sits about 0.7 mm inside the SM1V05 open end, so th
 ahead of the iris; the SM1D12 interferes with the lens if threaded directly into the SM1V05.
 
 The cap and the SM1V05 sleeve share the SMR1/M thread. The cap threads in until its knurled flange seats on
-the SMR1/M face, so the LED position is fixed and the SM1V05 engagement is the focus adjustment (§6.6).
-Engagement runs from the Thorlabs minimum of 0.110 in / 2.79 mm to about 5.7–5.8 mm, where the sleeve end
-comes within 0.3 mm of the LED board. Turning the SM1V05 moves the lens, SM1L03, and iris together relative to
-the LED; the resulting few-millimeter iris shift is negligible against the 150 mm iris-to-slit spacing.
+the SMR1/M face, so the LED position is fixed and the SM1V05 engagement is the focus adjustment
+([§6.6](#66-focus-and-module-interchange)). Engagement runs from the Thorlabs minimum of 0.110 in / 2.79 mm to
+about 5.7–5.8 mm, where the sleeve end comes within 0.3 mm of the LED board. Turning the SM1V05 moves the
+lens, SM1L03, and iris together relative to the LED; the resulting few-millimeter iris shift is negligible
+against the 150 mm iris-to-slit spacing.
 
 Thorlabs SM1 part dimensions in this stack-up (SMR1/M, SM1CP2M, SM1V05) are the exact inch-primary values from
 the vendor STEP models in `cad/vendor/`, not the rounded millimeter values on the drawings. The TR50/M is
@@ -75,16 +77,18 @@ Module stack, from the condenser outward:
 1. LED star board on the front face of a Thorlabs SM1CP2M externally SM1-threaded end cap (0.210 in /
    5.33 mm solid aluminum, 0.100 in / 2.54 mm thread, Ø1.200 in / 30.48 mm knurled flange);
 2. the SM1CP2M itself;
-3. Alpha CN40-40B heatsink (§6.4) bolted to the rear face of the cap, with thermal compound between.
+3. Alpha CN40-40B heatsink ([§6.4](#64-common-heatsink)) bolted to the rear face of the cap, with thermal
+   compound between.
 
 Interfaces:
 
 - The cap flange is the repeatable axial stop on the SMR1/M face; the module's rotational position at the
   stop does not matter.
 - The SM1 thread centers the emitter on the condenser axis; no vertical calibration is required.
-- Heatsink fastening: socket-head screws through the CN40 base in the open cells between pins, into blind
-  M3 holes tapped about 2.5 mm deep in the cap rear face, with M3 × 6 mm screws (**provisional** length). Keep
-  the rear holes angularly offset from the front M2 board holes (§6.5), since the cap is only 5.33 mm thick.
+- Heatsink fastening: socket-head screws through the CN40 base in the open cells between pins, into blind M3
+  holes tapped about 2.5 mm deep in the cap rear face, with M3 × 6 mm screws (**provisional** length). Keep
+  the rear holes angularly offset from the front M2 board holes ([§6.5](#65-led-board-mounting)), since the
+  cap is only 5.33 mm thick.
 - Leads drop past the board edge through the board's edge slots, through a pair of holes drilled at about
   r = 11 mm through the cap (inside the thread root) and the heatsink base, and out between the pins.
 - Fabrication is drilling and tapping of purchased aluminum parts only.
@@ -108,8 +112,9 @@ dissipates about 1.1 W. The rating is the manufacturer's pins-up test; the modul
 which pin fins tolerate well. **Provisional:** bench-test the temperature rise at 700 mA before relying on
 it.
 
-The heatsink is round so that it clears the post at every rotation while the module is threaded in (§6.3); a
-larger or non-round heatsink would sweep its corners below the post top during threading.
+The heatsink is round so that it clears the post at every rotation while the module is threaded in
+([§6.3](#63-led-modules)); a larger or non-round heatsink would sweep its corners below the post top during
+threading.
 
 ### 6.5 LED board mounting
 

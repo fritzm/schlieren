@@ -92,9 +92,10 @@ common TR50/M post + printed rail shoe concept:
 3. cutoff carriage.
 
 The source slit and the cutoff both rotate about the optical axis in a Thorlabs SM1RC/M SM1 slip ring. The
-slit uses a flexure head with fine centering and slit-width adjustment (§7); the cutoff uses a rotating
-carriage with a 64 mm cassette envelope, allowing knife-edge, wire, and color-filter experiments without
-changing the supporting mechanism (§8).
+slit uses a flexure head with fine centering and slit-width adjustment
+([§7](07-source-slit.md#7-source-slit)); the cutoff uses a rotating carriage with a 64 mm cassette envelope,
+allowing knife-edge, wire, and color-filter experiments without changing the supporting mechanism
+([§8](08-cutoff.md#8-cutoff)).
 
 The mirror cell uses a three-point, approximately 120°-spaced fine-adjustment architecture with compression
 springs and spherical washer interfaces. The mirror is compliantly supported in the moving plate by six radial

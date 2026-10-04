@@ -286,7 +286,8 @@ the 1/2 in Baltic-birch mirror-cell base.
 The sliding plate is 7.00 in / 177.8 mm long, mounted with its forward end flush with the front edge of the
 11.0 in-deep base, so it spans 0–7.00 in / 0–177.8 mm aft of the front edge and its geometric center lies 3.50
 in / 88.9 mm aft of that edge. This is only 0.15 in / 3.8 mm aft of the estimated mirror-cell center of
-gravity (§10.1), negligible relative to the CoG uncertainty and the quick-release system's sliding adjustment.
+gravity ([§10.1](#101-plates-and-basic-architecture)), negligible relative to the CoG uncertainty and the
+quick-release system's sliding adjustment.
 
 The plate is attached by four McMaster 92125A196 M4 × 0.7 × 18 mm 90° flat-head screws:
 

@@ -3,8 +3,8 @@
 Three fixtures use the common post/shoe architecture:
 
 1. LED/condenser/iris;
-2. source-slit flexure head (§7);
-3. cutoff carriage (§8).
+2. source-slit flexure head ([§7](07-source-slit.md#7-source-slit));
+3. cutoff carriage ([§8](08-cutoff.md#8-cutoff)).
 
 ### 5.1 Post
 
@@ -16,8 +16,10 @@ Three fixtures use the common post/shoe architecture:
 ### 5.2 Optical-holder allocation
 
 - LED/condenser/iris: 1 × SMR1/M
-- slit head: 1 × SM1RC/M, clamping the printed spigot of the slit-head adapter (§7.6)
-- cutoff carriage: 1 × SM1RC/M, clamping the printed spigot of the carriage base plate (§8.1)
+- slit head: 1 × SM1RC/M, clamping the printed spigot of the slit-head adapter
+  ([§7.6](07-source-slit.md#76-rotation-mount-and-clearances))
+- cutoff carriage: 1 × SM1RC/M, clamping the printed spigot of the carriage base plate
+  ([§8.1](08-cutoff.md#81-spigot-and-rotation-interface))
 
 The condenser/slit/cutoff holders preserve the 22.1 mm post-top-to-axis dimension.
 
@@ -26,8 +28,8 @@ The condenser/slit/cutoff holders preserve the 22.1 mm post-top-to-axis dimensio
 The common shoe is a printed ABS U-shaped saddle that:
 
 - straddles the 2020 extrusion;
-- locks through the rail side channels with M5 screws into the measured slot geometry (§4.1), using the
-  20-series slot-6 T-nut hardware;
+- locks through the rail side channels with M5 screws into the measured slot geometry
+  ([§4.1](04-frame.md#41-rails)), using the 20-series slot-6 T-nut hardware;
 - leaves the rail top available as the datum surface;
 - carries a vertical 12.7 mm through-bore for the TR50/M post.
 

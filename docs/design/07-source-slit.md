@@ -1,16 +1,19 @@
 ## 7. Source slit
 
-The source slit is a flexure slit head: one flat-printed ABS part carrying both blades, with fine
-centering perpendicular to the slit and fine slit-width adjustment, mounted for continuous rotation about
-the optical axis in an SM1RC/M on the common post and rail shoe (§5).
+The source slit is a flexure slit head: one flat-printed ABS part carrying both blades, with fine centering
+perpendicular to the slit and fine slit-width adjustment, mounted for continuous rotation about the optical
+axis in an SM1RC/M on the common post and rail shoe
+([§5](05-post-support.md#5-common-rail-mounted-post-support)).
 
 The model is `src/schlieren/parts/slit_head.py` (`uv run slit-head`, with `--show` for the viewer assembly).
 
 The slit needs only about ±2 mm of centering travel, one adjustment axis, and discrete orientations, so it
-does not use the cutoff's carriage, plungers, guide rails, keeper frame, datum pins, or cassettes (§8).
+does not use the cutoff's carriage, plungers, guide rails, keeper frame, datum pins, or cassettes
+([§8](08-cutoff.md#8-cutoff)).
 
-**Provisional:** the flexure dimensions are first-print values, and the stage-rotation figures below come
-from a first-order flexure model, not FEA; both are to be confirmed on the assembled head (§7.7).
+**Provisional:** the flexure dimensions are first-print values, and the stage-rotation figures below come from
+a first-order flexure model, not FEA; both are to be confirmed on the assembled head
+([§7.7](#77-fabrication-and-fit)).
 
 ### 7.1 Blades and slit widths
 
@@ -130,8 +133,9 @@ A Ø34 mm shoulder on the spigot is the ring's axial stop: the ring seats agains
 adapter plate 3.5 mm in front of the ring face and 2.2 mm clear of the post at every rotation. Do not clamp
 the ring away from the shoulder.
 
-The SM1RC/M keeps the 22.1 mm post-top-to-axis dimension (§5.2). Loosening the ring rotates the whole head
-about the optical axis:
+The SM1RC/M keeps the 22.1 mm post-top-to-axis dimension
+([§5.2](05-post-support.md#52-optical-holder-allocation)). Loosening the ring rotates the whole head about the
+optical axis:
 
 - rotation 0: horizontal slit, vertical centering, knobs up;
 - ±90°: vertical slit, horizontal centering, knobs sideways;
@@ -152,12 +156,12 @@ Printed parts: the flexure head, the spigot adapter, and two clamp bars.
 - Adapter: print front face down, spigot up; no supports.
 - Clamp bars: print flat, EPDM face down.
 - The insert bores are pilots, finished by a light hand ream with a 5/16 in twist drill to a press fit
-  (§8.3); flanges outboard.
+  ([§8.3](08-cutoff.md#83-fine-adjustment)); flanges outboard.
 - The spigot is printed at the SM1 tube nominal.
 
-Hardware: 2 × FAS100, 2 × 98625A950 inserts, 2 × N52 10 × 5 × 2 mm magnet bearing pads (one under each
-FAS100 ball tip, §8.3), 1 × 2006N292 spring, 8 × M3 × 12 mm socket-head screws, 8 × M3 nuts, 8 × M3 flat
-washers.
+Hardware: 2 × FAS100, 2 × 98625A950 inserts, 2 × N52 10 × 5 × 2 mm magnet bearing pads (one under each FAS100
+ball tip, [§8.3](08-cutoff.md#83-fine-adjustment)), 1 × 2006N292 spring, 8 × M3 × 12 mm socket-head screws, 8
+× M3 nuts, 8 × M3 flat washers.
 
 A test print of the head (Prusa MINI+, ABS) confirmed the insert press fit, the magnet, spring, and other
 pockets and bores as sized, and essentially parallel flexure motion along both push axes.

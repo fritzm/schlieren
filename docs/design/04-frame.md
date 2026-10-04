@@ -109,9 +109,10 @@ bears on the rail top, adds friction to the yaw lock. The strip spans the strap 
 bolt holes (about 30 mm long, clear of the holes at ±20 mm).
 
 Each strap center is 90 mm aft of its rail pivot along the nominal rail axis, with the strap perpendicular to
-the nominal rail direction (§4.2). Yaw is adjusted and locked at the front pivot plate by loosening the two
-thumb nuts, rotating the rail beneath the fixed strap, and retightening. The bolt/rail clearance supports at
-least approximately ±3° adjustment about nominal with useful remaining clearance.
+the nominal rail direction ([§4.2](#42-front-pivot-plate)). Yaw is adjusted and locked at the front pivot
+plate by loosening the two thumb nuts, rotating the rail beneath the fixed strap, and retightening. The
+bolt/rail clearance supports at least approximately ±3° adjustment about nominal with useful remaining
+clearance.
 
 Hardware:
 

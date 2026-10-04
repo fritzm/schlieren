@@ -30,15 +30,17 @@ Design areas marked **Provisional** in the sections above:
 
 ### 11.2 Next steps
 
-1. Fit-test the printed parts: the assembled slit head (§7.7); the cutoff carriage and a cassette blank (§8),
-   including datum-pin seating, bevel seating, keeper lift, and clamp-bar screw length.
+1. Fit-test the printed parts: the assembled slit head ([§7.7](07-source-slit.md#77-fabrication-and-fit)); the
+   cutoff carriage and a cassette blank ([§8](08-cutoff.md#8-cutoff)), including datum-pin seating, bevel
+   seating, keeper lift, and clamp-bar screw length.
 2. Fabricate both threaded LED modules: drill and tap the caps and heatsinks, center each board, and set
    focus on the slit blades. Confirm that the white module reaches focus; if not, add a thin cap-flange shim
-   (§6.6). Bench-test the heatsink temperature rise.
-3. Design the phone cradle and telephoto saddle (§9).
-4. Design the mirror-cell safety retainers and travel cover (§10.8).
+   ([§6.6](06-light-source.md#66-focus-and-module-interchange)). Bench-test the heatsink temperature rise.
+3. Design the phone cradle and telephoto saddle ([§9](09-camera-telephoto.md#9-camera-and-telephoto-support)).
+4. Design the mirror-cell safety retainers and travel cover
+   ([§10.8](10-mirror-cell.md#108-mirror-safety-and-transport-retention)).
 5. Assemble the tabletop optical head.
 6. Perform a dry optical layout near 3.2 m before making any remaining irreversible holes or bonds.
-7. Bond the mirror into the moving plate (§10.5) at the destination, after a dry fit and an adhesion test.
-   The cell is otherwise assembled; the mirror travels separately, protected, because there is not enough
-   cure time before departure.
+7. Bond the mirror into the moving plate ([§10.5](10-mirror-cell.md#105-mirror-mounting)) at the destination,
+   after a dry fit and an adhesion test. The cell is otherwise assembled; the mirror travels separately,
+   protected, because there is not enough cure time before departure.
