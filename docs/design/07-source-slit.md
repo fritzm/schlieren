@@ -1,4 +1,4 @@
-## 8. Source slit
+## 7. Source slit
 
 The source slit is a flexure slit head: one flat-printed ABS part carrying both blades, with fine
 centering perpendicular to the slit and fine slit-width adjustment, mounted for continuous rotation about
@@ -7,12 +7,12 @@ the optical axis in an SM1RC/M on the common post and rail shoe (§5).
 The model is `src/schlieren/parts/slit_head.py` (`uv run slit-head`, with `--show` for the viewer assembly).
 
 The slit needs only about ±2 mm of centering travel, one adjustment axis, and discrete orientations, so it
-does not use the cutoff's carriage, plungers, guide rails, keeper frame, datum pins, or cassettes (§9).
+does not use the cutoff's carriage, plungers, guide rails, keeper frame, datum pins, or cassettes (§8).
 
 **Provisional:** the flexure dimensions are first-print values, and the stage-rotation figures below come
-from a first-order flexure model, not FEA; both are to be confirmed on the assembled head (§8.7).
+from a first-order flexure model, not FEA; both are to be confirmed on the assembled head (§7.7).
 
-### 8.1 Blades and slit widths
+### 7.1 Blades and slit widths
 
 The slit uses two Stanley 11-515 backed single-edge scraper blades.
 
@@ -30,7 +30,7 @@ edge by about 1.5 mm. No blade pockets, holes, or spine compensation are used; a
 blade toward its folded spine is acceptable, since the optically important geometry is the gap and
 parallelism of the two cutting edges.
 
-### 8.2 Architecture
+### 7.2 Architecture
 
 The head is a three-body monolithic flexure:
 
@@ -62,7 +62,7 @@ Closely spaced blades or a spring offset from the screw would not achieve this: 
 blade spacing and the spring 23 mm from the screw gives a constant ~1° platform pre-twist and about 8 mrad of
 rotation over the centering travel.
 
-### 8.3 Centering stage
+### 7.3 Centering stage
 
 - travel: ±2.0 mm about the as-printed position;
 - drive: Thorlabs FAS100 1/4"-80 adjuster, 0.3175 mm per turn (10 µm per about 11° of knob), in a McMaster
@@ -87,7 +87,7 @@ by d/150; at the mirror the beam moves about 21 × d. The ±2 mm travel therefor
 ±42 mm at the mirror, which covers printed-part and shoe tolerances plus deliberate aiming. For a
 horizontal slit this is the only vertical aiming adjustment at the source.
 
-### 8.4 Width stage
+### 7.4 Width stage
 
 - drive: a second FAS100 in a 98625A950 insert in the platform top bar; pushing closes the slit;
 - preload: the stage's own flexures, printed so that FAS100 #2 always deflects them 0.8–1.6 mm (about
@@ -110,7 +110,7 @@ Slit setup:
 4. remove the gauge; thereafter set width with FAS100 #2 from that reference (0.15 mm is about half a
    turn). Re-check parallelism with the gauge after large width changes.
 
-### 8.5 Blade clamping
+### 7.5 Blade clamping
 
 Each blade is pinched against its carrier by an identical removable printed ABS clamp bar (54 × 7 × 4 mm)
 faced with McMaster 9852N37 1/32 in EPDM. The bar bears on the flat portion of the blade about 3 mm back
@@ -118,7 +118,7 @@ from the cutting edge, leaving the slit cone clear, and is fastened by two M3 ×
 just beyond the blade ends into M3 hex nuts captured in pockets opening from the carrier back. The common
 McMaster 91292A114 screw and 91828A211 nut are used; four of each.
 
-### 8.6 Rotation mount and clearances
+### 7.6 Rotation mount and clearances
 
 A separate printed spigot adapter is bolted to the frame back with four M3 × 12 mm socket-head screws,
 counterbored from the head front into M3 nuts captured in the adapter back. The adapter is a flat plate,
@@ -142,7 +142,7 @@ about ±50°, as the corners pass). The TR50/M M4 stud reaches up into the ring'
 1.7 mm short of the spigot at its 5.2 mm drawing maximum; this gap is set by the Thorlabs parts, not by this
 design. Beyond about ±125° the adapter corners and knobs reach the shoe.
 
-### 8.7 Fabrication and fit
+### 7.7 Fabrication and fit
 
 Printed parts: the flexure head, the spigot adapter, and two clamp bars.
 
@@ -152,11 +152,11 @@ Printed parts: the flexure head, the spigot adapter, and two clamp bars.
 - Adapter: print front face down, spigot up; no supports.
 - Clamp bars: print flat, EPDM face down.
 - The insert bores are pilots, finished by a light hand ream with a 5/16 in twist drill to a press fit
-  (§9.3); flanges outboard.
+  (§8.3); flanges outboard.
 - The spigot is printed at the SM1 tube nominal.
 
 Hardware: 2 × FAS100, 2 × 98625A950 inserts, 2 × N52 10 × 5 × 2 mm magnet bearing pads (one under each
-FAS100 ball tip, §9.3), 1 × 2006N292 spring, 8 × M3 × 12 mm socket-head screws, 8 × M3 nuts, 8 × M3 flat
+FAS100 ball tip, §8.3), 1 × 2006N292 spring, 8 × M3 × 12 mm socket-head screws, 8 × M3 nuts, 8 × M3 flat
 washers.
 
 A test print of the head (Prusa MINI+, ABS) confirmed the insert press fit, the magnet, spring, and other

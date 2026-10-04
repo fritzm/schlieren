@@ -1,4 +1,4 @@
-"""Export the flexure slit head parts (§8); print its adjustment figures; optionally show it."""
+"""Export the flexure slit head parts (§7); print its adjustment figures; optionally show it."""
 
 import argparse
 from pathlib import Path
@@ -12,7 +12,7 @@ from schlieren.parts.slit_head import (
     build_spigot_adapter,
 )
 
-# Setup values for the steering figure: iris-to-slit ~150 mm (§7.3), slit-to-mirror ~3200 mm (§3.1).
+# Setup values for the steering figure: iris-to-slit ~150 mm (§6.6), slit-to-mirror ~3200 mm (§3.1).
 IRIS_TO_SLIT = 150.0
 SLIT_TO_MIRROR = 3200.0
 

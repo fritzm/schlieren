@@ -1,4 +1,4 @@
-"""Threaded SM1 LED module stack-up; canonical design §6.5 and §7.
+"""Threaded SM1 LED module stack-up; canonical design §6.
 
 The LED star board mounts on a Thorlabs SM1CP2M externally threaded end cap,
 which threads into the LED-side face of the condenser SMR1/M and seats on its

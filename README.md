@@ -14,7 +14,7 @@ everything that doesn't need metal precision. The mirror sits in its own tripod-
 
 | Path | Contents |
 |---|---|
-| [`docs/design/`](docs/design/) | Baseline design: geometry, decisions, rationale, and open work, as numbered Markdown fragments, one per subsystem. Start with `01-context-and-layout.md`; open areas are flagged **Provisional** and rolled up in `12-open-work.md`. |
+| [`docs/design/`](docs/design/) | Baseline design: geometry, decisions, rationale, and open work, as numbered Markdown fragments, one per subsystem. Start with `01-context-and-layout.md`; open areas are flagged **Provisional** and rolled up in `11-open-work.md`. |
 | [`bom/bom.csv`](bom/bom.csv) | BOM: one row per allocation, with vendor, SKU, quantity, and procurement or CAD state. |
 | [`src/schlieren/parts/`](src/schlieren/parts/) | build123d models of custom parts and purchased-part stack-ups. See the additional [README](src/schlieren/parts/README.md) there for per-part notes. |
 | [`src/schlieren/cli/`](src/schlieren/cli/) | Utility scripts for building and viewing parts and generating documents. |

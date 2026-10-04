@@ -37,8 +37,7 @@ STATE_FILLS = {
 SUBSYSTEMS = [
     "Tabletop frame",
     "Optical supports",
-    "Condenser",
-    "LED source",
+    "Light source",
     "Source slit",
     "Carriages",
     "Cassettes",

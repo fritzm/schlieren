@@ -1,14 +1,14 @@
-## 9. Cutoff
+## 8. Cutoff
 
-The cutoff sits at the returned slit-image plane on the imaging rail. It is a rotating carriage (§9.1–9.5)
-holding interchangeable 64 mm cassettes (§9.6–9.7), which carry the cutoff element: a knife edge, a fine
-wire (§9.8), or a color filter (§9.9). The carriage model is `src/schlieren/parts/carriage.py`; the cassette
+The cutoff sits at the returned slit-image plane on the imaging rail. It is a rotating carriage (§8.1–8.5)
+holding interchangeable 64 mm cassettes (§8.6–8.7), which carry the cutoff element: a knife edge, a fine
+wire (§8.8), or a color filter (§8.9). The carriage model is `src/schlieren/parts/carriage.py`; the cassette
 blank and clamp bars are modeled in `src/schlieren/parts/cassette.py`.
 
-### 9.1 Spigot and rotation interface
+### 8.1 Spigot and rotation interface
 
 The carriage mounts in 1 × Thorlabs SM1RC/M through a hollow printed spigot integral with the carriage base
-plate, the same interface as the slit-head adapter ([§8.6](08-source-slit.md#86-rotation-mount-and-clearances)):
+plate, the same interface as the slit-head adapter ([§7.6](07-source-slit.md#76-rotation-mount-and-clearances)):
 
 - Ø30.48 mm spigot (SM1 tube OD nominal), clamped directly by the SM1RC/M split ring (Ø30.7 mm bore, 10.16
   mm thick, M4 locking screw across the split); the spigot end is flush with the ring's rear face;
@@ -41,21 +41,21 @@ Fore/aft optical positioning is done by moving the rail shoe.
 Rotation envelope: the 2020 rail runs beneath the carriage at every rail position, 72.35 mm below the axis.
 The base plate, guide frame, and keeper are trimmed to a 70.35 mm radius about the optical axis (the rail top
 less 2 mm clearance). Only the outer plate corners are removed; the plate is otherwise 86 mm wide, widened to
-94 mm at the side keeper-screw lugs (§9.4). Calculated from the CAD, the carriage with its FAS100 rotates
+94 mm at the side keeper-screw lugs (§8.4). Calculated from the CAD, the carriage with its FAS100 rotates
 clear of the rail over ±150°; only the FAS100 knob reaches the rail, near ±170–180°. Nothing projects below
-the plate at nominal zero (§9.5). **Provisional:** clearance to other equipment on the rail near the cutoff
+the plate at nominal zero (§8.5). **Provisional:** clearance to other equipment on the rail near the cutoff
 station is not yet checked.
 
-### 9.2 Spigot print and fit
+### 8.2 Spigot print and fit
 
 The carriage base plate is printed deck down with the spigot up, so the spigot and shoulder need no
 supports; the guide frame above the deck is a separate print (the base/frame split exists for this). The three
-datum-pin shanks ([§9.4](#94-cassette-seating)) lie outside the shoulder and are flush-cut on the plate back.
+datum-pin shanks ([§8.4](#84-cassette-seating)) lie outside the shoulder and are flush-cut on the plate back.
 
 **Provisional:** the spigot is printed at the SM1 tube nominal; fit-test it in the SM1RC/M and adjust if
 needed.
 
-### 9.3 Fine adjustment
+### 8.3 Fine adjustment
 
 The carriage uses:
 
@@ -72,7 +72,7 @@ under-flange/body length 0.298 in (7.569 mm); flange outside diameter 0.352 in (
 
 The insert bore is nominally 0.313 in (7.950 mm), matching the drawing. The printed bore is a pilot, finished
 after printing with a 5/16 in (0.3125 in) drill rather than relying on FDM accuracy; on the slit head this
-gave a good press fit (§8.7). The 8.5 mm insert support exceeds the drawing's 0.298 in (7.569 mm) minimum
+gave a good press fit (§7.7). The 8.5 mm insert support exceeds the drawing's 0.298 in (7.569 mm) minimum
 material thickness, with about 3 mm of radial ABS around the insert body. The flange is on the
 adjuster/outboard side, unrecessed, so the axial reaction from the FAS100 seats it against the carriage.
 
@@ -94,7 +94,7 @@ The magnet is used as a hard, wear-resistant plated bearing surface; its magneti
 sits in a close-fitting printed pocket with its rear face fully supported by ABS, with a small CA or epoxy
 tack for retention. The FAS100 ball contacts the broad plated face rather than bare ABS.
 
-### 9.4 Cassette seating
+### 8.4 Cassette seating
 
 Cassette motion is controlled by opposed plungers:
 
@@ -135,7 +135,7 @@ insertion and removal. Its side members span the plunger guide tracks and retain
 escape while the printed track walls carry the lateral guidance loads. The frame may be locally scalloped or
 notched where the FAS100 adjuster axis intersects its envelope, provided the material directly over the swept
 guide-ear paths and the load paths to the fasteners remain intact. The keeper's spring-end member also carries
-the roof of the end-wall spring cup (§9.5).
+the roof of the end-wall spring cup (§8.5).
 
 Keeper retention is mechanical, with eight fasteners per carriage. Each is the existing common McMaster
 91292A114 M3 × 0.5 × 12 mm socket-head screw with a McMaster 91828A211 full-height M3 × 0.5 hex nut (5.5 mm
@@ -147,7 +147,7 @@ firm hex-key torque can crush the bearing face.
   the FAS100). Each sits on solid fill closing its guide track from 1 mm beyond the outermost ear position
   to the plate end. The fill is also the plungers' end stop: 1 mm past full loading retraction for the spring
   plunger and past +5 mm travel for the driven plunger. These positions keep each nut pocket at least 1 mm
-  inside the rotation envelope (§9.1).
+  inside the rotation envelope (§8.1).
 - Four side screws, at (±42, ±37) mm, beside the middle of each plunger's ear travel. Each sits in a Ø10 mm
   round lug that widens the base, frame, and keeper locally to 94 mm, clipped at the guide-track wall.
 
@@ -190,9 +190,9 @@ ears into the keeper frame; about 20 N per plunger is the working-load scale bef
 **Provisional:** the bevel angle and depth, and the seating-force estimate (which neglects sliding friction),
 are pending a cassette insertion, seating, and tilt trial.
 
-### 9.5 Spring seating and retraction
+### 8.5 Spring seating and retraction
 
-The spring plunger is preloaded by the McMaster 2006N292 compression spring (§9.3), acting between the frame's
+The spring plunger is preloaded by the McMaster 2006N292 compression spring (§8.3), acting between the frame's
 spring end wall and the plunger's outboard face on an axis 7.5 mm above the plate back. No guide rod, retract
 handle, or penetration of the end wall is used; a guide rod through the end wall would project below the axis
 past the rail top at nominal zero.
@@ -237,7 +237,7 @@ Retraction for cassette loading uses a thumb tab on the spring plunger's front f
 The tab is kept low, close to the plane of the guide ears, so that pushing on it does not twist the plunger
 and jam the ears.
 
-### 9.6 Common cassette standard
+### 8.6 Common cassette standard
 
 Cassette envelope:
 
@@ -248,14 +248,14 @@ Cassette envelope:
 - perimeter kept clear enough to use any opposing edge pair
 - orientation/polarity indicated by markings rather than a mechanical key.
 
-Cassettes load with the spring plunger retracted 6 mm beyond fiducial (§9.5).
+Cassettes load with the spring plunger retracted 6 mm beyond fiducial (§8.5).
 
 Cassette variants, all built on the common blank:
 
 1. single razor knife edge;
-2. centered fine-wire or filament dark-field cutoff (§9.8);
-3. striated / multicolor gel filter (§9.9);
-4. dark-center color filter (§9.9).
+2. centered fine-wire or filament dark-field cutoff (§8.8);
+3. striated / multicolor gel filter (§8.9);
+4. dark-center color filter (§8.9).
 
 The standard cassette blank carries one opposed pair of integral filament cleats on the front / non-datum
 face, rather than making cleats a special cassette variant: two cleats, one on each side of the 24 mm optical
@@ -271,10 +271,10 @@ face unobstructed.
 
 **Provisional:** cleat geometry is pending a wire-mounting trial.
 
-### 9.7 Cassette clamp bars
+### 8.7 Cassette clamp bars
 
-These bars and their hardware are the clamping standard for the cassettes (§9.6); the slit head uses its own
-smaller bars (§8.5).
+These bars and their hardware are the clamping standard for the cassettes (§8.6); the slit head uses its own
+smaller bars (§7.5).
 
 Common clamp bars:
 
@@ -324,7 +324,7 @@ blade-thickness stack. **Provisional:** the 14 mm screw length is pending a fit 
 cassette/bar assembly, confirming full nut engagement, useful clamp travel for razor blades and thin
 filter/foil media, a flush or recessed rear head, and clearance over the plunger lips.
 
-### 9.8 Fine wire
+### 8.8 Fine wire
 
 The dark-field filament set is enameled copper magnet wire in three readily available AWG sizes. The
 nominal diameters below are bare-conductor diameters; enamel makes the finished optical obstruction slightly
@@ -338,12 +338,12 @@ larger.
 
 Exact finished outside diameter is not critical for the qualitative instrument.
 
-The universal cassette cleat pair described in [§9.6](#96-common-cassette-standard)
+The universal cassette cleat pair described in [§8.6](#86-common-cassette-standard)
 is the quick-change mounting for these wires and for dark sewing thread or other fibers. Apply only
 modest tension, particularly to 44 AWG wire; the conical cleats seat the filament against the cassette face,
 and the S-wrap places the free span approximately on the aperture centerline.
 
-### 9.9 Color-filter material
+### 8.9 Color-filter material
 
 Filter material is cut from the Roscolux 3 × 6 in Designer Color Selector, which provides more useful
 material per color than very small swatches.

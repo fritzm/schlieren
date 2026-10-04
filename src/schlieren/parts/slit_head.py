@@ -1,6 +1,6 @@
-"""Flexure source-slit head; canonical design §8 (selected baseline; first test print fits confirmed).
+"""Flexure source-slit head; canonical design §7 (selected baseline; first test print fits confirmed).
 
-It replaces the §9 carriage and slit cassette for the source slit; the cutoff keeps the §9 carriage.
+It replaces the §8 carriage and slit cassette for the source slit; the cutoff keeps the §8 carriage.
 One flat-printed ABS flexure head carries both Stanley blades:
 
 - frame -> platform: a parallelogram flexure for slit centering perpendicular to the slit, driven by
@@ -51,7 +51,7 @@ class SlitHeadParameters:
     # Thorlabs SM1RC/M (vendor STEP model): Ø1.21 in bore accepting Ø1.20 in SM1 tubes.
     ring_thickness: float = SM1RC_M_THICKNESS
     ring_bore: float = 1.21 * INCH
-    # Stanley 11-515 blades, measured (§8).
+    # Stanley 11-515 blades, measured (§7).
     blade_length: float = 38.99
     blade_width: float = 19.51
     blade_thickness: float = 0.254
@@ -62,22 +62,22 @@ class SlitHeadParameters:
     adjuster_thread_length: float = 1.00 * INCH
     adjuster_pitch: float = INCH / 80
     adjuster_knob_diameter: float = 0.49 * INCH
-    # McMaster 98625A950 brass insert (§9.3 drawing values).
+    # McMaster 98625A950 brass insert (§8.3 drawing values).
     insert_bore: float = 0.313 * INCH  # Print as pilot; finish with a 5/16 in drill.
     insert_length: float = 0.313 * INCH
     insert_min_material: float = 0.298 * INCH
     insert_flange_diameter: float = 0.352 * INCH
     insert_flange_thickness: float = 0.010 * INCH
-    # N52 10 x 5 x 2 mm magnet bearing pads under each FAS100 ball tip (§9.3).
+    # N52 10 x 5 x 2 mm magnet bearing pads under each FAS100 ball tip (§8.3).
     magnet_length: float = 10.0
     magnet_width: float = 5.0
     magnet_thickness: float = 2.0
     magnet_fit_clearance: float = 0.15
-    # McMaster 2006N292 spring (§§9.4-9.5): free length and rate; 9 mm compression at mid travel.
+    # McMaster 2006N292 spring (§§8.4-8.5): free length and rate; 9 mm compression at mid travel.
     spring_free_length: float = 25.5
     spring_mid_length: float = 16.5
     spring_rate: float = 0.14 * LBF  # N/mm
-    spring_guide_pin_diameter: float = 3.6  # Inside the coil, which passes a 4 mm shoulder (§9.5).
+    spring_guide_pin_diameter: float = 3.6  # Inside the coil, which passes a 4 mm shoulder (§8.5).
     spring_guide_pin_length: float = 5.0
     spring_outer_diameter: float = 0.272 * INCH  # Measured (calipers), in-hand spring.
     spring_pocket_clearance: float = 1.0  # Diametral; printed-hole shrink and coil growth under compression.

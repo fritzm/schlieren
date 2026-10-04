@@ -16,7 +16,7 @@ from schlieren.vendor_cad import (
     vendor_step,
 )
 
-USEFUL_GAP = (13.0, 17.0)  # §7: useful emitter-to-plano range
+USEFUL_GAP = (13.0, 17.0)  # §6.6: useful emitter-to-plano range
 # Required gap travel either side of the optimum. Relaxed from 1.0 mm: with exact Thorlabs dimensions the
 # white module has 0.93 mm on the long-gap side. Accepted pending the build; if the white module cannot reach
 # focus, space its cap flange off the SMR1/M face with a thin shim (moving the emitter away from the lens;
