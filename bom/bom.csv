@@ -28,18 +28,18 @@ LGT-004,Light source,1,Adjustable iris,,Thorlabs,SM1D12,1,each,In hand,§6.1,
 LGT-005,Light source,1,"Ø1"" lens mount with SM1 internal threads and no retaining Lip, M4 tap",Post attachment,Thorlabs,SMR1/M,1,each,In hand,§6.1,
 LGT-006,Light source,1,Internally SM1-threaded end cap,,Thorlabs,SM1CP1,1,each,In hand,§6.1,
 LGT-007,Light source,1,Snap-on plastic dust cap for SM1 lens tube,,Thorlabs,SM1EC2,5,pack,In hand,§6.1,
-LGT-008,Light source,1,Nichia 519A R9080 5000K,White LED,Convoy,519A R9080 5000K,3,each,In hand,§6.3,
-LGT-009,Light source,1,OSRAM LST1-01F06-GRN1-00,Green LED,Digikey,1672-1132-ND,2,each,In hand,§6.3,
+LGT-008,Light source,1,Nichia 519A R9080 5000K,White LED,Convoy,519A R9080 5000K,3,each,In hand,§6.2,
+LGT-009,Light source,1,OSRAM LST1-01F06-GRN1-00,Green LED,Digikey,1672-1132-ND,2,each,In hand,§6.2,
 LGT-010,Light source,,"Heatsink, 6063-T5 non-anodized aluminum, Ø55 mm x 20 mm.",Existing spare stock; former LED heatsink,HeatsinkOnline,64ASL-8-55,4,each,In hand,,No longer allocated after the threaded SM1 LED module decision; replaced by LGT-018 (Alpha CN40-40B). Four in hand retained as spares.
-LGT-011,Light source,4,M2 × 5 mm button head hex-drive screw 18-8 SS,"LED board mounting screws, tapped into SM1CP2M cap",McMaster,92095A452,25,pack,In hand,§6.5,
-LGT-012,Light source,4,M2 nylon washers,LED insulating washers,McMaster,91545A410,,pack,On order,§6.5,
-LGT-013,Light source,1,"ALIENTEK DP100 DC Power Supply Variable, 30V 5A",LED CC/CV power supply,Amazon,B0CWRG6YFM,1,each,In hand,§6.7,
-LGT-014,Light source,2,"Cable Assembly, Micro-Fit 3.0 P-S 2ckt 150 mm",LED pigtails,Mouser,538-214758-1021,2,each,In hand,§6.7,
-LGT-015,Light source,1,"Cable Assembly, Micro-Fit 3.0 R-S 2ckt 600MM",Power supply pigtail,Mouser,538-214756-1023,2,each,In hand,§6.7,
-LGT-016,Light source,1,Banana plug set 1 blk 1 red,DP11 connection,Mouser,565-1825-02,1,each,In hand,§6.7,
-LGT-017,Light source,2,"SM1 end cap, external threads, with center drill mark, anodized aluminum","LED carrier: board on front face, threads into condenser SMR1/M",Thorlabs,SM1CP2M,,each,To procure,§6.3,"One per LED module. Drill/tap: M2 board holes (front), M3 heatsink holes (rear, ~2.5 mm deep), lead pass-through holes at r ≈ 11 mm."
-LGT-018,Light source,2,"Alpha CN40-40B natural-convection pin-fin heatsink, Ø40 × 40 mm, black anodized",LED module heatsink,Luxeon Star LEDs,CN40-40B,,each,To procure,§6.4,One per LED module; bolted to SM1CP2M rear. Drill base for M3 screws in open pin cells and for leads.
-LGT-019,Light source,,M3 × 6 mm socket head screw,Heatsink-to-cap fasteners,McMaster,,,,Specified,§6.3,Provisional length (3 mm base + ~2.5 mm thread into cap). Quantity per module (2–3) and SKU to be confirmed; check existing M3 stock.
+LGT-011,Light source,4,M2 × 5 mm button head hex-drive screw 18-8 SS,"LED board mounting screws, tapped into SM1CP2M cap",McMaster,92095A452,25,pack,In hand,§6.4,
+LGT-012,Light source,4,M2 nylon washers,LED insulating washers,McMaster,91545A410,,pack,On order,§6.4,
+LGT-013,Light source,1,"ALIENTEK DP100 DC Power Supply Variable, 30V 5A",LED CC/CV power supply,Amazon,B0CWRG6YFM,1,each,In hand,§6.5,
+LGT-014,Light source,2,"Cable Assembly, Micro-Fit 3.0 P-S 2ckt 150 mm",LED pigtails,Mouser,538-214758-1021,2,each,In hand,§6.5,
+LGT-015,Light source,1,"Cable Assembly, Micro-Fit 3.0 R-S 2ckt 600MM",Power supply pigtail,Mouser,538-214756-1023,2,each,In hand,§6.5,
+LGT-016,Light source,1,Banana plug set 1 blk 1 red,DP11 connection,Mouser,565-1825-02,1,each,In hand,§6.5,
+LGT-017,Light source,2,"SM1 end cap, external threads, with center drill mark, anodized aluminum","LED carrier: board on front face, threads into condenser SMR1/M",Thorlabs,SM1CP2M,,each,To procure,§6.2,"One per LED module. Drill/tap: M2 board holes (front), M3 heatsink holes (rear, ~2.5 mm deep), lead pass-through holes at r ≈ 11 mm."
+LGT-018,Light source,2,"Alpha CN40-40B natural-convection pin-fin heatsink, Ø40 × 40 mm, black anodized",LED module heatsink,Luxeon Star LEDs,CN40-40B,,each,To procure,§6.3,One per LED module; bolted to SM1CP2M rear. Drill base for M3 screws in open pin cells and for leads.
+LGT-019,Light source,,M3 × 6 mm socket head screw,Heatsink-to-cap fasteners,McMaster,,,,Specified,§6.2,Provisional length (3 mm base + ~2.5 mm thread into cap). Quantity per module (2–3) and SKU to be confirmed; check existing M3 stock.
 SLT-001,Source slit,1,"Slip ring for SM1 lens tubes, M4 Tap",Slit-head rotation mount; clamps the adapter spigot,Thorlabs,SM1RC/M,2,each,In hand,§7.6,Second of the two in hand (CAR-002 holds the other).
 SLT-002,Source slit,2,"Fine adjustment screw with knob, 1/4""-80, 1.00"" long",Slit centering and slit-width adjusters,Thorlabs,FAS100,3,each,In hand,§§7.3–7.4,"Shared stock with CAR-005: three in hand, two here, one in the cutoff carriage; no spare."
 SLT-003,Source slit,2,1/4 in-80 inserts,Slit centering and slit-width adjusters,McMaster,98625A950,3,each,In hand,§§7.3–7.4,"Shared stock with CAR-007: three in hand, two here, one in the cutoff carriage; no spare. Finish printed bores with a 5/16 in drill; a light hand ream gave a good press fit on the first print."
@@ -112,13 +112,13 @@ SHP-001,Shop supplies,1,"Loctite 271 threadlocker, .34 fl. oz.",,McMaster,91458A
 SHP-002,Shop supplies,1,Heat-set installation tip,,McMaster,92160A327,1,each,In hand,§9.5,
 SHP-003,Shop supplies,1,Optical spanner wrench,,Amazon,B0CKSL364Q,1,each,In hand,,
 SHP-004,Shop supplies,1,Metric feeler gauge set,Source-slit blade spacing,Amazon,B07XPD9L1C,1,each,In hand,§7.4,
-SHP-005,Shop supplies,1,M2 tap,LED board mounting into SM1CP2M cap,McMaster,8305A78,1,each,In hand,§6.5,
-SHP-006,Shop supplies,1,"M2 tap drill, 1.6mm",LED mounting,McMaster,2979N13,1,each,In hand,§6.5,
-SHP-007,Shop supplies,,18 AWG wire,LED wiring,,,,,In hand,§6.7,
+SHP-005,Shop supplies,1,M2 tap,LED board mounting into SM1CP2M cap,McMaster,8305A78,1,each,In hand,§6.4,
+SHP-006,Shop supplies,1,"M2 tap drill, 1.6mm",LED mounting,McMaster,2979N13,1,each,In hand,§6.4,
+SHP-007,Shop supplies,,18 AWG wire,LED wiring,,,,,In hand,§6.5,
 SHP-008,Shop supplies,,Heat-shrink tubing,LED wiring,,,,,In hand,,
 SHP-009,Shop supplies,,USB-C chargers/cables,DP100 power,,,,,In hand,,
-SHP-010,Shop supplies,,Thermal compound,LED heatsink interfaces,,,,,In hand,§6.5,
-SHP-011,Shop supplies,1,"Loctite 4061 cyanoacrylate adhesive, 0.7 fl. oz., low viscosity (~20 cP)",Plywood fiber conditioning and localized tack bonds,McMaster,1818A45,1,each,In hand,"§§6.3, 7, 8.4, 10.4",Use sparingly: wick into Baltic-birch fibers for spherical-washer sockets; use needle-sized localized drops for ABS/metal calibration tacks and captive screw retention. No accelerator required.
+SHP-010,Shop supplies,,Thermal compound,LED heatsink interfaces,,,,,In hand,§6.4,
+SHP-011,Shop supplies,1,"Loctite 4061 cyanoacrylate adhesive, 0.7 fl. oz., low viscosity (~20 cP)",Plywood fiber conditioning and localized tack bonds,McMaster,1818A45,1,each,In hand,"§§6.2, 7, 8.4, 10.4",Use sparingly: wick into Baltic-birch fibers for spherical-washer sockets; use needle-sized localized drops for ABS/metal calibration tacks and captive screw retention. No accelerator required.
 SHP-012,Shop supplies,1,"UHMW Sheet 1/8"" x 12"" x 12""",Mirror mount releasing assembly surface,US Plastics,46489,1,each,In hand,§10.6,
 SHP-013,Shop supplies,,Soldering tools / supplies,LED wiring,,,,,In hand,,
 SHP-014,Shop supplies,1,"West System G/Flex 650 Epoxy Adhesive, 2 x 4 oz","Mirror cell adjuster sleeves, spring seat washer tack",Amazon,B002IZFPQE,1,each,In hand,§10.2,
@@ -130,4 +130,4 @@ SHP-019,Shop supplies,1,M4 × 0.7 high-speed-steel plug-chamfer hex-bit tap,Tap 
 SHP-020,Shop supplies,1,3.3 mm black-oxide HSS jobber-length drill bit,M4 × 0.7 tap drill for CAMVATE quick-release plate,McMaster,2958A64,1,each,In hand,§10.9,Standard 3.3 mm tap-drill size for M4 × 0.7.
 SHP-021,Shop supplies,1,"Loctite 243 medium-strength removable threadlocker, 0.34 fl. oz.",Removable thread retention for quick-release plate mounting screws,McMaster,91458A115,1,each,In hand,§10.9,Apply only after fit and screw length are validated; preferred over high-strength Loctite 271 for this serviceable joint.
 SHP-022,Shop supplies,1,"Rosco Photofoil matte black aluminum wrap, 12""x10'",Opaque masking / thin-sheet cutoff experiments,Fullcompass,01001-1210,1,pack,In hand,"§§8, 8.7",Retained as general shop stock for opaque masking and thin-sheet cutoff experiments.
-SHP-023,Shop supplies,1,M3 × 0.5 tap and 2.5 mm tap drill,Tap SM1CP2M rear for heatsink screws,,,,,Specified,§6.3,Confirm whether already in shop stock before purchasing; vendor and SKU not yet chosen.
+SHP-023,Shop supplies,1,M3 × 0.5 tap and 2.5 mm tap drill,Tap SM1CP2M rear for heatsink screws,,,,,Specified,§6.2,Confirm whether already in shop stock before purchasing; vendor and SKU not yet chosen.

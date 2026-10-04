@@ -6,9 +6,9 @@ Procurement state and the CAD state of printed parts are tracked in `bom/bom.csv
 
 Design areas marked **Provisional** in the sections above:
 
-- **Light source** ([§6.3](06-light-source.md#63-led-modules),
-  [§6.4](06-light-source.md#64-common-heatsink),
-  [§6.6](06-light-source.md#66-focus-and-module-interchange)): M3 heatsink-screw length; heatsink temperature
+- **Light source** ([§6.2](06-light-source.md#62-led-modules),
+  [§6.3](06-light-source.md#63-common-heatsink),
+  [§6.7](06-light-source.md#67-focus-and-module-interchange)): M3 heatsink-screw length; heatsink temperature
   rise at 700 mA; white-module long-gap focus margin.
 - **Source-slit head** ([§7](07-source-slit.md#7-source-slit)): flexure dimensions and stage-rotation
   estimates; spigot and clamp-bar fit; width-stage preload; adapter-plate clearance; slit parallelism and
@@ -35,7 +35,7 @@ Design areas marked **Provisional** in the sections above:
    seating, keeper lift, and clamp-bar screw length.
 2. Fabricate both threaded LED modules: drill and tap the caps and heatsinks, center each board, and set
    focus on the slit blades. Confirm that the white module reaches focus; if not, add a thin cap-flange shim
-   ([§6.6](06-light-source.md#66-focus-and-module-interchange)). Bench-test the heatsink temperature rise.
+   ([§6.7](06-light-source.md#67-focus-and-module-interchange)). Bench-test the heatsink temperature rise.
 3. Design the phone cradle and telephoto saddle ([§9](09-camera-telephoto.md#9-camera-and-telephoto-support)).
 4. Design the mirror-cell safety retainers and travel cover
    ([§10.8](10-mirror-cell.md#108-mirror-safety-and-transport-retention)).

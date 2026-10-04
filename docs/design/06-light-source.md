@@ -1,16 +1,16 @@
 ## 6. Light source
 
 The light source is a single assembly on one TR50/M post and common rail shoe
-([§5](05-post-support.md#5-common-rail-mounted-post-support)): a Thorlabs SMR1/M holder that carries the
-condenser and iris on its slit-side face and one of two interchangeable threaded LED modules on its LED-side
-face. There is no dedicated LED post, rail shoe, or printed bracket. The condenser images the LED emitter onto
-the source slit ([§7](07-source-slit.md#7-source-slit)).
+([§5](05-post-support.md#5-common-rail-mounted-post-support)): a Thorlabs SMR1/M holder that carries one of
+two interchangeable threaded LED modules on its rear face and a condensing lens and iris on its forward face.
+The condenser images the LED emitter onto the source slit ([§7](07-source-slit.md#7-source-slit)), and the
+iris sets the angular size of the illumination cone ([§3.2](01-context-and-layout.md#32-source-cone)).
 
 ### 6.1 Assembly and stack order
 
 Parts:
 
-- threaded LED module, green or white ([§6.3](#63-led-modules))
+- threaded LED module, green or white ([§6.2](#62-led-modules))
 - Thorlabs SMR1/M fixed threaded holder
 - Thorlabs SM1V05 adjustable lens cell
 - Thorlabs ACL2520U-A condenser
@@ -36,7 +36,7 @@ ahead of the iris; the SM1D12 interferes with the lens if threaded directly into
 
 The cap and the SM1V05 sleeve share the SMR1/M thread. The cap threads in until its knurled flange seats on
 the SMR1/M face, so the LED position is fixed and the SM1V05 engagement is the focus adjustment
-([§6.6](#66-focus-and-module-interchange)). Engagement runs from the Thorlabs minimum of 0.110 in / 2.79 mm to
+([§6.7](#67-focus-and-module-interchange)). Engagement runs from the Thorlabs minimum of 0.110 in / 2.79 mm to
 about 5.7–5.8 mm, where the sleeve end comes within 0.3 mm of the LED board. Turning the SM1V05 moves the
 lens, SM1L03, and iris together relative to the LED; the resulting few-millimeter iris shift is negligible
 against the 150 mm iris-to-slit spacing.
@@ -46,21 +46,7 @@ the vendor STEP models in `cad/vendor/`, not the rounded millimeter values on th
 metric-primary and keeps its 50 mm / Ø12.7 mm nominals (its STEP model is rounded to inches).
 `src/schlieren/parts/led_module.py` encodes the stack-up; `uv run led-module` prints the focus ranges.
 
-### 6.2 Condenser optics
-
-The condenser images the LED emitter onto the source slit (about 6.6× magnification). Each slit point then
-sees the iris uniformly filled at the LED radiance, which gives a uniformly illuminated mirror. The LED image
-should cover the illuminated slit length; the domes enlarge the apparent emitters by about 1.4–1.5×.
-
-Defocus in either direction underfills the ±1.8° cone: iris-edge rays then trace back beyond the emitter
-edge, darkening the mirror edge and shortening the uniformly lit slit length. With the LED at the condenser
-focus (12 mm, collimated) the emitter cannot fill the cone even at the slit center.
-
-Using ACL2520U-A catalog values (EFL 20.1 mm, BFL 12.0 mm; object-side principal plane about 8.1 mm inside
-the plano face) and about 153 mm from the convex vertex to the slit, the optimum emitter-to-plano-face gap is
-about 15 mm. The optimum moves only about ±0.7 mm for ±30 mm of slit position.
-
-### 6.3 LED modules
+### 6.2 LED modules
 
 There are two interchangeable LED modules, each a self-contained threaded assembly. Each LED board mounts on
 an identical threaded SM1 carrier so that the SM1 thread and cap flange, rather than the individual MCPCB
@@ -72,13 +58,13 @@ pattern, are the interchange standard.
 | Board | NewEnergy star board, LST1-01F06-GRN1-00 | Convoy 20 mm star/DTP carrier |
 | Initial operating current | approximately 350 mA | approximately 500–700 mA |
 
-Module stack, from the condenser outward:
+Module stack, from the rear toward the condenser:
 
-1. LED star board on the front face of a Thorlabs SM1CP2M externally SM1-threaded end cap (0.210 in /
-   5.33 mm solid aluminum, 0.100 in / 2.54 mm thread, Ø1.200 in / 30.48 mm knurled flange);
-2. the SM1CP2M itself;
-3. Alpha CN40-40B heatsink ([§6.4](#64-common-heatsink)) bolted to the rear face of the cap, with thermal
-   compound between.
+1. Alpha CN40-40B heatsink ([§6.3](#63-common-heatsink)), bolted to the rear face of the cap with thermal
+   compound between;
+2. Thorlabs SM1CP2M externally SM1-threaded end cap (0.210 in / 5.33 mm solid aluminum, 0.100 in / 2.54 mm
+   thread, Ø1.200 in / 30.48 mm knurled flange);
+3. LED star board on the front face of the cap ([§6.4](#64-led-board-mounting)).
 
 Interfaces:
 
@@ -87,7 +73,7 @@ Interfaces:
 - The SM1 thread centers the emitter on the condenser axis; no vertical calibration is required.
 - Heatsink fastening: socket-head screws through the CN40 base in the open cells between pins, into blind M3
   holes tapped about 2.5 mm deep in the cap rear face, with M3 × 6 mm screws (**provisional** length). Keep
-  the rear holes angularly offset from the front M2 board holes ([§6.5](#65-led-board-mounting)), since the
+  the rear holes angularly offset from the front M2 board holes ([§6.4](#64-led-board-mounting)), since the
   cap is only 5.33 mm thick.
 - Leads drop past the board edge through the board's edge slots, through a pair of holes drilled at about
   r = 11 mm through the cap (inside the thread root) and the heatsink base, and out between the pins.
@@ -100,7 +86,7 @@ Clearances:
 - The heatsink front face is 2.79 mm (0.110 in) behind the SMR1/M face (the cap flange thickness).
 - The SMR1/M thread bore leaves about 3 mm of radial room around a 20 mm board for leads.
 
-### 6.4 Common heatsink
+### 6.3 Common heatsink
 
 - Alpha CN40-40B natural-convection pin-fin heatsink, one per module
 - Ø40.0 mm (+0/−0.5) × 40 mm overall, 3.0 mm flat base, Ø2.8 mm pins on a 6.9 mm square grid
@@ -113,10 +99,10 @@ which pin fins tolerate well. **Provisional:** bench-test the temperature rise a
 it.
 
 The heatsink is round so that it clears the post at every rotation while the module is threaded in
-([§6.3](#63-led-modules)); a larger or non-round heatsink would sweep its corners below the post top during
+([§6.2](#62-led-modules)); a larger or non-round heatsink would sweep its corners below the post top during
 threading.
 
-### 6.5 LED board mounting
+### 6.4 LED board mounting
 
 Measured star-board thicknesses (calipers):
 
@@ -146,7 +132,42 @@ exposed board contacts:
 
 A thin layer of thermal compound is used between board and cap.
 
-### 6.6 Focus and module interchange
+### 6.5 Power and wiring
+
+Power supply:
+
+- ALIENTEK DP100
+- use DC constant-current operation rather than PWM to avoid rolling-shutter banding
+
+Connector standard:
+
+- Micro-Fit 3.0
+- 2-pin
+- 18 AWG factory pigtails
+
+Connector hardware:
+
+- 2 × Molex 214758-1021, male-to-pigtail, 150 mm — module side
+- 1 × Molex 214756-1023, female-to-pigtail, 600 mm — supply side
+- 1 × Pomona 1825-02 red/black 4 mm banana-plug pair
+
+The supply side should present recessed/socket contacts.
+
+### 6.6 Condenser optics
+
+The condenser images the LED emitter onto the source slit (about 6.6× magnification). Each slit point then
+sees the iris uniformly filled at the LED radiance, which gives a uniformly illuminated mirror. The LED image
+should cover the illuminated slit length; the domes enlarge the apparent emitters by about 1.4–1.5×.
+
+Defocus in either direction underfills the ±1.8° cone: iris-edge rays then trace back beyond the emitter
+edge, darkening the mirror edge and shortening the uniformly lit slit length. With the LED at the condenser
+focus (12 mm, collimated) the emitter cannot fill the cone even at the slit center.
+
+Using ACL2520U-A catalog values (EFL 20.1 mm, BFL 12.0 mm; object-side principal plane about 8.1 mm inside
+the plano face) and about 153 mm from the convex vertex to the slit, the optimum emitter-to-plano-face gap is
+about 15 mm. The optimum moves only about ±0.7 mm for ±30 mm of slit position.
+
+### 6.7 Focus and module interchange
 
 Setup values (not hard CAD dimensions):
 
@@ -185,24 +206,3 @@ Module interchange:
 2. unscrew the module (cap and heatsink together) from the SMR1/M, about four turns;
 3. screw in the alternate module until its flange seats;
 4. touch up focus on the closed slit blades if needed.
-
-### 6.7 Power and wiring
-
-Power supply:
-
-- ALIENTEK DP100
-- use DC constant-current operation rather than PWM to avoid rolling-shutter banding
-
-Connector standard:
-
-- Micro-Fit 3.0
-- 2-pin
-- 18 AWG factory pigtails
-
-Connector hardware:
-
-- 2 × Molex 214758-1021, male-to-pigtail, 150 mm — module side
-- 1 × Molex 214756-1023, female-to-pigtail, 600 mm — supply side
-- 1 × Pomona 1825-02 red/black 4 mm banana-plug pair
-
-The supply side should present recessed/socket contacts.

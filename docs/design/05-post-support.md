@@ -2,7 +2,7 @@
 
 Three fixtures use the common post/shoe architecture:
 
-1. LED/condenser/iris;
+1. light source ([§6](06-light-source.md#6-light-source));
 2. source-slit flexure head ([§7](07-source-slit.md#7-source-slit));
 3. cutoff carriage ([§8](08-cutoff.md#8-cutoff)).
 
@@ -11,17 +11,16 @@ Three fixtures use the common post/shoe architecture:
 - Thorlabs TR50/M
 - 12.7 mm diameter
 - 50 mm long
-- quantity: 3, one at each common post/shoe station
 
 ### 5.2 Optical-holder allocation
 
-- LED/condenser/iris: 1 × SMR1/M
+- light source: 1 × SMR1/M ([§6.1](06-light-source.md#61-assembly-and-stack-order))
 - slit head: 1 × SM1RC/M, clamping the printed spigot of the slit-head adapter
   ([§7.6](07-source-slit.md#76-rotation-mount-and-clearances))
 - cutoff carriage: 1 × SM1RC/M, clamping the printed spigot of the carriage base plate
   ([§8.1](08-cutoff.md#81-spigot-and-rotation-interface))
 
-The condenser/slit/cutoff holders preserve the 22.1 mm post-top-to-axis dimension.
+The source/slit/cutoff holders preserve the 22.1 mm post-top-to-axis dimension.
 
 ### 5.3 Common rail shoe
 
