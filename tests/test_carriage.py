@@ -8,6 +8,7 @@ from build123d import Box, Cylinder, Plane, Polygon, Pos, RegularPolygon, Rot, e
 
 from schlieren.cad import ON_FLOOR, along_y, children_by_label
 from schlieren.parts.carriage import CarriageParameters, build_carriage, support_location
+from schlieren.testing import slow
 
 
 def y_cylinder(radius, length, y, z):
@@ -190,6 +191,7 @@ class CarriageTests(unittest.TestCase):
         for y in (p.plate_ymin + 0.1, (p.plate_ymin + p.spring_seat_y) / 2, p.spring_seat_y - 0.1):
             self.assertTrue(fixed.is_inside((0, y, p.spring_axis_z)))
 
+    @slow
     def test_spring_cups_locate_coil_ends(self):
         p = self.p
         r = p.spring_cup_bore / 2
@@ -270,6 +272,7 @@ class CarriageTests(unittest.TestCase):
             pin = Pos(x, y, -1) * Cylinder(p.datum_pin_shank / 2, p.plate_thickness + 1, align=ON_FLOOR)
             self.assertLess((base & pin).volume, 1e-6)
 
+    @slow
     def test_post_and_rail_shoe_clearance(self):
         p = self.p
         # At nominal zero the plate reaches below the shoe top, so the shoe end sets the ring gap.
@@ -434,6 +437,7 @@ class CarriageTests(unittest.TestCase):
         for fx, fy in p.fasteners:
             self.assertLess(abs(fy), abs(spring_stop) + p.fastener_stop_margin + 1e-6)
 
+    @slow
     def test_adjuster_hardware_seats_and_clears(self):
         for travel in (-5, 0, 5):
             solids = children_by_label(build_carriage(travel=travel, include_hardware=True))

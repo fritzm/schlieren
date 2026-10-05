@@ -16,6 +16,7 @@ from schlieren.parts.slit_head import (
     build_spigot_adapter,
     head_location,
 )
+from schlieren.testing import slow
 from schlieren.vendor_cad import SM1RC_M_THICKNESS, thorlabs_fas100, thorlabs_sm1rc_m, thorlabs_tr50_m
 
 MODEL_MATCH = 0.001
@@ -120,6 +121,7 @@ class SlitHeadTests(unittest.TestCase):
             self.assertAlmostEqual(_overlap(_blade(p, sign), head), 0, places=3)
         self.assertAlmostEqual(_overlap(self.adapter, head), 0, places=3)
 
+    @slow
     def test_working_rotations_clear_post_ring_and_shoe(self):
         p = self.p
         support = [
@@ -134,6 +136,7 @@ class SlitHeadTests(unittest.TestCase):
                 for other in support:
                     self.assertAlmostEqual(_overlap(part, other), 0, places=3, msg=f"rotation {rotation}")
 
+    @slow
     def test_rotation_sweep_keeps_clearance(self):
         """Corners, knobs, and the adapter clear the post and shoe all the way through the working range.
 

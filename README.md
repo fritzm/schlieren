@@ -41,7 +41,7 @@ generated views: to change them, edit the fragments or the CSV and rebuild.
 
 ```sh
 uv sync                                          # set up the environment
-uv run python -m unittest discover -s tests -v   # run all tests
+uv run run-tests [--full]                        # run the tests in parallel (--full adds the slow ones)
 uvx ruff check . && uvx ruff format .            # lint and format
 
 uv run light-source [--show] [--figure]          # light source focus stack-up

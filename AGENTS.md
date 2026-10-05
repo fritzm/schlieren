@@ -198,6 +198,11 @@ Prefer testing engineering invariants rather than implementation details.
 
 Run relevant tests after modifying CAD or supporting code.
 
+Tests that take more than a few seconds, typically exhaustive pairwise interference or rotation-sweep
+checks, are marked `@slow` (`schlieren.testing`) and skipped by default so that iteration stays quick; the
+skip count is reported. Run `uv run run-tests --full` before presenting completed work. Prefer a bounding-box
+prefilter (`boxes_overlap`) before exact boolean or distance queries in new pairwise checks.
+
 Do not change a test merely to make an unintended geometry change pass.
 
 ## Commands
@@ -206,8 +211,10 @@ Dependencies are managed with `uv` (Python >= 3.12). Tests use `unittest`; ruff 
 
 ```sh
 uv sync                                               # install/update the environment
-uv run python -m unittest discover -s tests -v        # all tests
-uv run python -m unittest tests.test_carriage -v      # one test module
+uv run run-tests                                      # fast tests, one process per module in parallel; iterate with this
+uv run run-tests --full                               # adds the slow interference/sweep tests; run before presenting work
+uv run run-tests test_carriage                        # chosen modules only
+uv run python -m unittest tests.test_carriage -v      # one module, serial and verbose (SCHLIEREN_TESTS=full for slow tests)
 uvx ruff check . && uvx ruff format .                 # lint/format (line length 110, from pyproject.toml)
 uv run <command> --help                               # part commands: build/export (--show opens the viewer)
 uv run rail-shoe --figure                             # re-render docs/design/figures/rail-shoe.png

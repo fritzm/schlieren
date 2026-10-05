@@ -16,6 +16,7 @@ from schlieren.parts.light_source import (
     build_light_source_assembly,
     build_star_board,
 )
+from schlieren.testing import boxes_overlap, slow
 from schlieren.vendor_cad import (
     alpha_cn40_40b,
     thorlabs_acl2520u_a,
@@ -248,6 +249,7 @@ class LightSourceTests(unittest.TestCase):
             self.assertLess(lever.max.Y, iris.max.Y)
             self.assertGreater(lever.max.Z, iris.max.Z)
 
+    @slow
     def test_assembly_parts_do_not_interfere(self):
         for board in MODULES:
             p = self.p
@@ -258,6 +260,8 @@ class LightSourceTests(unittest.TestCase):
                 names = list(parts)
                 for i, a in enumerate(names):
                     for b in names[i + 1 :]:
+                        if not boxes_overlap(parts[a], parts[b]):
+                            continue
                         overlap = parts[a] & parts[b]
                         if overlap.volume < 1e-6:
                             continue

@@ -15,6 +15,7 @@ from schlieren.parts.frame import (
     build_pivot_plate,
 )
 from schlieren.parts.frame_drawing import pivot_plate_drawing_svg
+from schlieren.testing import slow
 from schlieren.vendor_cad import (
     MCMASTER_8215K2_DIAMETER,
     MCMASTER_8215K2_HEIGHT,
@@ -201,6 +202,7 @@ class FrameTests(unittest.TestCase):
             with self.subTest(yaw=yaw):
                 self.assertAlmostEqual(closest, 2.8, delta=0.1)
 
+    @slow
     def test_no_part_interference_across_the_yaw_range(self):
         for yaw in (-MAX_YAW, 0.0, MAX_YAW):
             parts = leaves(build_frame_assembly(self.p, left_yaw=yaw, right_yaw=yaw))

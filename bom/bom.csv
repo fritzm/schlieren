@@ -88,6 +88,7 @@ CAM-010,Imager,1,"Stainless steel round rod assortment, 100 mm length",Groove ro
 CAM-011,Imager,2,ABS printed lens collars,"Split clamps on the lens barrel, carrying the adjuster pads",,,,,CAD open,§9.5,Two identical collars for the 37 mm barrel. Concept mock-up only.
 CAM-012,Imager,2,"M3 × 12 mm socket head screw, 18-8 SS",Lens collar clamp screws,McMaster,91292A114,100,pack,In hand,§9.5,Shared common 100-pack. Provisional: one screw per collar.
 CAM-013,Imager,2,"M3 × 0.5 hex nut, 18-8 SS, 5.5 mm AF × 2.4 mm high",Lens collar clamp nuts,McMaster,91828A211,100,pack,In hand,§9.5,Shared common 100-pack (see CAS-004). Provisional: one nut per collar.
+CAM-014,Imager,2,"Oil-resistant Buna-N O-ring, 2 mm wide × 40 mm ID, 70A, round",Lens pointer retaining bands,McMaster,9262K203,25,pack,To procure,§9.5,"One endless ring per collar, on the bare barrel beside the yoke and hooked on its peg. About 19% stretch gives about 3 N per leg (calculated, modulus assumed). If too tight, 41 mm ID is McMaster 9262K694 (pack of 50)."
 MIR-001,Mirror cell,1,"Skyoptikst D203F1600 spherical mirror, Ø203 mm, f=1600 mm",,Amazon,B0B5RR41CT,1,each,In hand,§10.5,
 MIR-002,Mirror cell,2,Baltic birch plywood panel 12 × 12 × 1/2 in,Base and adjuster plates,Amazon,B09D941GXR,4,pack,In hand,§10.1,
 MIR-003,Mirror cell,1,Baltic birch plywood panel 12 × 12 × 3/4 in,Mirror plate,Amazon,B0GL9G45GH,1,each,In hand,§10.1,

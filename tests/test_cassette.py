@@ -15,6 +15,7 @@ from schlieren.parts.cassette import (
     build_cassette_assembly,
     build_clamp_bar,
 )
+from schlieren.testing import slow
 
 
 class CassetteTests(unittest.TestCase):
@@ -88,6 +89,7 @@ class CassetteTests(unittest.TestCase):
         beam = Cylinder(12, 8, align=ON_FLOOR)
         self.assertLess((self.blank & beam).volume, 1e-6)
 
+    @slow
     def test_clamp_bars_and_hardware_clearance(self):
         p, b, c = CassetteParameters(), ClampBarParameters(), CarriageParameters()
         bar = build_clamp_bar(p, b)

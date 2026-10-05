@@ -25,17 +25,39 @@ Coordinates: the §3.4 imaging rail frame, +x right, +y along the rail toward th
 top. y=0 is the back of the cased phone.
 """
 
-from dataclasses import dataclass
-from math import cos, radians, sin, sqrt
+from dataclasses import dataclass, field
+from math import asin, atan2, cos, degrees, hypot, pi, radians, sin, sqrt, tan
 
-from build123d import Align, Box, Compound, Cylinder, Location, Part, Pos, Rot
+from build123d import (
+    Align,
+    Axis,
+    Box,
+    Compound,
+    Cone,
+    Cylinder,
+    Edge,
+    Face,
+    Location,
+    Part,
+    Plane,
+    Pos,
+    RegularPolygon,
+    Rot,
+    Solid,
+    Vector,
+    Wire,
+    extrude,
+    fillet,
+)
 
-from schlieren.cad import BLACK_ANODIZED, ON_FLOOR, along_y, assembly, labeled, place
+from schlieren.cad import BLACK_ANODIZED, ON_FLOOR, along_x, along_y, assembly, labeled, place
 from schlieren.parts.rail import build_rail
+from schlieren.parts.rail_shoe import RailShoeParameters
 from schlieren.vendor_cad import (
     MCMASTER_92815A202_HEIGHT,
     MCMASTER_93339A252_BALL_DIAMETER,
     MCMASTER_93339A252_LENGTH,
+    MCMASTER_94459A797_FLANGE_DIAMETER,
     MCMASTER_94459A797_LENGTH,
     mcmaster_92815a202,
     mcmaster_93339a252,
@@ -43,9 +65,11 @@ from schlieren.vendor_cad import (
 )
 
 INCH = 25.4
+YOKE_BOSS_OVERRUN = 0.5  # Arm material behind the end of the screw at nominal.
 POINTER_COLOR = (0.8, 0.4, 0.25)
 REST_COLOR = (0.35, 0.6, 0.8)
 COLLAR_COLOR = (0.4, 0.75, 0.5)
+BAND_COLOR = (0.85, 0.3, 0.25)
 STEEL = (0.6, 0.6, 0.62)
 BRASS = (0.8, 0.65, 0.25)
 BLACK_OXIDE = (0.13, 0.13, 0.14)
@@ -97,17 +121,69 @@ class CameraSupportParameters:
     )
     fore_station: float = 96.5  # Fore collar center: its front face 2 mm behind the focus ring.
     collar_width: float = 12.0
-    collar_wall: float = 6.0
+    collar_bore_diametral_clearance: float = (
+        0.30  # Over the barrel (measured 37.01 to 37.06 mm); fit-test it.
+    )
+    collar_wall: float = 3.0  # Ring wall: the pad pockets and the ear carry the local thickness.
+    collar_end_fillet: float = 1.0  # Outer edges round the ring ends, for the fingers.
+    collar_root_fillet: float = 2.0  # Inside corners, ear and pad platforms to the ring.
+    collar_round_fillet: float = 1.0  # Other outside corners of the ear and pad platforms.
+    # Split clamp, the common M3 hardware of 5.3: the screw passes a thin ear into a captured nut in the
+    # other, as on the common rail shoe (whose split and ear thicknesses it takes).
+    clamp_screw_above_ring: float = 4.25  # Screw axis above the ring top; the head clears the root fillet.
+    ear_top_above_ring: float = 8.75
+    clamp_head_diameter: float = 5.5  # Screw head, which the ear must clear.
+    # Pad pockets: each bearing surface sits in a pocket whose rim stands above it, so a ball end that
+    # wanders reaches a wall instead of the edge of the pad. The rim stays below the screw's end face, which
+    # is 1.2 mm behind the ball apex.
+    pad_wall_height: float = 0.8  # Rim above the pad face.
+    pad_wall: float = 1.5  # Wall round each pocket.
+    pad_pocket_clearance_per_side: float = 0.10  # Magnet or rod pair in its pocket, bonded.
+    pad_edge_margin: float = 1.0  # A ball apex can reach to within this of the pad edge (the rim stops it).
+    min_collar_wall: float = 2.5
+    # Retaining band (§9.5 hold-down): an endless elastic cord round the bare barrel beside each collar, on
+    # the side toward the other collar, with its legs running down inboard of the thumb nuts to a peg on the
+    # centre of the yoke's crossbar face. Its pull acts on the barrel, which the collar's clamp carries to the
+    # pads; no groove is needed on the collar.
+    band_cord_diameter: float = 2.0
+    band_hold_down: float = 5.0  # N at each pad pair, §9.5, from the two bands together.
+    horn_diameter: float = 4.0  # The peg's stem.
+    horn_stem_length: float = 6.0
+    horn_lip_diameter: float = 6.0
+    horn_lip_height: float = 1.0
+    horn_neck_below_lip: float = 1.2  # Where the cord lies on the stem, below the lip.
     yoke_boss_length: float = (
         10.0  # Along each screw: holds the insert, and leaves the thumb nut 5 mm of travel.
     )
-    yoke_boss_width: float = 16.0
-    yoke_clearance_below_collar: float = 12.0  # Crossbar top below the collar, clear of the thumb nuts.
+    yoke_boss_width: float = 16.0  # Across the screw axis, to the outboard end of the arm.
+    yoke_clearance_below_collar: float = 13.0  # Crossbar top below the collar, clear of the thumb nuts.
     yoke_crossbar: float = 10.0
-    shoe_cheek: float = 6.0
-    shoe_deck: float = 5.0
-    pointer_front_margin: float = 9.0  # Pointer shoe beyond the fore yoke, along the rail.
-    pointer_rear_margin: float = 4.0  # And behind the aft yoke, short of the phone rest.
+    # Thickness of the yoke along the rail. Walls round the insert holes and counterbores are
+    # (thickness - 8.12 mm)/2, about 3 mm; heat-set inserts want at least 2 mm in ABS.
+    yoke_thickness: float = 14.0
+    yoke_min_insert_wall: float = 2.5
+    # Profile fillets, mm. The column root takes the arm's bending, so it is the largest; the free corners
+    # are rounded to keep them from catching and to spread the stress where the profile turns.
+    yoke_root_fillet: float = 5.0  # Column to crossbar underside, inside corner.
+    yoke_blend_fillet: float = 4.0  # Crossbar underside to arm back, and arm face to crossbar top.
+    yoke_corner_fillet: float = 2.0  # Outboard corners of the arm.
+    # Lower clamp sections (saddle, skirts, side-slot holes) take the common rail shoe's dimensions, §5.3.
+    rail_shoe: RailShoeParameters = field(default_factory=RailShoeParameters)
+    pointer_clamp_spacing: float = 36.0  # Between the two pairs of rail clamp screws on the pointer shoe.
+    # Yoke-to-shoe joint: each yoke is printed separately and bolted up through the shoe deck with one
+    # countersunk M5 screw on the rail centerline, into a heat-set insert in the yoke column. Two straight
+    # walls on the deck, across the rail, ahead of and behind the column, locate it and stop its twisting.
+    locating_wall_thickness: float = 1.6  # Along the rail: four perimeters at a 0.4 mm nozzle.
+    locating_wall_height: float = 3.0  # Above the deck.
+    locating_clearance_per_side: float = 0.20  # Wall to column face, ABS fabrication allowance.
+    insert_hole_diameter: float = 6.40  # McMaster 94459A797 drawing.
+    insert_flange_thickness: float = 1.02  # McMaster 94459A797 drawing.
+    insert_hole_relief: float = 1.0  # Hole depth beyond the insert, for the screw tip and melt.
+    joint_screw_length: float = 10.0  # M5 countersunk, overall including the head.
+    joint_screw_head_diameter: float = 10.0  # 90-degree head, ISO 10642.
+    pointer_end_margin: float = (
+        9.0  # Pointer shoe beyond each yoke along the rail; symmetric about the stations.
+    )
 
     # Phone rest.
     rest_x: float = 100.0  # Rest rod under the phone's lower edge, outboard of the axis.
@@ -117,6 +193,39 @@ class CameraSupportParameters:
     rest_arm_depth: float = 14.0
     rest_shoe_length: float = 22.0  # Along the rail.
     rest_shoe_aft_of_rest: float = 3.0  # Shoe center aft of the rest, to stand clear of the pointer.
+
+    @property
+    def shoe_outer(self) -> float:
+        """Half the saddle width: the rail opening plus a side wall."""
+        return self.rail_shoe.width / 2
+
+    @property
+    def rest_center(self) -> float:
+        """Phone rest shoe center along the rail, where its clamp screws go."""
+        return self.rest_y - self.rest_shoe_aft_of_rest
+
+    @property
+    def pointer_clamp_ys(self) -> tuple[float, float]:
+        middle = sum(self.stations) / 2
+        return middle - self.pointer_clamp_spacing / 2, middle + self.pointer_clamp_spacing / 2
+
+    @property
+    def deck_top(self) -> float:
+        return self.rail_shoe.bridge_top
+
+    @property
+    def joint_z(self) -> float:
+        """Underside of a yoke column, on the deck, where the insert flange sits."""
+        return self.deck_top
+
+    @property
+    def yoke_top(self) -> float:
+        """Top of the yoke column and crossbar."""
+        return self.optical_height - self.collar_radius - self.yoke_clearance_below_collar
+
+    @property
+    def insert_hole_depth(self) -> float:
+        return MCMASTER_94459A797_LENGTH + self.insert_hole_relief
 
     @property
     def case_wall(self) -> float:
@@ -155,13 +264,82 @@ class CameraSupportParameters:
         return self.aft_station, self.fore_station
 
     @property
+    def collar_bore(self) -> float:
+        return self.lens_diameter + self.collar_bore_diametral_clearance
+
+    @property
     def collar_radius(self) -> float:
-        return self.lens_diameter / 2 + self.collar_wall
+        return self.collar_bore / 2 + self.collar_wall
 
     @property
     def pad_radius(self) -> float:
-        """Lens axis to each screw tip, on the outer face of its pad."""
-        return self.collar_radius + 1.0
+        """Lens axis to each screw tip, on the outer face of its pad.
+
+        The pocket floor is tangent to the outside of the ring, so the pad stands a magnet thickness out.
+        """
+        return self.collar_radius + self.magnet_thickness
+
+    @property
+    def cord_radius(self) -> float:
+        return self.band_cord_diameter / 2
+
+    def toward_other(self, station: float) -> int:
+        """+1 where a station faces the fore collar, -1 where it faces the aft collar."""
+        return 1 if station < sum(self.stations) / 2 else -1
+
+    def horn_base(self, station: float) -> tuple[float, float, float]:
+        """Where a yoke's peg leaves the crossbar face, which faces the other collar."""
+        face = station + self.toward_other(station) * self.yoke_thickness / 2
+        return 0.0, face, self.yoke_top - self.yoke_crossbar / 2
+
+    def band_y(self, station: float) -> float:
+        """Along the lens, the plane of a band: the cord lies on the peg's neck."""
+        return self.horn_base(station)[1] + self.toward_other(station) * (
+            self.horn_stem_length - self.horn_neck_below_lip
+        )
+
+    @property
+    def ear_top_wall(self) -> float:
+        """Ear material over the nut pocket."""
+        r = self.rail_shoe
+        return (
+            self.ear_top_above_ring
+            - self.clamp_screw_above_ring
+            - (r.clamp_nut_across_flats + r.nut_across_flats_clearance) / 2
+        )
+
+    @property
+    def ear_screw_side(self) -> float:
+        """Outer face of the screw ear, across the rail from the split."""
+        return -(self.rail_shoe.split_gap / 2 + self.rail_shoe.screw_ear_thickness)
+
+    @property
+    def ear_nut_side(self) -> float:
+        """Outer face of the nut ear."""
+        return self.rail_shoe.split_gap / 2 + self.rail_shoe.nut_ear_thickness
+
+    @property
+    def ball_rim_standoff(self) -> float:
+        """Across the pad, from the center of a ball sitting on it to where its sphere meets a rim edge that
+        stands pad_wall_height above the pad face."""
+        r, h = self.ball_diameter / 2, self.pad_wall_height
+        return sqrt(r**2 - (r - h) ** 2)
+
+    @property
+    def pad_wall_relief(self) -> float:
+        """How far the pocket opens outward from the pad edge above the pad face, per side.
+
+        The rim is cut back so that the ball stops pad_edge_margin short of the pad edge, not at the edge
+        of the sphere's reach against a rim standing at the pad edge.
+        """
+        return self.ball_rim_standoff - self.pad_edge_margin - self.pad_pocket_clearance_per_side
+
+    @property
+    def pad_edge_stop(self) -> tuple[float, float]:
+        """How far a ball end can move from the middle of a magnet pad, across and along the rail, before its
+        sphere meets the relieved rim."""
+        reach = self.pad_pocket_clearance_per_side + self.pad_wall_relief - self.ball_rim_standoff
+        return self.magnet_length / 2 + reach, self.magnet_width / 2 + reach
 
     @property
     def boss_top_below_tip(self) -> float:
@@ -186,8 +364,58 @@ class CameraSupportParameters:
             raise ValueError("The aft collar must sit on the rear cylindrical section")
         if self.fore_station + half >= self.focus_ring_start:
             raise ValueError("The fore collar must stay behind the focus ring")
+        r_ = self.rail_shoe
+        across_corners = (r_.clamp_nut_across_flats + r_.nut_across_flats_clearance) / cos(radians(30))
+        if self.collar_wall < self.min_collar_wall:
+            raise ValueError("The collar ring is too thin")
+        if self.ear_top_wall < 1.5:
+            raise ValueError("The ear must leave material over the nut pocket")
+        if self.clamp_screw_above_ring < (r_.clamp_nut_across_flats + r_.nut_across_flats_clearance) / 2:
+            raise ValueError("The nut pocket must not cut into the ring")
+        # The root fillet runs up the ear face from where it meets the ring, by its tangent length.
+        x_ear = abs(self.ear_screw_side)
+        ring_slope = asin(x_ear / self.collar_radius)
+        root_rise = sqrt(self.collar_radius**2 - x_ear**2) - self.collar_radius
+        fillet_top = root_rise + self.collar_root_fillet / tan((pi / 2 + ring_slope) / 2)
+        if self.clamp_screw_above_ring - self.clamp_head_diameter / 2 < fillet_top:
+            raise ValueError("The screw head must clear the fillet at the root of its ear")
+        if (self.collar_width - across_corners) / 2 < 2.0:
+            raise ValueError("The ear must leave walls beside the nut pocket")
+        if not 0 <= self.pad_wall_relief < self.pad_wall / 2:
+            raise ValueError("The pocket relief must be small against the wall round it")
+        rod_pocket_along = _pad_pocket(self, True)[1] + 2 * self.pad_wall_relief
+        if (self.collar_width - rod_pocket_along) / 2 < self.pad_wall:
+            raise ValueError("The pad pockets must leave a wall along the rail")
+        if self.horn_lip_diameter > self.yoke_crossbar - 2.0:
+            raise ValueError("The horn lip must lie within the crossbar face")
+        if (
+            self.band_y(self.aft_station) + self.cord_radius
+            >= self.band_y(self.fore_station) - self.cord_radius
+        ):
+            raise ValueError("The two bands must not cross")
+        if self.pad_wall_height >= 1.2:
+            raise ValueError("The pocket rim must stay below the screw's end face")
         if self.yoke_boss_length < MCMASTER_94459A797_LENGTH:
             raise ValueError("Each yoke boss must contain its heat-set insert")
+        r = self.rail_shoe
+        counterbore = MCMASTER_94459A797_FLANGE_DIAMETER + 0.2
+        if (self.yoke_thickness - counterbore) / 2 < self.yoke_min_insert_wall:
+            raise ValueError("The yoke must leave a wall round each insert")
+        if (self.yoke_boss_width - counterbore) / 2 < self.yoke_min_insert_wall:
+            raise ValueError("The yoke arm must leave a wall round each insert")
+        if (self.rail_size - counterbore) / 2 < self.yoke_min_insert_wall:
+            raise ValueError("The yoke column must leave a wall round the joint insert")
+        if self.yoke_thickness < self.collar_width:
+            raise ValueError("The yoke must be at least as thick as the collar")
+        wall_inner = self.yoke_thickness / 2 + self.locating_clearance_per_side
+        if wall_inner + self.locating_wall_thickness > self.pointer_end_margin:
+            raise ValueError("The locating walls must stay on the pointer shoe")
+        if self.rail_size > r.width:
+            raise ValueError("The locating walls must stay on the deck")
+        if self.joint_z + self.insert_hole_depth + 1.5 > self.yoke_top:
+            raise ValueError("The yoke column must leave a roof over the insert")
+        if not self.joint_z < self.joint_screw_length < self.joint_z + MCMASTER_94459A797_LENGTH:
+            raise ValueError("The joint screw must end inside its insert")
         if self.boss_top_below_tip < self.nut_below_tip + MCMASTER_92815A202_HEIGHT:
             raise ValueError("Each thumb nut must fit between its collar pad and its yoke boss")
 
@@ -220,59 +448,382 @@ def _adjuster(p: CameraSupportParameters, name: str, loc: Location) -> list[Part
     ]
 
 
-def build_collar(p: CameraSupportParameters | None = None, station: float = 0.0) -> Part:
-    """Split collar clamped on the lens barrel at a station, with its clamp ear up."""
+def rod_layout(p: CameraSupportParameters) -> tuple[float, float]:
+    """Groove rods of the fore/aft stop pad: half the spacing of their axes, and their axes' height in the
+    pad frame. The ball nests between them; the rods lie on the pocket floor."""
+    ball_radius, rod_radius = p.ball_diameter / 2, p.groove_rod_diameter / 2
+    half_spacing = p.groove_rod_diameter * 0.75
+    nest = sqrt((ball_radius + rod_radius) ** 2 - half_spacing**2)  # Rod axes beyond the ball center.
+    return half_spacing, nest - ball_radius
+
+
+def _pad_pocket(p: CameraSupportParameters, rods: bool) -> tuple[float, float]:
+    """Pocket size in a pad frame, across and along the rail: a magnet, or the pair of groove rods."""
+    c = 2 * p.pad_pocket_clearance_per_side
+    if rods:
+        half_spacing, _ = rod_layout(p)
+        return p.groove_rod_length + c, 2 * half_spacing + p.groove_rod_diameter + c
+    return p.magnet_length + c, p.magnet_width + c
+
+
+def _tangent(c1, r1, c2, r2):
+    """Points where the outer tangent joins circle 1 to circle 2, going counterclockwise round the pair."""
+    dx, dz = c2[0] - c1[0], c2[1] - c1[1]
+    length = hypot(dx, dz)
+    along = ((dx / length), (dz / length))
+    k = (r1 - r2) / length
+    right = (along[1], -along[0])
+    n = (k * along[0] + sqrt(1 - k * k) * right[0], k * along[1] + sqrt(1 - k * k) * right[1])
+    return (c1[0] + r1 * n[0], c1[1] + r1 * n[1]), (c2[0] + r2 * n[0], c2[1] + r2 * n[1])
+
+
+def _arc(center, radius, start, finish):
+    """("arc", start, mid, finish) going counterclockwise about center."""
+    a0 = atan2(start[1] - center[1], start[0] - center[0])
+    sweep_angle = (atan2(finish[1] - center[1], finish[0] - center[0]) - a0) % (2 * pi)
+    mid = (center[0] + radius * cos(a0 + sweep_angle / 2), center[1] + radius * sin(a0 + sweep_angle / 2))
+    return ("arc", start, mid, finish)
+
+
+def band_path(p: CameraSupportParameters) -> list[tuple]:
+    """Axis of a retaining band in its plane, as ("line", a, b) and ("arc", a, mid, b) pieces of (x, z).
+
+    An endless loop: the convex hull of the cord lying on the barrel and on the neck of the peg below it,
+    counterclockwise from the barrel's right tangent: arc over the top, left leg down, arc under the peg,
+    right leg up. The same for both bands.
+    """
+    barrel = ((0.0, p.optical_height), p.lens_diameter / 2 + p.cord_radius)
+    peg = ((0.0, p.horn_base(p.aft_station)[2]), p.horn_diameter / 2 + p.cord_radius)
+    left = _tangent(*barrel, *peg)  # Barrel to peg: down the left side.
+    right = _tangent(*peg, *barrel)  # Peg to barrel: up the right side.
+    return [
+        _arc(*barrel, right[1], left[0]),
+        ("line", *left),
+        _arc(*peg, left[1], right[0]),
+        ("line", *right),
+    ]
+
+
+def band_leg_angle(p: CameraSupportParameters) -> float:
+    """Angle above horizontal of the band's legs, degrees."""
+    _, a, b = band_path(p)[1]
+    return degrees(atan2(abs(b[1] - a[1]), abs(b[0] - a[0])))
+
+
+def _band_wire(p: CameraSupportParameters, station: float) -> Wire:
+    y = p.band_y(station)
+    edges = []
+    for kind, *points in band_path(p):
+        vs = [Vector(x, y, z) for x, z in points]
+        edges.append(Edge.make_line(*vs) if kind == "line" else Edge.make_three_point_arc(*vs))
+    return Wire(edges)
+
+
+def _swept_circle(wire: Wire, radius: float) -> Part:
+    section = Face(Wire.make_circle(radius, Plane(origin=wire.start_point(), z_dir=wire.tangent_at(0))))
+    return Part([Solid.sweep(section, path=wire)])
+
+
+def build_band(p: CameraSupportParameters | None = None, station: float = 0.0) -> Part:
+    """The endless retaining cord of a collar, on the barrel and the neck of its yoke's peg."""
     p = p or CameraSupportParameters()
-    ring = Cylinder(p.collar_radius, p.collar_width) - Cylinder(p.lens_diameter / 2, p.collar_width + 2)
-    ring += _box(-6, 6, p.collar_radius - 2, p.collar_radius + 9, -p.collar_width / 2, p.collar_width / 2)
-    ring -= _box(-0.75, 0.75, p.lens_diameter / 2 - 1, p.collar_radius + 10, -p.collar_width, p.collar_width)
-    # Built about +z with the clamp ear toward +y; turned so the axis is rail y and the ear points up.
-    return Pos(0, station, p.optical_height) * Rot(X=90) * ring
+    return _swept_circle(_band_wire(p, station), p.cord_radius)
+
+
+def _edges_along_rail(body: Part, points: list[tuple[float, float]]) -> list:
+    """The edges of body that run along the rail and pass through the given (x, z) points."""
+    found = []
+    for x, z in points:
+        near = [
+            e
+            for e in body.edges().filter_by(Axis.Y)
+            if abs(e.center().X - x) < 1e-3 and abs(e.center().Z - z) < 1e-3
+        ]
+        if len(near) != 1:
+            raise ValueError(
+                f"Expected one collar edge along the rail at x={x:.2f}, z={z:.2f}, found {len(near)}"
+            )
+        found.append(near[0])
+    return found
+
+
+def build_collar(
+    p: CameraSupportParameters | None = None, station: float = 0.0, rod_side: int | None = None
+) -> Part:
+    """Split collar clamped on the lens barrel at a station, its clamp ear up.
+
+    A thin ring with a flat platform at each screw, in which a pocket holds the bearing surface (a magnet, or
+    on rod_side the pair of groove rods) with a rim round it. The ear takes the common M3 screw and nut, as
+    the common rail shoe's clamp does. Inside corners are filleted against stress, outside ones for the
+    fingers; the faces of the split stay sharp.
+    """
+    p = p or CameraSupportParameters()
+    p.validate()
+    r = p.rail_shoe
+    zc = p.optical_height
+    half_width = p.collar_width / 2
+    ring_axis = Pos(0, station, zc) * Rot(X=90)
+    body = ring_axis * Cylinder(p.collar_radius, p.collar_width)
+    ear_top = zc + p.collar_radius + p.ear_top_above_ring
+    body += _box(
+        p.ear_screw_side,
+        p.ear_nut_side,
+        station - half_width,
+        station + half_width,
+        zc + p.collar_radius - 2,
+        ear_top,
+    )
+    platform_depth = 4.0  # Into the ring wall; the bore is cut after.
+    across_platform = (
+        max(_pad_pocket(p, True)[0], _pad_pocket(p, False)[0]) / 2 + p.pad_wall_relief + p.pad_wall
+    )
+    for side in (-1, 1):
+        body += screw_location(p, side, station) * _box(
+            -across_platform,
+            across_platform,
+            -half_width,
+            half_width,
+            -p.pad_wall_height,
+            p.magnet_thickness + platform_depth,
+        )
+    if len(body.solids()) != 1:
+        raise ValueError("Collar did not produce one solid")
+    # Edges along the rail, picked by position: inside corners get the larger fillet, outside ones the
+    # smaller; then the outline of the two ring ends. The faces of the split are cut afterwards.
+    ring_r = p.collar_radius
+    inside = [(x, zc + sqrt(ring_r**2 - x**2)) for x in (p.ear_screw_side, p.ear_nut_side)]
+    outside = [(p.ear_screw_side, ear_top), (p.ear_nut_side, ear_top)]
+    for side in (-1, 1):
+        loc = screw_location(p, side, station)
+        for sign in (-1, 1):
+            xl = sign * across_platform
+            root = p.pad_radius - sqrt(ring_r**2 - xl**2)  # Where the platform side meets the ring.
+            for local, bucket in (((xl, root), inside), ((xl, -p.pad_wall_height), outside)):
+                point = (loc * Pos(local[0], 0, local[1])).position
+                bucket.append((point.X, point.Z))
+    body = fillet(_edges_along_rail(body, inside), p.collar_root_fillet)
+    body = fillet(_edges_along_rail(body, outside), p.collar_round_fillet)
+    ends = body.faces().filter_by(Axis.Y)
+    body = fillet([e for f in ends for e in f.edges()], p.collar_end_fillet)
+
+    body -= ring_axis * Cylinder(p.collar_bore / 2, p.collar_width + 2)
+    body -= _box(
+        -r.split_gap / 2, r.split_gap / 2, station - half_width - 1, station + half_width + 1, zc, ear_top + 1
+    )
+    # Clamp screw through the screw ear, and the nut in a hex pocket in the other, flats up and down.
+    screw_z = zc + p.collar_radius + p.clamp_screw_above_ring
+    body -= along_x((p.ear_screw_side - 1, station, screw_z)) * Cylinder(
+        r.m3_clearance_diameter / 2, p.ear_nut_side - p.ear_screw_side + 2, align=ON_FLOOR
+    )
+    nut_across_corners = (r.clamp_nut_across_flats + r.nut_across_flats_clearance) / cos(radians(30))
+    body -= extrude(
+        along_x((p.ear_nut_side - r.nut_pocket_depth, station, screw_z))
+        * RegularPolygon(nut_across_corners / 2, 6),
+        amount=r.nut_pocket_depth + 1,
+    )
+    for side in (-1, 1):
+        loc = screw_location(p, side, station)
+        across, along_rail = _pad_pocket(p, side == rod_side)
+        # The pad itself, to its floor; above the pad face the opening is cut back by the relief.
+        body -= loc * _box(-across / 2, across / 2, -along_rail / 2, along_rail / 2, 0, p.magnet_thickness)
+        relief = p.pad_wall_relief
+        body -= loc * _box(
+            -across / 2 - relief,
+            across / 2 + relief,
+            -along_rail / 2 - relief,
+            along_rail / 2 + relief,
+            -p.pad_wall_height - 1,
+            0.001,
+        )
+    if len(body.solids()) != 1 or not body.is_valid:
+        raise ValueError("Collar did not produce one valid solid")
+    return body
+
+
+def _arm_point(p: CameraSupportParameters, side: int, along: float, across: float) -> tuple[float, float]:
+    """(x, z) of a point on a screw's axis plane: along its axis from the lens axis, across it (up-outboard)."""
+    a = radians(p.screw_angle)
+    return (
+        side * (along * sin(a) + across * cos(a)),
+        p.optical_height - along * cos(a) + across * sin(a),
+    )
+
+
+def _yoke_profile(p: CameraSupportParameters) -> Face:
+    """Filleted yoke outline in the x-z plane: column, crossbar, and an inclined arm either side.
+
+    Each arm is a slab of the boss thickness, square to its screw. Its lens-side face carries the insert and
+    runs down to the crossbar top; its back face runs down to the crossbar underside, so there is no stub
+    or step. Inside corners are filleted most generously.
+    """
+    a = radians(p.screw_angle)
+    top = p.yoke_top
+    bottom = top - p.yoke_crossbar
+    column = p.rail_size / 2
+    face_s = p.pad_radius + p.boss_top_below_tip  # Lens-side face of the arm, from the lens axis.
+    back_s = face_s + p.yoke_boss_length + YOKE_BOSS_OVERRUN
+    outer = p.yoke_boss_width / 2
+    cross = lambda s, z: (z - p.optical_height + s * cos(a)) / sin(a)  # t on the face/back line at height z.
+    face_foot = _arm_point(p, 1, face_s, cross(face_s, top))  # Lens-side face meets the crossbar top.
+    back_foot = _arm_point(p, 1, back_s, cross(back_s, bottom))  # Back face meets the crossbar underside.
+    right = [
+        ((column, p.deck_top), 0.0),
+        ((column, bottom), p.yoke_root_fillet),
+        (back_foot, p.yoke_blend_fillet),
+        (_arm_point(p, 1, back_s, outer), p.yoke_corner_fillet),
+        (_arm_point(p, 1, face_s, outer), p.yoke_corner_fillet),
+        (face_foot, p.yoke_blend_fillet),
+    ]
+    if not column + p.yoke_root_fillet < back_foot[0] - p.yoke_blend_fillet:
+        raise ValueError("The crossbar underside is too short for its fillets")
+    if not 0 < face_foot[0] < back_foot[0]:
+        raise ValueError("The arm face must meet the crossbar top inboard of its back")
+    ring = right + [((-x, z), r) for (x, z), r in reversed(right)]
+    wire = Wire.make_polygon([Vector(x, 0, z) for (x, z), _ in ring], close=True)
+    face = Face(wire)
+    for (x, z), radius in ring:
+        if radius:
+            nearest = min(face.vertices(), key=lambda v: hypot(v.X - x, v.Z - z))
+            face = face.fillet_2d(radius, [nearest])
+    return face
 
 
 def _yoke(p: CameraSupportParameters, station: float) -> Part:
-    """Column, crossbar, and two inclined bosses for one pair of screws, standing on the rail top."""
-    y0, y1 = station - p.collar_width / 2, station + p.collar_width / 2
-    half_boss = p.yoke_boss_width / 2
-    boss = _box(-half_boss, half_boss, y0 - station, y1 - station, -p.yoke_boss_length - 0.5, 0)
-    reach = p.pad_radius + p.screw_length
-    half_span = reach * sin(radians(p.screw_angle)) + 2
-    top = p.optical_height - p.collar_radius - p.yoke_clearance_below_collar
-    yoke = _box(-half_span, half_span, y0, y1, top - p.yoke_crossbar, top)
-    yoke += _box(-p.rail_size / 2, p.rail_size / 2, y0, y1, 0, top)
+    """One printed yoke: column with an insert hole in its foot, crossbar, and two inclined arms.
+
+    Printed on its side, so every layer lies in the plane of the loads. The column's flat underside sits on
+    the shoe deck, between the deck's two locating walls. Each arm carries a heat-set insert from its
+    lens-side face, with the bore open through the back for the screw and its hex key.
+    """
+    face = _yoke_profile(p)
+    yoke = Part(Solid.extrude(face, Vector(0, p.yoke_thickness, 0)).wrapped)
+    yoke = Pos(0, station - p.yoke_thickness / 2, 0) * yoke
+    # The peg for the retaining band: a stem with a lip, on the centre of the crossbar face toward the other
+    # collar, pointing along the lens.
+    hx, hy, hz = p.horn_base(station)
+    plane = Plane(origin=(hx, hy, hz), z_dir=(0, p.toward_other(station), 0))
+    yoke += plane * Pos(0, 0, -1) * Cylinder(p.horn_diameter / 2, p.horn_stem_length + 1, align=ON_FLOOR)
+    yoke += (
+        plane
+        * Pos(0, 0, p.horn_stem_length)
+        * Cylinder(p.horn_lip_diameter / 2, p.horn_lip_height, align=ON_FLOOR)
+    )
+    counterbore = (MCMASTER_94459A797_FLANGE_DIAMETER + 0.2) / 2
+    hole = p.insert_hole_diameter / 2
+    yoke -= Pos(0, station, p.joint_z - 1) * Cylinder(hole, p.insert_hole_depth + 1, align=ON_FLOOR)
+    yoke -= Pos(0, station, p.joint_z - 1) * Cylinder(
+        counterbore, p.insert_flange_thickness + 1, align=ON_FLOOR
+    )
+    # Arm insert: from the lens-side face, along the screw, flange recessed flush; the screw passes on out.
+    face_z = -p.boss_top_below_tip
+    back_z = face_z - p.yoke_boss_length - YOKE_BOSS_OVERRUN
     for side in (-1, 1):
-        yoke += screw_location(p, side, station) * Pos(0, 0, -p.boss_top_below_tip) * boss
+        loc = screw_location(p, side, station)
+        yoke -= (
+            loc
+            * Pos(0, 0, face_z - p.insert_hole_depth)
+            * Cylinder(hole, p.insert_hole_depth + 1, align=ON_FLOOR)
+        )
+        yoke -= (
+            loc
+            * Pos(0, 0, face_z - p.insert_flange_thickness)
+            * Cylinder(counterbore, p.insert_flange_thickness + 1, align=ON_FLOOR)
+        )
+        bore = p.rail_shoe.m5_clearance_diameter / 2
+        yoke -= (
+            loc
+            * Pos(0, 0, back_z - 1)
+            * Cylinder(bore, face_z - back_z + 2 - p.insert_hole_depth, align=ON_FLOOR)
+        )
     return yoke
 
 
-def _straddle(p: CameraSupportParameters, y0: float, y1: float) -> Part:
-    """Shoe body straddling the rail from y0 to y1."""
-    half = p.rail_size / 2
-    outer = half + p.shoe_cheek
-    shoe = _box(-outer, outer, y0, y1, -p.rail_size, p.shoe_deck)
-    return shoe - _box(-half, half, y0 - 1, y1 + 1, -p.rail_size - 1, 0)
+def _straddle(
+    p: CameraSupportParameters,
+    y0: float,
+    y1: float,
+    clamp_ys: tuple[float, ...],
+    yoke_stations: tuple[float, ...] = (),
+) -> Part:
+    """Saddle straddling the rail from y0 to y1, as the common rail shoe's lower section (§5.3).
+
+    Same rail opening, side walls, skirt depth, deck thickness, and rounded outside corners; an M5 clearance
+    hole crosses the skirts at each clamp_ys station, at rail mid-height, for the side-slot screws. At each
+    yoke station the deck carries two locating walls across the rail, with a countersunk M5 hole between
+    them, the head flush with the underside.
+    """
+    r = p.rail_shoe
+    shoe = Pos(-p.shoe_outer, y0, -r.skirt_depth) * Box(
+        2 * p.shoe_outer, y1 - y0, r.skirt_depth + r.bridge_top, align=Align.MIN
+    )
+    shoe = fillet(shoe.edges().filter_by(Axis.Z), r.outside_corner_radius)
+    shoe -= _box(-r.rail_opening / 2, r.rail_opening / 2, y0 - 1, y1 + 1, -r.skirt_depth - 1, 0)
+    for y in clamp_ys:
+        shoe -= along_x((-p.shoe_outer - 1, y, -r.rail_height / 2)) * Cylinder(
+            r.m5_clearance_diameter / 2, 2 * p.shoe_outer + 2, align=ON_FLOOR
+        )
+    head_depth = (p.joint_screw_head_diameter - r.m5_clearance_diameter) / 2
+    wall_offset = p.yoke_thickness / 2 + p.locating_clearance_per_side + p.locating_wall_thickness / 2
+    for station in yoke_stations:
+        for side in (-1, 1):
+            y = station + side * wall_offset
+            half = p.locating_wall_thickness / 2
+            shoe += _box(
+                -p.rail_size / 2,
+                p.rail_size / 2,
+                y - half,
+                y + half,
+                p.deck_top - 1,
+                p.deck_top + p.locating_wall_height,
+            )
+        shoe -= Pos(0, station, -1) * Cylinder(r.m5_clearance_diameter / 2, p.deck_top + 2, align=ON_FLOOR)
+        shoe -= Pos(0, station, 0) * Cone(
+            p.joint_screw_head_diameter / 2, r.m5_clearance_diameter / 2, head_depth, align=ON_FLOOR
+        )
+    return shoe
 
 
-def build_lens_pointer(p: CameraSupportParameters | None = None) -> Part:
-    """Lens-specific printed shoe carrying both yokes."""
+def build_pointer_shoe(p: CameraSupportParameters | None = None) -> Part:
+    """Lens-pointer saddle, printed deck-down, symmetric about the middle of the two stations."""
     p = p or CameraSupportParameters()
     p.validate()
     aft, fore = p.stations
     half_collar = p.collar_width / 2
-    pointer = _straddle(
-        p, aft - half_collar - p.pointer_rear_margin, fore + half_collar + p.pointer_front_margin
+    return _straddle(
+        p,
+        aft - half_collar - p.pointer_end_margin,
+        fore + half_collar + p.pointer_end_margin,
+        p.pointer_clamp_ys,
+        p.stations,
     )
-    for station in p.stations:
-        pointer += _yoke(p, station)
-    return pointer
+
+
+def build_pointer_yoke(p: CameraSupportParameters | None = None, station: float = 0.0) -> Part:
+    """Yoke for the collar at a station, printed on its side and bolted to the pointer shoe."""
+    p = p or CameraSupportParameters()
+    p.validate()
+    return _yoke(p, station)
+
+
+def _joint_hardware(p: CameraSupportParameters, where: str, station: float) -> list[Part]:
+    """Insert and countersunk M5 screw of a yoke's joint."""
+    head_depth = (p.joint_screw_head_diameter - 5.0) / 2
+    head = Cone(p.joint_screw_head_diameter / 2, 2.5, head_depth, align=ON_FLOOR)
+    shank = Cylinder(2.5, p.joint_screw_length - head_depth, align=ON_FLOOR)
+    screw = head + Pos(0, 0, head_depth) * shank
+    insert_at = Pos(0, station, p.joint_z) * Rot(X=180)
+    return [
+        labeled(mcmaster_94459a797(), f"{where} yoke insert", BRASS, insert_at),
+        labeled(screw, f"{where} yoke screw", STEEL, Pos(0, station, 0)),
+    ]
 
 
 def build_phone_rest(p: CameraSupportParameters | None = None) -> Part:
     """Phone-specific printed shoe with the arm that carries the rest rod."""
     p = p or CameraSupportParameters()
-    center = p.rest_y - p.rest_shoe_aft_of_rest
-    rest = _straddle(p, center - p.rest_shoe_length / 2, center + p.rest_shoe_length / 2)
-    outer = p.rail_size / 2 + p.shoe_cheek
+    center = p.rest_center
+    rest = _straddle(p, center - p.rest_shoe_length / 2, center + p.rest_shoe_length / 2, (center,))
+    outer = p.shoe_outer
     arm_y0, arm_y1 = p.rest_y - p.rest_arm_width / 2, p.rest_y + p.rest_arm_width / 2
     rest += _box(outer, p.rest_x + 8, arm_y0, arm_y1, p.rest_arm_top - p.rest_arm_depth, p.rest_arm_top)
     return rest
@@ -298,7 +849,7 @@ def build_camera_support_assembly(
     axis = along_y((0, -60, axis_z)) * Cylinder(0.4, p.lens_length + 150, align=ON_FLOOR)
     children = [
         labeled(rail, "Rail", BLACK_ANODIZED),
-        labeled(build_lens_pointer(p), "Lens pointer", POINTER_COLOR),
+        labeled(build_pointer_shoe(p), "Pointer shoe", POINTER_COLOR),
         labeled(build_phone_rest(p), "Phone rest", REST_COLOR),
         labeled(phone, "Phone envelope", PHONE_COLOR),
         labeled(lens, "Telephoto envelope", LENS_COLOR),
@@ -309,7 +860,11 @@ def build_camera_support_assembly(
     # screw of its pair, and only slightly along the rail.
     pad = Box(p.magnet_length, p.magnet_width, p.magnet_thickness, align=ON_FLOOR)
     for where, station in zip(("Aft", "Fore"), p.stations):
-        children.append(labeled(build_collar(p, station), f"{where} collar", COLLAR_COLOR))
+        rod_side = -1 if where == "Aft" else None  # The aft left pad carries the groove rods.
+        children.append(labeled(build_collar(p, station, rod_side), f"{where} collar", COLLAR_COLOR))
+        children.append(labeled(build_pointer_yoke(p, station), f"{where} yoke", POINTER_COLOR))
+        children.append(labeled(build_band(p, station), f"{where} band", BAND_COLOR))
+        children += _joint_hardware(p, where, station)
         for name, side in (("left", -1), ("right", 1)):
             loc = screw_location(p, side, station)
             children += _adjuster(p, f"{where} {name}", loc)
@@ -319,34 +874,17 @@ def build_camera_support_assembly(
     # Fore/aft stop: in place of a magnet, the aft left collar pad carries two rods lying across the rail, and
     # the screw's ball nests in the groove between them. The ball can still slide along the rods.
     groove = screw_location(p, -1, p.aft_station)
-    ball_radius = p.ball_diameter / 2
+    half_spacing, rod_height = rod_layout(p)
     rod_radius = p.groove_rod_diameter / 2
-    half_spacing = p.groove_rod_diameter * 0.75
-    nest = sqrt((ball_radius + rod_radius) ** 2 - half_spacing**2)  # Rod centers above the ball center.
     for offset in (-1, 1):
         rod = Rot(Y=90) * Cylinder(rod_radius, p.groove_rod_length)
-        loc = groove * Pos(0, offset * half_spacing, nest - ball_radius)
+        loc = groove * Pos(0, offset * half_spacing, rod_height)
         children.append(labeled(rod, f"Groove rod {offset:+d}", STEEL, loc))
     # Roll: the phone's lower edge on a rod lying along the rail.
     rest = along_y((p.rest_x, p.rest_y - p.rest_rod_length / 2, p.rest_arm_top)) * Cylinder(
         p.rest_rod_diameter / 2, p.rest_rod_length, align=ON_FLOOR
     )
     children.append(labeled(rest, "Rest rod", STEEL))
-    # Clamp screws into the rail side slots: two pairs on the pointer, one pair on the phone rest.
-    head = Cylinder(4.25, 5.0, align=ON_FLOOR)
-    outer = p.rail_size / 2 + p.shoe_cheek
-    aft, fore = p.stations
-    middle = (aft + fore) / 2
-    rest_center = p.rest_y - p.rest_shoe_aft_of_rest
-    for name, y in (
-        ("Pointer clamp screw 1", middle - 18),
-        ("Pointer clamp screw 2", middle + 18),
-        ("Rest clamp screw", rest_center),
-    ):
-        for side, turn in ((-1, -90), (1, 90)):
-            loc = Pos(side * outer, y, -p.rail_size / 2) * Rot(Y=turn)
-            children.append(labeled(head, f"{name} {side:+d}", STEEL, loc))
-
     support = assembly("Lens pointer and phone rest (concept mock-up)", children)
     if not include_cutoff:
         return support
