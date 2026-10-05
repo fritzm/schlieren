@@ -1,4 +1,4 @@
-"""Show or render the lens pointer and phone rest concept mock-up (design §§9.4-9.7)."""
+"""Show or render the lens pointer and phone rest model (design §§9.4-9.8)."""
 
 import argparse
 from pathlib import Path
@@ -23,7 +23,7 @@ VIEWS = {
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--show", action="store_true", help="Display the mock-up in OCP CAD Viewer")
+    parser.add_argument("--show", action="store_true", help="Display the model in OCP CAD Viewer")
     parser.add_argument("--no-cutoff", action="store_true", help="Leave the cutoff station out of --show")
     parser.add_argument(
         "--figure",

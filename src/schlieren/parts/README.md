@@ -346,27 +346,29 @@ orientation/supports to accommodate its downward locating pegs. Spigot fit in th
 SM1RC/M and rotation clearance to the rail remain physical validation items. The
 committed design is recorded in `docs/design/08-cutoff.md` (§8).
 
-## Camera support — lens pointer and phone rest (concept mock-up)
+## Camera support — lens pointer and phone rest
 
-`src/schlieren/parts/camera_support.py` is the mock-up of the provisional
-baseline concept of §§9.4–9.7: a lens-specific pointer that holds the lens in
-two collars, each on a pair of inclined ball-tip screws, and a phone-specific
-rest under the lower edge of the phone hanging from the lens. It places the
-parts with plain envelopes and is not a detailed or printable design. Phone
-and lens dimensions are the §9.1–9.2 measurements and the Apple drawing; the
-focus-ring diameter and the cased phone thickness are assumed. The screws,
-thumb nuts, and heat-set inserts are the McMaster vendor models. Coordinates
-are the §3.4 imaging rail frame with y=0 at the back of the phone.
+`src/schlieren/parts/camera_support.py` models §§9.4–9.8: a lens-specific pointer that holds the lens in two
+collars, each on a pair of inclined ball-tip screws in a printed yoke bolted to a shoe, with an endless
+elastic band per yoke, and a phone-specific rest under the lower edge of the phone hanging from the lens.
+The printed parts (pointer shoe, two yokes, two collars, phone rest) are modeled in detail with fillets, pad
+pockets, clamp ears, insert holes, the yoke joint, and the band pegs; the shoe and rest saddles take the
+common rail shoe's dimensions through `RailShoeParameters`. The lens, phone, and hardware are envelopes
+except the McMaster screws, thumb nuts, and heat-set inserts, which are vendor models. The M3 clamp screws
+and nuts, the M5 clamp and joint screws, and the band peg ends are not drawn. Phone and lens dimensions are
+the §9.1–9.2 measurements and the Apple drawing; the focus-ring diameter and the cased phone thickness are
+assumed. Coordinates are the §3.4 imaging rail frame with y=0 at the back of the phone.
 
 ```sh
 uv run camera-support --show
 uv run camera-support --figure     # re-render docs/design/figures/camera-support.png
 uv run camera-support --views      # several PNG views into exports/figures/
-uv run python -m unittest tests.test_camera_support -v
+uv run run-tests test_camera_support
 ```
 
-Tests cover the collar stations against the measured barrel sections and the
-focus ring, the lens axis on the optical datum, each screw tip touching its
-pad or the groove rods, the four inserts buried in their yoke bosses, the
-phone's lower edge on the rest rod, and the pointer and rest staying separate
-parts clear of each other and of the cutoff station's rail shoe.
+Tests cover the collar stations against the measured barrel sections and the focus ring, the collar wall,
+split, fillets, clamp-screw hole and nut pocket, each pad pocket and its rim, the ball end stopping at the
+predicted travel, each screw tip touching its pad or the groove rods, the yoke profile and the walls round its
+inserts, the yoke-to-shoe joint, the saddle dimensions against the common rail shoe, the band geometry, load
+split, and clearances, the phone's lower edge on the rest rod, and the printed parts staying clear of each
+other and of the cutoff station's rail shoe (slow tests).

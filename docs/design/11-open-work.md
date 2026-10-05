@@ -20,11 +20,13 @@ Design areas marked **Provisional** in the sections above:
   [§8.7](08-cutoff.md#87-cassette-clamp-bars)): filament-cleat geometry;
   clamp-bar screw length.
 - **Lens pointer and phone rest** ([§9](09-camera-telephoto.md#9-camera-and-telephoto-support)):
-  the main remaining custom design, a baseline concept with a mock-up model. Open points include the collar
-  clamp and pad pockets, pad size, the hold-down at each collar, the yoke and shoe detail and its rail
-  clamping, the phone rest geometry with a retainer and safety catch, the fitting and removal sequence, and
-  packaging beside the cutoff station. The alignment tolerances rest on assumed lens and camera values, and
-  the contact loads on an assumed lens balance point and phone mass.
+  fit allowances of the printed pointer parts (collar bore, pad pockets, yoke locating walls), the magnet and
+  rod adhesive, and the retaining-band ring size on an assumed modulus
+  ([§9.5](09-camera-telephoto.md#95-lens-pointer), [§9.8](09-camera-telephoto.md#98-retaining-bands));
+  the phone rest's retainer and safety catch ([§9.6](09-camera-telephoto.md#96-phone-rest)); the lens
+  alignment procedure, untested ([§9.9](09-camera-telephoto.md#99-lens-alignment)); and packaging
+  beside the cutoff station. The alignment tolerances rest on assumed lens and camera values, and the contact
+  loads on an assumed lens balance point and phone mass.
 - **Mirror cell** ([§10.5](10-mirror-cell.md#105-mirror-mounting),
   [§10.8](10-mirror-cell.md#108-mirror-safety-and-transport-retention)): RTV adhesion primer decision; safety
   retainers and travel cover.
@@ -37,8 +39,9 @@ Design areas marked **Provisional** in the sections above:
 2. Fabricate both threaded LED modules: drill and tap the caps and heatsinks, center each board, and set
    focus on the slit blades. Confirm that the white module reaches focus; if not, add a thin cap-flange shim
    ([§6.7](06-light-source.md#67-focus-and-module-interchange)). Bench-test the heatsink temperature rise.
-3. Design the lens pointer and phone rest in detail ([§9](09-camera-telephoto.md#9-camera-and-telephoto-support)),
-   after measuring the magnet pull on a screw tip, the lens balance point, and the cased phone mass.
+3. Fit-test the printed lens pointer parts and the retaining bands
+   ([§9](09-camera-telephoto.md#9-camera-and-telephoto-support)), after measuring the magnet pull on a screw
+   tip, the lens balance point, and the cased phone mass; design the phone rest's retainer and safety catch.
 4. Design the mirror-cell safety retainers and travel cover
    ([§10.8](10-mirror-cell.md#108-mirror-safety-and-transport-retention)).
 5. Assemble the tabletop optical head.

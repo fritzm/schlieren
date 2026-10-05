@@ -1,4 +1,4 @@
-"""Lens pointer and phone rest: mock-up of the provisional baseline concept, design §§9.4-9.7.
+"""Lens pointer and phone rest, design §§9.4-9.9.
 
 The phone and the lens threaded onto its case are one rigid body, held by the lens barrel with the phone
 hanging from it. Two separate rail fixtures:
@@ -6,20 +6,22 @@ hanging from it. Two separate rail fixtures:
 - the lens pointer, specific to the lens. Two split collars clamp the barrel, the aft one on its rear
   cylindrical section and the fore one at the front of the long section, just behind the focus ring. Each
   collar rests on a pair of ball-tip screws at ±45° in a yoke; each pair sets x and z of the lens axis at its
-  station, so together they set position, pitch, and yaw. Both yokes are one printed shoe straddling the rail.
-  Three screw tips bear on magnet pads; the aft left one sits between two short rods on its collar pad, which
-  fixes the lens fore/aft;
+  station, so together they set position, pitch, and yaw. The yokes are printed separately and bolted to one
+  shoe straddling the rail. Three screw tips bear on magnet pads; the aft left one sits between two short rods
+  on its collar pad, which fixes the lens fore/aft. An endless elastic ring round the barrel beside each yoke,
+  hooked on a peg on the yoke, holds each pad pair down;
 - the phone rest, specific to the phone. The phone is carried by its lens mount and is not gripped, but it
   hangs well to one side of the lens axis, so its weight would turn the lens in its collars. Its lower edge
   rests on one piece of rod stock lying along the rail, on the arm of a small shoe of its own. The rest is
   fixed: roll changes slightly as the aft collar is raised or lowered, which does not matter. A different
   phone needs only this part redesigned.
 
-The concept is the baseline; this model of it is a visualization envelope, not a detailed design: plain blocks,
-no fits, pockets, hold-downs, or printability worked out. The phone dimensions are the §9.1 measurements and
-Apple's drawing, and the lens section lengths and barrel diameter are measured (§9.2); the cased phone
-thickness and the focus-ring diameter are assumed, and the lens aft end is taken to be at the phone's back.
-The screws, thumb nuts, and inserts are the vendor models.
+The pointer parts are modeled in detail: fillets, pad pockets, clamp ear, insert holes, joint, and pegs. The
+lens, phone, and hardware are envelopes, except the McMaster screws, thumb nuts, and inserts, which are vendor
+models; the clamp screws and nuts and the rail clamp screws are not drawn. The phone rest has no retainer or
+safety catch yet. The phone dimensions are the §9.1 measurements and Apple's drawing, and the lens section
+lengths and barrel diameter are measured (§9.2); the cased phone thickness and the focus-ring diameter are
+assumed, and the lens aft end is taken to be at the phone's back.
 
 Coordinates: the §3.4 imaging rail frame, +x right, +y along the rail toward the mirror, z up from the rail
 top. y=0 is the back of the cased phone.
@@ -189,10 +191,17 @@ class CameraSupportParameters:
     rest_x: float = 100.0  # Rest rod under the phone's lower edge, outboard of the axis.
     rest_rod_diameter: float = 4.0
     rest_rod_length: float = 20.0
-    rest_arm_width: float = 14.0  # Along the rail.
-    rest_arm_depth: float = 14.0
-    rest_shoe_length: float = 22.0  # Along the rail.
-    rest_shoe_aft_of_rest: float = 3.0  # Shoe center aft of the rest, to stand clear of the pointer.
+    rest_shoe_length: float = 22.0  # Along the rail; the arm spans all of it, so it prints without a bridge.
+    rest_arm_depth: float = 10.0  # Kept shallow so the root fillet stays above the side-slot screw head.
+    rest_arm_overhang: float = 8.0  # Arm tip beyond the rod.
+    rest_seat_clearance_per_side: float = 0.10  # Radial, rod in its half-round seat, bonded.
+    # Profile fillets, mm. The root takes the arm's bending, so it is the largest.
+    rest_root_fillet: float = 3.0  # Arm underside to the shoe's side wall, inside corner.
+    rest_step_fillet: float = 2.0  # Arm top to the deck, inside corner.
+    rest_edge_fillet: float = 2.0  # Outside corners of the arm: tip, and the step up from the deck.
+    rest_seat_lip_fillet: float = 0.5  # Edges of the rod seat, where the phone slides on.
+    clamp_screw_head_diameter: float = 8.5  # M5 socket head cap (ISO 4762), on the outside of each skirt.
+    clamp_screw_head_clearance: float = 1.0  # Arm and its root fillet to the head, axial clearance.
 
     @property
     def shoe_outer(self) -> float:
@@ -201,8 +210,8 @@ class CameraSupportParameters:
 
     @property
     def rest_center(self) -> float:
-        """Phone rest shoe center along the rail, where its clamp screws go."""
-        return self.rest_y - self.rest_shoe_aft_of_rest
+        """Phone rest shoe center along the rail, where its clamp screws go: under the middle of the rod."""
+        return self.rest_y
 
     @property
     def pointer_clamp_ys(self) -> tuple[float, float]:
@@ -416,6 +425,16 @@ class CameraSupportParameters:
             raise ValueError("The yoke column must leave a roof over the insert")
         if not self.joint_z < self.joint_screw_length < self.joint_z + MCMASTER_94459A797_LENGTH:
             raise ValueError("The joint screw must end inside its insert")
+        if self.rest_shoe_length < self.rest_rod_length:
+            raise ValueError("The rest arm must be at least as long as the rod")
+        head_top = -self.rail_shoe.rail_height / 2 + self.clamp_screw_head_diameter / 2
+        if (
+            self.rest_arm_top - self.rest_arm_depth - self.rest_root_fillet
+            < head_top + self.clamp_screw_head_clearance
+        ):
+            raise ValueError("The rest arm root fillet must clear the side-slot screw head")
+        if self.rest_arm_top <= self.deck_top + self.rest_step_fillet + self.rest_edge_fillet:
+            raise ValueError("The rest arm must stand clear of the deck for the step fillets")
         if self.boss_top_below_tip < self.nut_below_tip + MCMASTER_92815A202_HEIGHT:
             raise ValueError("Each thumb nut must fit between its collar pad and its yoke boss")
 
@@ -744,6 +763,7 @@ def _straddle(
     y1: float,
     clamp_ys: tuple[float, ...],
     yoke_stations: tuple[float, ...] = (),
+    square_sides: tuple[int, ...] = (),
 ) -> Part:
     """Saddle straddling the rail from y0 to y1, as the common rail shoe's lower section (§5.3).
 
@@ -756,7 +776,10 @@ def _straddle(
     shoe = Pos(-p.shoe_outer, y0, -r.skirt_depth) * Box(
         2 * p.shoe_outer, y1 - y0, r.skirt_depth + r.bridge_top, align=Align.MIN
     )
-    shoe = fillet(shoe.edges().filter_by(Axis.Z), r.outside_corner_radius)
+    corners = [
+        e for e in shoe.edges().filter_by(Axis.Z) if (1 if e.center().X > 0 else -1) not in square_sides
+    ]
+    shoe = fillet(corners, r.outside_corner_radius)
     shoe -= _box(-r.rail_opening / 2, r.rail_opening / 2, y0 - 1, y1 + 1, -r.skirt_depth - 1, 0)
     for y in clamp_ys:
         shoe -= along_x((-p.shoe_outer - 1, y, -r.rail_height / 2)) * Cylinder(
@@ -819,13 +842,33 @@ def _joint_hardware(p: CameraSupportParameters, where: str, station: float) -> l
 
 
 def build_phone_rest(p: CameraSupportParameters | None = None) -> Part:
-    """Phone-specific printed shoe with the arm that carries the rest rod."""
+    """Phone-specific printed shoe with the arm that carries the rest rod, printed on its side.
+
+    The whole part is one profile in the plane of the loads, extruded along the rail, so each layer is that
+    profile and the arm, as long as the shoe, grows from the bed with no bridge or overhang; only the side-slot
+    screw bores are horizontal. The arm's inside corners are filleted against stress, the root largest, its
+    outside corners rounded, and the rod lies in a half-round seat in its top.
+    """
     p = p or CameraSupportParameters()
-    center = p.rest_center
-    rest = _straddle(p, center - p.rest_shoe_length / 2, center + p.rest_shoe_length / 2, (center,))
+    p.validate()
+    y0, y1 = p.rest_center - p.rest_shoe_length / 2, p.rest_center + p.rest_shoe_length / 2
     outer = p.shoe_outer
-    arm_y0, arm_y1 = p.rest_y - p.rest_arm_width / 2, p.rest_y + p.rest_arm_width / 2
-    rest += _box(outer, p.rest_x + 8, arm_y0, arm_y1, p.rest_arm_top - p.rest_arm_depth, p.rest_arm_top)
+    top = p.rest_arm_top
+    bottom = top - p.rest_arm_depth
+    tip = p.rest_x + p.rest_arm_overhang
+    rest = _straddle(p, y0, y1, (p.rest_center,), square_sides=(1,))
+    rest += _box(outer, tip, y0, y1, bottom, top)
+    seat_r = p.rest_rod_diameter / 2 + p.rest_seat_clearance_per_side
+    seat = along_y((p.rest_x, y0 - 1, top)) * Cylinder(seat_r, y1 - y0 + 2, align=ON_FLOOR)
+    rest -= seat
+    rest = fillet(_edges_along_rail(rest, [(outer, bottom)]), p.rest_root_fillet)
+    rest = fillet(_edges_along_rail(rest, [(outer, p.deck_top)]), p.rest_step_fillet)
+    rounded = [(outer, top), (tip, top), (tip, bottom)]
+    rest = fillet(_edges_along_rail(rest, rounded), p.rest_edge_fillet)
+    lips = [(p.rest_x + sign * seat_r, top) for sign in (-1, 1)]
+    rest = fillet(_edges_along_rail(rest, lips), p.rest_seat_lip_fillet)
+    if len(rest.solids()) != 1 or not rest.is_valid:
+        raise ValueError("Phone rest did not produce one valid solid")
     return rest
 
 

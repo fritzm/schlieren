@@ -331,6 +331,26 @@ class LensPointerTests(unittest.TestCase):
         self.assertAlmostEqual(phone.min.Z, 11.75, places=4)
         self.assertAlmostEqual(p.rest_x, 100.0)
 
+    def test_rest_arm_prints_on_its_side_without_a_bridge(self):
+        p = self.p
+        rest = build_phone_rest(p)
+        box = rest.bounding_box()
+        # The arm spans the whole shoe along the rail, so every layer of a side print is the same profile.
+        for y in (box.min.Y + 0.1, p.rest_center, box.max.Y - 0.1):
+            self.assertTrue(rest.is_inside((p.shoe_outer + 20, y, p.rest_arm_top - p.rest_arm_depth / 2)))
+        self.assertAlmostEqual(box.max.Z, p.rest_arm_top, places=4)
+        # The rod lies in a half-round seat, not on a flat top.
+        self.assertFalse(rest.is_inside((p.rest_x, p.rest_center, p.rest_arm_top - 1.0)))
+        self.assertTrue(rest.is_inside((p.rest_x, p.rest_center, p.rest_arm_top - p.rest_rod_diameter)))
+        # The root fillet fills the inside corner under the arm and stays above the screw head.
+        r = p.rest_root_fillet
+        corner = (p.shoe_outer + 0.2 * r, p.rest_center, p.rest_arm_top - p.rest_arm_depth - 0.2 * r)
+        self.assertTrue(rest.is_inside(corner))
+        head_top = -p.rail_shoe.rail_height / 2 + p.clamp_screw_head_diameter / 2
+        self.assertGreaterEqual(
+            p.rest_arm_top - p.rest_arm_depth - r - head_top, p.clamp_screw_head_clearance
+        )
+
     def test_pointer_and_rest_are_separate_single_parts(self):
         pointer, rest = build_pointer_shoe(self.p), build_phone_rest(self.p)
         yokes = [build_pointer_yoke(self.p, station) for station in self.p.stations]
