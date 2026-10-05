@@ -4,9 +4,11 @@ Two yaw-adjustable 2020 rails pivoted on the plywood front pivot plate, each wit
 strap, and a rear foot block; three Sorbothane feet. Nothing here is printed: the plywood parts are cut and
 drilled, everything else is purchased.
 
-Coordinates: the §4.2 plate frame, extended up by the §3.4 datum. The origin is at the midpoint of the
-mirror-facing plate edge, x transverse to the rails, y aft (away from the mirror), and z up with the rail top
-at z=0. A rail has side -1 (left, x<0) or +1 (right).
+Coordinates: the §3.4 pivot frame. The origin is at the midpoint of the aft plate edge, +y toward the mirror
+along the plate centerline, +x to the right seen from above with the mirror ahead, and z up with the rail top
+at z=0; the plate lies at positive y and the rails run aft of it to negative y. A rail has side -1 (left, x<0,
+the source rail) or +1 (right, the imaging rail). Each rail assembly is built in its §3.4 rail frame, the same
+senses with y along that rail and the origin at its pivot.
 
 The thumb nuts and feet are the vendor models. Other fasteners, washers, and nuts are plain nominal envelopes
 without threads or sockets, and the T-nuts are not modeled.
@@ -181,21 +183,23 @@ class FrameParameters:
         )
 
     def rail_direction(self, side: int, yaw: float = 0.0) -> tuple[float, float]:
-        """Unit vector aft along a rail, yawed outward from nominal by yaw radians."""
+        """Unit vector along a rail toward the mirror (the rail frame's +y), in the pivot frame, with the rail
+        yawed outward from nominal by yaw radians."""
         angle = self.half_angle + yaw
-        return side * sin(angle), cos(angle)
+        return -side * sin(angle), cos(angle)
 
     def rail_location(self, side: int, yaw: float = 0.0) -> Location:
-        """Rail frame: origin at the pivot on the rail top, y aft along the rail, x across it."""
+        """Rail frame in the pivot frame: origin at the pivot on the rail top, +y along the rail toward the
+        mirror, +x across it to the right."""
         x, y = self.pivot_center(side)
-        return Pos(x, y, 0) * Rot(Z=degrees(-side * (self.half_angle + yaw)))
+        return Pos(x, y, 0) * Rot(Z=degrees(side * (self.half_angle + yaw)))
 
     def pivot_center(self, side: int) -> tuple[float, float]:
-        return side * self.pivot_separation / 2, self.pivot_setback
+        return side * self.pivot_separation / 2, self.plate_depth - self.pivot_setback
 
     def strap_center(self, side: int) -> tuple[float, float]:
         (x, y), (dx, dy) = self.pivot_center(side), self.rail_direction(side)
-        return x + self.yaw_station * dx, y + self.yaw_station * dy
+        return x - self.yaw_station * dx, y - self.yaw_station * dy
 
     def yaw_bolt_centers(self, side: int) -> tuple[tuple[float, float], tuple[float, float]]:
         """The strap's two outer holes, in order of increasing x."""
@@ -292,21 +296,22 @@ def _ring(outer_diameter: float, inner_diameter: float, height: float) -> Part:
 
 def _rail_assembly(p: FrameParameters, name: str) -> Compound:
     """A rail and everything that yaws with it, in the rail frame (see FrameParameters.rail_location)."""
-    lug_center = p.joining_plate_hole_pitch
-    block_y = p.foot_block_center
+    # Everything on the rail lies aft of the pivot, at negative y.
+    lug_center = -p.joining_plate_hole_pitch
+    block_y = -p.foot_block_center
     block_bottom = p.plate_bottom
     parts = [
         labeled(
             build_rail(p.rail_length, p.rail_profile()),
             "Rail",
             BLACK_ANODIZED,
-            Pos(0, p.rail_front_setback + p.rail_length / 2, 0),
+            Pos(0, -(p.rail_front_setback + p.rail_length / 2), 0),
         ),
         labeled(build_joining_plate(p), "Pivot lug", ALUMINUM_COLOR, Pos(0, lug_center, 0)),
         labeled(build_foot_block(p), "Foot block", PLYWOOD_COLOR, Pos(0, block_y, p.plate_top)),
         labeled(mcmaster_8215k2(), "Foot", SORBOTHANE_COLOR, Pos(0, block_y, block_bottom)),
     ]
-    for index, y in enumerate((lug_center, lug_center + p.joining_plate_hole_pitch), start=1):
+    for index, y in enumerate((lug_center, lug_center - p.joining_plate_hole_pitch), start=1):
         head_down = Pos(0, y, p.joining_plate_thickness) * Rot(X=180)
         parts.append(labeled(_socket_screw(p.lug_screw_length), f"Lug screw {index}", STEEL_COLOR, head_down))
     for index, offset in enumerate((-p.foot_screw_spacing / 2, p.foot_screw_spacing / 2), start=1):
@@ -335,7 +340,12 @@ def _plate_assembly(p: FrameParameters) -> Compound:
 
     parts = [
         labeled(build_pivot_plate(p), "Pivot plate", PLYWOOD_COLOR),
-        labeled(mcmaster_8215k2(), "Front foot", SORBOTHANE_COLOR, Pos(0, p.pivot_setback, p.plate_bottom)),
+        labeled(
+            mcmaster_8215k2(),
+            "Front foot",
+            SORBOTHANE_COLOR,
+            Pos(0, p.plate_depth - p.pivot_setback, p.plate_bottom),
+        ),
     ]
 
     def stack(label: str, x: float, y: float, top: float, nut: Part) -> None:
@@ -355,7 +365,7 @@ def _plate_assembly(p: FrameParameters) -> Compound:
 
         # The strap lies across the nominal rail axis and stays there when the rail is yawed.
         x, y = p.strap_center(side)
-        across_rail = Pos(x, y, 0) * Rot(Z=degrees(-side * p.half_angle) + 90)
+        across_rail = Pos(x, y, 0) * Rot(Z=degrees(side * p.half_angle) + 90)
         parts.append(labeled(strip, f"{name} friction strip", RUBBER_COLOR, across_rail))
         parts.append(
             labeled(

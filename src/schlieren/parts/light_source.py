@@ -9,7 +9,8 @@ focus adjustment. The SM1L03 tube threads into the SM1V05 open end and the
 SM1D12 iris into the SM1L03, so lens, tube, and iris move together with focus.
 
 Axial coordinate u (mm): u=0 at the LED-side face of the SMR1/M, +u toward
-the slit. Assembly coordinates: x transverse, +y along u, z=0 at the rail top.
+the slit. Assembly coordinates: the §3.4 source rail frame, x transverse, +y along u (toward the mirror), z=0 at the
+rail top.
 Nothing here is printed; the solids are vendor STEP models (Thorlabs TR50/M,
 SMR1/M, SM1CP2M, SM1V05, ACL2520U-A, SM1L03, SM1D12; Alpha CN40-40B) or, for the
 star board and LED package, representative solids built from the outline

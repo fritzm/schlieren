@@ -24,6 +24,8 @@ Name files `<Brand>-<part>.step` following the `docs/reference/` convention (`/`
 | `Alpha-CN40-40B.step` | CN40-40B (2009, AP203 config control design, mm) | alphanovatech.com CN40-40B | Axis +Y through origin, base mounting face at y=0, 3.0 mm base, pins to y=40 mm; one solid |
 | `McMaster-92815A202.step` | 92815A202_NO THREADS_Low-Profile Knurled-Head Thumb Nuts.STEP (SolidWorks 2024, AP203, mm) | mcmaster.com 92815A202, "3-D STEP", no threads | Axis +Z through origin, z from -2.5 to 2.5 mm; Ø20 mm knurled head, Ø5 mm plain bore, collar at +Z; one solid |
 | `McMaster-8215K2.step` | 8215K2_Load-Rated Adhesive-Back Sorbothane Bumper.STEP (SolidWorks 2024, AP203, mm) | mcmaster.com 8215K2, "3-D STEP" | Hemisphere, axis +Y through origin, adhesive face at y=-7.9375 mm, apex at y=7.9375 mm; Ø1.25 in; one solid |
+| `McMaster-93339A252.step` | 93339A252_NO THREADS_Easy-Adjust Alloy Steel Ball-Tip Set Screw.STEP (SolidWorks 2024, AP203, mm) | mcmaster.com 93339A252, "3-D STEP", no threads | Axis +Z through origin, hex-socket end at z=11.99 mm, ball apex at z=-13.01 mm, 25.0 mm overall; Ø5 mm plain body, 2.5 mm hex socket; two solids (body, Ø3 mm ball) |
+| `McMaster-94459A797.step` | 94459A797_NO THREADS_Heat-Set Inserts for Plastic.STEP (SolidWorks 2024, AP203, mm) | mcmaster.com 94459A797, "3-D STEP", no threads | Axis +Y through origin, flange face at y=3.874 mm, pilot end at y=-2.858 mm, 6.73 mm overall; Ø7.92 mm flange, knurled tapered body, Ø5 mm plain bore; one solid |
 
 Thorlabs CAD downloads are listed per product through the site's GraphQL API at
 `https://www.thorlabs.com/graphql`, e.g. `{ products(storeId: "Thorlabs-Website", filter: "name:\"SM1RC/M\"")

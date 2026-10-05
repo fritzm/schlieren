@@ -9,8 +9,9 @@ substantive work.
 
 ## Sources of truth
 
-Git is authoritative for the design baseline and the BOM. Google Drive holds generated views only: a
-read-only PDF of the design document for sharing, and the BOM Sheet for sharing and GUI editing.
+Git is authoritative for the design baseline and the BOM. Rendered views of both, `docs/schlieren-design.pdf`
+and `bom/schlieren-bom.xlsx`, are generated from those sources and versioned beside them for reading and
+sharing by repository link.
 
 Use the following priority order:
 
@@ -40,8 +41,9 @@ unless the task needs it.
 
 `uv run build-design-doc` concatenates the fragments into `exports/docs/schlieren-design.md`
 (generated; never edit it) and copies `docs/design/figures/` beside it. With `--pdf` it also writes
-`schlieren-design.html` and `schlieren-design.pdf` there; the PDF is the copy shared on Drive. The PDF step
-needs a local Chrome or Chromium and network access (KaTeX, for the formulas).
+`schlieren-design.html` there and prints it to `docs/schlieren-design.pdf`, the versioned rendered copy. The
+PDF step needs a local Chrome or Chromium and network access (KaTeX, for the formulas). Rebuild the PDF when
+the fragments or figures change; it is not reproducible byte for byte, so do not rebuild it needlessly.
 
 Figures in `docs/design/figures/` are PNG renders (`src/schlieren/render.py`) and SVG drawings generated from
 the CAD by a part command's `--figure` option and versioned so the fragments display without a build. They are derived
@@ -53,8 +55,14 @@ Single CSV, one row per BOM line item. Authoritative for BOM contents, quantitie
 vendors, SKUs, procurement status, inventory state, purchasing notes, and the CAD state of printed parts
 (`CAD ready` / `CAD open`). The design fragments do not track procurement or CAD state.
 
-`uv run build-bom-xlsx` builds `exports/bom/schlieren-bom.xlsx` (BOM tab, Summary formulas, procurement-state
-conditional formatting) from the CSV; import that into Drive for the Sheets view.
+`uv run build-bom-xlsx` builds `bom/schlieren-bom.xlsx` (BOM tab, Summary formulas, procurement-state
+conditional formatting) from the CSV. The workbook is versioned and must match the CSV (a test checks this):
+rebuild it whenever `bom.csv` changes. The build is reproducible, so an unchanged CSV gives an unchanged file.
+
+The workbook is also the convenient place to edit the BOM in a spreadsheet program. Such edits are not
+authoritative until reconciled into the CSV: `uv run reconcile-bom [workbook.xlsx]` reports the differences
+row by row, and `--apply` writes them to `bom.csv`. Review the report with the user before applying; never
+overwrite the CSV blindly.
 
 Read `bom/bom.csv` before answering or acting on procurement, BOM, inventory, vendor, quantity, or purchasing
 questions.
@@ -65,19 +73,6 @@ Vendor drawings and datasheets for purchased parts, named `<Brand>-<part>.pdf` (
 Consult them for catalog dimensions. They are manufacturer specifications, not measured values or committed
 project dimensions; a measurement recorded in `docs/design/` takes precedence.
 
-### Google Drive copies
-
-The design document is shared in Projects/iPhone schlieren/ as a read-only PDF, `schlieren-design.pdf` from
-`uv run build-design-doc --pdf`, uploaded by hand from time to time. It is not edited on Drive; change the
-`docs/design/` fragments and rebuild.
-
-The Sheet "schlieren-bom" in the same folder is a working copy. Edits made there are not authoritative until
-reconciled into Git by diffing against the current `bom.csv`, never by blind overwrite. Archive snapshots are
-historical only.
-
-Agent access to Drive goes through the fritzm-agents isolation model: read-only pulls are fine; writes to
-Drive require explicit user confirmation each time. Do not assume any particular auth method is set up.
-
 ## Repository authority
 
 This Git repository is authoritative for version-controlled engineering artifacts, including:
@@ -87,7 +82,8 @@ This Git repository is authoritative for version-controlled engineering artifact
 - repository configuration and agent instructions
 - deliberately versioned generated outputs, if any
 
-Generated files (`exports/`, the consolidated design document, the .xlsx) are derived artifacts.
+Generated files (`exports/`, the consolidated design document, `docs/schlieren-design.pdf`,
+`bom/schlieren-bom.xlsx`) are derived artifacts; the PDF and the workbook are versioned, `exports/` is not.
 
 ## Design decisions and canonical updates
 
@@ -215,8 +211,9 @@ uv run python -m unittest tests.test_carriage -v      # one test module
 uvx ruff check . && uvx ruff format .                 # lint/format (line length 110, from pyproject.toml)
 uv run <command> --help                               # part commands: build/export (--show opens the viewer)
 uv run rail-shoe --figure                             # re-render docs/design/figures/rail-shoe.png
-uv run build-design-doc [--pdf]                       # docs/design/ -> exports/docs/schlieren-design.md (+ .pdf)
-uv run build-bom-xlsx                                 # bom/bom.csv -> exports/bom/schlieren-bom.xlsx
+uv run build-design-doc [--pdf]                       # docs/design/ -> exports/docs/, docs/schlieren-design.pdf
+uv run build-bom-xlsx                                 # bom/bom.csv -> bom/schlieren-bom.xlsx
+uv run reconcile-bom [workbook.xlsx] [--apply]        # edited workbook -> differences from bom/bom.csv
 ```
 
 Commands live in `src/schlieren/cli/` and are registered in `pyproject.toml` `[project.scripts]`; run them with
@@ -225,8 +222,8 @@ current directory. To add a command: write `cli/<name>.py` with `main()` and reg
 `[project.scripts]`.
 
 A `.claude/` PostToolUse hook auto-formats edited `.py` files with ruff, and a PreToolUse hook blocks direct
-edits to `exports/`. Project skills: `/finalize-decision` (propagate an accepted decision) and `/sync-drive`
-(design-document PDF for Drive; diff-based BOM Sheet reconciliation).
+edits to `exports/`. Project skills: `/finalize-decision` (propagate an accepted decision) and
+`/reconcile-bom` (review and apply edits made in a copy of the BOM workbook).
 
 ## Working with the BOM
 
@@ -324,7 +321,7 @@ At the beginning of a substantial task:
 5. make the requested change;
 6. run appropriate verification;
 7. update `docs/design/` and `bom/bom.csv` only when the user has finalized a decision and the rules above
-   require it; push to Drive only with explicit confirmation.
+   require it, and rebuild the versioned PDF and workbook to match.
 
 The objective is to keep CAD, implementation, design state, and procurement state synchronized without
 treating exploratory work as finalized engineering.

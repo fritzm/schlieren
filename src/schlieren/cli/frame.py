@@ -14,8 +14,8 @@ from schlieren.parts.frame_drawing import pivot_plate_drawing_svg
 DEFAULT_FIGURE = Path("docs/design/figures/frame.png")
 DRAWING_FIGURE_NAME = "frame-pivot-plate.svg"  # The §4.2 drilling drawing, written beside the figure.
 FIGURE_VIEW_DIRECTION = (
-    -1.0,
-    -0.8,
+    1.0,
+    0.8,
     0.7,
 )  # From ahead of the pivot plate and above, looking aft down the rails.
 
@@ -41,7 +41,7 @@ def main() -> None:
     p.validate()
 
     print(f"Rail half-angle {degrees(p.half_angle):.3f} deg")
-    print("Pivot plate holes (x transverse, y aft of the mirror-facing edge), mm:")
+    print("Pivot plate holes (pivot frame: +x right, +y toward the mirror from the aft edge), mm:")
     for name, (x, y) in p.plate_holes().items():
         print(f"  {name:<16} ({x:+7.2f}, {y:6.2f})")
     print(f"Pivot screw beyond its nyloc {p.pivot_screw_protrusion:.2f} mm")

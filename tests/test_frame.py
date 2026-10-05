@@ -53,15 +53,16 @@ class FrameTests(unittest.TestCase):
     def test_half_angle_and_hole_layout_match_design(self):
         p = self.p
         self.assertAlmostEqual(degrees(p.half_angle), 0.850, places=3)
-        self.assert_point(p.strap_center(-1), (-48.84, 114.99))
-        self.assert_point(p.strap_center(1), (48.84, 114.99))
+        # Pivot frame: +y toward the mirror from the aft edge, so the pivots are forward of the straps.
+        self.assert_point(p.strap_center(-1), (-48.84, 35.01))
+        self.assert_point(p.strap_center(1), (48.84, 35.01))
         expected = {
-            "Left pivot": (-47.50, 25.00),
-            "Right pivot": (47.50, 25.00),
-            "Left outer yaw": (-68.83, 114.69),
-            "Left inner yaw": (-28.84, 115.29),
-            "Right inner yaw": (28.84, 115.29),
-            "Right outer yaw": (68.83, 114.69),
+            "Left pivot": (-47.50, 125.00),
+            "Right pivot": (47.50, 125.00),
+            "Left outer yaw": (-68.83, 35.31),
+            "Left inner yaw": (-28.84, 34.71),
+            "Right inner yaw": (28.84, 34.71),
+            "Right outer yaw": (68.83, 35.31),
         }
         holes = p.plate_holes()
         self.assertEqual(set(holes), set(expected))
@@ -126,9 +127,11 @@ class FrameTests(unittest.TestCase):
                 self.assertAlmostEqual(a.Z, b.Z, places=4)
         foot_x = right["Foot"].center().X
         self.assertGreater(foot_x, self.p.pivot_separation / 2)
-        # The foot follows the chief ray from the pivot.
-        dx, _ = self.p.rail_direction(1)
-        self.assertAlmostEqual(foot_x, 47.5 + self.p.foot_block_center * dx, places=4)
+        # The foot follows the chief ray aft from the pivot, against the rail's +y.
+        dx, dy = self.p.rail_direction(1)
+        self.assertGreater(dy, 0.0)
+        self.assertAlmostEqual(foot_x, 47.5 - self.p.foot_block_center * dx, places=4)
+        self.assertLess(right["Foot"].center().Y, 0.0)  # Aft of the plate.
 
     def test_three_feet_stand_on_one_plane_below_everything(self):
         p = self.p
@@ -137,7 +140,7 @@ class FrameTests(unittest.TestCase):
             self.assertAlmostEqual(foot.bounding_box().min.Z, p.table, places=5)
         front = feet[0].center()
         self.assertAlmostEqual(front.X, 0.0, places=5)
-        self.assertAlmostEqual(front.Y, p.pivot_setback, places=5)
+        self.assertAlmostEqual(front.Y, p.plate_depth - p.pivot_setback, places=5)
         lowest_other = min(
             part.bounding_box().min.Z for part in leaves(self.frame) if not part.label.endswith("oot")
         )
@@ -251,16 +254,16 @@ class FrameTests(unittest.TestCase):
         for name, (x, y) in p.plate_holes().items():
             with self.subTest(hole=name):
                 circle = circles[name]
-                # Seen from above: plate x to the right, aft up the sheet.
+                # Seen from above with the mirror ahead: +x to the right, +y up the sheet.
                 self.assertAlmostEqual(float(circle.get("cx")) - left, x + 90.0, places=3)
                 self.assertAlmostEqual(top + 150.0 - float(circle.get("cy")), y, places=3)
                 self.assertAlmostEqual(float(circle.get("r")), 2.75, places=3)
         figures = [e.text for e in svg.iter(f"{ns}text")]
-        # x from the plate centerline, y from the mirror-facing edge, as in §4.2.
+        # x from the plate centerline, y from the aft edge, as in §4.2.
         x_figures = ("-90.0", "-68.8", "-47.5", "-28.8", "0 CL", "+28.8", "+47.5", "+68.8", "+90.0")
-        for expected in (*x_figures, "25.0", "114.7", "150.0"):
+        for expected in (*x_figures, "0.0", "35.3", "125.0", "150.0"):
             self.assertIn(expected, figures)
-        self.assertTrue(any("115.3" in figure for figure in figures))
+        self.assertTrue(any("34.7" in figure for figure in figures))
 
     def test_assembly_groups(self):
         self.assertEqual(

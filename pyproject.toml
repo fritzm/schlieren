@@ -14,6 +14,7 @@ dependencies = [
 ]
 
 [project.scripts]
+camera-support = "schlieren.cli.camera_support:main"
 carriage = "schlieren.cli.carriage:main"
 cassette = "schlieren.cli.cassette:main"
 frame = "schlieren.cli.frame:main"
@@ -22,6 +23,7 @@ rail-shoe = "schlieren.cli.rail_shoe:main"
 slit-head = "schlieren.cli.slit_head:main"
 build-bom-xlsx = "schlieren.cli.build_bom_xlsx:main"
 build-design-doc = "schlieren.cli.build_design_doc:main"
+reconcile-bom = "schlieren.cli.reconcile_bom:main"
 
 [build-system]
 requires = ["uv_build>=0.12.17,<0.13.0"]

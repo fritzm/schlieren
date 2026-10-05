@@ -39,6 +39,11 @@ Define nominal zero as:
 - fine-adjust translation vertical;
 - fine adjuster pointing upward.
 
+The cassette-loading side of the carriage faces the mirror, so cassettes are loaded and retracted from the
+forward side, away from the telephoto. The spigot, slip ring, and post are therefore aft of the base plate; the
+ring's rear face, 22.2 mm behind the plate back, is the rearmost part of the station on the optical axis and
+is what the telephoto front must clear.
+
 Fore/aft optical positioning is done by moving the rail shoe.
 
 Rotation envelope: the 2020 rail runs beneath the carriage at every rail position, 72.35 mm below the axis.

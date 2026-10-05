@@ -57,7 +57,7 @@ CAR-002,Carriages,1,"Slip ring for SM1 lens tubes, M4 Tap",Post attachment,Thorl
 CAR-005,Carriages,1,"Fine adjustment screw with knob, 1/4""-80, 1.00"" long",Cassette positioner,Thorlabs,FAS100,3,each,In hand,§8.3,"Three in hand: one for the cutoff carriage, two for the slit head (SLT-002); no spare."
 CAR-006,Carriages,1,Compression springs,Cassette counter-force plunger,McMaster,2006N292,5,pack,In hand,§8.3,Shared 5-pack with the slit-head preload spring (SLT-004).
 CAR-007,Carriages,1,1/4 in-80 inserts,Cassette positioner,McMaster,98625A950,3,each,In hand,§8.3,"Three in hand: one for the cutoff carriage, two for the slit head (SLT-003); no spare."
-CAR-008,Carriages,,"4 mm × 45 mm shoulder screw, 18-8 SS",Existing stock; former spring guide / retract handle,McMaster,91273A377,2,each,In hand,,"No longer allocated: the spring seats in printed cups and the plunger retracts by a thumb tab (§8.5); both screws in hand are spare."
+CAR-008,Carriages,,"4 mm × 45 mm shoulder screw, 18-8 SS",Existing stock; former spring guide / retract handle,McMaster,91273A377,2,each,In hand,,No longer allocated: the spring seats in printed cups and the plunger retracts by a thumb tab (§8.5); both screws in hand are spare.
 CAR-009,Carriages,3,Brass escutcheon pins,Cassette interface datums,McMaster,97936A109,300,pack,In hand,§8.4,Cutoff carriage only.
 CAR-010,Carriages,1,ABS printed carriage bodies,,,,,,CAD ready,§8.1,Cutoff carriage only.
 CAR-012,Carriages,1,N52 Bar Magnet - 10mm L x 5mm W x 2mm H,Hard bearing pads for FAS100-driven plungers,Amazon,B0DMCY4FN1,120,pack,In hand,§8.3,Nickel-plated rectangular magnets; one hard contact insert for the FAS100-driven ABS plunger of the cutoff carriage.
@@ -67,7 +67,7 @@ CAR-015,Carriages,8,"M3 × 0.5 hex nut, 18-8 SS, 5.5 mm AF × 2.4 mm high",Keepe
 CAS-001,Cassettes,6,ABS printed cassettes,,,,,,CAD ready,§8.6,The source slit no longer uses a cassette (§7); quantity to be re-confirmed for the cutoff cassettes.
 CAS-002,Cassettes,1,Rubber/EPDM sheet,Retaining bar friction pads,McMaster,9852N37,1,sheet,In hand,"§§7.5, 8.7",Also faces the two slit-head blade clamp bars (§7.5).
 CAS-003,Cassettes,12,"M3 × 14 mm 90° flat-head socket screw, 18-8 SS",Retaining bar screws,McMaster,92125A133,100,pack,In hand,§8.7,Provisional 14 mm length; fit-test with 4 mm bar.
-CAS-004,Cassettes,12,"M3 × 0.5 full-height hex nut, 18-8 SS",Retaining bar nuts,McMaster,91828A211,100,pack,In hand,§8.7,"Shared 100-pack: 31 total nuts now allocated across split clamps, keeper frames, cassette retaining bars, and the slit head; 69 spare."
+CAS-004,Cassettes,12,"M3 × 0.5 full-height hex nut, 18-8 SS",Retaining bar nuts,McMaster,91828A211,100,pack,In hand,§8.7,"Shared 100-pack: 33 total nuts now allocated across split clamps, keeper frames, cassette retaining bars, the slit head, and the lens collars; 67 spare."
 CAS-005,Cassettes,12,"M3 flat washer, 3.2 mm ID × 7 mm OD, 18-8 SS",Retaining bar washers,McMaster,93475A210,100,pack,In hand,§8.7,"Under exposed nut, on printed retaining bar. Shared 100-pack with the slit-head spacer washers (SLT-009)."
 CAS-006,Cassettes,,"Razor blade, Stanley 11-515",Existing stock; former slit-cassette allocation,Amazon,B000NNIIQM,100,pack,In hand,,No longer allocated after the flexure slit head decision (§7); the slit blades are SLT-006.
 CAS-007,Cassettes,1,"Razor blade, Stanley 11-515",Cutoff cassette,Amazon,B000NNIIQM,100,pack,In hand,§8,
@@ -78,13 +78,16 @@ CAS-011,Cassettes,1,Rosco Roscolux Designer Color Selector Swatchbook - 3 x 6,Cu
 CAM-001,Imager,1,iPhone,Imager,Apple,iPhone 17,1,each,In hand,§9.1,
 CAM-002,Imager,1,iPhone camera app,Imager,Blackmagic Design,Blackmagic Camera,1,each,In hand,§9.1,
 CAM-003,Imager,1,"Telephoto lens, 17mm",Imager,iOgrapher,proSnap 7×,1,each,In hand,§9.2,
-CAM-004,Imager,3,Ball-tip jack screws,Phone and saddle adjusters,McMaster,93339A252,4,each,In hand,§9.5,
-CAM-005,Imager,3,M5 heat-set inserts,Phone and saddle adjusters,McMaster,94459A797,,,In hand,§9.5,
-CAM-006,Imager,3,"M5 thumb nuts, low profile black oxide",Phone and saddle adjusters,McMaster,92815A202,10,pack,In hand,§9.5,
-CAM-007,Imager,1,ABS printed phone cradle assembly,,,,,,CAD open,§9.3,
-CAM-008,Imager,1,ABS printed lens saddle assembly,,,,,,CAD open,§9.4,
-CAM-009,Imager,3,N52 Bar Magnet - 10mm L x 5mm W x 2mm H,Hard bearing pads for phone/lens jack contacts,Amazon,B0DMCY4FN1,120,pack,In hand,§§9.3–9.5,Nickel-plated rectangular magnets; allocation covers the two phone-cradle jack contacts and the lens-saddle jack contact.
-CAM-010,Imager,1,"Stainless steel round rod assortment, 100 mm length",Phone-cradle / imager vertical-guide prototyping stock,Amazon,B08N4TSNPW,1,pack,In hand,§§9.3–9.5,Working-stock assortment for guide-rod prototyping; exact diameter and installed allocation remain open.
+CAM-004,Imager,4,Ball-tip jack screws,Lens pointer adjusters,McMaster,93339A252,4,each,In hand,§9.7,Two under each lens collar. All four of the pack in hand are allocated; no spare.
+CAM-005,Imager,4,M5 flanged heat-set inserts,Lens pointer adjusters,McMaster,94459A797,25,pack,In hand,§9.7,"One per adjuster, set in the pointer shoe yoke bosses. One pack of 25 in hand; 21 spare."
+CAM-006,Imager,4,"M5 thumb nuts, low profile black oxide",Lens pointer adjuster handwheels,McMaster,92815A202,10,pack,In hand,§9.7,Threadlocked mid-screw. Shared 10-pack with the yaw clamp thumb nuts (FRM-010).
+CAM-007,Imager,1,ABS printed phone rest,Roll support under the phone's lower edge,,,,,CAD open,§9.6,Phone-specific rail shoe with an arm carrying the rest rod. Concept mock-up only.
+CAM-008,Imager,1,ABS printed lens pointer shoe,Rail shoe with the two yokes that hold the four adjusters,,,,,CAD open,§9.5,Lens-specific. Concept mock-up only.
+CAM-009,Imager,3,N52 Bar Magnet - 10mm L x 5mm W x 2mm H,Hard bearing pads under three lens-pointer screw tips,Amazon,B0DMCY4FN1,120,pack,In hand,§§9.5–9.7,"Nickel-plated rectangular magnets, 10 mm side across the rail; the fourth screw tip sits in a rod groove (CAM-010)."
+CAM-010,Imager,1,"Stainless steel round rod assortment, 100 mm length",Groove rods at the fourth lens-pointer screw; phone rest rod,Amazon,B08N4TSNPW,1,pack,In hand,§§9.5–9.7,Working-stock assortment; rod diameters and cut lengths remain open.
+CAM-011,Imager,2,ABS printed lens collars,"Split clamps on the lens barrel, carrying the adjuster pads",,,,,CAD open,§9.5,Two identical collars for the 37 mm barrel. Concept mock-up only.
+CAM-012,Imager,2,"M3 × 12 mm socket head screw, 18-8 SS",Lens collar clamp screws,McMaster,91292A114,100,pack,In hand,§9.5,Shared common 100-pack. Provisional: one screw per collar.
+CAM-013,Imager,2,"M3 × 0.5 hex nut, 18-8 SS, 5.5 mm AF × 2.4 mm high",Lens collar clamp nuts,McMaster,91828A211,100,pack,In hand,§9.5,Shared common 100-pack (see CAS-004). Provisional: one nut per collar.
 MIR-001,Mirror cell,1,"Skyoptikst D203F1600 spherical mirror, Ø203 mm, f=1600 mm",,Amazon,B0B5RR41CT,1,each,In hand,§10.5,
 MIR-002,Mirror cell,2,Baltic birch plywood panel 12 × 12 × 1/2 in,Base and adjuster plates,Amazon,B09D941GXR,4,pack,In hand,§10.1,
 MIR-003,Mirror cell,1,Baltic birch plywood panel 12 × 12 × 3/4 in,Mirror plate,Amazon,B0GL9G45GH,1,each,In hand,§10.1,

@@ -31,8 +31,9 @@ uv run frame --figure      # re-render docs/design/figures/frame.png and frame-p
 uv run python -m unittest tests.test_frame -v
 ```
 
-Coordinates are the §4.2 plate frame (origin at the midpoint of the
-mirror-facing plate edge, x transverse, y aft) with z=0 at the rail top.
+Coordinates are the §3.4 pivot frame (origin at the midpoint of the aft
+plate edge, +y toward the mirror, +x to the right seen from above with the
+mirror ahead) with z=0 at the rail top; the rails run aft to negative y. Each rail assembly is built in its own §3.4 rail frame.
 Yaw is in degrees outward from the nominal half-angle; the straps and their
 bolts stay fixed to the plate. The rails use `rail.py` with the measured
 §4.1 slot dimensions; the slot-floor taper is still nominal. The thumb nuts
@@ -74,7 +75,7 @@ uv run python -m unittest tests.test_light_source -v
 ```
 
 Axial coordinate u has u=0 at the LED-side SMR1/M face; the viewer uses x
-transverse, +y toward the slit, z=0 at the rail top. Board thicknesses are
+transverse, +y toward the slit and mirror (the §3.4 source rail frame), z=0 at the rail top. Board thicknesses are
 caliper measurements; emitter heights are calculated from the LED outline
 drawings in `docs/reference/`; other dimensions are catalog values. Tests cover
 the optimum-gap calculation, focus margin for each module, SMR1/M thread
@@ -99,8 +100,9 @@ uv run python -m unittest tests.test_slit_head -v
 ```
 
 The local frame has x along the slit, z the adjustment axis (knobs up at
-rotation 0), and y toward the mirror, with the origin at the slit center on the
-blade-seat plane. Tests cover the optical-height datum, flexure topology
+rotation 0), and +y out of the blade-seat (front) side, with the origin at the
+slit center on the blade-seat plane. On the rail the front faces the light
+source (§7.2), so local +y is rail -y. Tests cover the optical-height datum, flexure topology
 (the blades are the only links between frame, platform, and width stage),
 strain, preload, stage rotation, the spigot fit and shoulder, hardware
 interference, and clearance to the post and shoe swept over ±110°.
@@ -108,7 +110,7 @@ interference, and clearance to the post and shoe swept over ±110°.
 ## Common rail shoe
 
 Source: `src/schlieren/parts/rail_shoe.py` (§5.3). All dimensions are millimeters;
-x is across the rail, y is along it, and z=0 is the rail top. The model and its
+coordinates are a §3.4 rail frame: x across the rail, +y along it toward the mirror, and z=0 at the rail top. The model and its
 ABS allowances are final, fit-tested on printed shoes.
 
 ```sh
@@ -157,7 +159,8 @@ Now used for the cutoff only; the source slit uses the flexure slit head (§7).
 base plate with spigot, separate guide frame, keeper plate, and two plungers.
 The base carries an integral rear shouldered spigot that the SM1RC/M clamps directly
 (§8.1), the same interface as the slit-head adapter. Local XY is the cassette plane, +Y
-points toward the fine adjuster, and +Z is the loading direction; this local
+points toward the fine adjuster, and +Z is the loading direction, which
+faces the mirror (§8.1); this local
 Z origin is the plate back, not the rail-top optical-height datum.
 
 ```sh
@@ -317,7 +320,6 @@ Tests include complete assembly/hardware interference against the carriage
 at four orientations and three travel positions, aperture clearance, and
 washer bearing lands. Physical bevel seating, datum-pin height, screw seating,
 ABS fit, tool access, and tilted loading/removal still need validation.
-The canonical Google resources are unchanged by this preliminary design.
 
 The rear carriage tube boss uses a provisional 30.73 mm bore (30.48 mm
 catalog OD plus 0.25 mm diametral clearance) and 4.5 mm radial wall. It
@@ -343,3 +345,28 @@ with the deck at z=0 and spigot end at z=26.16 mm. Choose guide-frame print
 orientation/supports to accommodate its downward locating pegs. Spigot fit in the
 SM1RC/M and rotation clearance to the rail remain physical validation items. The
 committed design is recorded in `docs/design/08-cutoff.md` (§8).
+
+## Camera support — lens pointer and phone rest (concept mock-up)
+
+`src/schlieren/parts/camera_support.py` is the mock-up of the provisional
+baseline concept of §§9.4–9.7: a lens-specific pointer that holds the lens in
+two collars, each on a pair of inclined ball-tip screws, and a phone-specific
+rest under the lower edge of the phone hanging from the lens. It places the
+parts with plain envelopes and is not a detailed or printable design. Phone
+and lens dimensions are the §9.1–9.2 measurements and the Apple drawing; the
+focus-ring diameter and the cased phone thickness are assumed. The screws,
+thumb nuts, and heat-set inserts are the McMaster vendor models. Coordinates
+are the §3.4 imaging rail frame with y=0 at the back of the phone.
+
+```sh
+uv run camera-support --show
+uv run camera-support --figure     # re-render docs/design/figures/camera-support.png
+uv run camera-support --views      # several PNG views into exports/figures/
+uv run python -m unittest tests.test_camera_support -v
+```
+
+Tests cover the collar stations against the measured barrel sections and the
+focus ring, the lens axis on the optical datum, each screw tip touching its
+pad or the groove rods, the four inserts buried in their yoke bosses, the
+phone's lower edge on the rest rod, and the pointer and rest staying separate
+parts clear of each other and of the cutoff station's rail shoe.

@@ -1,6 +1,7 @@
 """Common rail shoe; design §§3–5 (§5.3).
 
-Coordinates: x across the rail, y along it, z up; rail top is z=0.
+Coordinates: a §3.4 rail frame, +x across the rail (right, seen from above with the mirror ahead), +y along
+it toward the mirror, z up; rail top is z=0.
 The post is at x=y=0. Both ears point toward +x: nut at +y, screw at -y.
 Envelope, hole layout, and fabrication allowances are fit-tested on printed shoes.
 No ABS lies between the post bottom and the metal datum disc.

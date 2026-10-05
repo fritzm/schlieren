@@ -13,12 +13,7 @@
     ],
     "ask": [
       "Bash(git commit:*)",
-      "Bash(git push:*)",
-      "mcp__claude_ai_Google_Drive__create_file",
-      "mcp__claude_ai_Google_Drive__update_file",
-      "mcp__claude_ai_Google_Drive__copy_file",
-      "mcp__claude_ai_Google_Drive__share_file",
-      "mcp__claude_ai_Google_Drive__trash_file"
+      "Bash(git push:*)"
     ]
   },
   "hooks": {

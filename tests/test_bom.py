@@ -2,10 +2,11 @@
 
 import csv
 import re
+import tempfile
 import unittest
 from pathlib import Path
 
-from schlieren.cli import build_bom_xlsx
+from schlieren.cli import build_bom_xlsx, reconcile_bom
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 HEADER = [
@@ -53,6 +54,14 @@ class BomCsvTests(unittest.TestCase):
     def test_subsystems_match_summary_labels(self):
         script = build_bom_xlsx
         self.assertLessEqual({r[1] for r in self.rows}, set(script.SUBSYSTEMS))
+
+    def test_csv_is_in_canonical_form(self):
+        # reconcile-bom --apply rewrites the whole file; canonical quoting keeps that diff to the edited rows.
+        path = REPO_ROOT / "bom" / "bom.csv"
+        with tempfile.TemporaryDirectory() as tmp:
+            rewritten = Path(tmp) / "bom.csv"
+            reconcile_bom.write_bom(rewritten, self.header, self.rows)
+            self.assertEqual(rewritten.read_bytes(), path.read_bytes())
 
 
 class BomSectionReferenceTests(unittest.TestCase):
@@ -107,6 +116,90 @@ class BomWorkbookTests(unittest.TestCase):
             n_rows = sum(1 for _ in csv.reader(f)) - 1
         self.assertEqual(ranges, {f"J2:J{n_rows + 1}"})
         self.assertEqual(sum(len(r.rules) for r in cf), 5)
+
+    def test_save_is_reproducible(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            first, second = Path(tmp) / "a.xlsx", Path(tmp) / "b.xlsx"
+            build_bom_xlsx.save_workbook(self.wb, first)
+            build_bom_xlsx.save_workbook(build_bom_xlsx.build_workbook(), second)
+            self.assertEqual(first.read_bytes(), second.read_bytes())
+
+    def test_versioned_workbook_matches_csv(self):
+        """bom/schlieren-bom.xlsx is generated; rebuild it (uv run build-bom-xlsx) whenever bom.csv changes."""
+        header, rows = build_bom_xlsx.read_bom(build_bom_xlsx.BOM_CSV)
+        workbook_header, workbook_rows = reconcile_bom.read_workbook_bom(build_bom_xlsx.DEFAULT_OUTPUT)
+        self.assertEqual(workbook_header, header)
+        diff = reconcile_bom.diff_bom(header, rows, workbook_rows)
+        self.assertFalse(diff, reconcile_bom.report(diff, header))
+
+
+class ReconcileBomTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.header, cls.rows = build_bom_xlsx.read_bom(build_bom_xlsx.BOM_CSV)
+
+    def edited_workbook_rows(self, edit):
+        """Rows read back from a workbook built from the CSV and then edited on its BOM tab."""
+        wb = build_bom_xlsx.build_workbook()
+        edit(wb[build_bom_xlsx.BOM_SHEET])
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "edited.xlsx"
+            wb.save(path)
+            header, rows = reconcile_bom.read_workbook_bom(path)
+        self.assertEqual(header, self.header)
+        return rows
+
+    def test_unedited_workbook_round_trips(self):
+        rows = self.edited_workbook_rows(lambda ws: None)
+        self.assertEqual(rows, self.rows)
+        self.assertFalse(reconcile_bom.diff_bom(self.header, self.rows, rows))
+
+    def test_reports_changed_added_and_removed_rows(self):
+        state = self.header.index("Procurement state")
+        qty = self.header.index("Qty")
+        first, second = self.rows[0], self.rows[1]
+        new_row = [
+            "TST-001",
+            first[1],
+            2.0,
+            "Test item",
+            None,
+            None,
+            None,
+            None,
+            None,
+            "Specified",
+            None,
+            None,
+        ]
+
+        def edit(ws):
+            ws.cell(row=2, column=state + 1, value="On order")
+            ws.cell(row=2, column=qty + 1, value=7.0)  # Spreadsheet programs save whole numbers as floats.
+            ws.delete_rows(3)
+            ws.append(new_row)
+
+        diff = reconcile_bom.diff_bom(self.header, self.rows, self.edited_workbook_rows(edit))
+        self.assertEqual(
+            diff.changed,
+            {first[0]: [("Qty", first[qty], "7"), ("Procurement state", first[state], "On order")]},
+        )
+        self.assertEqual([r[0] for r in diff.removed], [second[0]])
+        self.assertEqual([r[:4] for r in diff.added], [["TST-001", first[1], "2", "Test item"]])
+        self.assertFalse(diff.reordered)
+        self.assertIn(f"Changed {first[0]}", reconcile_bom.report(diff, self.header))
+
+    def test_reports_reordering(self):
+        def edit(ws):
+            ws.move_range("A2:L2", rows=len(self.rows))  # First data row to below the last.
+
+        diff = reconcile_bom.diff_bom(self.header, self.rows, self.edited_workbook_rows(edit))
+        self.assertTrue(diff.reordered)
+        self.assertFalse(diff.added or diff.removed or diff.changed)
+
+    def test_rejects_duplicate_ids(self):
+        with self.assertRaises(SystemExit):
+            reconcile_bom.diff_bom(self.header, self.rows, [*self.rows, self.rows[0]])
 
 
 if __name__ == "__main__":

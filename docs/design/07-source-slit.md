@@ -46,8 +46,13 @@ Both parallelograms translate perpendicular to the slit. Their parasitic motion 
 the slit, where it is harmless.
 
 Local frame, at rotation 0: slit horizontal, adjustment axis vertical, both FAS100 knobs up. The blade-seat
-plane (the carrier front faces) faces the mirror; every other front face stands back 1 mm so the
+plane (the carrier front faces) is the front of the head; every other front face stands back 1 mm so the
 overhanging blades cannot rub moving or fixed parts.
+
+The head's front faces the light source, so the LED image on the blades is in plain view for centering and
+focus ([§6.7](06-light-source.md#67-focus-and-module-interchange)). The spigot adapter, slip ring, and post
+are on the mirror side of the blades. In this section "front" and "back" refer to the head, not to the rail
+direction.
 
 Envelope: about 80 × 88 × 13 mm, excluding knobs and adapter.
 

@@ -3,12 +3,12 @@
 The output is a generated artifact; edit the fragments, never the output. The fragments' figures are copied
 to figures/ beside it, so their relative image links resolve there too.
 
---pdf also writes a print-styled HTML page and a PDF of it beside the Markdown; the PDF is the read-only copy
-shared on Google Drive. It has a linked contents list, working section links, and a heading outline
-(bookmarks). It is printed by a locally installed headless Chrome or Chromium, and its formulas are typeset by
-KaTeX loaded from a CDN, so that step needs network access. No Drive access is used here.
+--pdf also writes a print-styled HTML page beside the Markdown and prints it to docs/schlieren-design.pdf,
+the rendered copy versioned in the repository for reading and sharing. The PDF has a linked contents list,
+working section links, and a heading outline (bookmarks). It is printed by a locally installed headless Chrome
+or Chromium, and its formulas are typeset by KaTeX loaded from a CDN, so that step needs network access.
 
-    uv run build-design-doc [--pdf] [-o exports/docs/schlieren-design.md]
+    uv run build-design-doc [--pdf [PATH]] [-o exports/docs/schlieren-design.md]
 """
 
 import argparse
@@ -22,6 +22,7 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 FRAGMENT_DIR = REPO_ROOT / "docs" / "design"
 FIGURE_DIR = FRAGMENT_DIR / "figures"
 DEFAULT_OUTPUT = REPO_ROOT / "exports" / "docs" / "schlieren-design.md"
+DEFAULT_PDF = REPO_ROOT / "docs" / "schlieren-design.pdf"
 
 CHROME_CANDIDATES = (
     "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
@@ -130,7 +131,14 @@ def print_pdf(html: Path, pdf: Path) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("-o", "--output", type=Path, default=DEFAULT_OUTPUT)
-    parser.add_argument("--pdf", action="store_true", help="Also write a print-styled .html and .pdf")
+    parser.add_argument(
+        "--pdf",
+        type=Path,
+        nargs="?",
+        const=DEFAULT_PDF,
+        metavar="PATH",
+        help=f"Also write a print-styled .html and print it to a PDF (default {DEFAULT_PDF.relative_to(REPO_ROOT)})",
+    )
     args = parser.parse_args()
     args.output.parent.mkdir(parents=True, exist_ok=True)
     design_doc = build_design_doc()
@@ -144,9 +152,9 @@ def main() -> None:
         html = args.output.with_suffix(".html")
         html.write_text(build_print_html(design_doc, args.output.stem), encoding="utf-8")
         print(f"Wrote {html}")
-        pdf = args.output.with_suffix(".pdf")
-        print_pdf(html, pdf)
-        print(f"Wrote {pdf}")
+        args.pdf.parent.mkdir(parents=True, exist_ok=True)
+        print_pdf(html, args.pdf)
+        print(f"Wrote {args.pdf}")
 
 
 if __name__ == "__main__":

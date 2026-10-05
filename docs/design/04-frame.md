@@ -36,11 +36,13 @@ B0DP6JBX4Y).
 The front pivot plate is a 180 × 150 × 12.7 mm Baltic-birch rectangle with no structural cutouts. The 180 mm
 dimension is transverse to the rails and the 150 mm dimension is fore/aft.
 
-Plate coordinates have the origin at the midpoint of the mirror-facing edge, x transverse to the rails and y
-aft, away from the mirror. The pivot centers are:
+Plate coordinates are the pivot frame ([§3.4](01-context-and-layout.md#34-common-optical-axis-datum)): the
+origin is at the midpoint of the aft edge, +y runs toward the mirror along the plate centerline, and +x runs to
+the right seen from above with the mirror ahead. The mirror-facing edge is at y = 150 mm, and the left rail is
+the one at negative x. The pivot line is 25 mm behind the mirror-facing edge, giving pivot centers at:
 
-- left pivot: (-47.50, 25.00) mm;
-- right pivot: (+47.50, 25.00) mm;
+- left pivot: (-47.50, 125.00) mm;
+- right pivot: (+47.50, 125.00) mm;
 - total pivot separation: 95 mm.
 
 The nominal rail half-angle implied by the 95 mm pivot separation and approximately 3.2 m mirror distance is
@@ -49,20 +51,20 @@ about 0.850°, or about 1.70° total chief-ray separation.
 Each yaw-clamp station is 90 mm aft of its pivot along the nominal rail axis, giving yaw-strap centers at
 approximately:
 
-- left strap center: (-48.84, 114.99) mm;
-- right strap center: (+48.84, 114.99) mm.
+- left strap center: (-48.84, 35.01) mm;
+- right strap center: (+48.84, 35.01) mm.
 
 Each fixed yaw strap is perpendicular to its rail at the nominal rail angle. The two outer holes of each
 3-hole joining plate give fixed yaw-bolt centers at approximately:
 
-- left outer: (-68.83, 114.69) mm;
-- left inner: (-28.84, 115.29) mm;
-- right inner: (+28.84, 115.29) mm;
-- right outer: (+68.83, 114.69) mm.
+- left outer: (-68.83, 35.31) mm;
+- left inner: (-28.84, 34.71) mm;
+- right inner: (+28.84, 34.71) mm;
+- right outer: (+68.83, 35.31) mm.
 
 <p align="center">
   <img src="figures/frame-pivot-plate.svg" width="640" style="max-width: 95%"
-       alt="Front pivot plate drilling layout seen from above: the two pivot holes and four yaw-bolt holes, dimensioned in x from the plate centerline and in y from the mirror-facing edge">
+       alt="Front pivot plate drilling layout seen from above: the two pivot holes and four yaw-bolt holes, dimensioned in x from the plate centerline and in y from the aft edge, with the mirror-facing edge at the top">
   <br>
   <em>Fig. 2. Front pivot plate drilling layout, seen from above, in plate coordinates</em>
 </p>
@@ -73,7 +75,7 @@ spacing, the rail has approximately 7.5 mm nominal edge-to-M5-shank clearance pe
 2.8 mm clearance at ±3° rail yaw from nominal for the 90 mm pivot-to-clamp distance. Rail-to-bolt contact
 does not occur until roughly ±4.7° from nominal, so the fixed-hole geometry provides ample adjustment range.
 
-A front Sorbothane support foot is centered at approximately (0, 25 mm), directly between the two rail pivots,
+A front Sorbothane support foot is centered at approximately (0, 125) mm, directly between the two rail pivots,
 keeping the support point on the pivot line and clear of the pivot and yaw hardware.
 
 1/2 in Baltic-birch sheet stock is shared across the tabletop frame and mirror cell: it supplies the front

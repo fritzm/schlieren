@@ -1,14 +1,19 @@
 """Build a BOM workbook (.xlsx) from bom/bom.csv.
 
 Produces a BOM tab (pure data, with procurement-state conditional formatting) and a Summary tab whose
-rollups are live formulas over the BOM tab. The .xlsx is a generated artifact; bom/bom.csv is authoritative.
-Importing the .xlsx into Google Drive yields the Sheets view. No Drive access is used here.
+rollups are live formulas over the BOM tab. The .xlsx is a generated artifact, versioned beside the CSV so it
+can be opened or shared straight from the repository; bom/bom.csv is authoritative. Edits made in a copy of
+the workbook come back through `uv run reconcile-bom`.
 
-    uv run build-bom-xlsx [-o exports/bom/schlieren-bom.xlsx]
+    uv run build-bom-xlsx [-o bom/schlieren-bom.xlsx]
 """
 
 import argparse
 import csv
+import io
+import re
+import zipfile
+from datetime import UTC, datetime
 from pathlib import Path
 
 from openpyxl import Workbook
@@ -18,7 +23,12 @@ from openpyxl.styles import Font, PatternFill
 # src/schlieren/cli/<module>.py -> repo root (valid for the editable install that uv sync creates)
 REPO_ROOT = Path(__file__).resolve().parents[3]
 BOM_CSV = REPO_ROOT / "bom" / "bom.csv"
-DEFAULT_OUTPUT = REPO_ROOT / "exports" / "bom" / "schlieren-bom.xlsx"
+DEFAULT_OUTPUT = REPO_ROOT / "bom" / "schlieren-bom.xlsx"
+BOM_SHEET = "BOM"
+# Fixed timestamps, so that rebuilding from an unchanged CSV reproduces the versioned file byte for byte.
+WORKBOOK_TIMESTAMP = datetime(2026, 1, 1, tzinfo=UTC)
+ZIP_TIMESTAMP = (1980, 1, 1, 0, 0, 0)
+CORE_PROPERTIES = "docProps/core.xml"
 
 NUMERIC_COLUMNS = {"Qty", "Pkg Size"}
 STATE_COLUMN = "Procurement state"
@@ -29,7 +39,7 @@ STATE_FILLS = {
     "In hand": "FFD6EDD6",
     "On order": "FFFFEDB2",
     "To procure": "FFFFD1D1",
-    "Specified": None,  # counted in Summary; no fill rule in the source Sheet
+    "Specified": None,  # counted in Summary; no fill rule
     "CAD ready": "FFD1E5FF",
     "CAD open": "FFEAD8FF",
 }
@@ -51,7 +61,7 @@ SUMMARY_NOTES_TOP = [
     (None, None),
     (
         "Canonical workbook",
-        "Generated from bom/bom.csv in Git. Edits made here are a working copy until reconciled into the CSV.",
+        "Generated from bom/bom.csv in Git. Edits made here count only once reconciled into the CSV (reconcile-bom).",
     ),
     ("Design baseline", "docs/design/ fragments in Git (consolidated: schlieren-design)."),
     (
@@ -81,7 +91,10 @@ SUMMARY_NOTES_BOTTOM = [
     ("Data rule", "Do not insert subsystem header or separator rows inside the BOM table."),
     (None, None),
     ("Specified", "Part defined by the design; vendor, SKU, or quantity still to be confirmed."),
-    ("CAD ready", "Printed part with a CadQuery model in src/schlieren/parts/; ready to print and fit-test."),
+    (
+        "CAD ready",
+        "Printed part with a build123d model in src/schlieren/parts/; ready to print and fit-test.",
+    ),
     ("CAD open", "Printed part whose custom geometry is still to be designed."),
 ]
 
@@ -155,8 +168,25 @@ def build_workbook(bom_csv: Path = BOM_CSV) -> Workbook:
     summary = wb.active
     summary.title = "Summary"
     write_summary_sheet(summary, header)
-    write_bom_sheet(wb.create_sheet("BOM"), header, rows)
+    write_bom_sheet(wb.create_sheet(BOM_SHEET), header, rows)
     return wb
+
+
+def save_workbook(wb: Workbook, path: Path) -> None:
+    """Save with fixed document and archive timestamps (see WORKBOOK_TIMESTAMP)."""
+    wb.properties.created = WORKBOOK_TIMESTAMP
+    buffer = io.BytesIO()
+    wb.save(buffer)
+    stamp = f"\\g<1>{WORKBOOK_TIMESTAMP:%Y-%m-%dT%H:%M:%SZ}<".encode()
+    with zipfile.ZipFile(buffer) as saved, zipfile.ZipFile(path, "w") as out:
+        for member in saved.infolist():
+            data = saved.read(member)
+            if member.filename == CORE_PROPERTIES:  # openpyxl stamps the save time here
+                data = re.sub(rb"(<dcterms:modified[^>]*>)[^<]*<", stamp, data)
+            fixed = zipfile.ZipInfo(member.filename, date_time=ZIP_TIMESTAMP)
+            fixed.compress_type = zipfile.ZIP_DEFLATED
+            fixed.external_attr = member.external_attr
+            out.writestr(fixed, data)
 
 
 def main() -> None:
@@ -164,7 +194,7 @@ def main() -> None:
     parser.add_argument("-o", "--output", type=Path, default=DEFAULT_OUTPUT)
     args = parser.parse_args()
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    build_workbook().save(args.output)
+    save_workbook(build_workbook(), args.output)
     print(f"Wrote {args.output}")
 
 

@@ -32,6 +32,17 @@ MCMASTER_92815A202_DIAMETER = 20.0
 MCMASTER_92815A202_HEIGHT = 5.0
 # McMaster 8215K2 model: hemisphere on axis +Y through the origin, adhesive face at y=-height/2, apex toward +Y.
 MCMASTER_8215K2_DIAMETER = 1.25 * INCH
+# McMaster 93339A252 model: axis +Z through the origin, hex-socket end at z=11.99 mm, ball apex at z=-13.01 mm;
+# the Ø3 mm ball is a separate solid centered 1.5 mm inside its apex.
+MCMASTER_93339A252_LENGTH = 25.0  # Overall, socket end to ball apex.
+MCMASTER_93339A252_DIAMETER = 5.0
+MCMASTER_93339A252_BALL_DIAMETER = 3.0
+MCMASTER_93339A252_APEX_Z = -13.01
+# McMaster 94459A797 model (inch-dimensioned): axis +Y through the origin, flange face at y=0.1525 in, tapered
+# pilot end at y=-0.1125 in; Ø5 mm plain bore.
+MCMASTER_94459A797_LENGTH = 0.265 * INCH
+MCMASTER_94459A797_FLANGE_DIAMETER = 0.312 * INCH
+MCMASTER_94459A797_FLANGE_Y = 0.1525 * INCH
 MCMASTER_8215K2_HEIGHT = 0.625 * INCH
 
 
@@ -152,3 +163,21 @@ def mcmaster_8215k2() -> Compound:
     The adhesive face is at z=0, with the dome hanging toward -Z.
     """
     return _moved("McMaster-8215K2.step", Pos(0, 0, -MCMASTER_8215K2_HEIGHT / 2) * Rot(X=-90))
+
+
+@cache
+def mcmaster_93339a252() -> Compound:
+    """McMaster 93339A252 M5 × 25 ball-tip set screw (unthreaded model); axis +Z through the origin.
+
+    The ball apex is at the origin, pointing +Z, with the screw body and its hex socket toward -Z.
+    """
+    return _moved("McMaster-93339A252.step", Pos(0, 0, MCMASTER_93339A252_APEX_Z) * Rot(X=180))
+
+
+@cache
+def mcmaster_94459a797() -> Compound:
+    """McMaster 94459A797 M5 flanged heat-set insert (unthreaded model); axis +Z through the origin.
+
+    The flange face is at z=0, with the knurled body and its tapered pilot end toward -Z.
+    """
+    return _moved("McMaster-94459A797.step", Pos(0, 0, -MCMASTER_94459A797_FLANGE_Y) * Rot(X=90))

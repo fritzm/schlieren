@@ -2,7 +2,7 @@
 
 **Design Description**
 
-Revision: Oct 3, 2026
+Revision: Oct 4, 2026
 
 This document describes the design of the apparatus, and is maintained authoritatively as Markdown fragments
 in the project repo on github at https://github.com/fritzm/schlieren/tree/main/docs/design.
@@ -77,8 +77,8 @@ therefore does not itself require the same precision vertical positioning as the
 The imaging rail contains:
 
 1. cutoff carriage at the returned slit-image plane;
-2. telephoto lens support;
-3. iPhone cradle.
+2. lens pointer, holding the telephoto lens;
+3. phone rest, under the iPhone hanging from the lens.
 
 The spherical mirror forms an image of the source slit back near the optical head. Refractive-index gradients
 in the test region near the mirror deflect portions of this return beam relative to the cutoff, producing
@@ -168,6 +168,30 @@ For optical-head CAD:
 - take the rail top surface as z = 0;
 - do not reference optical height to the tabletop or support feet;
 - small whole-frame pitch/roll errors can be corrected at the mirror.
+
+The optical head uses three coordinate frames with common senses:
+
+- +y forward, toward the mirror;
+- +x to the right when looking down from above with the mirror ahead;
+- +z up, with the rail top at z = 0.
+
+The frames are right-handed and differ only in where their y axes lie:
+
+- pivot frame: y along the centerline of the front pivot plate, with the origin at the midpoint of its aft
+  edge ([§4.2](04-frame.md#42-front-pivot-plate));
+- source rail frame: y along the source rail centerline;
+- imaging rail frame: y along the imaging rail centerline.
+
+The imaging rail is the right rail, at positive x in the pivot frame, and the source rail is the left. The
+phone extends well to the right of its camera axis when sighting along that axis toward the mirror
+([§9.1](09-camera-telephoto.md#91-camera)), so this places its overhang on the outer side of the imaging
+rail, clear of the source rail and its fixtures.
+
+Each rail frame yaws with its rail, about 0.85° from the pivot frame at nominal
+([§4.2](04-frame.md#42-front-pivot-plate)). Its origin is on the rail top at the rail's pivot axis; a fixture
+is described with its own rail station at y = 0. In a rail frame the optical axis is at x = 0, z = 72.35 mm,
+and pitch, yaw, and roll are rotations about x, z, and y respectively. A rotating fixture may define a local
+frame, stated where it is used.
 
 The common post stack is:
 

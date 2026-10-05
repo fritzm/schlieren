@@ -1,7 +1,7 @@
 """Preliminary five-piece slit/cutoff carriage, baseline refreshed 2026-09-22 §8.
 
 Local XY is the cassette plane, +Y points toward the FAS100, +Z is the
-cassette-loading side. Z=0 is the plate back, not the rail-height datum.
+cassette-loading side, which faces the mirror (§8.1). Z=0 is the plate back, not the rail-height datum.
 The rear shouldered spigot, clamped directly by the SM1RC/M, is integral with the base. Dimensions beyond
 explicit baseline interfaces are provisional first-print targets; no purchased threads are modeled.
 """
@@ -515,13 +515,15 @@ def _add_spigot(base, p):
 
 
 def support_location(p=None, rotation=0.0):
-    """Rail-assembly frame (x transverse, y along the rail, z up from the rail top, post at x=y=0) -> local
-    carriage frame, with the carriage rotated by `rotation` degrees about the optical axis.
+    """Imaging rail frame (§3.4: +x right, +y along the rail toward the mirror, z up from the rail top, post at
+    x=y=0) -> local carriage frame, with the carriage rotated by `rotation` degrees about the optical axis.
 
-    Rotation 0 is the nominal zero of §8.1: fine adjuster (+Y) up.
+    The cassette-loading side (+Z) faces the mirror, so rail +y is local +Z and rail +x is local -X; the
+    spigot, slip ring, and post are aft of the plate. Rotation 0 is the nominal zero of §8.1: fine adjuster
+    (+Y) up.
     """
     p = p or CarriageParameters()
-    return Rot(Z=-rotation) * Pos(0, -p.optical_height, p.post_axis_z) * Rot(X=-90)
+    return Rot(Z=-rotation) * Pos(0, -p.optical_height, p.post_axis_z) * Rot(Y=180) * Rot(X=-90)
 
 
 def _side_lugs(p, z, height):

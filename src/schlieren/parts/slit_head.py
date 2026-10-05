@@ -21,12 +21,13 @@ spigot that the SM1RC/M split ring clamps, so the head rotates continuously abou
 blades; no holes go through the blades.
 
 Local frame, shown at rotation 0 (slit horizontal, knobs up): x along the slit, z the adjustment axis (+z
-toward the knobs), y the optical axis (+y toward the mirror). The origin is the slit center on the
-blade-seat plane (the carrier front faces). The head is modeled as printed: the platform at mid travel and
-the width stage at zero flexure deflection.
+toward the knobs), y the optical axis, +y out of the head's front, the blade-seat side. The origin is the slit
+center on the blade-seat plane (the carrier front faces). The head is modeled as printed: the platform at
+mid travel and the width stage at zero flexure deflection.
 
-Assembly frame matches light_source: x transverse, y along the rail toward the mirror, z=0 at the rail top,
-with the slit post at x=y=0.
+Assembly frame is the §3.4 source rail frame, as light_source: x transverse, +y along the rail toward the
+mirror, z=0 at the rail top, with the slit post at x=y=0. The head's front faces the light source (§7.2), so
+local +y is rail -y and the spigot, ring, and post are on the mirror side of the blades (see head_location).
 """
 
 from dataclasses import dataclass
@@ -647,10 +648,13 @@ def _blade(p, sign):
 
 
 def head_location(p, rotation=0.0):
-    """Local head frame -> assembly frame; rotation in degrees about the optical axis (+y)."""
-    ring_front = SM1RC_M_THICKNESS / 2
-    front_y = ring_front + p.ring_gap - p.adapter_back
-    return Pos(0, front_y, p.optical_height) * Rot(Y=rotation)
+    """Local head frame -> assembly (source rail) frame; rotation in degrees about the head's local +y.
+
+    The head's front (local +y, the blade side) faces the light source, toward rail -y.
+    """
+    ring_face = SM1RC_M_THICKNESS / 2
+    blade_plane = ring_face + p.ring_gap - p.adapter_back  # Blade-seat plane from the post axis.
+    return Pos(0, -blade_plane, p.optical_height) * Rot(Z=180) * Rot(Y=rotation)
 
 
 def build_slit_head_assembly(p=None, rotation=0.0, include_support=True):
