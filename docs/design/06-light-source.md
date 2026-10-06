@@ -78,13 +78,14 @@ Interfaces:
 - The cap flange is the repeatable axial stop on the SMR1/M face; the module's rotational position at the
   stop does not matter.
 - The SM1 thread centers the emitter on the condenser axis; no vertical calibration is required.
-- Heatsink fastening: socket-head screws through the CN40 base in the open cells between pins, into blind M3
-  holes tapped about 2.5 mm deep in the cap rear face, with M3 × 6 mm screws (**provisional** length). Keep
-  the rear holes angularly offset from the front M2 board holes ([§6.4](#64-led-board-mounting)), since the
-  cap is only 5.33 mm thick.
-- Leads drop past the board edge through the board's edge slots, through a pair of holes drilled at about
-  r = 11 mm through the cap (inside the thread root) and the heatsink base, and out between the pins.
-- Fabrication is drilling and tapping of purchased aluminum parts only.
+- Heatsink fastening: three M3 × 6 mm socket-head screws (**provisional** length) through the CN40 base, their
+  heads in open cells between four pins, into M3 holes tapped through the cap. Positions are in
+  [§6.4](#64-led-board-mounting).
+- Leads drop past the star board's flat edges through two Ø2.0 mm holes in the cap and the heatsink base, 11.0
+  mm from the axis (inside the thread root), and out between the pin columns. **Provisional:** the hole size
+  against the lead insulation ([§6.4](#64-led-board-mounting)).
+- Fabrication is drilling and tapping of purchased aluminum parts only. Every hole in the cap and the heatsink
+  base is a through hole, so plain plug taps are enough.
 
 Clearances:
 
@@ -122,9 +123,11 @@ Fastening standard:
 
 - M2 × 0.4
 - McMaster 92095A452, M2 × 5 mm screws
-- tapped directly into the front (threaded) face of the SM1CP2M cap
-- 1.6 mm tap drill
-- M2 × 0.4 HSS tap
+- tapped directly into the front (threaded) face of the SM1CP2M cap, in through holes
+- 1.6 mm tap drill, drilled through
+- M2 × 0.4 HSS plug tap; a through hole needs no bottoming tap
+
+The 5 mm screws are shorter than the 5.33 mm cap, so they stop short of the heatsink face.
 
 Use the cap's center-drill mark as the layout datum for the board hole pattern. Transfer each carrier board's
 hole geometry from the physical board rather than assuming it from the other module. Slightly oversized board
@@ -138,6 +141,50 @@ exposed board contacts:
 - M2 lubricant-filled nylon flat washer
 
 A thin layer of thermal compound is used between board and cap.
+
+#### Cap and heatsink hole layout
+
+All holes in the cap and in the heatsink base are **through holes**, drilled from one face. Plain plug taps
+(M3 × 0.5, M2 × 0.4) cut full threads through them; no bottoming tap is required. No screw reaches the far
+face of the cap: the M2 screws are 5 mm under the head and the M3 screws engage about 3 mm past the 3.0 mm
+heatsink base.
+
+<p align="center">
+  <img src="figures/light-source-holes.svg" width="640" style="max-width: 95%"
+       alt="Plan view from the LED side of the cap, the 20 mm star board, and the heatsink pins, with the M3, M2, and lead holes and their positions">
+  <br>
+  <em>Fig. 5. Cap and heatsink hole layout, seen from the LED side, in the frame of the heatsink pin lattice</em>
+</p>
+
+Coordinates are in millimeters from the optical axis, +x to the right and +y up as seen from the LED side, in
+the frame of the pin lattice; the cap and the heatsink are drilled to the same coordinates:
+
+| Hole | Position | In the cap | In the heatsink base |
+|---|---|---|---|
+| M3, three | (+6.90, +6.90), (−6.90, +6.90), (+6.90, −6.90) | Ø2.5 tap drill, M3 × 0.5 | Ø3.3 clearance |
+| M2, two | (±9.525, 0) | Ø1.6 tap drill, M2 × 0.4 | none |
+| Lead, two | (0, ±11.0) | Ø2.0 | Ø2.0 |
+
+- M3 holes: each is the center of a cell of the pin lattice, 4.88 mm from each of four pins, so the Ø5.5 mm
+  socket head lands between the pins with 0.73 mm to spare and the key reaches it. Three screws hold the
+  heatsink without a rocking axis; the fourth cell is free but unused. Roughly 70% of each hole's area lies under the star, a small loss of its
+  thermal contact.
+- M2 holes: in the two opposite corner notches of the star on the x axis (the 0.375 in notch center radius). They are covered by the solid heatsink base, so they do not meet the
+  pins.
+- Lead holes: on the axis through the midpoints of two opposite flat edges of the star, tangent to each edge
+  at 11.0 mm radius. Each is 1.1 mm from the nearest pins, in the 4.1 mm channel between pin columns.
+- The smallest wall between holes in the cap, measured to the thread major radius, is 4.9 mm. The lead holes'
+  outer edges, at 12.0 mm radius, leave about 0.5 mm to the estimated thread root.
+
+**Provisional:** the lead hole size against the insulation of the leads (a Ø2.0 hole leaves no room for
+thicker wire, since the outer edge is limited by the thread root); the cap thread root radius (estimated at
+12.5 mm, to be measured on a cap); and the Convoy star's notch geometry, which is taken from the NewEnergy
+drawing and must be checked against the physical board.
+
+Full-scale drilling templates for both parts, to print at 100% and stick on, come from
+`uv run light-source --templates`: the cap template goes on the LED-side face with its crosshair on the
+center-drill mark, and the heatsink template on the flat base face, aligned to the pin rows. Both are viewed
+from the LED side, so they share one set of coordinates.
 
 ### 6.5 Power and wiring
 

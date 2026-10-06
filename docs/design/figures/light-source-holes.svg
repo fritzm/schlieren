@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100.0mm" height="76.0mm" viewBox="0 0 100.0 76.0">
+<style>
+text { font-family: Helvetica, Arial, sans-serif; fill: #000; }
+.heatsink { fill: #ececec; stroke: #777; stroke-width: 0.2; }
+.pin { fill: #b8b8b8; stroke: #555; stroke-width: 0.15; }
+.ghost { fill: none; stroke: #666; stroke-width: 0.15; stroke-dasharray: 0.8 0.5; }
+.cap { fill: none; stroke: #b36200; stroke-width: 0.25; }
+.cap-flange { fill: none; stroke: #b36200; stroke-width: 0.2; stroke-dasharray: 2 1; }
+.cap-root { fill: none; stroke: #b36200; stroke-width: 0.15; stroke-dasharray: 0.6 0.6; }
+.star { fill: #d6e4f2; stroke: #2f5f98; stroke-width: 0.25; fill-opacity: 0.9; }
+.notch { fill: #fff; stroke: none; }
+.notch-edge { fill: none; stroke: #2f5f98; stroke-width: 0.25; }
+.m3 { fill: #fff; stroke: #c00; stroke-width: 0.3; }
+.m2 { fill: #fff; stroke: #070; stroke-width: 0.3; }
+.lead { fill: #fc0; stroke: #000; stroke-width: 0.25; }
+.thread { fill: none; stroke: #c00; stroke-width: 0.15; }
+.head { fill: none; stroke: #c00; stroke-width: 0.15; stroke-dasharray: 0.8 0.5; }
+.mark { stroke: #000; stroke-width: 0.15; }
+.axis { stroke: #888; stroke-width: 0.12; stroke-dasharray: 3 0.8 0.6 0.8; }
+.leader { stroke: #444; stroke-width: 0.12; }
+.cut { fill: none; stroke: #000; stroke-width: 0.3; }
+.tick { stroke: #000; stroke-width: 0.2; }
+.box { fill: none; stroke: #000; stroke-width: 0.2; }
+</style>
+<rect width="100.0" height="76.0" fill="#fff"/>
+<circle class="heatsink" cx="50.000" cy="36.000" r="20.000"/>
+<circle class="pin" cx="32.750" cy="39.450" r="1.400"/>
+<circle class="pin" cx="32.750" cy="32.550" r="1.400"/>
+<circle class="pin" cx="39.650" cy="46.350" r="1.400"/>
+<circle class="pin" cx="39.650" cy="39.450" r="1.400"/>
+<circle class="pin" cx="39.650" cy="32.550" r="1.400"/>
+<circle class="pin" cx="39.650" cy="25.650" r="1.400"/>
+<circle class="pin" cx="46.550" cy="53.250" r="1.400"/>
+<circle class="pin" cx="46.550" cy="46.350" r="1.400"/>
+<circle class="pin" cx="46.550" cy="39.450" r="1.400"/>
+<circle class="pin" cx="46.550" cy="32.550" r="1.400"/>
+<circle class="pin" cx="46.550" cy="25.650" r="1.400"/>
+<circle class="pin" cx="46.550" cy="18.750" r="1.400"/>
+<circle class="pin" cx="53.450" cy="53.250" r="1.400"/>
+<circle class="pin" cx="53.450" cy="46.350" r="1.400"/>
+<circle class="pin" cx="53.450" cy="39.450" r="1.400"/>
+<circle class="pin" cx="53.450" cy="32.550" r="1.400"/>
+<circle class="pin" cx="53.450" cy="25.650" r="1.400"/>
+<circle class="pin" cx="53.450" cy="18.750" r="1.400"/>
+<circle class="pin" cx="60.350" cy="46.350" r="1.400"/>
+<circle class="pin" cx="60.350" cy="39.450" r="1.400"/>
+<circle class="pin" cx="60.350" cy="32.550" r="1.400"/>
+<circle class="pin" cx="60.350" cy="25.650" r="1.400"/>
+<circle class="pin" cx="67.250" cy="39.450" r="1.400"/>
+<circle class="pin" cx="67.250" cy="32.550" r="1.400"/>
+<circle class="cap-root" cx="50.000" cy="36.000" r="12.500"/>
+<circle class="cap" cx="50.000" cy="36.000" r="13.144"/>
+<circle class="cap-flange" cx="50.000" cy="36.000" r="15.240"/>
+<polygon class="star" points="61.547,36.000 55.774,26.000 44.226,26.000 38.453,36.000 44.226,46.000 55.774,46.000"/>
+<path class="notch" d="M 61.700,34.413 L 59.525,34.413 A 1.5875 1.5875 0 0 0 59.525,37.587 L 61.700,37.587 Z"/>
+<path class="notch-edge" d="M 61.700,34.413 L 59.525,34.413 A 1.5875 1.5875 0 0 0 59.525,37.587 L 61.700,37.587"/>
+<path class="notch" d="M 54.475,25.074 L 53.388,26.957 A 1.5875 1.5875 0 0 0 56.137,28.545 L 57.225,26.661 Z"/>
+<path class="notch-edge" d="M 54.475,25.074 L 53.388,26.957 A 1.5875 1.5875 0 0 0 56.137,28.545 L 57.225,26.661"/>
+<path class="notch" d="M 42.775,26.661 L 43.863,28.545 A 1.5875 1.5875 0 0 0 46.612,26.957 L 45.525,25.074 Z"/>
+<path class="notch-edge" d="M 42.775,26.661 L 43.863,28.545 A 1.5875 1.5875 0 0 0 46.612,26.957 L 45.525,25.074"/>
+<path class="notch" d="M 38.300,37.587 L 40.475,37.587 A 1.5875 1.5875 0 0 0 40.475,34.413 L 38.300,34.413 Z"/>
+<path class="notch-edge" d="M 38.300,37.587 L 40.475,37.587 A 1.5875 1.5875 0 0 0 40.475,34.413 L 38.300,34.413"/>
+<path class="notch" d="M 45.525,46.926 L 46.612,45.043 A 1.5875 1.5875 0 0 0 43.863,43.455 L 42.775,45.339 Z"/>
+<path class="notch-edge" d="M 45.525,46.926 L 46.612,45.043 A 1.5875 1.5875 0 0 0 43.863,43.455 L 42.775,45.339"/>
+<path class="notch" d="M 57.225,45.339 L 56.137,43.455 A 1.5875 1.5875 0 0 0 53.388,45.043 L 54.475,46.926 Z"/>
+<path class="notch-edge" d="M 57.225,45.339 L 56.137,43.455 A 1.5875 1.5875 0 0 0 53.388,45.043 L 54.475,46.926"/>
+<line class="axis" x1="27.000" y1="36.000" x2="73.000" y2="36.000"/>
+<line class="axis" x1="50.000" y1="59.000" x2="50.000" y2="13.000"/>
+<circle class="head" cx="56.900" cy="29.100" r="2.750"/>
+<circle class="thread" cx="56.900" cy="29.100" r="1.500"/>
+<circle class="m3" data-hole="m3-1" cx="56.900" cy="29.100" r="1.250"/>
+<circle class="head" cx="43.100" cy="29.100" r="2.750"/>
+<circle class="thread" cx="43.100" cy="29.100" r="1.500"/>
+<circle class="m3" data-hole="m3-2" cx="43.100" cy="29.100" r="1.250"/>
+<circle class="head" cx="56.900" cy="42.900" r="2.750"/>
+<circle class="thread" cx="56.900" cy="42.900" r="1.500"/>
+<circle class="m3" data-hole="m3-3" cx="56.900" cy="42.900" r="1.250"/>
+<circle class="m2" data-hole="m2-1" cx="59.525" cy="36.000" r="0.800"/>
+<circle class="m2" data-hole="m2-2" cx="40.475" cy="36.000" r="0.800"/>
+<circle class="lead" data-hole="lead-1" cx="50.000" cy="25.000" r="1.000"/>
+<circle class="lead" data-hole="lead-2" cx="50.000" cy="47.000" r="1.000"/>
+<line class="leader" x1="56.900" y1="29.100" x2="79.000" y2="19.000"/>
+<text x="80.000" y="19.510" font-size="1.7" text-anchor="start">M3 (+6.90, +6.90)</text>
+<line class="leader" x1="43.100" y1="29.100" x2="21.000" y2="19.000"/>
+<text x="20.000" y="19.510" font-size="1.7" text-anchor="end">M3 (-6.90, +6.90)</text>
+<line class="leader" x1="56.900" y1="42.900" x2="79.000" y2="53.000"/>
+<text x="80.000" y="53.510" font-size="1.7" text-anchor="start">M3 (+6.90, -6.90)</text>
+<line class="leader" x1="59.525" y1="36.000" x2="79.000" y2="33.000"/>
+<text x="80.000" y="33.510" font-size="1.7" text-anchor="start">M2 (+9.525, +0.0)</text>
+<line class="leader" x1="40.475" y1="36.000" x2="21.000" y2="33.000"/>
+<text x="20.000" y="33.510" font-size="1.7" text-anchor="end">M2 (-9.525, +0.0)</text>
+<line class="leader" x1="50.000" y1="25.000" x2="63.000" y2="9.000"/>
+<text x="64.000" y="9.510" font-size="1.7" text-anchor="start">lead Ø2 (+0.0, +11.0)</text>
+<line class="leader" x1="50.000" y1="47.000" x2="63.000" y2="63.000"/>
+<text x="64.000" y="63.510" font-size="1.7" text-anchor="start">lead Ø2 (+0.0, -11.0)</text>
+<text x="3.000" y="67.500" font-size="1.35" text-anchor="start">View from the LED side. Orange: cap (Ø26.29 thread, estimated root, Ø30.48 flange); blue: 20 mm star; grey: heatsink pins.</text>
+<text x="3.000" y="69.700" font-size="1.35" text-anchor="start">All holes are through. Cap drilled M3 Ø2.5, M2 Ø1.6, lead Ø2; heatsink base M3 Ø3.3, lead Ø2. Dashed circles: M3 head Ø5.5.</text>
+</svg>

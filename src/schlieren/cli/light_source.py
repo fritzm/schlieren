@@ -10,8 +10,12 @@ from schlieren.parts.light_source import (
     LightSourceParameters,
     build_light_source_assembly,
 )
+from schlieren.parts.light_source_drawing import drilling_templates_svg, layout_drawing_svg
+from schlieren.parts.light_source_holes import HoleLayoutParameters
 
 DEFAULT_FIGURE = Path("docs/design/figures/light-source.png")
+HOLES_FIGURE_NAME = "light-source-holes.svg"  # The §6.4 hole layout, written beside the figure.
+TEMPLATES_NAME = "light_source_drilling_templates.svg"
 FIGURE_VIEW_DIRECTION = (1.0, 0.45, 0.4)  # From the side, slightly ahead and above: heatsink through iris.
 FIGURE_RAIL_OVERHANG = 15.0  # Rail shown beyond each end of the shoe.
 
@@ -35,6 +39,14 @@ def figure_assembly(p, board):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--show", action="store_true")
+    parser.add_argument(
+        "--output", type=Path, default=Path("exports"), help="Directory for the drilling templates"
+    )
+    parser.add_argument(
+        "--templates",
+        action="store_true",
+        help="Write the full-scale cap and heatsink drilling templates (US Letter SVG, print at 100%%)",
+    )
     parser.add_argument("--module", choices=("green", "white"), default="green", help="Board shown in viewer")
     parser.add_argument("--engagement", type=float, help="SM1V05 thread engagement, mm (default: focus)")
     parser.add_argument(
@@ -47,6 +59,8 @@ def main():
     args = parser.parse_args()
     p = LightSourceParameters()
     p.validate()
+    holes = HoleLayoutParameters()
+    holes.validate()
     print(f"Optimum emitter-to-plano gap {p.optimum_gap:.2f} mm, magnification {p.magnification:.1f}x")
     for board in MODULES:
         lo, hi = p.engagement_range(board)
@@ -57,8 +71,19 @@ def main():
         )
     print(f"Heatsink clearance above post top {p.heatsink_post_top_clearance:.2f} mm")
     print(f"Lens vertex {p.lens_vertex_inside_open_end:.2f} mm inside the SM1V05 open end")
+    print("Hole layout gaps, mm: " + ", ".join(f"{k} {v:.2f}" for k, v in holes.clearances().items()))
+    if args.templates:
+        templates = args.output / "drawings" / TEMPLATES_NAME
+        templates.parent.mkdir(parents=True, exist_ok=True)
+        templates.write_text(drilling_templates_svg(holes), encoding="utf-8")
+        print(templates)
     if args.figure:
         from schlieren.render import render_figure
+
+        holes_figure = args.figure.with_name(HOLES_FIGURE_NAME)
+        holes_figure.parent.mkdir(parents=True, exist_ok=True)
+        holes_figure.write_text(layout_drawing_svg(holes), encoding="utf-8")
+        print(holes_figure)
 
         args.figure.parent.mkdir(parents=True, exist_ok=True)
         render_figure(figure_assembly(p, GREEN), args.figure, FIGURE_VIEW_DIRECTION, perspective=True)

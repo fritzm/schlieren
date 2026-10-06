@@ -70,8 +70,9 @@ SM1V05 engagement. The SM1L03's own retaining ring is not modeled.
 ```sh
 uv run light-source
 uv run light-source --show --module white --engagement 3.0
-uv run light-source --figure      # re-render docs/design/figures/light-source.png
-uv run python -m unittest tests.test_light_source -v
+uv run light-source --figure      # re-render docs/design/figures/light-source.png and light-source-holes.svg
+uv run light-source --templates   # exports/drawings/light_source_drilling_templates.svg, print at 100%
+uv run python -m unittest tests.test_light_source tests.test_light_source_holes -v
 ```
 
 Axial coordinate u has u=0 at the LED-side SMR1/M face; the viewer uses x
@@ -82,6 +83,14 @@ the optimum-gap calculation, focus margin for each module, SMR1/M thread
 sharing, lead annulus, heatsink-to-post clearance, the lens vertex position
 in the SM1V05, vendor-model fit and placement, and part interference.
 They do not qualify thermal performance.
+
+`light_source_holes.py` holds the through-hole layout of the cap and the
+heatsink base (M3 heatsink screws, M2 board screws, lead holes) in the frame of
+the heatsink pin lattice, with the clearance checks; `light_source_drawing.py`
+draws it as the §6.4 figure and as a Letter sheet of full-scale cap and
+heatsink drilling templates. `tests/test_light_source_holes.py` covers the
+pin lattice against the vendor model, heads between pins, wall and pin gaps,
+and the drawings.
 
 ## Source-slit flexure head
 

@@ -8,8 +8,10 @@ Design areas marked **Provisional** in the sections above:
 
 - **Light source** ([§6.2](06-light-source.md#62-led-modules),
   [§6.3](06-light-source.md#63-common-heatsink),
-  [§6.7](06-light-source.md#67-focus-and-module-interchange)): M3 heatsink-screw length; heatsink temperature
-  rise at 700 mA; white-module long-gap focus margin.
+  [§6.7](06-light-source.md#67-focus-and-module-interchange)): M3 heatsink-screw length; lead hole size
+  against the lead insulation, cap thread root radius, and Convoy star notch geometry
+  ([§6.4](06-light-source.md#64-led-board-mounting)); heatsink temperature rise at 700 mA; white-module
+  long-gap focus margin.
 - **Source-slit head** ([§7](07-source-slit.md#7-source-slit)): flexure dimensions and stage-rotation
   estimates; clamp-bar fit; width-stage preload; adapter-plate clearance; slit parallelism and
   rotation; flexure creep.
