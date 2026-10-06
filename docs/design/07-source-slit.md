@@ -162,18 +162,19 @@ Printed parts: the flexure head, the spigot adapter, and two clamp bars.
 - Clamp bars: print flat, EPDM face down.
 - The insert bores are pilots, finished by a light hand ream with a 5/16 in twist drill to a press fit
   ([§8.3](08-cutoff.md#83-fine-adjustment)); flanges outboard.
-- The spigot is printed at the SM1 tube nominal.
+- The spigot is printed at the SM1 tube nominal, which fits the SM1RC/M.
 
 Hardware: 2 × FAS100, 2 × 98625A950 inserts, 2 × N52 10 × 5 × 2 mm magnet bearing pads (one under each FAS100
 ball tip, [§8.3](08-cutoff.md#83-fine-adjustment)), 1 × 2006N292 spring, 8 × M3 × 12 mm socket-head screws, 8
 × M3 nuts, 8 × M3 flat washers.
 
 A test print of the head (Prusa MINI+, ABS) confirmed the insert press fit, the magnet, spring, and other
-pockets and bores as sized, and essentially parallel flexure motion along both push axes.
+pockets and bores as sized, and essentially parallel flexure motion along both push axes. The printed spigot
+fits the SM1RC/M split ring at the SM1 tube nominal.
 
 **Provisional,** pending assembly of the complete head:
 
-- spigot fit in the SM1RC/M, and the blade clamp bars;
+- the blade clamp bars;
 - width-stage preload holding the stage on its adjuster at the low end of travel;
 - no stage contact with the adapter plate;
 - blade-edge parallelism versus width setting, and slit rotation versus centering travel, measured against

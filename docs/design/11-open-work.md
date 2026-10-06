@@ -11,7 +11,7 @@ Design areas marked **Provisional** in the sections above:
   [§6.7](06-light-source.md#67-focus-and-module-interchange)): M3 heatsink-screw length; heatsink temperature
   rise at 700 mA; white-module long-gap focus margin.
 - **Source-slit head** ([§7](07-source-slit.md#7-source-slit)): flexure dimensions and stage-rotation
-  estimates; spigot and clamp-bar fit; width-stage preload; adapter-plate clearance; slit parallelism and
+  estimates; clamp-bar fit; width-stage preload; adapter-plate clearance; slit parallelism and
   rotation; flexure creep.
 - **Cutoff carriage** ([§8](08-cutoff.md#8-cutoff)): spigot fit in the SM1RC/M;
   guide-stack, recess, and pocket dimensions, sliding fits, and datum-pin projection; keeper lift under the

@@ -166,6 +166,5 @@ def pivot_plate_drawing_svg(p: FrameParameters | None = None) -> str:
         line(sx(x), sy(y) - CENTER_MARK, sx(x), sy(y) + CENTER_MARK, "mark")
         text(sx(x), sy(y) + CENTER_MARK + SMALL_FONT_SIZE + 0.5, name.lower(), size=SMALL_FONT_SIZE)
 
-    text(sx(center), PAGE_HEIGHT - 3, "x, from the plate centerline", size=SMALL_FONT_SIZE)
     out.append("</svg>")
     return "\n".join(out) + "\n"

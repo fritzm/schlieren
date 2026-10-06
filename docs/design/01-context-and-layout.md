@@ -5,7 +5,7 @@
 Revision: Oct 4, 2026
 
 This document describes the design of the apparatus, and is maintained authoritatively as Markdown fragments
-in the project repo on github at https://github.com/fritzm/schlieren/tree/main/docs/design.
+in the project repo on github at <https://github.com/fritzm/schlieren/tree/main/docs/design>.
 
 ## Conventions
 
@@ -17,7 +17,7 @@ in the project repo on github at https://github.com/fritzm/schlieren/tree/main/d
 - Measured values, manufacturer specifications, and calculated values are identified as such where the
   distinction matters; a measured value takes precedence over a catalog value.
 - Quantities, vendors, part numbers beyond those needed to define the design, procurement state, and the CAD
-  state of printed parts are recorded in the BOM, `bom/bom.csv`, not here.
+  state of printed parts are recorded in the BOM (`bom/bom.csv`), not here.
 
 ## 1. Project context and design constraints
 
@@ -26,7 +26,7 @@ vacation/travel use in a location with a large room and a substantial tabletop. 
 afterward as a bench-top laboratory instrument.
 
 The complete system should pack into a standard airline rolling suitcase. Plan around the ordinary 50 lb / 23
-kg checked-bag target unless a higher allowance applies.
+kg checked-bag target.
 
 The design is cost-conscious rather than constrained to a fixed dollar ceiling. Commodity 2020 extrusion,
 Baltic birch plywood, standard fasteners, and printed ABS are preferred where they are adequate. Commercial
@@ -35,7 +35,7 @@ troublesome.
 
 ### 1.1 Fabrication envelope
 
-Near-term 3D printing is ABS only. Critical optical heights and precision datums should preferably be
+Near-term 3D printing is ABS only. Critical optical heights and precision datums should be
 established by metal posts, optical hardware, shim stock, mechanical stops, or adjustment mechanisms rather
 than relying solely on as-printed ABS dimensions.
 

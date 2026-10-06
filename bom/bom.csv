@@ -32,7 +32,7 @@ LGT-008,Light source,1,Nichia 519A R9080 5000K,White LED,Convoy,519A R9080 5000K
 LGT-009,Light source,1,OSRAM LST1-01F06-GRN1-00,Green LED,Digikey,1672-1132-ND,2,each,In hand,§6.2,
 LGT-010,Light source,,"Heatsink, 6063-T5 non-anodized aluminum, Ø55 mm x 20 mm.",Existing spare stock; former LED heatsink,HeatsinkOnline,64ASL-8-55,4,each,In hand,,No longer allocated after the threaded SM1 LED module decision; replaced by LGT-018 (Alpha CN40-40B). Four in hand retained as spares.
 LGT-011,Light source,4,M2 × 5 mm button head hex-drive screw 18-8 SS,"LED board mounting screws, tapped into SM1CP2M cap",McMaster,92095A452,25,pack,In hand,§6.4,
-LGT-012,Light source,4,M2 nylon washers,LED insulating washers,McMaster,91545A410,,pack,On order,§6.4,
+LGT-012,Light source,4,M2 nylon washers,LED insulating washers,McMaster,91545A410,,pack,In hand,§6.4,
 LGT-013,Light source,1,"ALIENTEK DP100 DC Power Supply Variable, 30V 5A",LED CC/CV power supply,Amazon,B0CWRG6YFM,1,each,In hand,§6.5,
 LGT-014,Light source,2,"Cable Assembly, Micro-Fit 3.0 P-S 2ckt 150 mm",LED pigtails,Mouser,538-214758-1021,2,each,In hand,§6.5,
 LGT-015,Light source,1,"Cable Assembly, Micro-Fit 3.0 R-S 2ckt 600MM",Power supply pigtail,Mouser,538-214756-1023,2,each,In hand,§6.5,
