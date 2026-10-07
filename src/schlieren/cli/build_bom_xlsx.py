@@ -19,6 +19,7 @@ from pathlib import Path
 from openpyxl import Workbook
 from openpyxl.formatting.rule import CellIsRule
 from openpyxl.styles import Font, PatternFill
+from openpyxl.worksheet.datavalidation import DataValidation
 
 # src/schlieren/cli/<module>.py -> repo root (valid for the editable install that uv sync creates)
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -31,6 +32,7 @@ ZIP_TIMESTAMP = (1980, 1, 1, 0, 0, 0)
 CORE_PROPERTIES = "docProps/core.xml"
 
 NUMERIC_COLUMNS = {"Qty", "Pkg Size"}
+ZOOM_PERCENT = 135
 STATE_COLUMN = "Procurement state"
 SUBSYSTEM_COLUMN = "Subsystem"
 
@@ -129,6 +131,12 @@ def write_bom_sheet(ws, header: list[str], rows: list[list[str]]) -> None:
                 state_range, CellIsRule(operator="equal", formula=[f'"{state}"'], fill=fill)
             )
 
+    picker = DataValidation(
+        type="list", formula1='"' + ",".join(STATE_FILLS) + '"', allow_blank=True, showErrorMessage=True
+    )
+    picker.add(state_range)
+    ws.add_data_validation(picker)
+
     for col, width in zip("ABCDEFGHIJKL", (10, 16, 6, 60, 36, 14, 22, 9, 13, 17, 14, 60)):
         ws.column_dimensions[col].width = width
 
@@ -169,6 +177,8 @@ def build_workbook(bom_csv: Path = BOM_CSV) -> Workbook:
     summary.title = "Summary"
     write_summary_sheet(summary, header)
     write_bom_sheet(wb.create_sheet(BOM_SHEET), header, rows)
+    for ws in wb.worksheets:
+        ws.sheet_view.zoomScale = ZOOM_PERCENT
     return wb
 
 
