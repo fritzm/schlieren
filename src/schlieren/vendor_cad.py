@@ -44,6 +44,47 @@ MCMASTER_94459A797_LENGTH = 0.265 * INCH
 MCMASTER_94459A797_FLANGE_DIAMETER = 0.312 * INCH
 MCMASTER_94459A797_FLANGE_Y = 0.1525 * INCH
 MCMASTER_8215K2_HEIGHT = 0.625 * INCH
+# Kozak TS250-80-2500 model: axis +X through the origin, ball center at x=0 (Ø3.969 mm ball, so the tip is at
+# x=-KOZAK_TS250_BALL_RADIUS), plain Ø6.35 mm body to the end at x=61.516 mm, which has a hex-drive socket 2.286 mm deep.
+KOZAK_TS250_BALL_RADIUS = 1.984
+KOZAK_TS250_LENGTH = 2.5 * INCH
+KOZAK_TS250_DIAMETER = 0.25 * INCH
+KOZAK_TS250_END_X = 61.516
+# Kozak KB250-80 model: axis +X through the origin, knurled Ø12.7 mm body from x=-1.538 to 9.892 mm. The open end
+# (x=9.892) takes the screw end: a Ø6.35 bore to x=4.304, then a Ø3.94 pocket (over the hex socket) to x=-1.03.
+KOZAK_KB250_OPEN_X = 9.892
+KOZAK_KB250_BORE_BOTTOM_X = 4.304
+KOZAK_KB250_LENGTH = 11.43
+KOZAK_KB250_DIAMETER = 0.5 * INCH
+# Kozak TB250-80-625 model: axis +X through (y, z) = (94.65, 0) mm, off origin; flange face at x=-60.966 mm.
+KOZAK_TB250_AXIS_Y = 94.65
+KOZAK_TB250_FLANGE_X = -60.966
+KOZAK_TB250_LENGTH = 0.625 * INCH
+KOZAK_TB250_FLANGE_DIAMETER = 8.941
+KOZAK_TB250_BARREL_DIAMETER = 7.938
+KOZAK_TB250_FLANGE_THICKNESS = 0.254
+# McMaster 8681N11 model: extrusion axis +X centered on the origin, outer corner at y=z=-3 in / 2, legs toward +y and +z.
+MCMASTER_8681N11_LEG = 3.0 * INCH
+MCMASTER_8681N11_THICKNESS = 0.25 * INCH
+MCMASTER_8681N11_WIDTH = 33.274
+# McMaster 8681N11 holes: Ø8.332 mm, centered across the leg, 0.75 and 2.25 in from the outer corner on each leg.
+MCMASTER_8681N11_HOLE_DIAMETER = 8.332
+MCMASTER_8681N11_HOLE_OFFSETS = (0.75 * INCH, 2.25 * INCH)
+# McMaster 98164A527 model: axis +Z through the origin, bearing face at z=17.463 mm, tip at z=-17.463 mm.
+MCMASTER_98164A527_LENGTH = 1.375 * INCH
+MCMASTER_98164A527_HEAD_HEIGHT = 4.216
+MCMASTER_98164A527_HEAD_DIAMETER = 13.87
+MCMASTER_98164A527_HEAD_BASE_Z = 17.463
+# McMaster 90099A030 model: axis +Y through the origin, y=-5.556 mm at the seating face, nylon insert at +Y.
+MCMASTER_90099A030_HEIGHT = 7 / 16 * INCH
+# McMaster 96659A134 model: axis +Z through the origin, centered on its 1.664 mm thickness.
+MCMASTER_96659A134_THICKNESS = 1.664
+MCMASTER_96659A134_DIAMETER = 17.476
+# McMaster 91131A028 model: axis +Y through the origin; the female half's flat back is at y=-3.378 mm.
+MCMASTER_91131A028_BACK_Y = -3.378
+MCMASTER_91131A028_HEIGHT = 6.756
+MCMASTER_91131A028_FEMALE_DIAMETER = 0.5 * INCH
+MCMASTER_91131A028_MALE_DIAMETER = 0.438 * INCH
 
 
 @cache
@@ -181,3 +222,77 @@ def mcmaster_94459a797() -> Compound:
     The flange face is at z=0, with the knurled body and its tapered pilot end toward -Z.
     """
     return _moved("McMaster-94459A797.step", Pos(0, 0, -MCMASTER_94459A797_FLANGE_Y) * Rot(X=90))
+
+
+@cache
+def kozak_ts250_80_2500() -> tuple[Compound, Compound]:
+    """Kozak TS250-80-2500 adjuster as (screw, ball tip); axis +Y through the origin, ball tip at y=0.
+
+    The hex-drive end is at y=KOZAK_TS250_LENGTH.
+    """
+    to_tip = Pos(0, KOZAK_TS250_BALL_RADIUS, 0) * Rot(Z=90)
+    ball, screw = sorted(vendor_step("Kozak-TS250-80-2500.step").solids(), key=lambda s: s.volume)
+    return Compound([to_tip * screw]), Compound([to_tip * ball])
+
+
+@cache
+def kozak_tb250_80_625() -> Compound:
+    """Kozak TB250-80-625 bushing; axis +Y through the origin, flange face at y=0, barrel toward +Y."""
+    to_axis = Pos(KOZAK_TB250_AXIS_Y, -KOZAK_TB250_FLANGE_X, 0) * Rot(Z=90)
+    return _moved("Kozak-TB250-80-625.step", to_axis)
+
+
+@cache
+def kozak_kb250_80() -> Compound:
+    """Kozak KB250-80 knob; axis +Y through the origin, open (screw) end at y=0, outer end at y=11.43 mm."""
+    return _moved("Kozak-KB250-80.step", Pos(0, KOZAK_KB250_OPEN_X, 0) * Rot(Z=-90))
+
+
+@cache
+def mcmaster_91131a028() -> tuple[Compound, Compound]:
+    """McMaster 91131A028 spherical washer pair as (female half, male half); axis +Y through the origin.
+
+    Nested as supplied, with the female half's flat back at y=0 and the male half's flat face at
+    y=MCMASTER_91131A028_HEIGHT.
+    """
+    female, male = sorted(
+        vendor_step("McMaster-91131A028.step").solids(), key=lambda s: s.bounding_box().min.Y
+    )
+    to_back = Pos(0, -MCMASTER_91131A028_BACK_Y, 0)
+    return Compound([to_back * female]), Compound([to_back * male])
+
+
+@cache
+def mcmaster_8681n11() -> Compound:
+    """McMaster 8681N11 3 in corner bracket; width along x centered on the origin, outer corner on the y and z axes.
+
+    One leg lies along +y and the other along +z, both starting at the outer corner (y=z=0).
+    """
+    half = MCMASTER_8681N11_LEG / 2
+    return _moved("McMaster-8681N11.step", Pos(0, half, half))
+
+
+@cache
+def mcmaster_98164a527() -> Compound:
+    """McMaster 98164A527 5/16"-18 × 1-3/8" 316 stainless button-head screw (unthreaded model); axis +Z through the origin.
+
+    The head's bearing face is at z=0, with the head toward +Z and the shank toward -Z.
+    """
+    return _moved("McMaster-98164A527.step", Pos(0, 0, -MCMASTER_98164A527_HEAD_BASE_Z))
+
+
+@cache
+def mcmaster_90099a030() -> tuple[Compound, Compound]:
+    """McMaster 90099A030 5/16"-18 heavy-profile locknut (unthreaded model) as (nut, nylon insert); axis +Z through the origin.
+
+    The seating face is at z=0, with the nylon insert end toward +Z.
+    """
+    to_seat = Pos(0, 0, MCMASTER_90099A030_HEIGHT / 2) * Rot(X=90)
+    insert, nut = sorted(vendor_step("McMaster-90099A030.step").solids(), key=lambda s: s.volume)
+    return Compound([to_seat * nut]), Compound([to_seat * insert])
+
+
+@cache
+def mcmaster_96659a134() -> Compound:
+    """McMaster 96659A134 5/16" SAE washer; axis +Z through the origin, one face at z=0, the other at +thickness."""
+    return _moved("McMaster-96659A134.step", Pos(0, 0, MCMASTER_96659A134_THICKNESS / 2))

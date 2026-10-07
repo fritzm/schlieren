@@ -1,12 +1,15 @@
-"""Export base, guide frame, keeper, and a paired plunger print layout; optionally show it on its post."""
+"""Export base, guide frame, keeper, and a paired plunger print layout; optionally render or show it on its post."""
 
 import argparse
 from pathlib import Path
 
 from build123d import Compound, Pos, Rot
 
-from schlieren.cad import EXPORTERS, children_by_label, labeled
+from schlieren.cad import EXPORTERS, assembly, children_by_label, labeled, place
 from schlieren.parts.carriage import CarriageParameters, build_carriage
+
+DEFAULT_FIGURE = Path("docs/design/figures/cutoff.png")
+FIGURE_VIEW_DIRECTION = (1.0, 0.9, 0.7)  # From the mirror side, outboard and above: carriage, cassette, knob.
 
 
 def main():
@@ -20,6 +23,13 @@ def main():
         type=float,
         default=CarriageParameters().keeper_side_thickness,
         help="keeper side-member thickness in mm (5 for the stiffer fallback keeper)",
+    )
+    parser.add_argument(
+        "--figure",
+        type=Path,
+        nargs="?",
+        const=DEFAULT_FIGURE,
+        help=f"Render the design-doc figure, carriage with a seated cassette (default path: {DEFAULT_FIGURE})",
     )
     args = parser.parse_args()
     params = CarriageParameters(keeper_side_thickness=args.keeper_side_thickness)
@@ -61,6 +71,18 @@ def main():
     for name in ("driven_plunger", "spring_plunger"):
         for kind in ("step", "stl"):
             (args.output / kind / f"carriage_{name}.{kind}").unlink(missing_ok=True)
+    if args.figure:
+        from schlieren.parts.cassette import build_cassette_assembly
+        from schlieren.render import render_figure
+
+        figure_carriage = build_carriage(params, include_support=True, include_hardware=True)
+        seated = Pos(0, 0, params.plate_thickness + params.datum_projection)
+        figure = assembly(
+            figure_carriage.label, [*figure_carriage.children, place(seated, build_cassette_assembly())]
+        )
+        args.figure.parent.mkdir(parents=True, exist_ok=True)
+        render_figure(figure, args.figure, FIGURE_VIEW_DIRECTION, perspective=True)
+        print(args.figure)
     if args.show:
         from ocp_vscode import show
 

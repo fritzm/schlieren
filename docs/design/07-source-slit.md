@@ -56,6 +56,13 @@ direction.
 
 Envelope: about 80 × 88 × 13 mm, excluding knobs and adapter.
 
+<p align="center">
+  <img src="figures/slit-head.png" width="260" style="max-width: 90%"
+       alt="Flexure slit head from the light-source side: frame, platform and width stage, two blade clamp bars, the two FAS100 adjusters, and the spigot adapter, on its SM1RC/M post and rail shoe">
+  <br>
+  <em>Fig. 6. Flexure slit head on its post and rail shoe, seen from the light-source side: blades and clamp bars, FAS100 centering and width adjusters</em>
+</p>
+
 Stage rotation in the slit plane would skew the slit against the cutoff (centering) or open it in a taper
 (width). Under load each flexure blade bends into an S with its inflection at mid-span, so only a force
 through the blades' mid-span needs no axial reaction; the layout keeps the varying drive forces from

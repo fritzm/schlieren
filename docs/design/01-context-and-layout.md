@@ -67,9 +67,8 @@ rail follows one optical chief ray:
 
 The source rail contains, in optical order:
 
-1. interchangeable threaded LED/heatsink source module, screwed into the condenser holder;
-2. condenser and adjustable iris;
-3. source-slit flexure head.
+1. light source (interchangeable threaded LED/heatsink source, condenser, and adjustable iris)
+2. source-slit flexure head
 
 The slit is the effective optical source. The LED primarily illuminates that slit through the condenser and
 therefore does not itself require the same precision vertical positioning as the slit.

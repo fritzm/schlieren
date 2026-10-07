@@ -381,3 +381,43 @@ predicted travel, each screw tip touching its pad or the groove rods, the yoke p
 inserts, the yoke-to-shoe joint, the saddle dimensions against the common rail shoe, the band geometry, load
 split, and clearances, the phone's lower edge on the rest rod, and the printed parts staying clear of each
 other and of the cutoff station's rail shoe (slow tests).
+
+## Mirror cell
+
+`src/schlieren/parts/mirror_cell.py` models §10: the 1/2 in cell-adjuster plate and the 1/2 in base plate (11.5 × 7.0 in, trimmed from the rear to just cover the quick-release plate), the 3/4 in truncated-hex
+moving mirror plate with its Ø8-1/8 in aperture, and three adjuster stations. The plates carry their holes, the
+spring-seat counterbores, and the spherical-washer sockets. The Kozak TS250-80-2500 screws, TB250-80-625 bushings and
+KB250-80 knobs and the McMaster 91131A028 spherical washers are vendor models, positioned from their documented
+vendor frames (`vendor_cad.py`). The mirror (Ø203 mm, f=1600 mm, edge thickness assumed 18 mm, back flush with the plate's rear face),
+the six RTV pads, and the seat washers (catalog envelopes) are envelopes, and each spring is a plain helix with an
+approximate turn count, as a visualization aid. The two McMaster 8681N11 corner brackets are vendor models, flush
+with the plates' side edges, and each takes four 98164A527 button-head screws (two through the fixed plate, two
+through the base), heads on the bracket, with a 96659A134 washer and a 90099A030 locknut behind the plywood; the
+screw and locknut models are the unthreaded variants, and the plywood holes match the bracket's Ø8.33 mm holes. The CAMVATE
+sliding plate under the base is a rough model: a 177.8 × 12 mm dovetail section (1.709 in neck for 0.162 in, flaring
+to 1.960 in, from caliper measurements), a through slot and a rear V-notch from the seller's image. Its screw hardware
+is removed in this application, and it is held by four M4 flat-head screws (envelopes) in countersunk base holes and
+tapped plate holes drawn at the nominal thread; its pads are not drawn. `mirror_cell_drawing.py` makes the base
+plate's full-scale drilling layout (all eight holes) as an SVG for an 11 × 17 in sheet. Not drawn:
+the quick-release screws, the safety retainers, and the 1/8 in guide holes.
+
+Coordinates: origin at the middle of the base's front edge on its top surface, +x right looking along +y, +y toward
+the rear of the base (the mirror looks toward -y), z up; the adjuster axes are parallel to y. Each knob is seated by
+the screw end bottoming in its bore, and the screw's position follows from the knob resting on the spherical washer
+in its socket, so the ball tip projects about 8.3 mm ahead of the moving plate's mirror face at the neutral position.
+
+```sh
+uv run mirror-cell --show
+uv run mirror-cell --figure     # re-render the front, rear, and underside views in docs/design/figures/
+uv run mirror-cell --drawing    # re-write docs/design/figures/mirror-cell-base-plate.svg (11 × 17 in, full scale)
+uv run run-tests test_mirror_cell
+```
+
+Tests cover the plate envelopes, the 0.500 in neutral gap, the truncated-hex geometry (apothem, height, lower chord,
+base clearance), the aperture and mirror centering, the 120° station layout on the 4.750 in radius, the bushing flange
+seating on the plate face, the knob bearing on the washer in its socket, the spring spanning the seat washers, the
+fixed-plate hole, counterbore and socket sizes, the bracket flush with the plate edges and seated on both plates, the
+bracket hardware counts, hole centering, screw projection past the locknuts and head clearance at the inside corner,
+the quick-release screw pattern, countersinks, head seating and engagement, the drilling layout's scale and
+dimensions, and (slow) that no assembly part interferes with the plywood, plates, mirror, brackets, springs, and pads
+(purchased hardware is not checked against other hardware).

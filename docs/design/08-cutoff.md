@@ -7,6 +7,13 @@ element: a knife edge, a fine wire ([§8.8](#88-fine-wire)), or a color filter
 ([§8.9](#89-color-filter-material)). The carriage model is `src/schlieren/parts/carriage.py`; the cassette
 blank and clamp bars are modeled in `src/schlieren/parts/cassette.py`.
 
+<p align="center">
+  <img src="figures/cutoff.png" width="500" style="max-width: 90%"
+       alt="Cutoff carriage from the mirror side with a cassette seated: base plate, guide frame, keeper plate, driven and spring plungers, FAS100 adjuster, and cassette with clamp bars">
+  <br>
+  <em>Fig. 7. Cutoff carriage with a seated cassette: guide frame, keeper plate, driven and spring plungers, and the FAS100 fine adjuster</em>
+</p>
+
 ### 8.1 Spigot and rotation interface
 
 The carriage mounts in 1 × Thorlabs SM1RC/M through a hollow printed spigot integral with the carriage base
@@ -266,6 +273,13 @@ Cassette variants, all built on the common blank:
 2. centered fine-wire or filament dark-field cutoff ([§8.8](#88-fine-wire));
 3. striated / multicolor gel filter ([§8.9](#89-color-filter-material));
 4. dark-center color filter ([§8.9](#89-color-filter-material)).
+
+<p align="center">
+  <img src="figures/cassette.png" width="400" style="max-width: 90%"
+       alt="Assembled cassette: 64 mm base with 24 mm aperture, two clamp bars with screws, washers and nuts">
+  <br>
+  <em>Fig. 8. Cassette blank with its two clamp bars and hardware</em>
+</p>
 
 The standard cassette blank carries one opposed pair of integral filament cleats on the front / non-datum
 face, rather than making cleats a special cassette variant: two cleats, one on each side of the 24 mm optical

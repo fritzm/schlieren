@@ -31,7 +31,8 @@ Design areas marked **Provisional** in the sections above:
   loads on an assumed lens balance point and phone mass.
 - **Mirror cell** ([§10.5](10-mirror-cell.md#105-mirror-mounting),
   [§10.8](10-mirror-cell.md#108-mirror-safety-and-transport-retention)): RTV adhesion primer decision; safety
-  retainers and travel cover.
+  retainers; transport sandwich covers, foam, and 1/4-80 thumb screws;
+  quick-release screw hole sizes ([§10.9](10-mirror-cell.md#109-tripod-interface)).
 
 ### 11.2 Next steps
 
@@ -44,7 +45,7 @@ Design areas marked **Provisional** in the sections above:
 3. Fit-test the printed lens pointer parts and the retaining bands
    ([§9](09-camera-telephoto.md#9-camera-and-telephoto-support)), after measuring the magnet pull on a screw
    tip, the lens balance point, and the cased phone mass; design the phone rest's retainer and safety catch.
-4. Design the mirror-cell safety retainers and travel cover
+4. Design the mirror-cell safety retainers and settle the transport sandwich
    ([§10.8](10-mirror-cell.md#108-mirror-safety-and-transport-retention)).
 5. Assemble the tabletop optical head.
 6. Perform a dry optical layout near 3.2 m before making any remaining irreversible holes or bonds.

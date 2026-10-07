@@ -1,4 +1,4 @@
-"""Export the flexure slit head parts (§7); print its adjustment figures; optionally show it."""
+"""Export the flexure slit head parts (§7); print its adjustment figures; optionally render or show it."""
 
 import argparse
 from pathlib import Path
@@ -12,6 +12,12 @@ from schlieren.parts.slit_head import (
     build_spigot_adapter,
 )
 
+DEFAULT_FIGURE = Path("docs/design/figures/slit-head.png")
+FIGURE_VIEW_DIRECTION = (
+    -0.9,
+    -1.0,
+    0.6,
+)  # From the light-source side, outboard and above: the blades, knobs, and flexure.
 # Setup values for the steering figure: iris-to-slit ~150 mm (§6.7), slit-to-mirror ~3200 mm (§3.1).
 IRIS_TO_SLIT = 150.0
 SLIT_TO_MIRROR = 3200.0
@@ -24,6 +30,13 @@ def main():
         "--rotation", type=float, default=0.0, help="Degrees about the optical axis; 0 = horizontal slit"
     )
     parser.add_argument("--output", type=Path, default=Path("exports"))
+    parser.add_argument(
+        "--figure",
+        type=Path,
+        nargs="?",
+        const=DEFAULT_FIGURE,
+        help=f"Render the design-doc figure, head on its post and shoe (default path: {DEFAULT_FIGURE})",
+    )
     args = parser.parse_args()
     p = SlitHeadParameters()
     p.validate()
@@ -56,6 +69,12 @@ def main():
             path.parent.mkdir(parents=True, exist_ok=True)
             EXPORTERS[kind](part, path)
             print(path)
+    if args.figure:
+        from schlieren.render import render_figure
+
+        args.figure.parent.mkdir(parents=True, exist_ok=True)
+        render_figure(build_slit_head_assembly(p), args.figure, FIGURE_VIEW_DIRECTION, perspective=True)
+        print(args.figure)
     if args.show:
         from ocp_vscode import show
 

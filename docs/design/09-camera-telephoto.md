@@ -101,7 +101,7 @@ mount. Two separate rail fixtures carry them:
   <img src="figures/camera-support.png" width="500" style="max-width: 90%"
        alt="Lens pointer and phone rest on the imaging rail: two collars on the lens barrel, each on a pair of inclined screws in a yoke bolted to the pointer shoe, a retaining band round the barrel beside each yoke, and the phone hanging from the lens with its lower edge on the rest arm">
   <br>
-  <em>Fig. 6. Lens pointer and phone rest on the imaging rail, with phone and lens envelopes</em>
+  <em>Fig. 9. Lens pointer and phone rest on the imaging rail, with phone and lens envelopes</em>
 </p>
 
 The body is located by six contacts and no more, so adjusting one station does not strain the lens mount:
