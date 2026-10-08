@@ -12,9 +12,6 @@ Design areas marked **Provisional** in the sections above:
   against the lead insulation, cap thread root radius, and Convoy star notch geometry
   ([§6.4](06-light-source.md#64-led-board-mounting)); heatsink temperature rise at 700 mA; white-module
   long-gap focus margin.
-- **Source-slit head** ([§7](07-source-slit.md#7-source-slit)): flexure dimensions and stage-rotation
-  estimates; clamp-bar fit; width-stage preload; adapter-plate clearance; slit parallelism and
-  rotation; flexure creep.
 - **Cutoff carriage** ([§8](08-cutoff.md#8-cutoff)): spigot fit in the SM1RC/M;
   guide-stack, recess, and pocket dimensions, sliding fits, and datum-pin projection; keeper lift under the
   ear wedge reactions; bevel angle and seating force; clearance to other equipment near the cutoff station.
@@ -36,9 +33,8 @@ Design areas marked **Provisional** in the sections above:
 
 ### 11.2 Next steps
 
-1. Fit-test the printed parts: the assembled slit head ([§7.7](07-source-slit.md#77-fabrication-and-fit)); the
-   cutoff carriage and a cassette blank ([§8](08-cutoff.md#8-cutoff)), including datum-pin seating, bevel
-   seating, keeper lift, and clamp-bar screw length.
+1. Fit-test the printed cutoff carriage and a cassette blank ([§8](08-cutoff.md#8-cutoff)), including
+   datum-pin seating, bevel seating, keeper lift, and clamp-bar screw length.
 2. Fabricate both threaded LED modules: drill and tap the caps and heatsinks, center each board, and set
    focus on the slit blades. Confirm that the white module reaches focus; if not, add a thin cap-flange shim
    ([§6.7](06-light-source.md#67-focus-and-module-interchange)). Bench-test the heatsink temperature rise.

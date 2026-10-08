@@ -49,7 +49,7 @@ SLT-006,Source slit,2,"Razor blade, Stanley 11-515",Slit blades (datum and movab
 SLT-007,Source slit,8,"M3 × 12 mm socket head screw, 18-8 SS",Blade clamp bars (4) and adapter-to-head (4),McMaster,91292A114,100,pack,In hand,§§7.5–7.6,Shared common 100-pack.
 SLT-008,Source slit,8,"M3 × 0.5 hex nut, 18-8 SS, 5.5 mm AF × 2.4 mm high",Captive nuts for blade clamp bars (4) and adapter (4),McMaster,91828A211,100,pack,In hand,§§7.5–7.6,Shared common 100-pack (see CAS-004).
 SLT-009,Source slit,8,"M3 flat washer, 3.2 mm ID × 7 mm OD, 18-8 SS","Adapter spacer washers, two per adapter screw",McMaster,93475A210,100,pack,In hand,§7.6,Two stacked per screw set the ~1 mm adapter standoff. Shared 100-pack with CAS-005.
-SLT-010,Source slit,1,ABS printed flexure slit head,,,,,,CAD ready,§7.2,"CAD in src/schlieren/parts/slit_head.py; first test print successful (fits and flexure motion confirmed, §7.7)."
+SLT-010,Source slit,1,ABS printed flexure slit head,,,,,,CAD ready,§7.2,"CAD in src/schlieren/parts/slit_head.py; printed and evaluated, fit for purpose (§7.7)."
 SLT-011,Source slit,1,ABS printed slit-head spigot adapter,,,,,,CAD ready,§7.6,
 SLT-012,Source slit,2,ABS printed slit-head blade clamp bars,,,,,,CAD ready,§7.5,
 CAR-001,Carriages,,"SM1 lens tube, 1.50"" Thread Depth",Existing stock; former carriage-tube allocation,Thorlabs,SM1L15,2,each,In hand,,No longer allocated: the cutoff carriage mounts in the SM1RC/M on an integral printed spigot (§8.1); both tubes in hand are spare.
