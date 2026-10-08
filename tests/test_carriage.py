@@ -4,7 +4,7 @@ import unittest
 from itertools import combinations
 from math import cos, pi, radians, sin, tan
 
-from build123d import Box, Cylinder, Plane, Polygon, Pos, RegularPolygon, Rot, extrude
+from build123d import Align, Box, Cylinder, Plane, Polygon, Pos, RegularPolygon, Rot, extrude
 
 from schlieren.cad import ON_FLOOR, along_y, children_by_label
 from schlieren.parts.carriage import CarriageParameters, build_carriage, support_location
@@ -214,7 +214,11 @@ class CarriageTests(unittest.TestCase):
         # Spring envelope clears every printed part over working travel and the loading pose.
         for travel, retract in ((-5, 0), (0, 0), (5, 0), (0, 6)):
             objects = children_by_label(build_carriage(travel=travel, retract=retract, include_hardware=True))
-            spring = objects["2006N292 spring envelope"]
+            # The displayed helix lies inside its cylindrical envelope; check the envelope.
+            length = p.spring_fiducial_length + travel - retract
+            spring = along_y((0, p.spring_seat_y, p.spring_axis_z)) * Cylinder(
+                p.spring_outer_diameter / 2, length, align=(Align.CENTER, Align.CENTER, Align.MIN)
+            )
             for part in self.parts:
                 self.assertLess((spring & objects[part]).volume, 1e-6, (travel, retract, part))
 

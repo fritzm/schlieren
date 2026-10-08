@@ -19,6 +19,7 @@ from schlieren.testing import slow
 from schlieren.vendor_cad import (
     MCMASTER_8215K2_DIAMETER,
     MCMASTER_8215K2_HEIGHT,
+    MCMASTER_92290A_HEAD_HEIGHT,
     MCMASTER_92815A202_DIAMETER,
     MCMASTER_92815A202_HEIGHT,
     vendor_step,
@@ -158,6 +159,25 @@ class FrameTests(unittest.TestCase):
             self.assertEqual(len(washers), 4)  # Two under each of the two screw heads.
             for washer in washers:
                 self.assertGreater(foot.distance_to(washer), 1.0)
+            screws = [
+                part
+                for label, part in parts.items()
+                if label.startswith("Foot screw") and "washer" not in label
+            ]
+            self.assertEqual(len(screws), 2)
+            for screw in screws:
+                box = screw.bounding_box()
+                # Head bearing face on the washers; the tip reaches the length of the vendor screw above it.
+                self.assertAlmostEqual(
+                    box.min.Z + MCMASTER_92290A_HEAD_HEIGHT,
+                    self.p.plate_bottom - self.p.foot_washer_stack,
+                    places=4,
+                )
+                self.assertAlmostEqual(
+                    box.max.Z,
+                    self.p.plate_bottom - self.p.foot_washer_stack + self.p.foot_screw_length,
+                    places=4,
+                )
 
     def test_screw_stacks_have_thread_to_spare(self):
         p = self.p
@@ -208,6 +228,9 @@ class FrameTests(unittest.TestCase):
             parts = leaves(build_frame_assembly(self.p, left_yaw=yaw, right_yaw=yaw))
             boxes = [part.bounding_box() for part in parts]
             for (a, box_a), (b, box_b) in combinations(zip(parts, boxes), 2):
+                # A screw passes through its unthreaded nut model; catalog hardware is trusted to fit.
+                if a.label.endswith(" screw") and b.label.endswith(" nut"):
+                    continue
                 if boxes_overlap(box_a, box_b):
                     with self.subTest(yaw=yaw, pair=(a.label, b.label)):
                         self.assertLess((a & b).volume, INTERFERENCE_TOLERANCE)

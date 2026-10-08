@@ -25,9 +25,9 @@ from build123d import (
     mirror,
 )
 
-from schlieren.cad import BLACK_ANODIZED, ON_FLOOR, along_x, along_y, assembly, labeled
+from schlieren.cad import BLACK_ANODIZED, ON_FLOOR, along_x, along_y, assembly, compression_spring, labeled
 from schlieren.parts.rail_shoe import RailShoeParameters
-from schlieren.vendor_cad import SM1RC_M_THICKNESS, thorlabs_fas100, thorlabs_sm1rc_m, thorlabs_tr50_m
+from schlieren.vendor_cad import SM1RC_M_THICKNESS, thorlabs_fas100_parts, thorlabs_sm1rc_m, thorlabs_tr50_m
 
 INCH = 25.4
 
@@ -104,7 +104,8 @@ class CarriageParameters:
     spring_fiducial_length: float = 16.5
     spring_axis_z: float = 7.5
     spring_outer_diameter: float = 0.272 * INCH  # Measured (calipers), in-hand spring (as the slit head).
-    spring_inner_diameter: float = 4.2  # Display only; the coil passes a 4 mm shoulder (§8.5).
+    spring_wire_diameter: float = 0.63  # Catalog; display only.
+    spring_display_coils: float = 10.0  # Total turns of the displayed helix; approximate.
     # Each spring end sits in a printed cup open toward the deck: sides and roof locate the coil, the deck
     # carries it, and nothing penetrates the frame end wall.
     spring_cup_clearance: float = 1.0  # Diametral; printed-hole shrink and coil growth under compression.
@@ -698,7 +699,7 @@ def build_carriage(p=None, *, travel=0.0, retract=0.0, include_support=False, in
     """Five independently selectable printed parts; retraction only at fiducial.
 
     `include_support` adds the SM1RC/M, TR50/M post, and rail shoe as references; `include_hardware` adds the
-    FAS100 (vendor model), its 98625A950 bushing, the magnet bearing pad, and the 2006N292 spring envelope.
+    FAS100 (vendor model), its 98625A950 bushing, the magnet bearing pad, and the 2006N292 spring (a display helix).
 
     Spring solid height is unverified: the loading pose checks printed geometry,
     not whether the purchased spring can safely reach that compression.
@@ -732,9 +733,11 @@ def build_carriage(p=None, *, travel=0.0, retract=0.0, include_support=False, in
     if include_hardware:
         children += [labeled(part, name, color) for name, part, color in _adjuster_hardware(p, travel)]
         length = p.spring_fiducial_length + travel - retract
-        spring = _y_hole(p.spring_outer_diameter / 2, length, p.spring_seat_y, p.spring_axis_z)
-        spring -= _y_hole(p.spring_inner_diameter / 2, length + 2, p.spring_seat_y - 1, p.spring_axis_z)
-        children.append(labeled(spring, "2006N292 spring envelope", (0.5, 0.5, 0.5)))
+        spring = compression_spring(
+            p.spring_outer_diameter, p.spring_wire_diameter, length, p.spring_display_coils
+        )
+        placed = Pos(0, p.spring_seat_y, p.spring_axis_z) * Rot(X=-90) * spring
+        children.append(labeled(placed, "2006N292 spring", (0.75, 0.75, 0.78)))
     return assembly("Carriage (preliminary)", children)
 
 
@@ -742,7 +745,8 @@ def _adjuster_hardware(p, travel):
     """FAS100, bushing, and magnet pad as (name, part, rgb); the ball tip bears on the pad face."""
     tip_y = p.magnet_contact_y + travel
     # Vendor model axis +Z toward the knob, turned to +Y (outboard, toward the bushing flange).
-    fas100 = Pos(0, tip_y, p.adjuster_axis_z) * Rot(X=-90) * thorlabs_fas100()
+    fas100_loc = Pos(0, tip_y, p.adjuster_axis_z) * Rot(X=-90)
+    screw, knob, dimple = (fas100_loc * part for part in thorlabs_fas100_parts())
     flange_face = p.plate_ymax
     bushing = _y_hole(
         p.insert_body_diameter / 2,
@@ -767,7 +771,9 @@ def _adjuster_hardware(p, travel):
         z=p.adjuster_axis_z - p.magnet_width / 2,
     )
     return (
-        ("FAS100", fas100, (0.75, 0.75, 0.78)),
+        ("FAS100", screw, (0.75, 0.75, 0.78)),
+        ("FAS100 knob", knob, (0.16, 0.16, 0.17)),
+        ("FAS100 index dimple", dimple, (0.95, 0.95, 0.95)),
         ("98625A950 bushing", bushing, (0.8, 0.65, 0.25)),
         ("Magnet pad", magnet, (0.6, 0.6, 0.62)),
     )

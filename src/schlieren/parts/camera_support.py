@@ -48,6 +48,7 @@ from build123d import (
     Solid,
     Vector,
     Wire,
+    chamfer,
     extrude,
     fillet,
 )
@@ -183,6 +184,9 @@ class CameraSupportParameters:
     insert_hole_relief: float = 1.0  # Hole depth beyond the insert, for the screw tip and melt.
     joint_screw_length: float = 10.0  # M5 countersunk, overall including the head.
     joint_screw_head_diameter: float = 10.0  # 90-degree head, ISO 10642.
+    # Chamfer round the skirt ends, inside and out, so that the first-layer flare (elephant's foot) does not
+    # narrow the rail opening or stand the skirts off the bed; it also eases the shoe onto the rail.
+    skirt_foot_chamfer: float = 0.6
     pointer_end_margin: float = (
         9.0  # Pointer shoe beyond each yoke along the rail; symmetric about the stations.
     )
@@ -781,6 +785,8 @@ def _straddle(
     ]
     shoe = fillet(corners, r.outside_corner_radius)
     shoe -= _box(-r.rail_opening / 2, r.rail_opening / 2, y0 - 1, y1 + 1, -r.skirt_depth - 1, 0)
+    feet = [f for f in shoe.faces() if abs(f.center().Z + r.skirt_depth) < 1e-6 and f.normal_at().Z < -0.99]
+    shoe = chamfer([e for f in feet for e in f.edges()], p.skirt_foot_chamfer)
     for y in clamp_ys:
         shoe -= along_x((-p.shoe_outer - 1, y, -r.rail_height / 2)) * Cylinder(
             r.m5_clearance_diameter / 2, 2 * p.shoe_outer + 2, align=ON_FLOOR
@@ -821,11 +827,25 @@ def build_pointer_shoe(p: CameraSupportParameters | None = None) -> Part:
     )
 
 
+def build_pointer_shoe_for_print(p: CameraSupportParameters | None = None) -> Part:
+    """The pointer shoe as printed, skirts on the bed and deck up, centered on the origin, bed at z = 0."""
+    shoe = build_pointer_shoe(p)
+    box = shoe.bounding_box()
+    return Pos(-(box.min.X + box.max.X) / 2, -(box.min.Y + box.max.Y) / 2, -box.min.Z) * shoe
+
+
 def build_pointer_yoke(p: CameraSupportParameters | None = None, station: float = 0.0) -> Part:
     """Yoke for the collar at a station, printed on its side and bolted to the pointer shoe."""
     p = p or CameraSupportParameters()
     p.validate()
     return _yoke(p, station)
+
+
+def build_pointer_yoke_for_print(p: CameraSupportParameters | None = None) -> Part:
+    """A yoke laid on its side as printed: profile plane on the bed, centered on the origin, bed at z = 0."""
+    yoke = Rot(X=90) * build_pointer_yoke(p)
+    box = yoke.bounding_box()
+    return Pos(-(box.min.X + box.max.X) / 2, -(box.min.Y + box.max.Y) / 2, -box.min.Z) * yoke
 
 
 def _joint_hardware(p: CameraSupportParameters, where: str, station: float) -> list[Part]:

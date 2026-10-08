@@ -6,7 +6,22 @@ children are always fresh wrappers made by `labeled`; never re-parent a shape ta
 and detach a child with `labeled` before exporting it (STEP export of an attached child fails).
 """
 
-from build123d import Align, Color, Compound, Location, Part, Plane, Shape, export_step, export_stl
+from build123d import (
+    Align,
+    Color,
+    Compound,
+    Face,
+    Helix,
+    Location,
+    Part,
+    Plane,
+    Pos,
+    Shape,
+    Solid,
+    Wire,
+    export_step,
+    export_stl,
+)
 
 ON_FLOOR = (Align.CENTER, Align.CENTER, Align.MIN)  # Centered in the plane, rising from it.
 FROM_CORNER = (Align.MIN, Align.MIN, Align.MIN)
@@ -22,6 +37,20 @@ def along_x(origin) -> Plane:
 def along_y(origin) -> Plane:
     """Plane at origin whose normal is +y, with local x along global x."""
     return Plane(origin=origin, x_dir=(1, 0, 0), z_dir=(0, 1, 0))
+
+
+def compression_spring(outer_diameter: float, wire_diameter: float, length: float, coils: float) -> Part:
+    """A plain helix of round wire for display, axis +z from z=0 to z=length.
+
+    An illustration: the ends are not closed and ground, and the turn count is approximate.
+    """
+    height = length - wire_diameter  # Length of the wire's centerline.
+    path = Helix(pitch=height / coils, height=height, radius=(outer_diameter - wire_diameter) / 2)
+    section = Face(
+        Wire.make_circle(wire_diameter / 2, Plane(origin=path.start_point(), z_dir=path.tangent_at(0)))
+    )
+    coil = Part([Solid.sweep(section, path=path, is_frenet=True)])
+    return Pos(0, 0, wire_diameter / 2) * coil
 
 
 def labeled(

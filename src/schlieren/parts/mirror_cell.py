@@ -49,9 +49,10 @@ from build123d import (
     extrude,
 )
 
-from schlieren.cad import ON_FLOOR, along_y, assembly, labeled
+from schlieren.cad import ON_FLOOR, along_y, assembly, labeled, leaves
 from schlieren.vendor_cad import (
     KOZAK_KB250_BORE_BOTTOM_X,
+    KOZAK_KB250_LENGTH,
     KOZAK_KB250_OPEN_X,
     KOZAK_TB250_FLANGE_THICKNESS,
     KOZAK_TB250_LENGTH,
@@ -78,7 +79,7 @@ INCH = 25.4
 PLYWOOD_COLOR = (0.82, 0.68, 0.45)
 BUSHING_COLOR = (0.75, 0.62, 0.3)
 SCREW_COLOR = (0.6, 0.6, 0.62)
-KNOB_COLOR = (0.2, 0.2, 0.22)
+KNOB_COLOR = (0.78, 0.78, 0.8)
 BLACK_OXIDE = (0.13, 0.13, 0.14)
 SPRING_COLOR = (0.7, 0.7, 0.72)
 BRACKET_COLOR = (0.7, 0.72, 0.75)
@@ -584,3 +585,41 @@ def build_mirror_cell_assembly(p: MirrorCellParameters | None = None) -> Compoun
             washer = _tube(x, y0, z, p.seat_washer_od, p.seat_washer_id, p.seat_washer_thickness)
             children.append(labeled(washer, f"{label} {name}", SPRING_COLOR))
     return assembly("Mirror cell", children)
+
+
+ADJUSTER_SECTION_RADIUS = 22.0  # Half-width of the zoomed adjuster section about the axis, mm.
+ADJUSTER_SECTION_FRONT_MARGIN = 4.0  # Kept ahead of the screw's ball tip, mm.
+ADJUSTER_SECTION_REAR_MARGIN = 4.0  # Kept behind the knob's outer end, mm.
+ADJUSTER_HARDWARE_LABELS = (
+    "Adjuster screw",
+    "Adjuster ball",
+    "Bushing",
+    "Knob",
+    "Spherical washer",
+    "Compression spring",
+    "Spring seat washer",
+)
+SECTIONED_LABELS = ("Base plate", "Cell-adjuster plate", "Moving mirror plate", "Mirror")
+
+
+def adjuster_section(cell: Compound, p: MirrorCellParameters, name: str) -> Compound:
+    """Exposition view of one adjuster station: its hardware whole, seen through cut-away plywood and mirror.
+
+    The station's hardware is kept entire. The plates and mirror are cut along the vertical plane through the
+    axis, dropping the -x half, and to a box about the station, which exposes the hardware where it passes
+    through them. Everything else is omitted.
+    """
+    x, z = p.station_center(name)
+    y0 = p.screw_tip_y - ADJUSTER_SECTION_FRONT_MARGIN
+    y1 = p.washer_front_y + KOZAK_KB250_LENGTH + ADJUSTER_SECTION_REAR_MARGIN
+    r = ADJUSTER_SECTION_RADIUS
+    keep = Pos(x + r / 2, (y0 + y1) / 2, z) * Box(r, y1 - y0, 2 * r)
+    kept = []
+    for leaf in leaves(cell):
+        if leaf.label.endswith(f" {name}") and leaf.label.startswith(ADJUSTER_HARDWARE_LABELS):
+            kept.append(leaf)
+        elif leaf.label in SECTIONED_LABELS:
+            piece = leaf & keep
+            if piece.solids():
+                kept.append(labeled(piece, leaf.label, leaf.color))
+    return assembly(f"Adjuster section {name}", kept)

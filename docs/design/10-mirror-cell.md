@@ -2,18 +2,16 @@
 
 ### 10.1 Plates and basic architecture
 
-The mirror-cell plywood thicknesses and plate envelopes are:
+The mirror-cell is constructed from three Baltic birch plywood plates:
 
-- cell-adjuster plate: 11.5 in wide × 11.0 in high × 1/2 in Baltic birch;
-- base plate: 11.5 in wide × 7.0 in front-to-back × 1/2 in Baltic birch;
-- moving mirror plate: 3/4 in Baltic birch, cut to the truncated-hex geometry below.
+- base plate: 11.5 in wide × 7.0 in front-to-back × 1/2 in;
+- cell-adjuster plate: 11.5 in wide × 11.0 in high × 1/2 in;
+- moving mirror plate: 3/4 in cut to the truncated-hex geometry below.
 
-The fixed cell-adjuster plate and the base plate therefore begin as identical 11.5 × 11.0 × 1/2 in rectangular
-blanks; the base plate is then trimmed from the rear to 7.0 in front-to-back, so that it just covers the 7.00 in
-quick-release plate ([§10.9](#109-tripod-interface)). The cell-adjuster plate carries the three fine-adjustment stations. The base plate provides the
-structural/tripod-support base and is joined to the cell-adjuster plate by the structural brackets described
-in [§10.7](#107-structural-brackets). The 3/4 in moving mirror plate carries the 203 mm
-mirror and moves relative to the fixed cell-adjuster plate.
+The base plate provides the structural/tripod-support base and is joined to the cell-adjuster plate by
+structural brackets described in [§10.7](#107-structural-brackets). The cell-adjuster plate carries three
+fine-adjustment stations ([§10.2](#102-three-adjuster-stations)) which couple it to the moving mirror plate.
+The 3/4 in moving mirror plate carries the 203 mm mirror and moves relative to the fixed cell-adjuster plate.
 
 <p align="center">
   <img src="figures/mirror-cell.png" width="500" style="max-width: 90%"
@@ -23,20 +21,20 @@ mirror and moves relative to the fixed cell-adjuster plate.
 </p>
 
 The cell-adjuster plate is centered left/right on the 11.5 in-wide base. The rear face of the 1/2 in fixed
-cell-adjuster plate is 4.000 in / 101.6 mm aft of the front edge of the 7.0 in-deep base, leaving 3.0 in of base behind it. The
-two McMaster 8681N11 structural angle brackets face forward, toward the moving mirror plate; their measured
-forward footprint is approximately 3.5 in from the fixed-plate rear face, leaving approximately 0.5 in of base
-margin at the front edge. This orientation places the brackets on the mirror side of the fixed plate so they
-directly resist the forward overturning moment of the mirror assembly.
+cell-adjuster plate is 4.000 in aft of the front edge of the 7.0 in-deep base, leaving 3.0 in of
+base behind it. Two McMaster 8681N11 structural angle brackets face forward, toward the moving mirror
+plate; their measured forward footprint is approximately 3.5 in from the fixed-plate rear face, leaving
+approximately 0.5 in of base margin at the front edge. This orientation places the brackets on the mirror side
+of the fixed plate so they directly resist the forward overturning moment of the mirror assembly.
 
 Using measured masses of 1.56 kg for the approximately 18 mm-thick mirror, 840 g for the assembled fixed +
-moving plates and adjuster hardware, about 318 g for the 11.5 × 7.0 × 1/2 in base plate (the measured 500 g of
-the 11.5 × 11.0 in blank, scaled by length), and 79 g each for the two aluminum brackets, the estimated
-completed mirror-cell fore/aft center of gravity is approximately 3.0 in / 76 mm aft of the front edge of the
-base. A working uncertainty of approximately ±0.2 in / ±5 mm is conservative. This places the expected center of
-gravity approximately 1.0 in / 25 mm forward of the rear face of the fixed cell-adjuster plate. The 130 g CAMVATE
-removable quick-release plate is centered 0.5 in / 12.7 mm aft of this location, a small offset that has little
-effect; final balance is trimmed using the quick-release system's generous fore/aft sliding travel.
+moving plates and adjuster hardware, about 318 g for the 11.5 × 7.0 × 1/2 in base plate, and 79 g each for the
+two aluminum brackets, the estimated completed mirror-cell fore/aft center of gravity is approximately 3.0 in
+/ 76 mm aft of the front edge of the base. A working uncertainty of approximately ±0.2 in / ±5 mm is
+conservative. This places the expected center of gravity approximately 1.0 in / 25 mm forward of the rear face
+of the fixed cell-adjuster plate. The 130 g CAMVATE removable quick-release plate is centered 0.5 in / 12.7 mm
+aft of this location, a small offset that has little effect; final balance is trimmed using the quick-release
+system's generous fore/aft sliding travel.
 
 The cell uses:
 
@@ -62,10 +60,9 @@ The moving mirror plate geometry is:
   the top vertex.
 
 The nominal clearance from the bottom trimmed edge of the moving mirror plate to the top surface of the base
-plate is 3/8 in / 9.53 mm. This places the mirror center approximately 5.138 in / 130.51 mm above
-the base top. The top moving-plate vertex then lies approximately 10.638 in / 270.21 mm above the base top,
-leaving approximately 0.362 in / 9.2 mm of fixed-plate height above it within the 11.0 in-high cell-adjuster
-plate.
+plate is 3/8 in / 9.53 mm. This places the mirror center approximately 5.138 in / 130.51 mm above the base
+top. The top moving-plate vertex then lies approximately 10.638 in / 270.21 mm above the base top, leaving
+approximately 0.362 in / 9.2 mm of fixed-plate height above it within the 11.0 in-high cell-adjuster plate.
 
 This truncated-hex geometry preserves the same approximately 0.701 in / 17.8 mm radial plywood width between
 the 8-1/8 in mirror aperture and the new bottom edge as exists between the aperture and each original hex
@@ -88,10 +85,10 @@ The adjusters are Kozak parts:
 Use one adjuster, one bushing, and one knob at each of the three stations.
 
 <p align="center">
-  <img src="figures/mirror-cell-rear.png" width="500" style="max-width: 90%"
-       alt="Mirror cell seen from behind: the three adjuster knobs on spherical washers at the rear face of the cell-adjuster plate, and the bracket locknuts">
+  <img src="figures/mirror-cell-adjuster.png" width="500" style="max-width: 90%"
+       alt="Section through one adjuster station: knob, spherical washer pair, cell-adjuster plate, spring between its seat washers, moving plate with bushing, and the adjuster screw">
   <br>
-  <em>Fig. 11. Mirror cell from behind: the three adjuster knobs on their spherical washers, and the bracket washers and locknuts</em>
+  <em>Fig. 11. Adjuster station, plywood and mirror cut away: knob, spherical washer pair, spring and seat washers, bushing, and adjuster screw</em>
 </p>
 
 Each adjuster station includes a concentric compression spring.

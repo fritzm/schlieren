@@ -20,13 +20,21 @@ from build123d import (
     Part,
     Pos,
     RegularPolygon,
+    Rot,
     extrude,
     fillet,
 )
 
 from schlieren.cad import FROM_CORNER, ON_FLOOR, along_x, along_y, assembly, labeled
 from schlieren.parts.rail import build_rail
-from schlieren.vendor_cad import thorlabs_tr50_m
+from schlieren.vendor_cad import (
+    MCMASTER_93475A240_THICKNESS,
+    mcmaster_91292a114,
+    mcmaster_91828a211,
+    mcmaster_92290a228,
+    mcmaster_93475a240,
+    thorlabs_tr50_m,
+)
 
 
 @dataclass(frozen=True)
@@ -104,6 +112,25 @@ class RailShoeParameters:
     @property
     def post_bore(self) -> float:
         return self.post_diameter + self.post_diametral_clearance
+
+    @property
+    def clamp_axis_x(self) -> float:
+        """Split-clamp screw and nut axis x (the axis runs along y), centered on the exposed inner ear faces."""
+        return sqrt(self.collar_outer_radius**2 - (self.split_gap / 2) ** 2) + self.ear_width / 2
+
+    @property
+    def clamp_axis_z(self) -> float:
+        return self.ear_bottom + self.ear_height / 2
+
+    @property
+    def clamp_screw_outer_y(self) -> float:
+        """Outer face of the screw ear, where the clamp screw head bears."""
+        return -(self.split_gap / 2 + self.screw_ear_thickness)
+
+    @property
+    def clamp_nut_outer_y(self) -> float:
+        """Outer face of the nut ear, where the nut pocket opens."""
+        return self.split_gap / 2 + self.nut_ear_thickness
 
     @property
     def nut_pocket_depth(self) -> float:
@@ -238,10 +265,8 @@ def build_rail_shoe(p: RailShoeParameters | None = None) -> Part:
 
     # Center on the exposed rectangular inner ear faces, whose x-span is
     # collar_x_at_inner_face .. ear_x_end. Both features share a y-axis.
-    clamp_x = collar_x_at_inner_face + p.ear_width / 2
-    clamp_z = p.ear_bottom + p.ear_height / 2
-    screw_outer_y = -ear_y_min - p.screw_ear_thickness
-    nut_outer_y = ear_y_min + p.nut_ear_thickness
+    clamp_x, clamp_z = p.clamp_axis_x, p.clamp_axis_z
+    screw_outer_y, nut_outer_y = p.clamp_screw_outer_y, p.clamp_nut_outer_y
     clamp_hole = along_y((clamp_x, screw_outer_y - overrun, clamp_z)) * Cylinder(
         p.m3_clearance_diameter / 2, nut_outer_y - screw_outer_y + 2 * overrun, align=ON_FLOOR
     )
@@ -274,8 +299,38 @@ def reference_parts(p: RailShoeParameters | None = None) -> dict[str, Part]:
     }
 
 
+def side_clamp_hardware(p: RailShoeParameters | None = None, y: float = 0.0) -> list[Part]:
+    """The M5 × 12 side-slot screws with flat washers, one on each skirt, entering toward the rail at y.
+
+    Each washer bears on its skirt's outer face and the screw on the washer; the screw axes are the side-hole
+    axis, at mid rail height. Each is a labeled vendor model.
+    """
+    p = p or RailShoeParameters()
+    parts = []
+    for name, side in (("left", -1), ("right", 1)):
+        axis = Pos(side * p.width / 2, y, -p.rail_height / 2) * Rot(Y=-90 * side)
+        seat = axis * Pos(0, 0, -MCMASTER_93475A240_THICKNESS)
+        parts.append(labeled(mcmaster_93475a240(), f"Side screw washer {name}", REFERENCE_COLOR, seat))
+        parts.append(labeled(mcmaster_92290a228(), f"Side screw {name}", REFERENCE_COLOR, seat))
+    return parts
+
+
+def split_clamp_hardware(p: RailShoeParameters | None = None) -> list[Part]:
+    """The M3 × 12 collar clamp screw and its hex nut: head on the screw ear, nut seated in its pocket."""
+    p = p or RailShoeParameters()
+    along_axis = Pos(p.clamp_axis_x, 0, p.clamp_axis_z) * Rot(X=-90)  # Local +z along +y.
+    screw = Pos(0, 0, p.clamp_screw_outer_y) * mcmaster_91292a114()
+    nut_seat = p.clamp_nut_outer_y - p.nut_pocket_depth  # The pocket bottom, which carries the clamp load.
+    nut = Pos(0, 0, nut_seat) * Rot(Z=90) * mcmaster_91828a211()  # Corners along x, as pocketed.
+    return [
+        labeled(screw, "Clamp screw", REFERENCE_COLOR, along_axis),
+        labeled(nut, "Clamp nut", REFERENCE_COLOR, along_axis),
+    ]
+
+
 def viewer_assembly(shoe: Part, p: RailShoeParameters | None = None) -> Compound:
-    """Shoe on a generic 2020 rail segment, with the datum disc and the vendor TR50/M model seated on it."""
+    """Shoe on a generic 2020 rail segment, with the datum disc, the vendor TR50/M model seated on it, and the
+    vendor side-slot and split-clamp hardware, all grouped as reference parts."""
     p = p or RailShoeParameters()
     refs = reference_parts(p)
     rparts = assembly(
@@ -284,6 +339,8 @@ def viewer_assembly(shoe: Part, p: RailShoeParameters | None = None) -> Compound
             labeled(build_rail(p.length + 2 * VIEWER_RAIL_OVERHANG), "Rail", REFERENCE_COLOR),
             labeled(refs["datum disc"], "Datum disc", REFERENCE_COLOR),
             labeled(thorlabs_tr50_m(), "TR50_M", REFERENCE_COLOR, Pos(0, 0, p.datum_disc_thickness)),
+            *side_clamp_hardware(p),
+            *split_clamp_hardware(p),
         ],
     )
     return assembly("Rail shoe prototype", [labeled(shoe, "Shoe", SHOE_COLOR), rparts])

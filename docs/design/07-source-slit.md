@@ -168,7 +168,10 @@ Printed parts: the flexure head, the spigot adapter, and two clamp bars.
 - Adapter: print front face down, spigot up; no supports.
 - Clamp bars: print flat, EPDM face down.
 - The insert bores are pilots, finished by a light hand ream with a 5/16 in twist drill to a press fit
-  ([§8.3](08-cutoff.md#83-fine-adjustment)); flanges outboard.
+  ([§8.3](08-cutoff.md#83-fine-adjustment)). The FAS100 #1 insert is pressed in from the inside with its flange
+  on the bar's inner face, so the spring load seats the flange against the bar instead of pushing the insert out;
+  the FAS100 #2 flange is outboard, since the platform top bar leaves no room to press it in from the inside
+  and it resists only the ABS flexure's restoring force, not a spring.
 - The spigot is printed at the SM1 tube nominal, which fits the SM1RC/M.
 
 Hardware: 2 × FAS100, 2 × 98625A950 inserts, 2 × N52 10 × 5 × 2 mm magnet bearing pads (one under each FAS100

@@ -3,14 +3,15 @@
 import argparse
 from pathlib import Path
 
-from schlieren.parts.mirror_cell import MirrorCellParameters, build_mirror_cell_assembly
+from schlieren.parts.mirror_cell import MirrorCellParameters, adjuster_section, build_mirror_cell_assembly
 from schlieren.parts.mirror_cell_drawing import base_plate_drawing_svg
 
 DEFAULT_FIGURE = Path("docs/design/figures/mirror-cell.png")
 DEFAULT_DRAWING = Path("docs/design/figures/mirror-cell-base-plate.svg")
 FIGURE_VIEW_DIRECTION = (-0.8, -1.0, 0.6)  # From the front (mirror side), left and above.
-REAR_VIEW_DIRECTION = (0.8, 1.0, 0.6)  # From behind, right and above: the knobs.
 BELOW_VIEW_DIRECTION = (-0.6, -0.9, -0.8)  # From the front, left and below: the sliding plate.
+ADJUSTER_VIEW_DIRECTION = (-1.0, 0.45, 0.35)  # From the cut face, behind and above: the adjuster stack.
+ADJUSTER_STATION = "top"
 
 
 def main() -> None:
@@ -21,8 +22,8 @@ def main() -> None:
         type=Path,
         nargs="?",
         const=DEFAULT_FIGURE,
-        help=f"Render the front, rear, and underside design-doc views (default path: {DEFAULT_FIGURE}; the others get "
-        "-rear and -below suffixes)",
+        help=f"Render the front, underside, and adjuster-section design-doc views (default path: {DEFAULT_FIGURE}; "
+        "the others get -below and -adjuster suffixes)",
     )
     parser.add_argument(
         "--drawing",
@@ -43,9 +44,13 @@ def main() -> None:
 
         args.figure.parent.mkdir(parents=True, exist_ok=True)
         render_figure(cell, args.figure, FIGURE_VIEW_DIRECTION, perspective=True)
-        for suffix, direction in (("-rear", REAR_VIEW_DIRECTION), ("-below", BELOW_VIEW_DIRECTION)):
+        views = (
+            ("-below", cell, BELOW_VIEW_DIRECTION),
+            ("-adjuster", adjuster_section(cell, p, ADJUSTER_STATION), ADJUSTER_VIEW_DIRECTION),
+        )
+        for suffix, shape, direction in views:
             path = args.figure.with_name(f"{args.figure.stem}{suffix}{args.figure.suffix}")
-            render_figure(cell, path, direction, perspective=True)
+            render_figure(shape, path, direction, perspective=True)
             print(path)
         print(args.figure)
     if args.show:

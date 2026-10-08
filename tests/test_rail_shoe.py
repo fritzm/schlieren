@@ -7,10 +7,18 @@ from math import cos, pi, sqrt
 from build123d import Cylinder, GeomType, Plane, RegularPolygon, extrude, section
 
 from schlieren.cad import ON_FLOOR, along_y
+from schlieren.parts.rail import RailProfile
 from schlieren.parts.rail_shoe import RailShoeParameters, build_rail_shoe, reference_parts, viewer_assembly
+from schlieren.vendor_cad import MCMASTER_91292A114_HEAD_HEIGHT, MCMASTER_92290A_HEAD_HEIGHT
 
 # The TR50/M STEP model is rounded to inches (0.499 in diameter), so it differs slightly from the nominal.
 TR50_MODEL_ROUNDING = 0.03
+
+
+def reference_children(shoe, p):
+    """The viewer's reference parts (rail, disc, post, hardware) by label."""
+    group = {child.label: child for child in viewer_assembly(shoe, p).children}["Reference parts"]
+    return {child.label: child for child in group.children}
 
 
 def ear_x_end(p):
@@ -112,8 +120,60 @@ class RailShoeTests(unittest.TestCase):
         groups = {child.label: child for child in assembly.children}
         self.assertEqual(set(groups), {"Shoe", "Reference parts"})
         self.assertEqual(
-            [child.label for child in groups["Reference parts"].children], ["Rail", "Datum disc", "TR50_M"]
+            [child.label for child in groups["Reference parts"].children],
+            [
+                "Rail",
+                "Datum disc",
+                "TR50_M",
+                "Side screw washer left",
+                "Side screw left",
+                "Side screw washer right",
+                "Side screw right",
+                "Clamp screw",
+                "Clamp nut",
+            ],
         )
+
+    def test_side_screws_seat_on_washers_at_the_side_holes_and_reach_the_t_nuts(self):
+        # Measured slot (design §4.1), not the generic profile.
+        p, rail = self.p, RailProfile(slot_depth=6.45, lip_thickness=1.65)
+        parts = reference_children(self.shoe, p)
+        for side, name in ((-1, "left"), (1, "right")):
+            with self.subTest(side=name):
+                washer = parts[f"Side screw washer {name}"].bounding_box()
+                screw = parts[f"Side screw {name}"].bounding_box()
+                self.assertAlmostEqual(
+                    abs(washer.min.X) if side < 0 else washer.max.X, p.width / 2 + 1.0, places=4
+                )
+                self.assertAlmostEqual(screw.center().Z, -p.rail_height / 2, places=4)
+                self.assertAlmostEqual(screw.center().Y, 0.0, places=4)
+                # Head against the washer's outer face; the tip passes the slot lip and stops short of the floor.
+                head_end = screw.min.X if side < 0 else screw.max.X
+                bearing = head_end - side * MCMASTER_92290A_HEAD_HEIGHT
+                self.assertAlmostEqual(bearing, washer.min.X if side < 0 else washer.max.X, places=4)
+                tip = screw.max.X if side < 0 else screw.min.X
+                entry = -side * (tip - side * p.rail_width / 2)
+                self.assertGreater(
+                    entry, rail.lip_thickness + 3.0
+                )  # Through the thickness of a roll-in T-nut.
+                self.assertLess(entry, rail.slot_depth - 0.5)
+                for part in (parts[f"Side screw washer {name}"], parts[f"Side screw {name}"]):
+                    self.assertLess((self.shoe & part).volume, 1e-6)
+
+    def test_split_clamp_screw_and_nut_sit_in_their_ears(self):
+        p = self.p
+        parts = reference_children(self.shoe, p)
+        screw, nut = parts["Clamp screw"].bounding_box(), parts["Clamp nut"].bounding_box()
+        self.assertAlmostEqual(screw.center().X, p.clamp_axis_x, places=4)
+        self.assertAlmostEqual(screw.center().Z, p.clamp_axis_z, places=4)
+        self.assertAlmostEqual(nut.center().X, p.clamp_axis_x, places=4)
+        self.assertAlmostEqual(nut.center().Z, p.clamp_axis_z, places=4)
+        # Head on the screw ear's outer face; nut on the pocket bottom, with the screw reaching through it.
+        self.assertAlmostEqual(screw.min.Y + MCMASTER_91292A114_HEAD_HEIGHT, p.clamp_screw_outer_y, places=4)
+        self.assertAlmostEqual(nut.min.Y, p.clamp_nut_outer_y - p.nut_pocket_depth, places=4)
+        self.assertGreater(screw.max.Y, nut.max.Y)
+        for label in ("Clamp screw", "Clamp nut"):
+            self.assertLess((self.shoe & parts[label]).volume, 1e-6)
 
     def test_viewer_post_is_vendor_model_seated_on_datum_disc(self):
         p = self.p

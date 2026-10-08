@@ -40,6 +40,13 @@ MODEL_MATCH = 0.001  # Parameters taken from vendor STEP models
 TR50_MODEL_ROUNDING = 0.03
 
 
+def parts_by_label(assembly):
+    """Parts by label, with the "Reference hardware" group's parts alongside the others."""
+    parts = children_by_label(assembly)
+    group = parts.pop("Reference hardware")
+    return {**parts, **children_by_label(group)}
+
+
 class LightSourceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -111,7 +118,7 @@ class LightSourceTests(unittest.TestCase):
     def test_led_board_placement(self):
         p = self.p
         for board in MODULES:
-            placed = children_by_label(build_light_source_assembly(p, board)).__getitem__
+            placed = parts_by_label(build_light_source_assembly(p, board)).__getitem__
             star = placed("LED star board").bounding_box()
             self.assertAlmostEqual(star.min.Y, p.cap_face, delta=MODEL_MATCH, msg=board.name)
             self.assertAlmostEqual(
@@ -196,7 +203,7 @@ class LightSourceTests(unittest.TestCase):
 
     def test_vendor_model_placement(self):
         p = self.p
-        placed = children_by_label(build_light_source_assembly(p)).__getitem__
+        placed = parts_by_label(build_light_source_assembly(p)).__getitem__
 
         post = max(placed("TR50 M post").solids(), key=lambda s: s.volume).bounding_box()
         self.assertAlmostEqual(post.min.Z, p.datum_thickness, delta=0.01)
@@ -225,7 +232,7 @@ class LightSourceTests(unittest.TestCase):
     def test_condenser_and_iris_follow_focus_engagement(self):
         p = self.p
         for e in p.engagement_range(GREEN):
-            placed = children_by_label(build_light_source_assembly(p, GREEN, e)).__getitem__
+            placed = parts_by_label(build_light_source_assembly(p, GREEN, e)).__getitem__
             body = placed("SM1V05 body").bounding_box()
             self.assertAlmostEqual(body.min.Y, p.smr1_thickness - e, delta=MODEL_MATCH)
             self.assertAlmostEqual(body.center().Z, p.optical_height, delta=0.01)
@@ -255,9 +262,10 @@ class LightSourceTests(unittest.TestCase):
             p = self.p
             for e in p.engagement_range(board):
                 assembly = build_light_source_assembly(p, board, e)
-                parts = children_by_label(assembly)
+                parts = parts_by_label(assembly)
                 self.assertTrue(all(s.is_valid for s in parts.values()))
-                names = list(parts)
+                # The rail segment is a reference, and its booleans are slow; the shoe's fit to it is the shoe's own.
+                names = [name for name in parts if name != "Rail segment"]
                 for i, a in enumerate(names):
                     for b in names[i + 1 :]:
                         if not boxes_overlap(parts[a], parts[b]):

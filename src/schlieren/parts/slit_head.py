@@ -35,8 +35,23 @@ from math import cos, isfinite, pi
 
 from build123d import Axis, Box, Cylinder, Pos, RegularPolygon, Rot, extrude, fillet
 
-from schlieren.cad import BLACK_ANODIZED, FROM_CORNER, ON_FLOOR, along_y, assembly, labeled
-from schlieren.vendor_cad import SM1RC_M_THICKNESS, thorlabs_fas100, thorlabs_sm1rc_m, thorlabs_tr50_m
+from schlieren.cad import (
+    BLACK_ANODIZED,
+    FROM_CORNER,
+    ON_FLOOR,
+    along_y,
+    assembly,
+    compression_spring,
+    labeled,
+)
+from schlieren.vendor_cad import (
+    SM1RC_M_THICKNESS,
+    mcmaster_91292a114,
+    mcmaster_91828a211,
+    thorlabs_fas100_parts,
+    thorlabs_sm1rc_m,
+    thorlabs_tr50_m,
+)
 
 INCH = 25.4
 LBF = 4.44822  # N
@@ -81,6 +96,8 @@ class SlitHeadParameters:
     spring_guide_pin_diameter: float = 3.6  # Inside the coil, which passes a 4 mm shoulder (§8.5).
     spring_guide_pin_length: float = 5.0
     spring_outer_diameter: float = 0.272 * INCH  # Measured (calipers), in-hand spring.
+    spring_wire_diameter: float = 0.63  # Catalog; display only.
+    spring_display_coils: float = 10.0  # Total turns of the displayed helix; approximate.
     spring_pocket_clearance: float = 1.0  # Diametral; printed-hole shrink and coil growth under compression.
     # Common M3 hardware: 91292A114 M3 x 12 SHCS, 91828A211 nut.
     screw_length: float = 12.0
@@ -307,6 +324,11 @@ class SlitHeadParameters:
         return tip + self.thread_protrusion + self.nut_thickness
 
     @property
+    def adapter_nut_floor(self):
+        """Front (floor) face of the adapter nut pockets, which open from the adapter back."""
+        return self.adapter_back + self.nut_thickness + self.nut_axial_clearance
+
+    @property
     def adapter_counterbore_floor(self):
         """Adapter screws enter from the head front; the nut pockets open from the adapter back."""
         nut_far_face = self.adapter_back + self.nut_axial_clearance
@@ -431,15 +453,22 @@ class SlitHeadParameters:
         if self.width_tip_well + self.magnet_thickness > self.width_blade_spacing:
             raise ValueError("Width-stage magnet must seat in the connector")
         # Each FAS100 must keep thread through its whole insert over all travel.
+        # Insert thread top: the flange face for outboard flanges, the body end for FAS100 #1's inboard flange.
         reaches = (
-            (self.frame_top_bar[1], self.centering_tip_z - self.centering_half_travel),
-            (self.platform_top_bar[1], self.width_tip_z - self.width_deflection_range[1]),
+            (self.frame_top_bar[0] + self.insert_length, self.centering_tip_z - self.centering_half_travel),
+            (
+                self.platform_top_bar[1] + self.insert_flange_thickness,
+                self.width_tip_z - self.width_deflection_range[1],
+            ),
         )
         for insert_top, lowest_tip in reaches:
-            if lowest_tip + self.adjuster_thread_length < insert_top + self.insert_flange_thickness + 0.5:
+            if lowest_tip + self.adjuster_thread_length < insert_top + 0.5:
                 raise ValueError("FAS100 cannot reach its lowest tip position")
-        if self.centering_tip_z + self.centering_half_travel >= self.frame_top_bar[0]:
-            raise ValueError("FAS100 #1 must protrude below the frame bar at full travel")
+        if (
+            self.centering_tip_z + self.centering_half_travel
+            >= self.frame_top_bar[0] - self.insert_flange_thickness
+        ):
+            raise ValueError("FAS100 #1 must protrude below its inboard insert flange at full travel")
         knob = self.adjuster_knob_diameter / 2
         if self.frame_top_bar_x0 - (self.width_screw_x + knob) < 2.0:
             raise ValueError("FAS100 #2 knob must clear the frame top bar")
@@ -547,7 +576,8 @@ def build_slit_head(p=None):
         head += part
 
     cuts = []
-    # FAS100 inserts: #1 in the frame top bar, #2 in the platform top bar; flanges outboard (+z).
+    # FAS100 inserts: #1 in the frame top bar, #2 in the platform top bar; FAS100 #1's flange
+    # is inboard (-z, on the bar's inner face) so the spring load seats the insert; #2's is outboard (+z).
     for x, (z0, z1) in ((p.centering_screw_x, ftb), (p.width_screw_x, ptb)):
         cuts.append(_z_cylinder(p.insert_bore, x, p.axis_y, z0 - 1, z1 + 1))
     cuts.append(_magnet_pocket(p, p.centering_screw_x, upper[1], p.centering_tip_well))
@@ -686,17 +716,42 @@ def build_slit_head_assembly(p=None, rotation=0.0, include_support=True):
         )
         children.append(labeled(epdm, f"{name} EPDM", (0.15, 0.15, 0.15), placed))
         children.append(labeled(_blade(p, sign), f"{name} blade", metal, loc))
+    # M3 hardware, axes along y: screw heads toward +y, shanks toward -y into captive nuts seated on their
+    # pocket floors (local +z of each vendor model turned to -y).
+    to_nut_corners_along_x = Rot(Z=90)
+    clamp_points = [
+        (cx, sign * p.clamp_bar_z) for sign in (-1, 1) for cx in (-p.clamp_screw_x, p.clamp_screw_x)
+    ]
+    for group, points, head_y, nut_y in (
+        ("Clamp", clamp_points, p.clamp_bar_front, p.clamp_nut_floor),
+        ("Adapter", p.adapter_screw_xz(), p.adapter_counterbore_floor, p.adapter_nut_floor),
+    ):
+        for i, (x, z) in enumerate(points, 1):
+            on_axis = loc * Pos(x, 0, z) * Rot(X=90)
+            children.append(
+                labeled(mcmaster_91292a114(), f"{group} screw {i}", metal, on_axis * Pos(0, 0, -head_y))
+            )
+            nut = to_nut_corners_along_x * mcmaster_91828a211()
+            children.append(labeled(nut, f"{group} nut {i}", metal, on_axis * Pos(0, 0, -nut_y)))
     tips = (
-        ("FAS100 centering", p.centering_screw_x, p.centering_tip_z, p.frame_top_bar[1]),
-        ("FAS100 width", p.width_screw_x, p.width_tip_z, p.platform_top_bar[1]),
+        ("FAS100 centering", p.centering_screw_x, p.centering_tip_z, p.frame_top_bar, True),
+        ("FAS100 width", p.width_screw_x, p.width_tip_z, p.platform_top_bar, False),
     )
-    for name, x, tip_z, insert_top in tips:
-        children.append(labeled(thorlabs_fas100(), name, metal, loc * Pos(x, p.axis_y, tip_z)))
-        insert = _z_cylinder(p.insert_bore, x, p.axis_y, insert_top - p.insert_length, insert_top)
-        insert += _z_cylinder(
-            p.insert_flange_diameter, x, p.axis_y, insert_top, insert_top + p.insert_flange_thickness
-        )
-        insert -= _z_cylinder(INCH / 4, x, p.axis_y, insert_top - 10, insert_top + 1)
+    for name, x, tip_z, bar, flange_inboard in tips:
+        fas100 = loc * Pos(x, p.axis_y, tip_z)
+        screw, knob, dimple = thorlabs_fas100_parts()
+        children.append(labeled(screw, name, metal, fas100))
+        children.append(labeled(knob, f"{name} knob", (0.16, 0.16, 0.17), fas100))
+        children.append(labeled(dimple, f"{name} index dimple", (0.95, 0.95, 0.95), fas100))
+        if flange_inboard:
+            seat, body0, body1 = bar[0], bar[0], bar[0] + p.insert_length
+            flange0, flange1 = seat - p.insert_flange_thickness, seat
+        else:
+            seat, body0, body1 = bar[1], bar[1] - p.insert_length, bar[1]
+            flange0, flange1 = seat, seat + p.insert_flange_thickness
+        insert = _z_cylinder(p.insert_bore, x, p.axis_y, body0, body1)
+        insert += _z_cylinder(p.insert_flange_diameter, x, p.axis_y, flange0, flange1)
+        insert -= _z_cylinder(INCH / 4, x, p.axis_y, bar[0] - 10, bar[1] + 1)
         children.append(labeled(insert, f"{name} insert", (0.8, 0.65, 0.25), loc))
         magnet = _box(
             x - p.magnet_length / 2,
@@ -708,11 +763,12 @@ def build_slit_head_assembly(p=None, rotation=0.0, include_support=True):
         )
         children.append(labeled(magnet, f"{name} magnet", (0.6, 0.6, 0.62), loc))
     sx, s0, s1 = p.centering_screw_x, p.frame_spring_seat_z, p.platform_spring_seat_z
-    spring = _z_cylinder(p.spring_outer_diameter, sx, p.axis_y, s0, s1)
-    spring -= _z_cylinder(p.spring_guide_pin_diameter + 0.4, sx, p.axis_y, s0 - 1, s1 + 1)
-    children.append(labeled(spring, "2006N292 spring envelope", (0.5, 0.5, 0.5), loc))
+    spring = compression_spring(
+        p.spring_outer_diameter, p.spring_wire_diameter, s1 - s0, p.spring_display_coils
+    )
+    children.append(labeled(spring, "2006N292 spring", (0.75, 0.75, 0.78), loc * Pos(sx, p.axis_y, s0)))
     if include_support:
-        from schlieren.parts.rail_shoe import build_rail_shoe
+        from schlieren.parts.rail_shoe import build_rail_shoe, side_clamp_hardware, split_clamp_hardware
 
         ring_y = -SM1RC_M_THICKNESS / 2
         children.append(
@@ -720,4 +776,6 @@ def build_slit_head_assembly(p=None, rotation=0.0, include_support=True):
         )
         children.append(labeled(thorlabs_tr50_m(), "TR50 M post", metal, Pos(0, 0, p.datum_thickness)))
         children.append(labeled(build_rail_shoe(), "Rail shoe", (0.8, 0.4, 0.25)))
+        for hardware in (*side_clamp_hardware(), *split_clamp_hardware()):
+            children.append(labeled(hardware, f"Shoe {hardware.label.lower()}", metal))
     return assembly("Flexure slit head (exploratory)", children)

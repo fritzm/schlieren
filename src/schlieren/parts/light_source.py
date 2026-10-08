@@ -26,6 +26,7 @@ from math import isfinite
 from build123d import Box, Circle, Cylinder, Pos, Rectangle, RegularPolygon, Rot, Sphere, extrude
 
 from schlieren.cad import BLACK_ANODIZED, ON_FLOOR, assembly, labeled
+from schlieren.parts.rail import build_rail
 from schlieren.vendor_cad import (
     alpha_cn40_40b,
     thorlabs_acl2520u_a,
@@ -39,7 +40,8 @@ from schlieren.vendor_cad import (
 
 INCH = 25.4
 METAL = (0.75, 0.75, 0.78)  # Stainless TR50/M post and the iris lever.
-SHOE_COLOR = (0.8, 0.4, 0.25)
+RAIL_SEGMENT_OVERHANG = 15.0  # Rail shown beyond each end of the shoe.
+SHOE_COLOR = (0.36, 0.35, 0.34)  # Charcoal ABS, lighter than the black anodized rail.
 GLASS = (0.7, 0.85, 0.95, 0.5)
 BOARD_COLOR = (0.92, 0.92, 0.9)  # White solder mask.
 LED_COLOR = (0.95, 0.9, 0.6)
@@ -237,9 +239,14 @@ def build_led_package(board):
 def build_light_source_assembly(p=None, board=GREEN, engagement=None):
     """Purchased parts in rail-top coordinates; the post is centered at the SMR1/M midplane.
 
-    The printed rail shoe is included under the post for reference.
+    The post, the printed rail shoe under it, and the shoe's vendor hardware are grouped as "Reference hardware".
     """
-    from schlieren.parts.rail_shoe import build_rail_shoe
+    from schlieren.parts.rail_shoe import (
+        RailShoeParameters,
+        build_rail_shoe,
+        side_clamp_hardware,
+        split_clamp_hardware,
+    )
 
     p = p or LightSourceParameters()
     p.validate()
@@ -268,7 +275,15 @@ def build_light_source_assembly(p=None, board=GREEN, engagement=None):
         "SM1L03 tube": (thorlabs_sm1l03(), p.open_end_u(engagement)),
         "SM1D12 iris": (iris, iris_seat),
     }
-    children = [labeled(thorlabs_tr50_m(), "TR50 M post", METAL, Pos(0, post_y, p.datum_thickness))]
+    on_post = Pos(0, post_y, 0)
+    shoe_length = RailShoeParameters().length
+    reference = [
+        labeled(thorlabs_tr50_m(), "TR50 M post", METAL, Pos(0, post_y, p.datum_thickness)),
+        labeled(build_rail_shoe(), "Rail shoe", SHOE_COLOR, on_post),
+        labeled(build_rail(shoe_length + 2 * RAIL_SEGMENT_OVERHANG), "Rail segment", BLACK_ANODIZED, on_post),
+        *(labeled(h, h.label, METAL, on_post) for h in (*side_clamp_hardware(), *split_clamp_hardware())),
+    ]
+    children = [assembly("Reference hardware", reference)]
     children += [
         labeled(part, name, BLACK_ANODIZED, Pos(0, u, z)) for name, (part, u) in vendor_parts.items()
     ]
@@ -281,5 +296,4 @@ def build_light_source_assembly(p=None, board=GREEN, engagement=None):
     children.append(
         labeled(build_led_package(board), "LED package", LED_COLOR, Pos(0, led_face, z) * toward_lens)
     )
-    children.append(labeled(build_rail_shoe(), "Rail shoe", SHOE_COLOR, Pos(0, post_y, 0)))
     return assembly("Light source", children)

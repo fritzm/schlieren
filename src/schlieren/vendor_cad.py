@@ -8,7 +8,7 @@ from the vendor's frame into a documented mounting frame, so callers place it wi
 from functools import cache
 from pathlib import Path
 
-from build123d import Compound, Location, Pos, Rot, import_step
+from build123d import Box, Compound, Location, Pos, Rot, import_step
 
 VENDOR_CAD_DIR = Path(__file__).resolve().parents[2] / "cad" / "vendor"
 INCH = 25.4
@@ -80,6 +80,29 @@ MCMASTER_90099A030_HEIGHT = 7 / 16 * INCH
 # McMaster 96659A134 model: axis +Z through the origin, centered on its 1.664 mm thickness.
 MCMASTER_96659A134_THICKNESS = 1.664
 MCMASTER_96659A134_DIAMETER = 17.476
+# McMaster 92290A228 (M5 × 12) and 92290A242 (M5 × 20) models, no threads: axis +Z through the origin, centered on the
+# overall length (the nominal length plus the head), Ø8.5 mm head of 5 mm at +Z, Ø5 mm plain shank to -Z.
+MCMASTER_92290A_HEAD_HEIGHT = 5.0
+MCMASTER_92290A_HEAD_DIAMETER = 8.5
+MCMASTER_92290A228_LENGTH = 12.0  # Nominal: under the head.
+MCMASTER_92290A242_LENGTH = 20.0
+MCMASTER_92290A265_LENGTH = 50.0  # The 92290A265 (M5 × 50) model has the same layout.
+# McMaster 91116A350 model: axis +Z through the origin, centered on its 1.2 mm thickness; Ø15 mm OD.
+MCMASTER_91116A350_THICKNESS = 1.2
+MCMASTER_91116A350_DIAMETER = 15.0
+# McMaster 93625A225 model (M5 nyloc nut, no threads): axis +Y through the origin, y from -2.5 to 2.5 mm, nylon insert
+# at +Y; 8 mm across flats (along x), 9.11 mm across corners (along z); two solids (nut, insert).
+MCMASTER_93625A225_HEIGHT = 5.0
+# McMaster 93475A240 model: axis +Z through the origin, centered on its 1 mm thickness; Ø10 mm OD, Ø5.3 mm ID.
+MCMASTER_93475A240_THICKNESS = 1.0
+MCMASTER_93475A240_DIAMETER = 10.0
+# McMaster 91292A114 model (M3 × 12, no threads): axis +Z through the origin, centered on its 15 mm overall length
+# (12 mm under the head plus the head), Ø5.5 mm head of 3 mm at +Z, Ø3 mm plain shank to -Z.
+MCMASTER_91292A114_LENGTH = 12.0  # Nominal: under the head.
+MCMASTER_91292A114_HEAD_HEIGHT = 3.0
+# McMaster 91828A211 model (M3 nut, no threads): axis +Z through the origin, centered on its 2.4 mm height; 5.5 mm
+# across flats (along x), 6.326 mm across corners (along y).
+MCMASTER_91828A211_HEIGHT = 2.4
 # McMaster 91131A028 model: axis +Y through the origin; the female half's flat back is at y=-3.378 mm.
 MCMASTER_91131A028_BACK_Y = -3.378
 MCMASTER_91131A028_HEIGHT = 6.756
@@ -180,6 +203,13 @@ def thorlabs_fas100() -> Compound:
     y, z = FAS100_AXIS_YZ
     to_tip = Pos(-FAS100_TIP_X, -y, -z)
     return _moved("Thorlabs-FAS100.step", Rot(Y=90) * to_tip)
+
+
+@cache
+def thorlabs_fas100_parts() -> tuple[Compound, Compound, Compound]:
+    """The thorlabs_fas100 frame split as (screw with ball tip, knob, index dimple), for coloring."""
+    dimple, tip, screw, knob = sorted(thorlabs_fas100().solids(), key=lambda s: s.volume)
+    return Compound([screw, tip]), Compound([knob]), Compound([dimple])
 
 
 @cache
@@ -296,3 +326,99 @@ def mcmaster_90099a030() -> tuple[Compound, Compound]:
 def mcmaster_96659a134() -> Compound:
     """McMaster 96659A134 5/16" SAE washer; axis +Z through the origin, one face at z=0, the other at +thickness."""
     return _moved("McMaster-96659A134.step", Pos(0, 0, MCMASTER_96659A134_THICKNESS / 2))
+
+
+def _m5_socket_screw(filename: str, length: float) -> Compound:
+    """A McMaster M5 socket head cap screw model: axis +Z, head bearing face at z=0, head toward -Z, shank to +Z."""
+    return _moved(filename, Pos(0, 0, (length - MCMASTER_92290A_HEAD_HEIGHT) / 2) * Rot(X=180))
+
+
+@cache
+def mcmaster_92290a228() -> Compound:
+    """McMaster 92290A228 M5 × 0.8 × 12 mm 316 stainless socket head screw (unthreaded model).
+
+    Axis +Z through the origin, the head's bearing face at z=0 with the head toward -Z and the shank toward +Z.
+    """
+    return _m5_socket_screw("McMaster-92290A228.step", MCMASTER_92290A228_LENGTH)
+
+
+@cache
+def mcmaster_92290a242() -> Compound:
+    """McMaster 92290A242 M5 × 0.8 × 20 mm 316 stainless socket head screw (unthreaded model).
+
+    Axis +Z through the origin, the head's bearing face at z=0 with the head toward -Z and the shank toward +Z.
+    """
+    return _m5_socket_screw("McMaster-92290A242.step", MCMASTER_92290A242_LENGTH)
+
+
+@cache
+def mcmaster_93475a240() -> Compound:
+    """McMaster 93475A240 M5 flat washer; axis +Z through the origin, one face at z=0, the other at +thickness."""
+    return _moved("McMaster-93475A240.step", Pos(0, 0, MCMASTER_93475A240_THICKNESS / 2))
+
+
+@cache
+def mcmaster_91292a114() -> Compound:
+    """McMaster 91292A114 M3 × 0.5 × 12 mm 18-8 stainless socket head screw (unthreaded model).
+
+    Axis +Z through the origin, the head's bearing face at z=0 with the head toward -Z and the shank toward +Z.
+    """
+    shift = (MCMASTER_91292A114_LENGTH - MCMASTER_91292A114_HEAD_HEIGHT) / 2
+    return _moved("McMaster-91292A114.step", Pos(0, 0, shift) * Rot(X=180))
+
+
+@cache
+def mcmaster_91828a211() -> Compound:
+    """McMaster 91828A211 M3 × 0.5 hex nut (unthreaded model); axis +Z through the origin.
+
+    One face is at z=0 and the other at +height; the flats are 5.5 mm apart along x, the corners along y.
+    """
+    return _moved("McMaster-91828A211.step", Pos(0, 0, MCMASTER_91828A211_HEIGHT / 2))
+
+
+@cache
+def mcmaster_92290a265() -> Compound:
+    """McMaster 92290A265 M5 × 0.8 × 50 mm 316 stainless socket head screw (unthreaded model).
+
+    Axis +Z through the origin, the head's bearing face at z=0 with the head toward -Z and the shank toward +Z.
+    """
+    return _m5_socket_screw("McMaster-92290A265.step", MCMASTER_92290A265_LENGTH)
+
+
+@cache
+def mcmaster_91116a350() -> Compound:
+    """McMaster 91116A350 M5 oversized washer; axis +Z through the origin, one face at z=0, the other at +thickness."""
+    return _moved("McMaster-91116A350.step", Pos(0, 0, MCMASTER_91116A350_THICKNESS / 2))
+
+
+@cache
+def mcmaster_93625a225() -> Compound:
+    """McMaster 93625A225 M5 nylon-insert locknut (unthreaded model); axis +Z through the origin.
+
+    One face is at z=0 and the other, with the nylon insert, at +height; the flats are 8 mm apart along x.
+    """
+    return _moved("McMaster-93625A225.step", Pos(0, 0, MCMASTER_93625A225_HEIGHT / 2) * Rot(X=90))
+
+
+@cache
+def m5_socket_screw(length: float) -> Compound:
+    """An M5 socket head cap screw of the given length under the head, as the kit screws are modeled.
+
+    The assortment kits have no vendor models, so this is the shortest McMaster M5 model (12, 20 or 50 mm) at
+    least that long, with its shank cut to length. Axis +Z through the origin, the head's bearing face at z=0 with
+    the head toward -Z and the shank toward +Z.
+    """
+    models = (
+        (MCMASTER_92290A228_LENGTH, mcmaster_92290a228),
+        (MCMASTER_92290A242_LENGTH, mcmaster_92290a242),
+        (MCMASTER_92290A265_LENGTH, mcmaster_92290a265),
+    )
+    for model_length, model in models:
+        if length <= model_length:
+            break
+    else:
+        raise ValueError(f"No M5 screw model reaches {length} mm")
+    if length == model_length:
+        return model()
+    size = 2 * MCMASTER_92290A_HEAD_DIAMETER
+    return model() - Pos(0, 0, length + size / 2) * Box(size, size, size)

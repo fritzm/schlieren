@@ -38,8 +38,9 @@ Yaw is in degrees outward from the nominal half-angle; the straps and their
 bolts stay fixed to the plate. The rails use `rail.py` with the measured
 §4.1 slot dimensions; the slot-floor taper is still nominal. The thumb nuts
 are the McMaster 92815A202 vendor model (Ø20 × 5 mm, unthreaded), collar down
-on the strap washer, and the feet are the McMaster 8215K2 model, a Ø1.25 in
-hemisphere. Other fasteners, washers, and nuts are plain nominal envelopes,
+on the strap washer, the feet are the McMaster 8215K2 model, a Ø1.25 in
+hemisphere, and the rear-foot screws and washers are the McMaster 92290A242 (M5 × 20, unthreaded) and
+93475A240 models. Other fasteners, washers, and nuts are plain nominal envelopes,
 and the T-nuts are not modeled.
 
 Three placements are not given in §4 and are model assumptions, exposed as
@@ -258,7 +259,7 @@ and ball-tip geometry still need a physical access check.
 The datum-pin projection, sliding fits, spring compression at loading, and
 cassette insertion/tilt trial remain provisional. Six millimeters of loading
 retraction is modeled from fiducial only. `--show` adds the FAS100, bushing,
-magnet pad, and spring envelope as references; the cassette is not shown. Full SM1RC/M/post rotation clearance still
+magnet pad, and spring (a display helix) as references; the cassette is not shown. Full SM1RC/M/post rotation clearance still
 needs checking against the physical stack.
 
 ## Common cassette blank — preliminary

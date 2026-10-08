@@ -3,7 +3,12 @@
 import argparse
 from pathlib import Path
 
-from schlieren.parts.camera_support import build_camera_support_assembly
+from schlieren.cad import EXPORTERS
+from schlieren.parts.camera_support import (
+    build_camera_support_assembly,
+    build_pointer_shoe_for_print,
+    build_pointer_yoke_for_print,
+)
 
 DEFAULT_FIGURE = Path("docs/design/figures/camera-support.png")
 FIGURE_VIEW_DIRECTION = (
@@ -26,6 +31,17 @@ def main() -> None:
     parser.add_argument("--show", action="store_true", help="Display the model in OCP CAD Viewer")
     parser.add_argument("--no-cutoff", action="store_true", help="Leave the cutoff station out of --show")
     parser.add_argument(
+        "--yoke",
+        action="store_true",
+        help="Export one pointer yoke in print orientation (STEP and STL); with --show, display it",
+    )
+    parser.add_argument(
+        "--shoe",
+        action="store_true",
+        help="Export the pointer shoe in print orientation (STEP and STL); with --show, display it",
+    )
+    parser.add_argument("--output", type=Path, default=Path("exports"))
+    parser.add_argument(
         "--figure",
         type=Path,
         nargs="?",
@@ -40,6 +56,17 @@ def main() -> None:
         help="Render several PNG views into this directory (default: exports/figures)",
     )
     args = parser.parse_args()
+    printed = {}
+    if args.yoke:
+        printed["pointer_yoke"] = build_pointer_yoke_for_print()
+    if args.shoe:
+        printed["pointer_shoe"] = build_pointer_shoe_for_print()
+    for name, part in printed.items():
+        for kind in ("step", "stl"):
+            destination = args.output / kind / f"{name}.{kind}"
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            EXPORTERS[kind](part, destination)
+            print(destination)
     if args.figure or args.views:
         from schlieren.render import render_figure
 
@@ -57,7 +84,9 @@ def main() -> None:
     if args.show:
         from ocp_vscode import show
 
-        show(build_camera_support_assembly(include_cutoff=not args.no_cutoff))
+        show(*printed.values()) if printed else show(
+            build_camera_support_assembly(include_cutoff=not args.no_cutoff)
+        )
 
 
 if __name__ == "__main__":

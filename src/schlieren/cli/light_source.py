@@ -16,24 +16,7 @@ from schlieren.parts.light_source_holes import HoleLayoutParameters
 DEFAULT_FIGURE = Path("docs/design/figures/light-source.png")
 HOLES_FIGURE_NAME = "light-source-holes.svg"  # The §6.4 hole layout, written beside the figure.
 TEMPLATES_NAME = "light_source_drilling_templates.svg"
-FIGURE_VIEW_DIRECTION = (1.0, 0.45, 0.4)  # From the side, slightly ahead and above: heatsink through iris.
-FIGURE_RAIL_OVERHANG = 15.0  # Rail shown beyond each end of the shoe.
-
-
-def figure_assembly(p, board):
-    """The light source at focus on a generic rail segment under its shoe."""
-    from build123d import Pos
-
-    from schlieren.cad import assembly, labeled
-    from schlieren.parts.rail import build_rail
-    from schlieren.parts.rail_shoe import REFERENCE_COLOR, RailShoeParameters
-
-    rail = build_rail(RailShoeParameters().length + 2 * FIGURE_RAIL_OVERHANG)
-    post_y = p.smr1_thickness / 2
-    return assembly(
-        "Light source figure",
-        [build_light_source_assembly(p, board), labeled(rail, "Rail", REFERENCE_COLOR, Pos(0, post_y, 0))],
-    )
+FIGURE_VIEW_DIRECTION = (1.0, 0.75, 0.45)  # From the side, ahead and above: heatsink through the iris end.
 
 
 def main():
@@ -86,7 +69,9 @@ def main():
         print(holes_figure)
 
         args.figure.parent.mkdir(parents=True, exist_ok=True)
-        render_figure(figure_assembly(p, GREEN), args.figure, FIGURE_VIEW_DIRECTION, perspective=True)
+        render_figure(
+            build_light_source_assembly(p, GREEN), args.figure, FIGURE_VIEW_DIRECTION, perspective=True
+        )
         print(args.figure)
     if args.show:
         from ocp_vscode import show

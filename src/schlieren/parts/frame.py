@@ -10,37 +10,44 @@ at z=0; the plate lies at positive y and the rails run aft of it to negative y. 
 the source rail) or +1 (right, the imaging rail). Each rail assembly is built in its §3.4 rail frame, the same
 senses with y along that rail and the origin at its pivot.
 
-The thumb nuts and feet are the vendor models. Other fasteners, washers, and nuts are plain nominal envelopes
+The thumb nuts, feet, foot screws, and foot washers are the vendor models. Other fasteners, washers, and nuts are plain nominal envelopes
 without threads or sockets, and the T-nuts are not modeled.
 """
 
 from dataclasses import dataclass
 from math import atan, cos, degrees, pi, sin
 
-from build123d import Align, Box, Compound, Cylinder, Location, Part, Pos, RegularPolygon, Rot, extrude
+from build123d import Align, Box, Compound, Cylinder, Location, Part, Pos, Rot
 
 from schlieren.cad import BLACK_ANODIZED, ON_FLOOR, assembly, labeled, place
 from schlieren.parts.rail import RailProfile, build_rail
 from schlieren.vendor_cad import (
     MCMASTER_8215K2_DIAMETER,
     MCMASTER_8215K2_HEIGHT,
+    MCMASTER_91116A350_THICKNESS,
+    MCMASTER_92290A242_LENGTH,
+    MCMASTER_92290A265_LENGTH,
     MCMASTER_92815A202_HEIGHT,
+    MCMASTER_93475A240_THICKNESS,
+    MCMASTER_93625A225_HEIGHT,
+    m5_socket_screw,
     mcmaster_8215k2,
+    mcmaster_91116a350,
+    mcmaster_92290a265,
     mcmaster_92815a202,
+    mcmaster_93475a240,
+    mcmaster_93625a225,
 )
 
 INCH = 25.4
 SIDES = {"Left": -1, "Right": 1}
 
-# Nominal M5 hardware envelopes (ISO 4762 socket head, ISO 7089 washer, DIN 985 nyloc), for the viewer and
-# stack checks.
+# Nominal M5 hardware envelopes (ISO 4762 socket head, ISO 7089 washer, nyloc), for the viewer and stack checks.
 M5_SHANK_DIAMETER = 5.0
 M5_HEAD_DIAMETER = 8.5
-M5_HEAD_HEIGHT = 5.0
 M5_WASHER_DIAMETER = 10.0
-M5_WASHER_THICKNESS = 1.0
-M5_NYLOC_ACROSS_FLATS = 8.0
-M5_NYLOC_HEIGHT = 5.0
+M5_WASHER_THICKNESS = MCMASTER_93475A240_THICKNESS
+M5_NYLOC_HEIGHT = MCMASTER_93625A225_HEIGHT
 
 PLYWOOD_COLOR = (0.82, 0.68, 0.45)
 ALUMINUM_COLOR = (0.75, 0.75, 0.78)
@@ -81,8 +88,8 @@ class FrameParameters:
     pivot_spacer_outer_diameter: float = 10.0
     pivot_spacer_inner_diameter: float = 5.3
     oversize_washer_diameter: float = 15.0
-    oversize_washer_thickness: float = 1.2  # Nominal for an M5 × 15 mm washer; not measured.
-    pivot_screw_length: float = 50.0  # Also the yaw-clamp screw.
+    oversize_washer_thickness: float = MCMASTER_91116A350_THICKNESS
+    pivot_screw_length: float = MCMASTER_92290A265_LENGTH  # Also the yaw-clamp screw.
     friction_strip_thickness: float = INCH / 32
     friction_strip_length: float = 30.0
 
@@ -90,7 +97,7 @@ class FrameParameters:
     foot_block_length: float = 75.0  # Along the rail.
     foot_block_width: float = 50.0
     foot_screw_spacing: float = 50.0
-    foot_screw_length: float = 20.0
+    foot_screw_length: float = MCMASTER_92290A242_LENGTH
     # Two washers under each head set how far the screw enters the rail slot. With one, an M5 × 20 stops only
     # 0.15 mm short of the measured slot floor and bottoms if the plywood runs thin; an M5 × 16 reaches barely
     # past the slot lip to the T-nut. No standard length lies between.
@@ -284,12 +291,6 @@ def build_joining_plate(p: FrameParameters | None = None) -> Part:
     return plate
 
 
-def _socket_screw(length: float) -> Part:
-    """M5 socket-head screw pointing +z, underside of the head at z=0."""
-    head = Cylinder(M5_HEAD_DIAMETER / 2, M5_HEAD_HEIGHT, align=TOP_AT_ORIGIN)
-    return head + Cylinder(M5_SHANK_DIAMETER / 2, length, align=ON_FLOOR)
-
-
 def _ring(outer_diameter: float, inner_diameter: float, height: float) -> Part:
     return Cylinder(outer_diameter / 2, height, align=ON_FLOOR) - _bore(inner_diameter, height)
 
@@ -313,17 +314,25 @@ def _rail_assembly(p: FrameParameters, name: str) -> Compound:
     ]
     for index, y in enumerate((lug_center, lug_center - p.joining_plate_hole_pitch), start=1):
         head_down = Pos(0, y, p.joining_plate_thickness) * Rot(X=180)
-        parts.append(labeled(_socket_screw(p.lug_screw_length), f"Lug screw {index}", STEEL_COLOR, head_down))
+        parts.append(
+            labeled(m5_socket_screw(p.lug_screw_length), f"Lug screw {index}", STEEL_COLOR, head_down)
+        )
     for index, offset in enumerate((-p.foot_screw_spacing / 2, p.foot_screw_spacing / 2), start=1):
         y = block_y + offset
-        washer = _ring(M5_WASHER_DIAMETER, p.pivot_spacer_inner_diameter, M5_WASHER_THICKNESS)
         under_head = block_bottom - p.foot_washer_stack
         for layer in range(p.foot_washers_per_screw):
             z = under_head + layer * M5_WASHER_THICKNESS
-            parts.append(labeled(washer, f"Foot screw {index} washer {layer + 1}", STEEL_COLOR, Pos(0, y, z)))
+            parts.append(
+                labeled(
+                    mcmaster_93475a240(), f"Foot screw {index} washer {layer + 1}", STEEL_COLOR, Pos(0, y, z)
+                )
+            )
         parts.append(
             labeled(
-                _socket_screw(p.foot_screw_length), f"Foot screw {index}", STEEL_COLOR, Pos(0, y, under_head)
+                m5_socket_screw(p.foot_screw_length),
+                f"Foot screw {index}",
+                STEEL_COLOR,
+                Pos(0, y, under_head),
             )
         )
     return assembly(f"{name} rail assembly", parts)
@@ -331,10 +340,7 @@ def _rail_assembly(p: FrameParameters, name: str) -> Compound:
 
 def _plate_assembly(p: FrameParameters) -> Compound:
     """The pivot plate and everything fixed to it: front foot, pivot stacks, yaw straps and their bolts."""
-    washer = _ring(p.oversize_washer_diameter, p.pivot_spacer_inner_diameter, p.oversize_washer_thickness)
     under_head = p.plate_bottom - p.oversize_washer_thickness
-    nyloc = extrude(RegularPolygon(M5_NYLOC_ACROSS_FLATS / 2 / cos(pi / 6), 6), amount=M5_NYLOC_HEIGHT)
-    nyloc -= _bore(M5_SHANK_DIAMETER, M5_NYLOC_HEIGHT)
     spacer = _ring(p.pivot_spacer_outer_diameter, p.pivot_spacer_inner_diameter, p.pivot_spacer_length)
     strip = Box(p.joining_plate_width, p.friction_strip_length, p.friction_strip_thickness, align=ON_FLOOR)
 
@@ -348,19 +354,19 @@ def _plate_assembly(p: FrameParameters) -> Compound:
         ),
     ]
 
-    def stack(label: str, x: float, y: float, top: float, nut: Part) -> None:
+    def stack(label: str, x: float, y: float, top: float, nut: Compound) -> None:
         """Screw up through the plate at (x, y), with washers under the plate and on the surface at top."""
         for part, name, z, color in (
-            (_socket_screw(p.pivot_screw_length), "screw", under_head, STEEL_COLOR),
-            (washer, "lower washer", under_head, STEEL_COLOR),
-            (washer, "upper washer", top, STEEL_COLOR),
+            (mcmaster_92290a265(), "screw", under_head, STEEL_COLOR),
+            (mcmaster_91116a350(), "lower washer", under_head, STEEL_COLOR),
+            (mcmaster_91116a350(), "upper washer", top, STEEL_COLOR),
             (nut, "nut", top + p.oversize_washer_thickness, BLACK_OXIDE_COLOR),
         ):
             parts.append(labeled(part, f"{label} {name}", color, Pos(x, y, z)))
 
     for name, side in SIDES.items():
         x, y = p.pivot_center(side)
-        stack(f"{name} pivot", x, y, p.joining_plate_thickness, nyloc)
+        stack(f"{name} pivot", x, y, p.joining_plate_thickness, mcmaster_93625a225())
         parts.append(labeled(spacer, f"{name} pivot spacer", STEEL_COLOR, Pos(x, y, p.plate_top)))
 
         # The strap lies across the nominal rail axis and stays there when the rail is yawed.
