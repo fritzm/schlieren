@@ -100,6 +100,12 @@ MCMASTER_93475A240_DIAMETER = 10.0
 # (12 mm under the head plus the head), Ø5.5 mm head of 3 mm at +Z, Ø3 mm plain shank to -Z.
 MCMASTER_91292A114_LENGTH = 12.0  # Nominal: under the head.
 MCMASTER_91292A114_HEAD_HEIGHT = 3.0
+# McMaster 91585A351 (Ø3 × 10 mm) and 91585A457 (Ø4 × 20 mm) dowel pins: axis +X through the origin, centered on
+# the length; chamfered ends.
+MCMASTER_91585A351_DIAMETER = 3.0
+MCMASTER_91585A351_LENGTH = 10.0
+MCMASTER_91585A457_DIAMETER = 4.0
+MCMASTER_91585A457_LENGTH = 20.0
 # McMaster 91828A211 model (M3 nut, no threads): axis +Z through the origin, centered on its 2.4 mm height; 5.5 mm
 # across flats (along x), 6.326 mm across corners (along y).
 MCMASTER_91828A211_HEIGHT = 2.4
@@ -365,6 +371,18 @@ def mcmaster_91292a114() -> Compound:
     """
     shift = (MCMASTER_91292A114_LENGTH - MCMASTER_91292A114_HEAD_HEIGHT) / 2
     return _moved("McMaster-91292A114.step", Pos(0, 0, shift) * Rot(X=180))
+
+
+@cache
+def mcmaster_91585a351() -> Compound:
+    """McMaster 91585A351 Ø3 × 10 mm 18-8 stainless dowel pin; axis +Z through the origin, centered on its length."""
+    return _moved("McMaster-91585A351.step", Rot(Y=90))
+
+
+@cache
+def mcmaster_91585a457() -> Compound:
+    """McMaster 91585A457 Ø4 × 20 mm 18-8 stainless dowel pin; axis +Z through the origin, centered on its length."""
+    return _moved("McMaster-91585A457.step", Rot(Y=90))
 
 
 @cache

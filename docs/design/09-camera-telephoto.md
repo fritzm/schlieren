@@ -157,7 +157,7 @@ pocket with a rim round it, so a ball end that wanders reaches a wall instead of
 
 - three pads are the 10 × 5 × 2 mm magnets, set with the 10 mm side across the rail, bonded into pockets
   0.1 mm larger per side;
-- the fourth, at the aft left screw, is a groove between two rods of 3 mm diameter and 10 mm length, lying
+- the fourth, at the aft left screw, is a groove between two dowel pins of 3 mm diameter and 10 mm length, lying
   across the rail on the pocket floor. The ball sits between them, free to slide across the rail but not along
   it;
 - the rim stands 0.8 mm above the pad face. The ball-tip screw's end face is 1.2 mm behind the ball apex, so
@@ -224,7 +224,7 @@ rod adhesive is not chosen; the fitting and removal sequence is set by the bands
 The phone hangs from the lens with its body to the outboard side of the optical axis
 ([§3.4](01-context-and-layout.md#34-common-optical-axis-datum)). Its weight, centered about 43 mm from the
 lens axis, would turn the lens in its collars. The phone rest stops that: the phone's lower long edge sits on
-one piece of rod stock lying along the rail, about 100 mm outboard of the axis, on the arm of a short printed
+one dowel pin lying along the rail, about 100 mm outboard of the axis, on the arm of a short printed
 shoe of its own. The shoe's lower section is that of the pointer shoe ([§9.5](#95-lens-pointer)), with a
 single pair of M5 clearance holes for the side-slot screw.
 
@@ -273,8 +273,9 @@ Hardware:
 - heat-set installation tip 92160A327;
 - Amazon B0DMCY4FN1, N52 Bar Magnet - 10 mm L × 5 mm W × 2 mm H, as hard plated bearing pads, one at each of
   three screws;
-- stainless rod stock, Amazon B08N4TSNPW assortment, for the two groove rods at the fourth screw (3 mm
-  diameter, 10 mm long) and for the phone rest rod (4 mm diameter, 20 mm long);
+- McMaster 91585A351, Ø3 × 10 mm 18-8 stainless dowel pins (ISO 2338 m6, chamfered ends), two for the groove at
+  the fourth screw;
+- McMaster 91585A457, Ø4 × 20 mm 18-8 stainless dowel pin, for the phone rest rod;
 - the common M3 split-clamp screw and nut ([§5.3](05-post-support.md#53-common-rail-shoe)), one pair per collar.
 
 ### 9.8 Retaining bands

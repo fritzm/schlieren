@@ -42,6 +42,8 @@ Name files `<Brand>-<part>.step` following the `docs/reference/` convention (`/`
 | `Kozak-TS250-80-2500.step` | TS250-80-2500.STEP (SolidWorks 2013, AP214, mm) | kozakusa.com TS250-80-2500, "3D MODELS" zip | Axis +X through origin, x from -1.984 to 61.516 mm, 63.5 mm (2.5 in) overall, Ø6.35 mm (1/4 in) envelope; two solids |
 | `Kozak-TB250-80-625.step` | TB250-80-625.STEP (SolidWorks 2013, AP214, mm) | kozakusa.com TB250-80-625, "3D" zip | Axis +X, off origin: (y, z) = (94.65, 0) mm, x from -60.966 to -45.091 mm, 15.875 mm (5/8 in) long, Ø8.941 mm envelope; one solid |
 | `Kozak-KB250-80.step` | KB250-80.STEP (SolidWorks 2013, AP214, mm) | kozakusa.com KB250-80, "3D MODELS" zip | Axis +X through origin, x from -1.538 to 9.892 mm, 11.43 mm long, Ø12.7 mm (0.5 in) envelope; one solid |
+| `McMaster-91585A351.step` | 91585A351_18-8 Stainless Steel Dowel Pin.STEP (AP203, mm) | mcmaster.com 91585A351, "3-D STEP" | Axis +X through origin, x from -5 to 5 mm (10 mm long); Ø3 mm, chamfered ends; one solid |
+| `McMaster-91585A457.step` | 91585A457_18-8 Stainless Steel Dowel Pin.STEP (AP203, mm) | mcmaster.com 91585A457, "3-D STEP" | Axis +X through origin, x from -10 to 10 mm (20 mm long); Ø4 mm, chamfered ends; one solid |
 
 Thorlabs CAD downloads are listed per product through the site's GraphQL API at
 `https://www.thorlabs.com/graphql`, e.g. `{ products(storeId: "Thorlabs-Website", filter: "name:\"SM1RC/M\"")

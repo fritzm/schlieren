@@ -7,18 +7,18 @@ hanging from it. Two separate rail fixtures:
   cylindrical section and the fore one at the front of the long section, just behind the focus ring. Each
   collar rests on a pair of ball-tip screws at ±45° in a yoke; each pair sets x and z of the lens axis at its
   station, so together they set position, pitch, and yaw. The yokes are printed separately and bolted to one
-  shoe straddling the rail. Three screw tips bear on magnet pads; the aft left one sits between two short rods
-  on its collar pad, which fixes the lens fore/aft. An endless elastic ring round the barrel beside each yoke,
+  shoe straddling the rail. Three screw tips bear on magnet pads; the aft left one sits between two short
+  dowel pins on its collar pad, which fixes the lens fore/aft. An endless elastic ring round the barrel beside each yoke,
   hooked on a peg on the yoke, holds each pad pair down;
 - the phone rest, specific to the phone. The phone is carried by its lens mount and is not gripped, but it
   hangs well to one side of the lens axis, so its weight would turn the lens in its collars. Its lower edge
-  rests on one piece of rod stock lying along the rail, on the arm of a small shoe of its own. The rest is
+  rests on one dowel pin lying along the rail, on the arm of a small shoe of its own. The rest is
   fixed: roll changes slightly as the aft collar is raised or lowered, which does not matter. A different
   phone needs only this part redesigned.
 
 The pointer parts are modeled in detail: fillets, pad pockets, clamp ear, insert holes, joint, and pegs. The
-lens, phone, and hardware are envelopes, except the McMaster screws, thumb nuts, and inserts, which are vendor
-models; the clamp screws and nuts and the rail clamp screws are not drawn. The phone rest has no retainer or
+lens, phone, and hardware are envelopes, except the McMaster screws, thumb nuts, inserts, and dowel pins, which
+are vendor models; the clamp screws and nuts and the rail clamp screws are not drawn. The phone rest has no retainer or
 safety catch yet. The phone dimensions are the §9.1 measurements and Apple's drawing, and the lens section
 lengths and barrel diameter are measured (§9.2); the cased phone thickness and the focus-ring diameter are
 assumed, and the lens aft end is taken to be at the phone's back.
@@ -62,6 +62,8 @@ from schlieren.vendor_cad import (
     MCMASTER_93339A252_LENGTH,
     MCMASTER_94459A797_FLANGE_DIAMETER,
     MCMASTER_94459A797_LENGTH,
+    mcmaster_91585a351,
+    mcmaster_91585a457,
     mcmaster_92815a202,
     mcmaster_93339a252,
     mcmaster_94459a797,
@@ -938,15 +940,12 @@ def build_camera_support_assembly(
     # the screw's ball nests in the groove between them. The ball can still slide along the rods.
     groove = screw_location(p, -1, p.aft_station)
     half_spacing, rod_height = rod_layout(p)
-    rod_radius = p.groove_rod_diameter / 2
     for offset in (-1, 1):
-        rod = Rot(Y=90) * Cylinder(rod_radius, p.groove_rod_length)
+        rod = Rot(Y=90) * mcmaster_91585a351()  # Axis along x (across the rail), as the Ø3 × 10 mm dowel pin.
         loc = groove * Pos(0, offset * half_spacing, rod_height)
         children.append(labeled(rod, f"Groove rod {offset:+d}", STEEL, loc))
     # Roll: the phone's lower edge on a rod lying along the rail.
-    rest = along_y((p.rest_x, p.rest_y - p.rest_rod_length / 2, p.rest_arm_top)) * Cylinder(
-        p.rest_rod_diameter / 2, p.rest_rod_length, align=ON_FLOOR
-    )
+    rest = along_y((p.rest_x, p.rest_y, p.rest_arm_top)) * mcmaster_91585a457()
     children.append(labeled(rest, "Rest rod", STEEL))
     support = assembly("Lens pointer and phone rest (concept mock-up)", children)
     if not include_cutoff:
