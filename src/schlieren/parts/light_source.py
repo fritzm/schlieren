@@ -23,10 +23,9 @@ are from the drawings in docs/reference/.
 from dataclasses import dataclass
 from math import isfinite
 
-from build123d import Box, Circle, Cylinder, Pos, Rectangle, RegularPolygon, Rot, Sphere, extrude
+from build123d import Box, Circle, Compound, Cylinder, Pos, Rectangle, RegularPolygon, Rot, Sphere, extrude
 
 from schlieren.cad import BLACK_ANODIZED, ON_FLOOR, assembly, labeled
-from schlieren.parts.rail import build_rail
 from schlieren.vendor_cad import (
     alpha_cn40_40b,
     thorlabs_acl2520u_a,
@@ -40,8 +39,16 @@ from schlieren.vendor_cad import (
 
 INCH = 25.4
 METAL = (0.75, 0.75, 0.78)  # Stainless TR50/M post and the iris lever.
-RAIL_SEGMENT_OVERHANG = 15.0  # Rail shown beyond each end of the shoe.
-SHOE_COLOR = (0.36, 0.35, 0.34)  # Charcoal ABS, lighter than the black anodized rail.
+REFERENCE_HARDWARE_LABEL = "Reference hardware"
+WHOLE_IN_SECTION = (  # The LED module and condenser, shown entire in light_source_section.
+    "CN40-40B heatsink",
+    "SM1CP2M cap",
+    "LED star board",
+    "LED package",
+    "ACL2520U-A condenser",
+)
+SECTION_BOX_SIZE = 1000.0  # Cutting box for light_source_section; larger than the module.
+SHOE_COLOR = (0.8, 0.4, 0.25)  # Printed rail shoe, as in the other models.
 GLASS = (0.7, 0.85, 0.95, 0.5)
 BOARD_COLOR = (0.92, 0.92, 0.9)  # White solder mask.
 LED_COLOR = (0.95, 0.9, 0.6)
@@ -239,12 +246,10 @@ def build_led_package(board):
 def build_light_source_assembly(p=None, board=GREEN, engagement=None):
     """Purchased parts in rail-top coordinates; the post is centered at the SMR1/M midplane.
 
-    The post, the printed rail shoe under it, and the shoe's vendor hardware are grouped as "Reference hardware".
+    The post, the printed rail shoe under it, and the shoe's vendor hardware are grouped as REFERENCE_HARDWARE_LABEL.
     """
     from schlieren.parts.rail_shoe import (
-        RailShoeParameters,
         build_rail_shoe,
-        side_clamp_hardware,
         split_clamp_hardware,
     )
 
@@ -276,14 +281,12 @@ def build_light_source_assembly(p=None, board=GREEN, engagement=None):
         "SM1D12 iris": (iris, iris_seat),
     }
     on_post = Pos(0, post_y, 0)
-    shoe_length = RailShoeParameters().length
     reference = [
         labeled(thorlabs_tr50_m(), "TR50 M post", METAL, Pos(0, post_y, p.datum_thickness)),
         labeled(build_rail_shoe(), "Rail shoe", SHOE_COLOR, on_post),
-        labeled(build_rail(shoe_length + 2 * RAIL_SEGMENT_OVERHANG), "Rail segment", BLACK_ANODIZED, on_post),
-        *(labeled(h, h.label, METAL, on_post) for h in (*side_clamp_hardware(), *split_clamp_hardware())),
+        *(labeled(h, h.label, METAL, on_post) for h in split_clamp_hardware()),
     ]
-    children = [assembly("Reference hardware", reference)]
+    children = [assembly(REFERENCE_HARDWARE_LABEL, reference)]
     children += [
         labeled(part, name, BLACK_ANODIZED, Pos(0, u, z)) for name, (part, u) in vendor_parts.items()
     ]
@@ -297,3 +300,21 @@ def build_light_source_assembly(p=None, board=GREEN, engagement=None):
         labeled(build_led_package(board), "LED package", LED_COLOR, Pos(0, led_face, z) * toward_lens)
     )
     return assembly("Light source", children)
+
+
+def light_source_section(module: Compound) -> Compound:
+    """Exposition view of the optical train: the module cut along the vertical plane through its axis.
+
+    The -x half of the SMR1/M, SM1V05, SM1L03, and iris is kept, so the cut face looks toward +x; the parts in
+    WHOLE_IN_SECTION are kept entire. The post, rail shoe, and its clamp screw and nut (REFERENCE_HARDWARE_LABEL)
+    are omitted.
+    """
+    half_space = Pos(-SECTION_BOX_SIZE / 2, 0, 0) * Box(SECTION_BOX_SIZE, SECTION_BOX_SIZE, SECTION_BOX_SIZE)
+    kept = []
+    for child in module.children:
+        if child.label == REFERENCE_HARDWARE_LABEL:
+            continue
+        piece = child if child.label in WHOLE_IN_SECTION else child & half_space
+        if piece.solids():
+            kept.append(labeled(piece, child.label, child.color))
+    return assembly("Light source section", kept)

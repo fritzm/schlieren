@@ -9,6 +9,7 @@ from schlieren.parts.light_source import (
     WHITE,
     LightSourceParameters,
     build_light_source_assembly,
+    light_source_section,
 )
 from schlieren.parts.light_source_drawing import drilling_templates_svg, layout_drawing_svg
 from schlieren.parts.light_source_holes import HoleLayoutParameters
@@ -17,6 +18,7 @@ DEFAULT_FIGURE = Path("docs/design/figures/light-source.png")
 HOLES_FIGURE_NAME = "light-source-holes.svg"  # The §6.4 hole layout, written beside the figure.
 TEMPLATES_NAME = "light_source_drilling_templates.svg"
 FIGURE_VIEW_DIRECTION = (1.0, 0.75, 0.45)  # From the side, ahead and above: heatsink through the iris end.
+SECTION_VIEW_DIRECTION = (1.0, 0.3, 0.2)  # Square to the cut face, slightly ahead and above.
 
 
 def main():
@@ -37,7 +39,7 @@ def main():
         type=Path,
         nargs="?",
         const=DEFAULT_FIGURE,
-        help=f"Render the design-doc figure, green module at focus (default path: {DEFAULT_FIGURE})",
+        help=f"Render the design-doc figure and its -section cutaway, green module at focus (default path: {DEFAULT_FIGURE})",
     )
     args = parser.parse_args()
     p = LightSourceParameters()
@@ -69,9 +71,11 @@ def main():
         print(holes_figure)
 
         args.figure.parent.mkdir(parents=True, exist_ok=True)
-        render_figure(
-            build_light_source_assembly(p, GREEN), args.figure, FIGURE_VIEW_DIRECTION, perspective=True
-        )
+        module = build_light_source_assembly(p, GREEN)
+        render_figure(module, args.figure, FIGURE_VIEW_DIRECTION, perspective=True)
+        section = args.figure.with_name(f"{args.figure.stem}-section{args.figure.suffix}")
+        render_figure(light_source_section(module), section, SECTION_VIEW_DIRECTION)
+        print(section)
         print(args.figure)
     if args.show:
         from ocp_vscode import show

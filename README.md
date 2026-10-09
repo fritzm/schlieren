@@ -7,7 +7,7 @@ An LED lights a source slit. A spherical mirror a few meters away re-images the 
 Air density gradients near the mirror bend the returning light past a cutoff (knife edge, wire, or color
 filter), and an iPhone behind a telephoto lens records the resulting contrast. The optical head is a pair of
 2020-extrusion rails attached to a plywood pivot plate, and is desgined to rest on a tabletop or bench.
-Thorlabs SM1 optomechanics hold the LEDs, condenser, the slit, and the cutoff, and printed ABS parts handle
+Thorlabs SM1 optomechanics hold the LEDs, condenser, the slit, and the cutoff, and printed PLA parts handle
 everything that doesn't need metal precision. The mirror sits in its own tripod-mounted cell.
 
 ## Repository layout

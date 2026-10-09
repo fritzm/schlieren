@@ -3,9 +3,12 @@
 import argparse
 from pathlib import Path
 
-from schlieren.cad import EXPORTERS
+from build123d import Pos
+
+from schlieren.cad import EXPORTERS, assembly, labeled
 from schlieren.parts.camera_support import (
     build_camera_support_assembly,
+    build_collar_for_print,
     build_pointer_shoe_for_print,
     build_pointer_yoke_for_print,
 )
@@ -36,6 +39,11 @@ def main() -> None:
         help="Export one pointer yoke in print orientation (STEP and STL); with --show, display it",
     )
     parser.add_argument(
+        "--collar",
+        action="store_true",
+        help="Export the fore and aft lens collars in print orientation (STEP and STL); with --show, display them",
+    )
+    parser.add_argument(
         "--shoe",
         action="store_true",
         help="Export the pointer shoe in print orientation (STEP and STL); with --show, display it",
@@ -59,6 +67,9 @@ def main() -> None:
     printed = {}
     if args.yoke:
         printed["pointer_yoke"] = build_pointer_yoke_for_print()
+    if args.collar:
+        printed["lens_collar_fore"] = build_collar_for_print()
+        printed["lens_collar_aft"] = build_collar_for_print(aft=True)
     if args.shoe:
         printed["pointer_shoe"] = build_pointer_shoe_for_print()
     for name, part in printed.items():
@@ -84,6 +95,15 @@ def main() -> None:
     if args.show:
         from ocp_vscode import show
 
+        if args.collar:  # Both are centered on the origin for printing; set them apart for viewing.
+            gap = 5.0
+            named = {"lens_collar_fore": "Fore Collar", "lens_collar_aft": "Aft Collar"}
+            collars = []
+            for i, (name, label) in enumerate(named.items()):
+                box = printed[name].bounding_box()
+                shifted = Pos((i - 0.5) * (box.size.X + gap), 0, 0) * printed[name]
+                collars.append(assembly(label, [labeled(shifted, label)]))
+            printed = {"lens_collars": assembly("Lens Collars", collars)}
         show(*printed.values()) if printed else show(
             build_camera_support_assembly(include_cutoff=not args.no_cutoff)
         )

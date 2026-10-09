@@ -1,6 +1,6 @@
 # Part models
 
-build123d models of the custom (mostly printed ABS) parts, plus purchased-part stack-ups used for clearance
+build123d models of the custom (mostly printed PLA) parts, plus purchased-part stack-ups used for clearance
 and focus calculations. Each module here has a matching command in `src/schlieren/cli/` (run as
 `uv run <command>`; `--show` sends the assembly to the OCP CAD Viewer) and a test module in `tests/`.
 
@@ -96,7 +96,7 @@ and the drawings.
 ## Source-slit flexure head
 
 `src/schlieren/parts/slit_head.py` encodes the §7 source slit: one flat-printed
-ABS flexure head holding both Stanley blades, with a FAS100-driven centering
+PLA flexure head holding both Stanley blades, with a FAS100-driven centering
 stage (±2 mm, coaxial spring preload) and a nested FAS100-driven width stage,
 plus a flat spigot adapter (on M3 washer spacers) clamped by the SM1RC/M for
 continuous rotation, and two clamp bars. The command exports the three printed
@@ -121,7 +121,7 @@ interference, and clearance to the post and shoe swept over ±110°.
 
 Source: `src/schlieren/parts/rail_shoe.py` (§5.3). All dimensions are millimeters;
 coordinates are a §3.4 rail frame: x across the rail, +y along it toward the mirror, and z=0 at the rail top. The model and its
-ABS allowances are final, fit-tested on printed shoes.
+PLA allowances are final, fit-tested on printed shoes.
 
 ```sh
 uv run rail-shoe
@@ -158,7 +158,7 @@ relief at its foot and a 2 mm root fillet. Both clamp ears point toward +x:
 the 4.5 mm nut ear at +y holds a full-height captured M3 hex nut loaded from
 its outer face, and the M3 × 12 screw enters the 3.5 mm screw ear from -y.
 
-No global ABS shrink compensation is assumed. STL uses assembly coordinates;
+No global PLA shrink compensation is assumed. STL uses assembly coordinates;
 choose orientation/supports in the slicer.
 
 ## Slit/cutoff carriage — preliminary sandwich layout
@@ -203,7 +203,7 @@ base, frame, and keeper locally to 94 mm (eight M3 × 12 screws and nuts in all)
 limiting upward keeper bowing under the ear wedge reactions. If a print shows
 too much lift, `uv run carriage --keeper-side-thickness 5` exports a keeper with
 5 mm side members and deeper counterbores (same screws). Screw heads and nuts
-bear directly on the ABS (no washers); tighten only to a light snug, since a
+bear directly on the PLA (no washers); tighten only to a light snug, since a
 firm hex-key torque can crush the bearing face and the joint needs little clamp.
 
 The base has a 24 mm circular aperture centered on the fixed spigot optical axis.
@@ -247,7 +247,7 @@ counterbore. Overall, body, and flange dimensions are independent drawing
 callouts rather than inferred from one another.
 
 The adjuster and magnet axis is z=8.0751 mm; the spring axis remains z=7.5 mm.
-The crown retains 3 mm nominal radial ABS thickness, reaching z=15.0502 mm.
+The crown retains 3 mm nominal radial PLA thickness, reaching z=15.0502 mm.
 Plunger bodies retain 0.3 mm deck clearance and their original guide ears.
 The calculated tip extension from the conservative overall-length envelope is 5.5–15.5 mm
 across ±5 mm cassette travel, below the 17.4498 mm theoretical full-engagement
@@ -264,7 +264,7 @@ needs checking against the physical stack.
 
 ## Common cassette blank — preliminary
 
-`src/schlieren/parts/cassette.py` supplies the common 64 × 64 × 5 mm ABS
+`src/schlieren/parts/cassette.py` supplies the common 64 × 64 × 5 mm PLA
 blank with a Ø24 mm through aperture. The rear sliding datum is z=0; the
 front is +Z. Four identical front-edge bevels match the preliminary carriage:
 1.25 mm axial depth at 27.5° from the cassette plane. These bevel dimensions
@@ -316,7 +316,7 @@ lower guide-track edges at ±32.3 mm). The washers reach ±30.5 mm, leaving
 
 A 1.6 mm underside relief beyond x=±21 mm lets the ends pass over the plunger
 lips when installed at 90°/270°. The central bar section remains 4 mm thick;
-relieved ends retain 2.4 mm of ABS. Validate stiffness and use light clamp loads.
+relieved ends retain 2.4 mm of PLA. Validate stiffness and use light clamp loads.
 The viewer uses a provisional 0.6 mm media lift and uncompressed 0.79375 mm
 EPDM, placing bar undersides at z=6.39375 mm. This is a setup estimate, not a
 measured blade thickness or a prediction of the blade's inclination. With
@@ -329,7 +329,7 @@ lip at the relieved ends before EPDM compression.
 Tests include complete assembly/hardware interference against the carriage
 at four orientations and three travel positions, aperture clearance, and
 washer bearing lands. Physical bevel seating, datum-pin height, screw seating,
-ABS fit, tool access, and tilted loading/removal still need validation.
+PLA fit, tool access, and tilted loading/removal still need validation.
 
 The rear carriage tube boss uses a provisional 30.73 mm bore (30.48 mm
 catalog OD plus 0.25 mm diametral clearance) and 4.5 mm radial wall. It

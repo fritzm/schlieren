@@ -11,10 +11,12 @@ from schlieren.parts.light_source import (
     GREEN,
     MODULES,
     WHITE,
+    WHOLE_IN_SECTION,
     LightSourceParameters,
     build_led_package,
     build_light_source_assembly,
     build_star_board,
+    light_source_section,
 )
 from schlieren.testing import boxes_overlap, slow
 from schlieren.vendor_cad import (
@@ -201,6 +203,24 @@ class LightSourceTests(unittest.TestCase):
         self.assertAlmostEqual(section_area(-0.5), math.pi * p.heatsink_diameter**2 / 4, delta=1.0)
         self.assertLess(section_area(-p.heatsink_base - 0.1), 0.2 * section_area(-0.5))
 
+    def test_section_view(self):
+        module = build_light_source_assembly(self.p)
+        section = light_source_section(module)
+        labels = {child.label for child in section.children}
+        self.assertNotIn("Reference hardware", labels)
+        self.assertNotIn("TR50 M post", labels)
+        self.assertTrue({"SMR1 M ring", "ACL2520U-A condenser", "LED package", "SM1D12 iris"} <= labels)
+        # The LED module and condenser stay whole; the rest are cut on the axis plane to the -x half.
+        full = children_by_label(module)
+        for child in section.children:
+            if child.label in WHOLE_IN_SECTION:
+                self.assertAlmostEqual(child.volume, full[child.label].volume, delta=1e-6)
+            else:
+                self.assertAlmostEqual(child.bounding_box().max.X, 0, delta=0.01)
+        self.assertAlmostEqual(
+            children_by_label(section)["SMR1 M ring"].volume / full["SMR1 M ring"].volume, 0.5, delta=0.01
+        )
+
     def test_vendor_model_placement(self):
         p = self.p
         placed = parts_by_label(build_light_source_assembly(p)).__getitem__
@@ -264,8 +284,7 @@ class LightSourceTests(unittest.TestCase):
                 assembly = build_light_source_assembly(p, board, e)
                 parts = parts_by_label(assembly)
                 self.assertTrue(all(s.is_valid for s in parts.values()))
-                # The rail segment is a reference, and its booleans are slow; the shoe's fit to it is the shoe's own.
-                names = [name for name in parts if name != "Rail segment"]
+                names = list(parts)
                 for i, a in enumerate(names):
                     for b in names[i + 1 :]:
                         if not boxes_overlap(parts[a], parts[b]):

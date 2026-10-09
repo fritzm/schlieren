@@ -35,7 +35,14 @@ From the LED to the slit:
   <img src="figures/light-source.png" width="360" style="max-width: 80%"
        alt="Light source on its TR50/M post and rail shoe: pin-fin heatsink and LED cap behind the SMR1/M, with the SM1V05, SM1L03, and iris ahead of it">
   <br>
-  <em>Fig. 4. Light source on rail: heatsink and LED module, SMR1/M, SM1V05, SM1L03, and iris</em>
+  <em>Fig. 4. Light source on its post and rail shoe: heatsink and LED module, SMR1/M, SM1V05, SM1L03, and iris</em>
+</p>
+
+<p align="center">
+  <img src="figures/light-source-section.png" width="500" style="max-width: 95%"
+       alt="Light source with the SMR1/M, SM1V05, SM1L03, and iris cut along the optical axis, and the heatsink, cap, star board with LED, and condenser lens shown whole">
+  <br>
+  <em>Fig. 5. Light source cutaway</em>
 </p>
 
 The ACL2520U-A convex vertex sits about 0.7 mm inside the SM1V05 open end, so the SM1L03 spacer is required
@@ -153,7 +160,7 @@ heatsink base.
   <img src="figures/light-source-holes.svg" width="640" style="max-width: 95%"
        alt="Plan view from the LED side of the cap, the 20 mm star board, and the heatsink pins, with the M3, M2, and lead holes and their positions">
   <br>
-  <em>Fig. 5. Cap and heatsink hole layout, seen from the LED side, in the frame of the heatsink pin lattice</em>
+  <em>Fig. 6. Cap and heatsink hole layout, seen from the LED side, in the frame of the heatsink pin lattice</em>
 </p>
 
 Coordinates are in millimeters from the optical axis, +x to the right and +y up as seen from the LED side, in

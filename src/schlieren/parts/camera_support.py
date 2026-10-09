@@ -164,7 +164,7 @@ class CameraSupportParameters:
     yoke_clearance_below_collar: float = 13.0  # Crossbar top below the collar, clear of the thumb nuts.
     yoke_crossbar: float = 10.0
     # Thickness of the yoke along the rail. Walls round the insert holes and counterbores are
-    # (thickness - 8.12 mm)/2, about 3 mm; heat-set inserts want at least 2 mm in ABS.
+    # (thickness - 8.12 mm)/2, about 3 mm; heat-set inserts want at least 2 mm in PLA.
     yoke_thickness: float = 14.0
     yoke_min_insert_wall: float = 2.5
     # Profile fillets, mm. The column root takes the arm's bending, so it is the largest; the free corners
@@ -180,7 +180,7 @@ class CameraSupportParameters:
     # walls on the deck, across the rail, ahead of and behind the column, locate it and stop its twisting.
     locating_wall_thickness: float = 1.6  # Along the rail: four perimeters at a 0.4 mm nozzle.
     locating_wall_height: float = 3.0  # Above the deck.
-    locating_clearance_per_side: float = 0.20  # Wall to column face, ABS fabrication allowance.
+    locating_clearance_per_side: float = 0.20  # Wall to column face, PLA fabrication allowance.
     insert_hole_diameter: float = 6.40  # McMaster 94459A797 drawing.
     insert_flange_thickness: float = 1.02  # McMaster 94459A797 drawing.
     insert_hole_relief: float = 1.0  # Hole depth beyond the insert, for the screw tip and melt.
@@ -663,6 +663,17 @@ def build_collar(
     if len(body.solids()) != 1 or not body.is_valid:
         raise ValueError("Collar did not produce one valid solid")
     return body
+
+
+def build_collar_for_print(p: CameraSupportParameters | None = None, aft: bool = False) -> Part:
+    """A collar as printed: ring axis vertical, one end face on the bed, centered on the origin, bed at z = 0.
+
+    The layers then lie in the plane of the clamp and pad loads. The aft collar carries the groove rods.
+    """
+    p = p or CameraSupportParameters()
+    collar = Rot(X=90) * build_collar(p, 0.0, -1 if aft else None)
+    box = collar.bounding_box()
+    return Pos(-(box.min.X + box.max.X) / 2, -(box.min.Y + box.max.Y) / 2, -box.min.Z) * collar
 
 
 def _arm_point(p: CameraSupportParameters, side: int, along: float, across: float) -> tuple[float, float]:

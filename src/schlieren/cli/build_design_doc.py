@@ -37,7 +37,9 @@ KATEX_CDN = "https://cdn.jsdelivr.net/npm/katex@0.16.11/dist"
 # Print layout. Sizes other than the base are relative to it, so the base alone sets how much fits on a page.
 PDF_BASE_FONT_PT = 9.5
 PDF_PAGE_MARGIN_IN = 0.8
-PDF_FIGURE_SCALE = 0.7  # Figure widths are set for Markdown viewers; print is smaller against the 9.5 pt text.
+PDF_FIGURE_SCALE = (
+    0.7  # Figure widths are set for Markdown viewers; print is smaller against the 9.5 pt text.
+)
 PDF_CONTENTS_DEPTH = "2-3"  # Heading levels listed in the contents: sections and subsections.
 PDF_STYLE = f"""
 @page {{ size: Letter; margin: {PDF_PAGE_MARGIN_IN}in; }}

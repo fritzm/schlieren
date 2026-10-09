@@ -1,6 +1,6 @@
 ## 7. Source slit
 
-The source slit is a flexure slit head: one flat-printed ABS part carrying both blades, with fine centering
+The source slit is a flexure slit head: one flat-printed PLA part carrying both blades, with fine centering
 perpendicular to the slit and fine slit-width adjustment, mounted for continuous rotation about the optical
 axis in an SM1RC/M on the common post and rail shoe
 ([§5](05-post-support.md#5-common-rail-mounted-post-support)).
@@ -59,7 +59,7 @@ Envelope: about 80 × 88 × 13 mm, excluding knobs and adapter.
   <img src="figures/slit-head.png" width="260" style="max-width: 90%"
        alt="Flexure slit head from the light-source side: frame, platform and width stage, two blade clamp bars, the two FAS100 adjusters, and the spigot adapter, on its SM1RC/M post and rail shoe">
   <br>
-  <em>Fig. 6. Flexure slit head on its post and rail shoe, seen from the light-source side: blades and clamp bars, FAS100 centering and width adjusters</em>
+  <em>Fig. 7. Flexure slit head on its post and rail shoe, seen from the light-source side: blades and clamp bars, FAS100 centering and width adjusters</em>
 </p>
 
 Stage rotation in the slit plane would skew the slit against the cutoff (centering) or open it in a taper
@@ -84,7 +84,7 @@ rotation over the centering travel.
 - preload: McMaster 2006N292 spring, coaxial with FAS100 #1, 16.5 mm long at mid travel (9 mm compression),
   about 4.4–6.9 N over the travel; located by printed guide pins inside the coil in pockets in the frame
   bottom bar and the lower platform connector;
-- flexure: two 0.8 mm ABS blades, 35.5 mm long, 12 mm deep; about 0.38% peak strain at full travel;
+- flexure: two 0.8 mm PLA blades, 35.5 mm long, 12 mm deep; about 0.38% peak strain at full travel;
 - estimated slit rotation: about 0.05 mrad over the full ±2 mm (0.5 µm across a 10 mm lit slit length).
 
 Measured spring OD: 0.272 in / 6.91 mm (calipers). Spring pockets are Ø7.91 mm (1.0 mm diametral
@@ -107,7 +107,7 @@ horizontal slit this is the only vertical aiming adjustment at the source.
 - preload: the stage's own flexures, printed so that FAS100 #2 always deflects them 0.8–1.6 mm (about
   0.8–1.6 N, comfortably above the stage's own weight in any orientation);
 - usable width adjustment: 0.8 mm;
-- flexure: two 1.2 mm ABS blades, 45 mm long, 12 mm apart; about 0.29% peak strain;
+- flexure: two 1.2 mm PLA blades, 45 mm long, 12 mm apart; about 0.29% peak strain;
 - estimated taper: about 0.6 µm across a 10 mm lit slit length per 0.1 mm of width change (about 4.6 µm
   over the full 0.8 mm).
 
@@ -126,7 +126,7 @@ Slit setup:
 
 ### 7.5 Blade clamping
 
-Each blade is pinched against its carrier by an identical removable printed ABS clamp bar (54 × 7 × 4 mm)
+Each blade is pinched against its carrier by an identical removable printed PLA clamp bar (54 × 7 × 4 mm)
 faced with McMaster 9852N37 1/32 in EPDM. The bar bears on the flat portion of the blade about 3 mm back
 from the cutting edge, leaving the slit cone clear, and is fastened by two M3 × 12 mm socket-head screws
 just beyond the blade ends into M3 hex nuts captured in pockets opening from the carrier back. The common
@@ -170,14 +170,17 @@ Printed parts: the flexure head, the spigot adapter, and two clamp bars.
   ([§8.3](08-cutoff.md#83-fine-adjustment)). The FAS100 #1 insert is pressed in from the inside with its flange
   on the bar's inner face, so the spring load seats the flange against the bar instead of pushing the insert out;
   the FAS100 #2 flange is outboard, since the platform top bar leaves no room to press it in from the inside
-  and it resists only the ABS flexure's restoring force, not a spring.
+  and it resists only the PLA flexure's restoring force, not a spring.
 - The spigot is printed at the SM1 tube nominal, which fits the SM1RC/M.
 
 Hardware: 2 × FAS100, 2 × 98625A950 inserts, 2 × N52 10 × 5 × 2 mm magnet bearing pads (one under each FAS100
 ball tip, [§8.3](08-cutoff.md#83-fine-adjustment)), 1 × 2006N292 spring, 8 × M3 × 12 mm socket-head screws, 8
 × M3 nuts, 8 × M3 flat washers.
 
-A printed and assembled head (Prusa MINI+, ABS) was evaluated and is fit for purpose: the insert press fit, the
+A printed and assembled head (Prusa MINI+, PLA) was evaluated and is fit for purpose: the insert press fit, the
 magnet, spring, and other pockets and bores are as sized, the flexures move essentially parallel along both push
 axes, the clamp bars, width-stage preload, and adapter-plate clearance work, and the printed spigot fits the
 SM1RC/M split ring at the SM1 tube nominal.
+
+**Provisional:** PLA creeps and relaxes under sustained strain, and the width stage is held deflected by its
+preload. Check the preload after the head has stood assembled for a few days, and again after warm storage.

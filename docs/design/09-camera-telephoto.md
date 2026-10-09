@@ -1,9 +1,9 @@
 ## 9. Camera and telephoto support
 
-The camera and lens are chosen ([§9.1](#91-camera)–[9.2](#92-telephoto)). Their support is a lens pointer and a
-phone rest ([§9.4](#94-support-concept)–[9.8](#98-retaining-bands)), with an alignment procedure
-([§9.9](#99-lens-alignment)). **Provisional:** the phone rest's retainer and safety catch, the fit allowances of
-the printed pointer parts, which are still to be tested, and the alignment procedure
+The camera and lens are chosen ([§9.1](#91-camera)–[9.2](#92-telephoto)). Their support is a lens pointer and
+a phone rest ([§9.4](#94-support-concept)–[9.8](#98-retaining-bands)), with an alignment procedure
+([§9.9](#99-lens-alignment)). **Provisional:** the phone rest's retainer and safety catch, the fit allowances
+of the printed yokes and of the rod groove, which are still to be tested, and the alignment procedure
 ([§11](11-open-work.md#11-provisional-areas-and-next-steps)).
 
 ### 9.1 Camera
@@ -63,10 +63,10 @@ centering minimizes vignetting.
 ### 9.3 Alignment requirements
 
 The returned slit image at the cutoff is the aperture stop for the camera: every ray from the test region
-passes through it, then spreads again at the ±1.82° cone angle ([§3.2](01-context-and-layout.md#32-source-cone)).
-The values below are calculated, and are **provisional** where they rest on assumed values: a lens front about
-42 mm behind the cutoff plane, a 10 mm lit slit image, a Main-camera pupil of about 3.7 mm (6 mm focal length
-at f/1.6), and a telephoto clear aperture near 30 mm.
+passes through it, then spreads again at the ±1.82° cone angle
+([§3.2](01-context-and-layout.md#32-source-cone)). The values below are calculated, and are **provisional**
+where they rest on assumed values: a lens front about 42 mm behind the cutoff plane, a 10 mm lit slit image, a
+Main-camera pupil of about 3.7 mm (6 mm focal length at f/1.6), and a telephoto clear aperture near 30 mm.
 
 | Quantity                                        | Value                    |
 |-------------------------------------------------|--------------------------|
@@ -101,7 +101,7 @@ mount. Two separate rail fixtures carry them:
   <img src="figures/camera-support.png" width="500" style="max-width: 90%"
        alt="Lens pointer and phone rest on the imaging rail: two collars on the lens barrel, each on a pair of inclined screws in a yoke bolted to the pointer shoe, a retaining band round the barrel beside each yoke, and the phone hanging from the lens with its lower edge on the rest arm">
   <br>
-  <em>Fig. 9. Lens pointer and phone rest on the imaging rail, with phone and lens envelopes</em>
+  <em>Fig. 10. Lens pointer and phone rest on the imaging rail, with phone and lens envelopes</em>
 </p>
 
 The body is located by six contacts and no more, so adjusting one station does not strain the lens mount:
@@ -115,8 +115,8 @@ Each station's pair of screws places one point of the lens axis, so the two stat
 pointing without coupling between them beyond the lever ratio. A second groove would fix the fore/aft position
 a second time against the spacing of the collars on the lens, and would stop the pad sliding that yaw
 adjustment needs. Holding the lens, not the phone, takes the lens weight off the lens mount: the mount carries
-about 1 N in shear (calculated), against roughly 130–150 N·mm of bending if the lens were cantilevered from the
-phone.
+about 1 N in shear (calculated), against roughly 130–150 N·mm of bending if the lens were cantilevered from
+the phone.
 
 The model is `src/schlieren/parts/camera_support.py`. It holds the printed parts, with their fits, pockets,
 fillets, and wall thicknesses, and checks contacts, clearances, and the lens and cord loads; the lens, phone,
@@ -157,9 +157,9 @@ pocket with a rim round it, so a ball end that wanders reaches a wall instead of
 
 - three pads are the 10 × 5 × 2 mm magnets, set with the 10 mm side across the rail, bonded into pockets
   0.1 mm larger per side;
-- the fourth, at the aft left screw, is a groove between two dowel pins of 3 mm diameter and 10 mm length, lying
-  across the rail on the pocket floor. The ball sits between them, free to slide across the rail but not along
-  it;
+- the fourth, at the aft left screw, is a groove between two dowel pins of 3 mm diameter and 10 mm length,
+  lying across the rail on the pocket floor. The ball sits between them, free to slide across the rail but not
+  along it;
 - the rim stands 0.8 mm above the pad face. The ball-tip screw's end face is 1.2 mm behind the ball apex, so
   the rim stays below it;
 - above the pad face the pocket opens outward by 0.23 mm per side, so that the rim edge stops the ball apex
@@ -188,8 +188,8 @@ side, printed on its side so that every layer lies in the plane of the loads:
 
 - a column 20 mm wide, the width of the rail, rising from the shoe to a crossbar 10 mm thick whose top stands
   13 mm below the bottom of the collar, clear of the thumb nuts;
-- each arm is a slab 10.5 mm thick, square to its screw. Its lens-side face carries the insert and runs down to
-  the crossbar top; its back face runs down to the crossbar underside, so there is no stub or step;
+- each arm is a slab 10.5 mm thick, square to its screw. Its lens-side face carries the insert and runs down
+  to the crossbar top; its back face runs down to the crossbar underside, so there is no stub or step;
 - fillets of 5 mm at the column root, 4 mm where the arm blends into the crossbar, and 2 mm round the outer
   arm corners;
 - each arm holds a heat-set insert ([§9.7](#97-adjuster-hardware)) in a 6.4 mm hole from the lens-side face
@@ -197,7 +197,7 @@ side, printed on its side so that every layer lies in the plane of the loads:
   5.5 mm bore carries on through the back of the arm for the screw and its hex key.
 
 Under the adjuster reactions of about 8 N the crossbar root sees about 0.6 MPa and the arm tip moves about
-0.01 mm (calculated, with an ABS modulus of about 2000 MPa assumed), so stiffness and strength are not
+0.01 mm (calculated, with a PLA modulus of about 3000 MPa assumed), so stiffness and strength are not
 limiting; the fillets are margin.
 
 #### Shoe and joint
@@ -209,15 +209,17 @@ between the collars. The shoe extends 9 mm beyond each collar face, so it is sym
 two stations. Each yoke is bolted to the deck, so that it prints on its side and the shoe prints without
 supports:
 
-- one 90° countersunk M5 screw from the underside of the deck, on the rail centerline, with its head flush with
-  the underside, into a heat-set insert in the column foot, with the insert's flange bearing on the deck;
+- one 90° countersunk M5 screw from the underside of the deck, on the rail centerline, with its head flush
+  with the underside, into a heat-set insert in the column foot, with the insert's flange bearing on the deck;
 - two straight walls on the deck across the rail, ahead of and behind the column, 1.6 mm thick and 3 mm high,
   with 0.2 mm clearance to the column faces. They locate the yoke along the rail and stop it twisting;
 - the screw ends inside the insert with about 5 mm of engagement.
 
-**Provisional:** the bore, pocket, and wall clearances of the printed parts are fit-test values; the magnet and
-rod adhesive is not chosen; the fitting and removal sequence is set by the bands
-([§9.8](#98-retaining-bands)).
+The collar bore, clamp-ear hardware pocket, and magnet pockets are fit-tested on printed collars, and the
+shoe's rail opening, screw holes, and seat on the rail on a printed shoe.
+**Provisional:** the groove between the rods and the ball-stop rims, and the insert holes and locating walls of
+the yokes, are untested; the magnet and rod adhesive is not chosen; the fitting and removal sequence is
+set by the bands ([§9.8](#98-retaining-bands)).
 
 ### 9.6 Phone rest
 
@@ -231,9 +233,10 @@ single pair of M5 clearance holes for the side-slot screw.
 - The shoe is 22 mm long and centered under the rod. The arm runs across the rail from the shoe's outboard
   wall to 8 mm beyond the rod, 10 mm deep and as long as the shoe. The rod lies half sunk in a half-round seat
   in its top, with 0.1 mm radial clearance, and is bonded.
-- The part is printed on its side, like the yokes: it is one profile in the plane of the load, extruded along the
-  rail, so every layer is that profile and the arm needs no bridge or support. Only the side-slot screw bores
-  are horizontal. The shoe's vertical corners on the arm side are left sharp, where the arm joins the wall.
+- The part is printed on its side, like the yokes: it is one profile in the plane of the load, extruded along
+  the rail, so every layer is that profile and the arm needs no bridge or support. Only the side-slot screw
+  bores are horizontal. The shoe's vertical corners on the arm side are left sharp, where the arm joins the
+  wall.
 - The arm's inside corners are filleted against stress: 3 mm under the arm where it meets the shoe wall, the
   largest because it takes the bending, and 2 mm where the arm top steps up from the deck. The outside corners
   at the tip and the step are rounded 2 mm, and the seat edges 0.5 mm. The arm is kept 10 mm deep so that the
@@ -266,24 +269,25 @@ Hardware:
   `cad/vendor/McMaster-94459A797.step`). The drawing calls for a 6.40 mm hole and at least 6.48 mm of
   material. Each is set from the lens-side face of its arm, flange outward and recessed, so the screw's
   reaction presses it into its hole. Two more are set in the yoke feet for the joint screws
-- McMaster 92125A208, M5 × 0.8 × 10 mm 18-8 stainless hex-drive flat head screws (90°, 10 mm head), two for the
-  yoke joints ([§9.5](#95-lens-pointer))
+- McMaster 92125A208, M5 × 0.8 × 10 mm 18-8 stainless hex-drive flat head screws (90°, 10 mm head), two for
+  the yoke joints ([§9.5](#95-lens-pointer))
 - McMaster 92815A202, M5 thumb nuts used as threadlocked mid-screw handwheels
 - Loctite 271, McMaster 91458A160
 - heat-set installation tip 92160A327;
 - Amazon B0DMCY4FN1, N52 Bar Magnet - 10 mm L × 5 mm W × 2 mm H, as hard plated bearing pads, one at each of
   three screws;
-- McMaster 91585A351, Ø3 × 10 mm 18-8 stainless dowel pins (ISO 2338 m6, chamfered ends), two for the groove at
-  the fourth screw;
+- McMaster 91585A351, Ø3 × 10 mm 18-8 stainless dowel pins (ISO 2338 m6, chamfered ends), two for the groove
+- at the fourth screw;
 - McMaster 91585A457, Ø4 × 20 mm 18-8 stainless dowel pin, for the phone rest rod;
-- the common M3 split-clamp screw and nut ([§5.3](05-post-support.md#53-common-rail-shoe)), one pair per collar.
+- the common M3 split-clamp screw and nut ([§5.3](05-post-support.md#53-common-rail-shoe)), one pair per
+  collar.
 
 ### 9.8 Retaining bands
 
 The collars sit on their pads under gravity alone, so each pad pair is held down by an elastic band. The pairs
-carry only the lens and phone weight, and the fore pair least of all: contact loads, calculated from the measured 215 g
-lens with an assumed balance point 60–70 mm from the aft end and an assumed cased phone mass of 177–210 g,
-are
+carry only the lens and phone weight, and the fore pair least of all: contact loads, calculated from the
+measured 215 g lens with an assumed balance point 60–70 mm from the aft end and an assumed cased phone mass of
+177–210 g, are
 
 - aft screw pair: about 2.2–2.7 N;
 - fore screw pair: about 0.6–0.9 N. The phone hangs behind the aft collar, so its weight pivots the lens about
@@ -308,11 +312,12 @@ crossbar face. The peg has a 4 mm stem and a 6 mm lip; the ring lies on the stem
   and about 0.8 N from the other. That raises the tap threshold at the fore end to roughly 14 N.
 - The legs clear the thumb nuts by more than 5 mm, so the cord stays out of the way of the fingers.
 - To fit, slide the rings over the focus ring onto the bare barrel before clamping the collars on; refitting
-  one afterwards means stretching it round the other collar and its ear. A band stays on the lens when the lens
-  is lifted out with the peg end unhooked.
+  one afterwards means stretching it round the other collar and its ear. A band stays on the lens when the
+  lens is lifted out with the peg end unhooked.
 
-**Provisional:** the ring size is chosen on an assumed modulus; the next larger inside diameter is the
-alternative if the 40 mm ring is too tight.
+**Provisional:** the contact loads rest on the assumed balance point and phone mass above, and the ring size
+is chosen on an assumed modulus; the next larger inside diameter is the alternative if the 40 mm ring is too
+tight.
 
 ### 9.9 Lens alignment
 
@@ -340,11 +345,11 @@ The sequence:
    snug the clamp screws. The groove at the aft left screw fixes the lens fore/aft on the pointer, so nothing
    later moves it.
 3. Center the barrel at each collar mechanically, aft first, and re-measure the other collar after each
-   change. Height: from the shoe deck, beside the yoke, up to the barrel top, whose target is
-   72.35 + 18.5 − 5 = about 85.85 mm (the deck top is 5 mm above the rail top; the barrel diameters of 37.01 and
-   37.06 mm differ by too little to matter). Lateral: with the shoe pressed to one side of the rail, taking up
-   its 0.4 mm lateral play, from the shoe's outer wall to the barrel side, whose target is 18.5 − 15.2 = about
-   3.3 mm. A ±0.5 mm error between the stations is about 0.4° of pitch or yaw, within tolerance.
+   change. Height: from the shoe deck, beside the yoke, up to the barrel top, whose target is 72.35 + 18.5 − 5
+   = about 85.85 mm (the deck top is 5 mm above the rail top; the barrel diameters of 37.01 and 37.06 mm
+   differ by too little to matter). Lateral: with the shoe pressed to one side of the rail, taking up its 0.4
+   mm lateral play, from the shoe's outer wall to the barrel side, whose target is 18.5 − 15.2 = about 3.3 mm.
+   A ±0.5 mm error between the stations is about 0.4° of pitch or yaw, within tolerance.
 4. Finish through the camera, because the phone camera may not lie on the barrel axis in its mount and case.
    With the source lit and the cutoff cleared, view the returned field at 1× and trim the aft screws in x and z
    until the vignetting at the corners is even; a turn of one screw is only about 0.6 mm, so turn in small

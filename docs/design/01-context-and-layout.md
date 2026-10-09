@@ -29,15 +29,20 @@ The complete system should pack into a standard airline rolling suitcase. Plan a
 kg checked-bag target.
 
 The design is cost-conscious rather than constrained to a fixed dollar ceiling. Commodity 2020 extrusion,
-Baltic birch plywood, standard fasteners, and printed ABS are preferred where they are adequate. Commercial
+Baltic birch plywood, standard fasteners, and printed PLA are preferred where they are adequate. Commercial
 optomechanics are used where they materially simplify alignment or provide precision that would otherwise be
 troublesome.
 
 ### 1.1 Fabrication envelope
 
-Near-term 3D printing is ABS only. Critical optical heights and precision datums should be
+Near-term 3D printing is PLA only. Critical optical heights and precision datums should be
 established by metal posts, optical hardware, shim stock, mechanical stops, or adjustment mechanisms rather
-than relying solely on as-printed ABS dimensions.
+than relying solely on as-printed PLA dimensions.
+
+PLA softens at about 55–60 °C and creeps under sustained load, so printed parts must not see direct sun or a
+closed vehicle, and sustained loads on them are kept low: clamp screws are tightened to a light snug, and the
+preloaded flexures of the slit head are checked for relaxation ([§7.7](07-source-slit.md#77-fabrication-and-fit)).
+The LED heatsinks rise only about 14 °C above ambient ([§6.3](06-light-source.md#63-common-heatsink)).
 
 The following are out of scope:
 
@@ -45,7 +50,7 @@ The following are out of scope:
 - cutting stainless-steel stock or sheet to custom shape or length.
 
 Use off-the-shelf metal parts, vendor-supplied finished dimensions, plywood, aluminum that can be
-drilled/tapped with ordinary shop tools, thin foil, or printed ABS. Simple drilling and tapping of the
+drilled/tapped with ordinary shop tools, thin foil, or printed PLA. Simple drilling and tapping of the
 aluminum LED carrier caps and heatsinks is within scope.
 
 A table saw, drill press, and small hand router are available and are expected to be used for accurate working

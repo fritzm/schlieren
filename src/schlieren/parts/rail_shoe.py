@@ -4,7 +4,7 @@ Coordinates: a §3.4 rail frame, +x across the rail (right, seen from above with
 it toward the mirror, z up; rail top is z=0.
 The post is at x=y=0. Both ears point toward +x: nut at +y, screw at -y.
 Envelope, hole layout, and fabrication allowances are fit-tested on printed shoes.
-No ABS lies between the post bottom and the metal datum disc.
+No PLA lies between the post bottom and the metal datum disc.
 """
 
 from dataclasses import dataclass
@@ -49,7 +49,7 @@ class RailShoeParameters:
     clamp_nut_across_flats: float = 5.5
     clamp_nut_thickness: float = 2.4
 
-    # ABS fabrication allowances, set by fit test (not measured shrink compensation).
+    # PLA fabrication allowances, set by fit test (not measured shrink compensation).
     rail_lateral_clearance_per_side: float = 0.20
     datum_disc_diametral_clearance: float = 1.0
     post_diametral_clearance: float = 0.10

@@ -241,6 +241,10 @@ Do not merge rows solely because Vendor + SKU are identical.
 Procurement rollups may aggregate identical Vendor + SKU combinations, but
 allocation rows should remain distinct when they serve different subsystems.
 
+Quote any `bom.csv` field that contains a comma (notes and item names often do); an unquoted comma splits the
+row, and `test_bom` fails on the ragged row. Edit the CSV as text or with the `csv` module, then rebuild the
+workbook.
+
 Do not guess:
 
 - procurement state

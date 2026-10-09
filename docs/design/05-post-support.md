@@ -24,7 +24,7 @@ The source/slit/cutoff holders preserve the 22.1 mm post-top-to-axis dimension.
 
 ### 5.3 Common rail shoe
 
-The common shoe is a printed ABS U-shaped saddle that:
+The common shoe is a printed PLA U-shaped saddle that:
 
 - straddles the 2020 extrusion;
 - locks through the rail side channels with M5 screws into the measured slot geometry
@@ -33,7 +33,7 @@ The common shoe is a printed ABS U-shaped saddle that:
 - carries a vertical 12.7 mm through-bore for the TR50/M post.
 
 The post passes through the printed shoe and bottoms on a McMaster 2895T62 0.010 in stainless datum disc
-resting on the rail top. The printed ABS does not establish the precision optical height.
+resting on the rail top. The printed PLA does not establish the precision optical height.
 
 The post bore incorporates a single-split clamping collar so that the post can be locked against rotational
 movement while remaining fully seated on the metal datum:
@@ -46,7 +46,7 @@ movement while remaining fully seated on the metal datum:
 - free-fitting 12.7 mm post bore before clamping.
 
 The clamp provides rotational and lateral retention; post height is still established solely by the post
-bottoming on the metal datum disc. The model, with its fit-tested ABS allowances, is
+bottoming on the metal datum disc. The model, with its fit-tested PLA allowances, is
 `src/schlieren/parts/rail_shoe.py`.
 
 <p align="center">

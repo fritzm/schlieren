@@ -1,7 +1,7 @@
 """Flexure source-slit head; canonical design §7 (selected baseline; first test print fits confirmed).
 
 It replaces the §8 carriage and slit cassette for the source slit; the cutoff keeps the §8 carriage.
-One flat-printed ABS flexure head carries both Stanley blades:
+One flat-printed PLA flexure head carries both Stanley blades:
 
 - frame -> platform: a parallelogram flexure for slit centering perpendicular to the slit, driven by
   FAS100 #1 (insert in the frame) against the coaxial 2006N292 spring, which supplies the preload;
@@ -165,8 +165,8 @@ class SlitHeadParameters:
     ring_gap: float = 3.5
     spigot_shoulder_diameter: float = 34.0  # Bears on the SM1RC/M face outside its Ø30.6 mm bore.
     post_clearance: float = 2.0  # Minimum, rotating parts to post and rail shoe over the working range.
-    # ABS material, typical values (provisional).
-    abs_modulus: float = 2200.0  # MPa
+    # PLA material, typical values (provisional).
+    pla_modulus: float = 3000.0  # MPa
     flexure_strain_limit: float = 0.006
 
     @property
@@ -345,11 +345,11 @@ class SlitHeadParameters:
 
     def flexure_stiffness(self, thickness, length):
         """Two fixed-guided blades, N/mm."""
-        return 2 * self.abs_modulus * self.flexure_height * thickness**3 / length**3
+        return 2 * self.pla_modulus * self.flexure_height * thickness**3 / length**3
 
     def rotation_stiffness(self, thickness, length, blades):
         """In-plane stage rotation, N mm/rad: resisted by opposing axial strain in the two blades."""
-        axial = self.abs_modulus * self.flexure_height * thickness / length
+        axial = self.pla_modulus * self.flexure_height * thickness / length
         spacing = (blades[0][0] + blades[0][1] - blades[1][0] - blades[1][1]) / 2
         return axial * spacing**2 / 2
 
@@ -439,7 +439,7 @@ class SlitHeadParameters:
             raise ValueError("Width stage travel exceeds its clearances")
         for strain in (self.centering_strain, self.width_strain):
             if strain > self.flexure_strain_limit:
-                raise ValueError("Flexure strain exceeds the ABS working limit")
+                raise ValueError("Flexure strain exceeds the PLA working limit")
         if self.bar_thickness < self.insert_min_material:
             raise ValueError("Insert bars must meet the 98625A950 minimum material")
         # Connectors: inside the platform ring and the carriers, magnets seated in solid material.
@@ -768,7 +768,7 @@ def build_slit_head_assembly(p=None, rotation=0.0, include_support=True):
     )
     children.append(labeled(spring, "2006N292 spring", (0.75, 0.75, 0.78), loc * Pos(sx, p.axis_y, s0)))
     if include_support:
-        from schlieren.parts.rail_shoe import build_rail_shoe, side_clamp_hardware, split_clamp_hardware
+        from schlieren.parts.rail_shoe import build_rail_shoe, split_clamp_hardware
 
         ring_y = -SM1RC_M_THICKNESS / 2
         children.append(
@@ -776,6 +776,6 @@ def build_slit_head_assembly(p=None, rotation=0.0, include_support=True):
         )
         children.append(labeled(thorlabs_tr50_m(), "TR50 M post", metal, Pos(0, 0, p.datum_thickness)))
         children.append(labeled(build_rail_shoe(), "Rail shoe", (0.8, 0.4, 0.25)))
-        for hardware in (*side_clamp_hardware(), *split_clamp_hardware()):
+        for hardware in split_clamp_hardware():
             children.append(labeled(hardware, f"Shoe {hardware.label.lower()}", metal))
     return assembly("Flexure slit head (exploratory)", children)

@@ -17,7 +17,7 @@ The 3/4 in moving mirror plate carries the 203 mm mirror and moves relative to t
   <img src="figures/mirror-cell.png" width="500" style="max-width: 90%"
        alt="Mirror cell seen from the front: the base plate, the cell-adjuster plate, the moving mirror plate with its 203 mm mirror and three adjuster tips, and the two corner brackets with their screws">
   <br>
-  <em>Fig. 10. Mirror cell from the mirror side: base plate, cell-adjuster plate, moving mirror plate and mirror, and corner brackets</em>
+  <em>Fig. 11. Mirror cell from the mirror side: base plate, cell-adjuster plate, moving mirror plate and mirror, and corner brackets</em>
 </p>
 
 The cell-adjuster plate is centered left/right on the 11.5 in-wide base. The rear face of the 1/2 in fixed
@@ -88,7 +88,7 @@ Use one adjuster, one bushing, and one knob at each of the three stations.
   <img src="figures/mirror-cell-adjuster.png" width="500" style="max-width: 90%"
        alt="Section through one adjuster station: knob, spherical washer pair, cell-adjuster plate, spring between its seat washers, moving plate with bushing, and the adjuster screw">
   <br>
-  <em>Fig. 11. Adjuster station, plywood and mirror cut away: knob, spherical washer pair, spring and seat washers, bushing, and adjuster screw</em>
+  <em>Fig. 12. Adjuster station, plywood and mirror cut away: knob, spherical washer pair, spring and seat washers, bushing, and adjuster screw</em>
 </p>
 
 Each adjuster station includes a concentric compression spring.
@@ -217,9 +217,9 @@ grease from shop stock.
 
 ### 10.5 Mirror mounting
 
-The 203 mm mirror is carried within the 3/4 in moving mirror-plate aperture. Its back surface is flush with the rear face of the plate, since both rest on the cure surface
-([§10.6](#106-rtv-glue-up-cure-surface)) during bonding; its front surface is therefore recessed about 1 mm
-below the front face of the plate.
+The 203 mm mirror is carried within the 3/4 in moving mirror-plate aperture. Its back surface is flush with
+the rear face of the plate, since both rest on the cure surface ([§10.6](#106-rtv-glue-up-cure-surface))
+during bonding; its front surface is therefore recessed about 1 mm below the front face of the plate.
 
 Six DOWSIL 737 RTV pads are placed radially between:
 
@@ -259,19 +259,20 @@ Hardware joining the 1/2 in cell-adjuster plate to the 1/2 in base plate:
 - 8 × McMaster 90099A030 5/16 in-18 18-8 stainless heavy-profile nylon-insert locknuts;
 - 8 × McMaster 96659A134 5/16 in stainless washers.
 
-Each bracket is flush with a side edge of the plates, with its base leg on the base top extending forward and its
-upright leg against the front face of the cell-adjuster plate. Each leg has two holes, centered across the
+Each bracket is flush with a side edge of the plates, with its base leg on the base top extending forward and
+its upright leg against the front face of the cell-adjuster plate. Each leg has two holes, centered across the
 leg, 0.75 in and 2.25 in from the outer corner. The screws are pushed through from the bracket side, with the
 button heads on the bracket's inner faces; the washers and locknuts are on the opposite faces of the plywood,
 the rear face of the cell-adjuster plate and the underside of the base. Each bracket therefore takes four
-screws, two through the plate and two through the base, eight in all. The plywood holes match the bracket holes.
+screws, two through the plate and two through the base, eight in all. The plywood holes match the bracket
+holes.
 
-The button heads (Ø0.547 in × 0.166 in) are low enough that the heads of the two holes nearest the inside corner
-clear each other by more than 6 mm, so all four holes are used. The washer and locknut stacks are on the far sides of the
-plywood and cannot meet.
+The button heads (Ø0.547 in × 0.166 in) are low enough that the heads of the two holes nearest the inside
+corner clear each other by more than 6 mm, so all four holes are used. The washer and locknut stacks are on
+the far sides of the plywood and cannot meet.
 
-The 1-3/8 in screw suits the 1/2 in plywood + 1/4 in bracket + washer + 7/16 in locknut stack of about 1.25 in:
-the thread projects approximately 0.12 in, about 2 threads, beyond the locknut, preserving full locknut
+The 1-3/8 in screw suits the 1/2 in plywood + 1/4 in bracket + washer + 7/16 in locknut stack of about 1.25
+in: the thread projects approximately 0.12 in, about 2 threads, beyond the locknut, preserving full locknut
 engagement without excessive overhang under the base or behind the cell-adjuster plate.
 
 The bracket attachments are through-bolted rather than relying on wood screws. The locknut stacks under the
@@ -297,37 +298,39 @@ bushings, is held between two covers. The adjusters, springs, and seat washers a
 - The mirror's back surface is flush with the rear face of the plate ([§10.5](#105-mirror-mounting)), so the
   rear cover carries a full-face sheet of thin closed-cell foam, which bears evenly on the glass and the
   plywood.
-- The front glass is recessed about 1 mm below the plywood face, and the bushing flanges stand 0.254 mm proud of
-  it. The front cover carries a foam ring that bears on the outer rim of the glass, outside the clear aperture, so
-  it does not touch the reflective surface across the aperture. The ring also acts as a dust gasket. A sheet of
-  optical tissue lies over the mirror face beneath the cover to keep the foam and any dust off the coating.
-- Closed-cell foam is preferred, because open-cell foam sheds particles. The foam thickness, about 3 mm, covers
-  the 1 mm recess plus a light compression; it sets the preload and is chosen so the glass is held without
-  stressing it.
-- Low-profile thumb screws thread into the adjuster bushings from the front and from the back, with full thread
-  engagement, to clamp the sandwich. The bushing thread is 1/4-80, which common thumb screws do not match. The
-  intended screw is a short Kozak TS250-80 adjuster (available from 5/16 in) with a KB250-80 knob, which
-  threads onto the screw end and can be removed. Lengths of about 5/8 in for the front and 3/4 in for the
-  rear suit a 1/8 in cover and a few millimeters of foam; the engaged lengths from the two sides together must
-  stay below the 15.6 mm barrel length, and the barrel's rear end is 3.2 mm below the rear face of the plate.
-- Threaded rods that pass through the bushing bores without engaging their threads, with thumb nuts on both sides
-  of the covers, would also work. They are less preferred: care is needed not to damage the fine bushing
+- The front glass is recessed about 1 mm below the plywood face, and the bushing flanges stand 0.254 mm proud
+  of it. The front cover carries a foam ring that bears on the outer rim of the glass, outside the clear
+  aperture, so it does not touch the reflective surface across the aperture. The ring also acts as a dust
+  gasket. A sheet of optical tissue lies over the mirror face beneath the cover to keep the foam and any dust
+  off the coating.
+- Closed-cell foam is preferred, because open-cell foam sheds particles. The foam thickness, about 3 mm,
+  covers the 1 mm recess plus a light compression; it sets the preload and is chosen so the glass is held
+  without stressing it.
+- Low-profile thumb screws thread into the adjuster bushings from the front and from the back, with full
+  thread engagement, to clamp the sandwich. The bushing thread is 1/4-80, which common thumb screws do not
+  match. The intended screw is a short Kozak TS250-80 adjuster (available from 5/16 in) with a KB250-80 knob,
+  which threads onto the screw end and can be removed. Lengths of about 5/8 in for the front and 3/4 in for
+  the rear suit a 1/8 in cover and a few millimeters of foam; the engaged lengths from the two sides together
+  must stay below the 15.6 mm barrel length, and the barrel's rear end is 3.2 mm below the rear face of the
+  plate.
+- Threaded rods that pass through the bushing bores without engaging their threads, with thumb nuts on both
+  sides of the covers, would also work. They are less preferred: care is needed not to damage the fine bushing
   threads.
 - The covers restrain the mirror axially only; lateral restraint is by the RTV pads. The sandwich is then
   wrapped in bubble wrap or boxed.
 
 **Provisional:** the safety retainers are not yet designed. For the transport sandwich: the cover material and
-thickness (the covers are clamped at 120.65 mm radius, while the foam ring bears at about 100 mm, so the covers
-must be stiff enough between the clamp points, possibly 1/4 in); the foam material and thickness; the ring's
-width against the clear aperture; the thumb-screw lengths and their availability (the Kozak catalog pages
-showed the short screws and the knob as sold out); and the optical tissue.
+thickness (the covers are clamped at 120.65 mm radius, while the foam ring bears at about 100 mm, so the
+covers must be stiff enough between the clamp points, possibly 1/4 in); the foam material and thickness; the
+ring's width against the clear aperture; the thumb-screw lengths and their availability (the Kozak catalog
+pages showed the short screws and the knob as sold out); and the optical tissue.
 
 ### 10.9 Tripod interface
 
-The mirror cell mounts on the tripod through a CAMVATE Manfrotto-type quick-release assembly with sliding plate
-(Amazon B0B2WBC921) on a Sunwayfoto LB-68R leveling base, whose top mounting stud is 3/8 in-16. The receiver
-stays on the LB-68R; the removable 501PL/577/504-compatible sliding plate stays attached to the underside of
-the 1/2 in Baltic-birch mirror-cell base.
+The mirror cell mounts on the tripod through a CAMVATE Manfrotto-type quick-release assembly with sliding
+plate (Amazon B0B2WBC921) on a Sunwayfoto LB-68R leveling base, whose top mounting stud is 3/8 in-16. The
+receiver stays on the LB-68R; the removable 501PL/577/504-compatible sliding plate stays attached to the
+underside of the 1/2 in Baltic-birch mirror-cell base.
 
 The sliding plate is 7.00 in / 177.8 mm long, mounted flush with the front and rear edges of the 7.0 in-deep
 base, so it spans 0–7.00 in / 0–177.8 mm aft of the front edge and its geometric center lies 3.50 in / 88.9 mm
@@ -336,8 +339,8 @@ aft of that edge. This is 0.5 in / 12.7 mm aft of the estimated mirror-cell cent
 
 The plate is attached by four McMaster 92125A196 M4 × 0.7 × 18 mm 90° flat-head screws:
 
-flush flat-head M4 screw → countersunk 1/2 in Baltic-birch base → M4 × 0.7 tapped hole in solid aluminum of the
-sliding plate.
+flush flat-head M4 screw → countersunk 1/2 in Baltic-birch base → M4 × 0.7 tapped hole in solid aluminum of
+the sliding plate.
 
 The screws are in a two-front / two-rear rectangular pattern. Each screw center is 1.875 in / 47.625 mm in
 from its nearest longitudinal plate end, and the two screws at each longitudinal station are ±0.500 in / ±12.7
@@ -348,25 +351,25 @@ surfaces and the central camera-screw slot. The heads finish flush with or sligh
 surface. The holes are tapped with an M4 × 0.7 tap (3.3 mm tap drill), and the screws are retained with
 Loctite 243 medium-strength removable threadlocker.
 
-The sliding plate is used without its camera screws. Its camera face, with the slot, goes against the underside
-of the base. In the base, each screw has a Ø4.5 mm through hole, countersunk 90° to Ø8.4 mm at the top surface,
-which seats the Ø8 mm head about 0.2 mm below the surface. The 18 mm screw then reaches about 5.5 mm into the
-plate, roughly eight threads. The base is drilled from the layout below; the plate holes are then marked through
-the base holes with the plate held against the underside, and tapped.
+The sliding plate is used without its camera screws. Its camera face, with the slot, goes against the
+underside of the base. In the base, each screw has a Ø4.5 mm through hole, countersunk 90° to Ø8.4 mm at the
+top surface, which seats the Ø8 mm head about 0.2 mm below the surface. The 18 mm screw then reaches about 5.5
+mm into the plate, roughly eight threads. The base is drilled from the layout below; the plate holes are then
+marked through the base holes with the plate held against the underside, and tapped.
 
 <p align="center">
   <img src="figures/mirror-cell-below.png" width="500" style="max-width: 90%"
        alt="Mirror cell seen from below and the front: the sliding plate against the underside of the base, with the bracket locknuts near the base edges">
   <br>
-  <em>Fig. 12. Mirror cell from below: the quick-release sliding plate on the underside of the base, and the bracket locknuts</em>
+  <em>Fig. 13. Mirror cell from below: the quick-release sliding plate on the underside of the base, and the bracket locknuts</em>
 </p>
 
 <p align="center">
   <img src="figures/mirror-cell-base-plate.svg" width="640" style="max-width: 95%"
        alt="Mirror-cell base plate drilling layout seen from above: four countersunk quick-release screw holes and four bracket-screw holes, dimensioned in x from the plate centerline and in y from the front edge, with the front edge at the bottom">
   <br>
-  <em>Fig. 13. Base plate drilling layout, seen from above, in cell coordinates (front edge at the bottom)</em>
+  <em>Fig. 14. Base plate drilling layout, seen from above, in cell coordinates (front edge at the bottom)</em>
 </p>
 
-**Provisional:** the Ø4.5 mm clearance hole, the countersink diameter, and the depth of the tapped holes in the
-sliding plate.
+**Provisional:** the Ø4.5 mm clearance hole, the countersink diameter, and the depth of the tapped holes in
+the sliding plate.

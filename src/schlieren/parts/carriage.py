@@ -70,7 +70,7 @@ class CarriageParameters:
     # keeper is the fallback if the print shows too much lift (`uv run carriage --keeper-side-thickness 5`).
     keeper_side_thickness: float = 3.0
     ear_lower_clearance: float = 0.15
-    body_deck_clearance: float = 0.3  # Provisional ABS running clearance.
+    body_deck_clearance: float = 0.3  # Provisional PLA running clearance.
     body_width: float = 58.0
     body_length: float = 10.0
     body_top: float = 12.0
@@ -86,11 +86,11 @@ class CarriageParameters:
     fastener_stop_margin: float = (
         4.0  # Screw axis beyond the track end stop; keeps the nut pocket in the fill.
     )
-    envelope_nut_wall: float = 1.0  # Minimum ABS between a nut pocket and the rotation envelope.
+    envelope_nut_wall: float = 1.0  # Minimum PLA between a nut pocket and the rotation envelope.
     # Side keeper screws beside each plunger's ear travel, in round lugs that widen the plate locally.
     side_fastener_x: float = 42.0
-    side_lug_radius: float = 5.0  # Leaves ~1.65 mm ABS outside the captive nut.
-    abs_modulus: float = 2200.0  # MPa, typical (provisional), for first-order keeper estimates.
+    side_lug_radius: float = 5.0  # Leaves ~1.65 mm PLA outside the captive nut.
+    pla_modulus: float = 3000.0  # MPa, typical (provisional), for first-order keeper estimates.
     datum_pin_shank: float = 0.050 * INCH  # Measured (calipers), in-hand brads.
     # Brad holes only. Measured on the first base-plate print: the Ø24 mm aperture printed Ø23.62 mm (0.930 in);
     # brad holes with 0.08 mm diametral clearance would not start a shank. Compensate them, where a few
@@ -322,7 +322,7 @@ class CarriageParameters:
                         * near
                         * (span - far)
                         * (2 * span * far - far**2 - near**2)
-                        / (6 * span * self.abs_modulus * inertia)
+                        / (6 * span * self.pla_modulus * inertia)
                     )
                 lift = max(lift, total)
         return lift
@@ -371,7 +371,7 @@ class CarriageParameters:
         if self.side_fastener_x + self.side_lug_radius <= self.plate_width / 2:
             raise ValueError("Side lugs must widen the plate around the side screws")
         if self.side_lug_radius < nut_radius + 1.5:
-            raise ValueError("Side lugs need ABS outside the captive nuts")
+            raise ValueError("Side lugs need PLA outside the captive nuts")
         if self.keeper_side_thickness < self.keeper_thickness:
             raise ValueError("Keeper side members must be at least the nominal keeper thickness")
         if not 0 < self.thumb_tab_chamfer < min(self.thumb_tab_thickness, self.thumb_tab_height) / 2:

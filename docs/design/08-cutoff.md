@@ -11,7 +11,7 @@ blank and clamp bars are modeled in `src/schlieren/parts/cassette.py`.
   <img src="figures/cutoff.png" width="500" style="max-width: 90%"
        alt="Cutoff carriage from the mirror side with a cassette seated: base plate, guide frame, keeper plate, driven and spring plungers, FAS100 adjuster, and cassette with clamp bars">
   <br>
-  <em>Fig. 7. Cutoff carriage with a seated cassette: guide frame, keeper plate, driven and spring plungers, and the FAS100 fine adjuster</em>
+  <em>Fig. 8. Cutoff carriage with a seated cassette: guide frame, keeper plate, driven and spring plungers, and the FAS100 fine adjuster</em>
 </p>
 
 ### 8.1 Spigot and rotation interface
@@ -88,7 +88,7 @@ under-flange/body length 0.298 in (7.569 mm); flange outside diameter 0.352 in (
 The insert bore is nominally 0.313 in (7.950 mm), matching the drawing. The printed bore is a pilot, finished
 after printing with a 5/16 in (0.3125 in) drill rather than relying on FDM accuracy; on the slit head this
 gave a good press fit ([§7.7](07-source-slit.md#77-fabrication-and-fit)). The 8.5 mm insert support exceeds
-the drawing's 0.298 in (7.569 mm) minimum material thickness, with about 3 mm of radial ABS around the insert
+the drawing's 0.298 in (7.569 mm) minimum material thickness, with about 3 mm of radial PLA around the insert
 body. The flange is on the adjuster/outboard side, unrecessed, so the axial reaction from the FAS100 seats it
 against the carriage.
 
@@ -99,7 +99,7 @@ theoretical screw motion. That is a geometric clearance estimate, not a publishe
 specification. The carriage's working translation is ±5 mm / 10 mm total, leaving useful adjuster margin
 before either end stop.
 
-The FAS100 ball tip does not bear directly on printed ABS. The driven plunger carries a small hard bearing
+The FAS100 ball tip does not bear directly on printed PLA. The driven plunger carries a small hard bearing
 insert made from a nickel-plated rectangular NdFeB magnet:
 
 - Amazon B0DMCY4FN1
@@ -107,8 +107,8 @@ insert made from a nickel-plated rectangular NdFeB magnet:
 - one magnet in the driven plunger
 
 The magnet is used as a hard, wear-resistant plated bearing surface; its magnetic function is incidental. It
-sits in a close-fitting printed pocket with its rear face fully supported by ABS, with a small CA or epoxy
-tack for retention. The FAS100 ball contacts the broad plated face rather than bare ABS.
+sits in a close-fitting printed pocket with its rear face fully supported by PLA, with a small CA or epoxy
+tack for retention. The FAS100 ball contacts the broad plated face rather than bare PLA.
 
 ### 8.4 Cassette seating
 
@@ -156,7 +156,7 @@ the roof of the end-wall spring cup ([§8.5](#85-spring-seating-and-retraction))
 Keeper retention is mechanical, with eight fasteners per carriage. Each is the existing common McMaster
 91292A114 M3 × 0.5 × 12 mm socket-head screw with a McMaster 91828A211 full-height M3 × 0.5 hex nut (5.5 mm
 across flats × 2.4 mm high), captive in a hex pocket opening from the plate back. Screw heads and nuts bear
-directly on the ABS, without washers; tighten only to a light snug, since the joint needs little clamp and a
+directly on the PLA, without washers; tighten only to a light snug, since the joint needs little clamp and a
 firm hex-key torque can crush the bearing face.
 
 - Four end screws, at (±38.5, −53) and (±38.5, +52) mm in the carriage frame (y along the travel, +y toward
@@ -169,13 +169,14 @@ firm hex-key torque can crush the bearing face.
 
 The side screws carry the ear wedge reactions (below) into the frame close to where they arise. A first-order
 beam estimate, with each keeper side member simply supported between adjacent screws, gives at most about
-0.1 mm of upward keeper deflection at the ears at the maximum-compression load. That is within the 0.25 mm
-free play between the ears and the keeper; with only the four end screws it would be about 2–3 mm. The keeper
+0.07 mm of upward keeper deflection at the ears at the maximum-compression load (with a PLA modulus of
+about 3000 MPa assumed). That is within the 0.25 mm free play between the ears and the keeper; with only the
+four end screws it would be about 1.5–2 mm. The keeper
 side members are 3.0 mm thick. **Provisional:** if a print shows too much lift, a keeper with 5.0 mm side
 members fits the same screws: its counterbores are deeper, so the head seat height is unchanged.
 
 The screw heads sit in an approximately 0.5 mm-deep recess in the keeper, and the captive hex pockets are
-approximately 2.5 mm deep. This leaves approximately 1.5 mm of ABS above each nut pocket and gives nearly
+approximately 2.5 mm deep. This leaves approximately 1.5 mm of PLA above each nut pocket and gives nearly
 full use of the 12 mm screw length, with only slight nominal screw projection beyond the nut. The keeper seats on broad
 printed lands, so the fasteners clamp it against the carriage rather than suspending it between isolated
 points.
@@ -186,7 +187,7 @@ guide-ear running surface; 3.0 mm plunger guide ears in a 3.4 mm guide channel; 
 **Provisional:** the guide-stack dimensions, keeper recess and nut-pocket depths, sliding fits, and datum-pin
 projection are first-print values, to be tuned from printed fit.
 
-Use a very light film of plastic-safe lubricant on the ABS-on-ABS sliding interfaces, particularly the plunger
+Use a very light film of plastic-safe lubricant on the PLA-on-PLA sliding interfaces, particularly the plunger
 ears/tabs in their guide slots and any other plunger sliding faces. The lubricant is McMaster 1418K51
 clear silicone grease, NLGI 1. Smooth/dress the printed sliding surfaces first, apply only a trace amount,
 cycle the mechanism, and wipe away visible excess so the lubricant acts as a thin boundary film rather than a
@@ -257,7 +258,7 @@ and jam the ears.
 
 Cassette envelope:
 
-- 64 × 64 × 5 mm ABS
+- 64 × 64 × 5 mm PLA
 - 24 mm diameter central clear aperture
 - identical shallow bevels on all four perimeter edges
 - insertable at 0 / 90 / 180 / 270°
@@ -278,7 +279,7 @@ Cassette variants, all built on the common blank:
   <img src="figures/cassette.png" width="400" style="max-width: 90%"
        alt="Assembled cassette: 64 mm base with 24 mm aperture, two clamp bars with screws, washers and nuts">
   <br>
-  <em>Fig. 8. Cassette blank with its two clamp bars and hardware</em>
+  <em>Fig. 9. Cassette blank with its two clamp bars and hardware</em>
 </p>
 
 The standard cassette blank carries one opposed pair of integral filament cleats on the front / non-datum
@@ -303,7 +304,7 @@ These bars and their hardware are the clamping standard for the cassettes
 
 Common clamp bars:
 
-- two identical printed rigid ABS bars fit each cassette;
+- two identical printed rigid PLA bars fit each cassette;
 - each bar uses two fasteners, one toward each end, so clamp force is distributed along the element;
 - no holes are made through razor blades, filter material, or other optical elements;
 - no blade-specific locating pocket or guide is required;
@@ -336,7 +337,7 @@ washer between the nut and printed bar. Do not use prevailing-torque/nyloc nuts 
 | Flat washer | [93475A210](https://www.mcmaster.com/93475A210/) | 18-8 stainless, 3.2 mm ID × 7 mm OD × 0.4–0.6 mm thick; DIN 125 / ISO 7089 |
 | Ordinary full-height hex nut | [91828A211](https://www.mcmaster.com/91828A211/) | M3 × 0.5, 18-8 stainless, 5.5 mm across flats × 2.4 mm high; DIN 934 (the common split-clamp nut, [§5.3](05-post-support.md#53-common-rail-shoe)) |
 
-The clamp bars are 4 mm printed ABS. The cassette blank has four Ø3.4 mm screw holes at (±27, ±12) mm with
+The clamp bars are 4 mm printed PLA. The cassette blank has four Ø3.4 mm screw holes at (±27, ±12) mm with
 rear-entry 90° countersinks matched to the 92125A133 head (Ø6.2 mm at the face: 6 mm head plus 0.2 mm
 diametral allowance), and each bar end provides a washer bearing land at least 7.2 mm across. The screw head
 finishes flush with or slightly below the rear/datum face so it cannot contact the carriage datum pins or
@@ -345,9 +346,10 @@ interfere with cassette sliding. The fasteners, bars, nuts, cleats, and projecti
 cassette blank, not blade-specific geometry.
 
 Because the clamp fasteners do not pass through the optical element, the screw length is not sized from a
-blade-thickness stack. **Provisional:** the 14 mm screw length is pending a fit test of the first printed
-cassette/bar assembly, confirming full nut engagement, useful clamp travel for razor blades and thin
-filter/foil media, a flush or recessed rear head, and clearance over the plunger lips.
+blade-thickness stack. The 14 mm length gives full nut engagement and holds razor blades under the 4 mm bars,
+with the head seated flush in its countersink. The screws are vertical and the lips act at the cassette edges,
+so the screw length does not bear on the lips; the bar ends, which reach the bevel zone, are relieved to clear
+them.
 
 ### 8.8 Fine wire
 
