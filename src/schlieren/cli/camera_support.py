@@ -1,4 +1,4 @@
-"""Show or render the lens pointer and phone rest model (design §§9.4-9.8)."""
+"""Show or render the lens cradle and phone rest model (design §§9.4-9.8)."""
 
 import argparse
 from pathlib import Path
@@ -9,8 +9,8 @@ from schlieren.cad import EXPORTERS, assembly, labeled
 from schlieren.parts.camera_support import (
     build_camera_support_assembly,
     build_collar_for_print,
-    build_pointer_shoe_for_print,
-    build_pointer_yoke_for_print,
+    build_cradle_shoe_for_print,
+    build_cradle_yoke_for_print,
 )
 
 DEFAULT_FIGURE = Path("docs/design/figures/camera-support.png")
@@ -36,7 +36,7 @@ def main() -> None:
     parser.add_argument(
         "--yoke",
         action="store_true",
-        help="Export one pointer yoke in print orientation (STEP and STL); with --show, display it",
+        help="Export one cradle yoke in print orientation (STEP and STL); with --show, display it",
     )
     parser.add_argument(
         "--collar",
@@ -46,7 +46,7 @@ def main() -> None:
     parser.add_argument(
         "--shoe",
         action="store_true",
-        help="Export the pointer shoe in print orientation (STEP and STL); with --show, display it",
+        help="Export the cradle shoe in print orientation (STEP and STL); with --show, display it",
     )
     parser.add_argument("--output", type=Path, default=Path("exports"))
     parser.add_argument(
@@ -66,12 +66,12 @@ def main() -> None:
     args = parser.parse_args()
     printed = {}
     if args.yoke:
-        printed["pointer_yoke"] = build_pointer_yoke_for_print()
+        printed["cradle_yoke"] = build_cradle_yoke_for_print()
     if args.collar:
         printed["lens_collar_fore"] = build_collar_for_print()
         printed["lens_collar_aft"] = build_collar_for_print(aft=True)
     if args.shoe:
-        printed["pointer_shoe"] = build_pointer_shoe_for_print()
+        printed["cradle_shoe"] = build_cradle_shoe_for_print()
     for name, part in printed.items():
         for kind in ("step", "stl"):
             destination = args.output / kind / f"{name}.{kind}"

@@ -356,12 +356,12 @@ orientation/supports to accommodate its downward locating pegs. Spigot fit in th
 SM1RC/M and rotation clearance to the rail remain physical validation items. The
 committed design is recorded in `docs/design/08-cutoff.md` (§8).
 
-## Camera support — lens pointer and phone rest
+## Camera support — lens cradle and phone rest
 
-`src/schlieren/parts/camera_support.py` models §§9.4–9.8: a lens-specific pointer that holds the lens in two
+`src/schlieren/parts/camera_support.py` models §§9.4–9.8: a lens-specific cradle that holds the lens in two
 collars, each on a pair of inclined ball-tip screws in a printed yoke bolted to a shoe, with an endless
 elastic band per yoke, and a phone-specific rest under the lower edge of the phone hanging from the lens.
-The printed parts (pointer shoe, two yokes, two collars, phone rest) are modeled in detail with fillets, pad
+The printed parts (cradle shoe, two yokes, two collars, phone rest) are modeled in detail with fillets, pad
 pockets, clamp ears, insert holes, the yoke joint, and the band pegs; the shoe and rest saddles take the
 common rail shoe's dimensions through `RailShoeParameters`. The lens, phone, and hardware are envelopes
 except the McMaster screws, thumb nuts, and heat-set inserts, which are vendor models. The M3 clamp screws

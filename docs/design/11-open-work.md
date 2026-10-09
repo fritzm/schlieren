@@ -16,10 +16,10 @@ Design areas marked **Provisional** in the sections above:
   angle and seating force; clearance to other equipment near the cutoff station.
 - **Cassettes** ([§8.6](08-cutoff.md#86-common-cassette-standard),
   [§8.7](08-cutoff.md#87-cassette-clamp-bars)): filament-cleat geometry.
-- **Lens pointer and phone rest** ([§9](09-camera-telephoto.md#9-camera-and-telephoto-support)): fit
+- **Lens cradle and phone rest** ([§9](09-camera-telephoto.md#9-camera-and-telephoto-support)): fit
   allowances of the rod groove, ball-stop rims, and yokes (including the locating walls on the shoe), the
   magnet and rod adhesive, and the retaining-band ring size on an assumed modulus
-  ([§9.5](09-camera-telephoto.md#95-lens-pointer), [§9.8](09-camera-telephoto.md#98-retaining-bands)); the
+  ([§9.5](09-camera-telephoto.md#95-lens-cradle), [§9.8](09-camera-telephoto.md#98-retaining-bands)); the
   phone rest's retainer and safety catch ([§9.6](09-camera-telephoto.md#96-phone-rest)); the lens alignment
   procedure, untested ([§9.9](09-camera-telephoto.md#99-lens-alignment)). The alignment tolerances rest on
   assumed lens and camera values, and the contact loads on an assumed lens balance point and phone mass.

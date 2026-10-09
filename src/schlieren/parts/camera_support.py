@@ -1,9 +1,9 @@
-"""Lens pointer and phone rest, design §§9.4-9.9.
+"""Lens cradle and phone rest, design §§9.4-9.9.
 
 The phone and the lens threaded onto its case are one rigid body, held by the lens barrel with the phone
 hanging from it. Two separate rail fixtures:
 
-- the lens pointer, specific to the lens. Two split collars clamp the barrel, the aft one on its rear
+- the lens cradle, specific to the lens. Two split collars clamp the barrel, the aft one on its rear
   cylindrical section and the fore one at the front of the long section, just behind the focus ring. Each
   collar rests on a pair of ball-tip screws at ±45° in a yoke; each pair sets x and z of the lens axis at its
   station, so together they set position, pitch, and yaw. The yokes are printed separately and bolted to one
@@ -16,7 +16,7 @@ hanging from it. Two separate rail fixtures:
   fixed: roll changes slightly as the aft collar is raised or lowered, which does not matter. A different
   phone needs only this part redesigned.
 
-The pointer parts are modeled in detail: fillets, pad pockets, clamp ear, insert holes, joint, and pegs. The
+The cradle parts are modeled in detail: fillets, pad pockets, clamp ear, insert holes, joint, and pegs. The
 lens, phone, and hardware are envelopes, except the McMaster screws, thumb nuts, inserts, and dowel pins, which
 are vendor models; the clamp screws and nuts and the rail clamp screws are not drawn. The phone rest has no retainer or
 safety catch yet. The phone dimensions are the §9.1 measurements and Apple's drawing, and the lens section
@@ -71,7 +71,7 @@ from schlieren.vendor_cad import (
 
 INCH = 25.4
 YOKE_BOSS_OVERRUN = 0.5  # Arm material behind the end of the screw at nominal.
-POINTER_COLOR = (0.8, 0.4, 0.25)
+CRADLE_COLOR = (0.8, 0.4, 0.25)
 REST_COLOR = (0.35, 0.6, 0.8)
 COLLAR_COLOR = (0.4, 0.75, 0.5)
 BAND_COLOR = (0.85, 0.3, 0.25)
@@ -120,7 +120,7 @@ class CameraSupportParameters:
     groove_rod_diameter: float = 3.0
     groove_rod_length: float = 10.0
 
-    # Lens pointer.
+    # Lens cradle.
     aft_station: float = (
         24.0  # Aft collar center from the lens aft end; leaves finger room ahead of the phone.
     )
@@ -174,7 +174,7 @@ class CameraSupportParameters:
     yoke_corner_fillet: float = 2.0  # Outboard corners of the arm.
     # Lower clamp sections (saddle, skirts, side-slot holes) take the common rail shoe's dimensions, §5.3.
     rail_shoe: RailShoeParameters = field(default_factory=RailShoeParameters)
-    pointer_clamp_spacing: float = 36.0  # Between the two pairs of rail clamp screws on the pointer shoe.
+    cradle_clamp_spacing: float = 36.0  # Between the two pairs of rail clamp screws on the cradle shoe.
     # Yoke-to-shoe joint: each yoke is printed separately and bolted up through the shoe deck with one
     # countersunk M5 screw on the rail centerline, into a heat-set insert in the yoke column. Two straight
     # walls on the deck, across the rail, ahead of and behind the column, locate it and stop its twisting.
@@ -189,8 +189,8 @@ class CameraSupportParameters:
     # Chamfer round the skirt ends, inside and out, so that the first-layer flare (elephant's foot) does not
     # narrow the rail opening or stand the skirts off the bed; it also eases the shoe onto the rail.
     skirt_foot_chamfer: float = 0.6
-    pointer_end_margin: float = (
-        9.0  # Pointer shoe beyond each yoke along the rail; symmetric about the stations.
+    cradle_end_margin: float = (
+        9.0  # Cradle shoe beyond each yoke along the rail; symmetric about the stations.
     )
 
     # Phone rest.
@@ -220,9 +220,9 @@ class CameraSupportParameters:
         return self.rest_y
 
     @property
-    def pointer_clamp_ys(self) -> tuple[float, float]:
+    def cradle_clamp_ys(self) -> tuple[float, float]:
         middle = sum(self.stations) / 2
-        return middle - self.pointer_clamp_spacing / 2, middle + self.pointer_clamp_spacing / 2
+        return middle - self.cradle_clamp_spacing / 2, middle + self.cradle_clamp_spacing / 2
 
     @property
     def deck_top(self) -> float:
@@ -423,8 +423,8 @@ class CameraSupportParameters:
         if self.yoke_thickness < self.collar_width:
             raise ValueError("The yoke must be at least as thick as the collar")
         wall_inner = self.yoke_thickness / 2 + self.locating_clearance_per_side
-        if wall_inner + self.locating_wall_thickness > self.pointer_end_margin:
-            raise ValueError("The locating walls must stay on the pointer shoe")
+        if wall_inner + self.locating_wall_thickness > self.cradle_end_margin:
+            raise ValueError("The locating walls must stay on the cradle shoe")
         if self.rail_size > r.width:
             raise ValueError("The locating walls must stay on the deck")
         if self.joint_z + self.insert_hole_depth + 1.5 > self.yoke_top:
@@ -825,38 +825,38 @@ def _straddle(
     return shoe
 
 
-def build_pointer_shoe(p: CameraSupportParameters | None = None) -> Part:
-    """Lens-pointer saddle, printed deck-down, symmetric about the middle of the two stations."""
+def build_cradle_shoe(p: CameraSupportParameters | None = None) -> Part:
+    """Lens-cradle saddle, printed deck-down, symmetric about the middle of the two stations."""
     p = p or CameraSupportParameters()
     p.validate()
     aft, fore = p.stations
     half_collar = p.collar_width / 2
     return _straddle(
         p,
-        aft - half_collar - p.pointer_end_margin,
-        fore + half_collar + p.pointer_end_margin,
-        p.pointer_clamp_ys,
+        aft - half_collar - p.cradle_end_margin,
+        fore + half_collar + p.cradle_end_margin,
+        p.cradle_clamp_ys,
         p.stations,
     )
 
 
-def build_pointer_shoe_for_print(p: CameraSupportParameters | None = None) -> Part:
-    """The pointer shoe as printed, skirts on the bed and deck up, centered on the origin, bed at z = 0."""
-    shoe = build_pointer_shoe(p)
+def build_cradle_shoe_for_print(p: CameraSupportParameters | None = None) -> Part:
+    """The cradle shoe as printed, skirts on the bed and deck up, centered on the origin, bed at z = 0."""
+    shoe = build_cradle_shoe(p)
     box = shoe.bounding_box()
     return Pos(-(box.min.X + box.max.X) / 2, -(box.min.Y + box.max.Y) / 2, -box.min.Z) * shoe
 
 
-def build_pointer_yoke(p: CameraSupportParameters | None = None, station: float = 0.0) -> Part:
-    """Yoke for the collar at a station, printed on its side and bolted to the pointer shoe."""
+def build_cradle_yoke(p: CameraSupportParameters | None = None, station: float = 0.0) -> Part:
+    """Yoke for the collar at a station, printed on its side and bolted to the cradle shoe."""
     p = p or CameraSupportParameters()
     p.validate()
     return _yoke(p, station)
 
 
-def build_pointer_yoke_for_print(p: CameraSupportParameters | None = None) -> Part:
+def build_cradle_yoke_for_print(p: CameraSupportParameters | None = None) -> Part:
     """A yoke laid on its side as printed: profile plane on the bed, centered on the origin, bed at z = 0."""
-    yoke = Rot(X=90) * build_pointer_yoke(p)
+    yoke = Rot(X=90) * build_cradle_yoke(p)
     box = yoke.bounding_box()
     return Pos(-(box.min.X + box.max.X) / 2, -(box.min.Y + box.max.Y) / 2, -box.min.Z) * yoke
 
@@ -925,7 +925,7 @@ def build_camera_support_assembly(
     axis = along_y((0, -60, axis_z)) * Cylinder(0.4, p.lens_length + 150, align=ON_FLOOR)
     children = [
         labeled(rail, "Rail", BLACK_ANODIZED),
-        labeled(build_pointer_shoe(p), "Pointer shoe", POINTER_COLOR),
+        labeled(build_cradle_shoe(p), "Cradle shoe", CRADLE_COLOR),
         labeled(build_phone_rest(p), "Phone rest", REST_COLOR),
         labeled(phone, "Phone envelope", PHONE_COLOR),
         labeled(lens, "Telephoto envelope", LENS_COLOR),
@@ -938,7 +938,7 @@ def build_camera_support_assembly(
     for where, station in zip(("Aft", "Fore"), p.stations):
         rod_side = -1 if where == "Aft" else None  # The aft left pad carries the groove rods.
         children.append(labeled(build_collar(p, station, rod_side), f"{where} collar", COLLAR_COLOR))
-        children.append(labeled(build_pointer_yoke(p, station), f"{where} yoke", POINTER_COLOR))
+        children.append(labeled(build_cradle_yoke(p, station), f"{where} yoke", CRADLE_COLOR))
         children.append(labeled(build_band(p, station), f"{where} band", BAND_COLOR))
         children += _joint_hardware(p, where, station)
         for name, side in (("left", -1), ("right", 1)):
@@ -958,7 +958,7 @@ def build_camera_support_assembly(
     # Roll: the phone's lower edge on a rod lying along the rail.
     rest = along_y((p.rest_x, p.rest_y, p.rest_arm_top)) * mcmaster_91585a457()
     children.append(labeled(rest, "Rest rod", STEEL))
-    support = assembly("Lens pointer and phone rest (concept mock-up)", children)
+    support = assembly("Lens cradle and phone rest (concept mock-up)", children)
     if not include_cutoff:
         return support
     from schlieren.parts.carriage import CarriageParameters, build_carriage, support_location

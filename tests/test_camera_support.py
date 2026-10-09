@@ -1,4 +1,4 @@
-"""Engineering invariants for the lens pointer and phone rest concept mock-up (design §§9.4-9.7)."""
+"""Engineering invariants for the lens cradle and phone rest concept mock-up (design §§9.4-9.7)."""
 
 import unittest
 from itertools import combinations, pairwise
@@ -14,9 +14,9 @@ from schlieren.parts.camera_support import (
     band_leg_angle,
     band_path,
     build_camera_support_assembly,
+    build_cradle_shoe,
+    build_cradle_yoke,
     build_phone_rest,
-    build_pointer_shoe,
-    build_pointer_yoke,
     screw_location,
 )
 from schlieren.testing import boxes_overlap, slow
@@ -27,7 +27,7 @@ ADJUSTERS = tuple(f"{where} {side}" for where in ("Aft", "Fore") for side in ("l
 MAGNET_PADS = ("Fore left", "Fore right", "Aft right")  # The aft left screw sits in the rod groove.
 
 
-class LensPointerTests(unittest.TestCase):
+class LensCradleTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.p = CameraSupportParameters()
@@ -99,7 +99,7 @@ class LensPointerTests(unittest.TestCase):
         for name in ADJUSTERS:
             insert = self.parts[f"{name} insert"]
             side = -1 if name.endswith("left") else 1
-            pointer = self.parts[f"{name.split()[0]} yoke"]
+            cradle = self.parts[f"{name.split()[0]} yoke"]
             toward_axis = Vector(-side, 0, 1).normalized()
             center = insert.center()
             screw = self.parts[f"{name} screw"]
@@ -108,17 +108,17 @@ class LensPointerTests(unittest.TestCase):
                 box = insert.bounding_box()
                 along = max(box.size.X, box.size.Z)
                 self.assertGreater(along, MCMASTER_94459A797_FLANGE_DIAMETER)  # Inclined, not axis-aligned.
-                self.assertFalse(pointer.is_inside(center))
+                self.assertFalse(cradle.is_inside(center))
                 for offset in (-0.4, 0.0):  # Material right round the insert body, deeper than the flange.
                     on_axis = center + toward_axis * (offset * MCMASTER_94459A797_LENGTH)
                     for dy in (-3.4, 3.4):
-                        self.assertTrue(pointer.is_inside(on_axis + Vector(0, dy, 0)))
-                self.assertFalse(pointer.is_inside(center + toward_axis * MCMASTER_94459A797_LENGTH))
+                        self.assertTrue(cradle.is_inside(on_axis + Vector(0, dy, 0)))
+                self.assertFalse(cradle.is_inside(center + toward_axis * MCMASTER_94459A797_LENGTH))
                 # The bore carries on through the back of the arm, past the insert, for the screw and its key.
                 behind = center - toward_axis * (MCMASTER_94459A797_LENGTH / 2 + 2.5)
-                self.assertFalse(pointer.is_inside(behind))
-                self.assertTrue(pointer.is_inside(behind + Vector(0, 3.4, 0)))
-                self.assertLess((screw & pointer).volume, 0.01)
+                self.assertFalse(cradle.is_inside(behind))
+                self.assertTrue(cradle.is_inside(behind + Vector(0, 3.4, 0)))
+                self.assertLess((screw & cradle).volume, 0.01)
         for kind in ("insert", "thumb nut", "screw"):
             self.assertEqual(sum(label == f"{name} {kind}" for name in ADJUSTERS for label in self.parts), 4)
 
@@ -351,19 +351,19 @@ class LensPointerTests(unittest.TestCase):
             p.rest_arm_top - p.rest_arm_depth - r - head_top, p.clamp_screw_head_clearance
         )
 
-    def test_pointer_and_rest_are_separate_single_parts(self):
-        pointer, rest = build_pointer_shoe(self.p), build_phone_rest(self.p)
-        yokes = [build_pointer_yoke(self.p, station) for station in self.p.stations]
-        for part in (pointer, rest, *yokes):
+    def test_cradle_and_rest_are_separate_single_parts(self):
+        cradle, rest = build_cradle_shoe(self.p), build_phone_rest(self.p)
+        yokes = [build_cradle_yoke(self.p, station) for station in self.p.stations]
+        for part in (cradle, rest, *yokes):
             self.assertEqual(len(part.solids()), 1)
-        self.assertGreater(pointer.distance_to(rest), 1.0)
+        self.assertGreater(cradle.distance_to(rest), 1.0)
         # Each saddle straddles the rail: nothing of either lies inside the rail section.
-        for part in (pointer, rest):
+        for part in (cradle, rest):
             self.assertFalse(part.is_inside((0, part.center().Y, -10)))
 
     def test_yokes_bolt_to_the_shoe_through_a_countersunk_hole_into_an_insert(self):
         p = self.p
-        shoe = self.parts["Pointer shoe"]
+        shoe = self.parts["Cradle shoe"]
         for where, station in zip(("Aft", "Fore"), p.stations):
             yoke = self.parts[f"{where} yoke"]
             screw_part, insert_part = self.parts[f"{where} yoke screw"], self.parts[f"{where} yoke insert"]
@@ -400,10 +400,10 @@ class LensPointerTests(unittest.TestCase):
     def test_saddles_match_the_common_rail_shoe_and_have_clamp_holes(self):
 
         p, r = self.p, self.p.rail_shoe
-        pointer, rest = build_pointer_shoe(p), build_phone_rest(p)
-        self.assertNotIn("Pointer clamp screw 1 -1", self.parts)
-        self.assertFalse([label for label in self.parts if label.startswith(("Pointer clamp", "Rest clamp"))])
-        for part, ys in ((pointer, p.pointer_clamp_ys), (rest, (p.rest_center,))):
+        cradle, rest = build_cradle_shoe(p), build_phone_rest(p)
+        self.assertNotIn("Cradle clamp screw 1 -1", self.parts)
+        self.assertFalse([label for label in self.parts if label.startswith(("Cradle clamp", "Rest clamp"))])
+        for part, ys in ((cradle, p.cradle_clamp_ys), (rest, (p.rest_center,))):
             box = part.bounding_box()
             self.assertAlmostEqual(box.min.Z, -r.skirt_depth, places=4)
             for y in ys:
@@ -417,17 +417,17 @@ class LensPointerTests(unittest.TestCase):
                         edge = (wall, y, -r.rail_height / 2 + r.m5_clearance_diameter)
                         self.assertTrue(part.is_inside(edge))
         middle = sum(p.stations) / 2
-        self.assertAlmostEqual(pointer.bounding_box().center().Y, middle, places=4)  # Symmetric fore/aft.
-        self.assertAlmostEqual(sum(p.pointer_clamp_ys) / 2, middle, places=4)
-        y = p.pointer_clamp_ys[0] + 5
-        self.assertTrue(pointer.is_inside((r.width / 2 - 0.1, y, -5)))
-        self.assertFalse(pointer.is_inside((r.width / 2 + 0.1, y, -5)))
+        self.assertAlmostEqual(cradle.bounding_box().center().Y, middle, places=4)  # Symmetric fore/aft.
+        self.assertAlmostEqual(sum(p.cradle_clamp_ys) / 2, middle, places=4)
+        y = p.cradle_clamp_ys[0] + 5
+        self.assertTrue(cradle.is_inside((r.width / 2 - 0.1, y, -5)))
+        self.assertFalse(cradle.is_inside((r.width / 2 + 0.1, y, -5)))
         self.assertAlmostEqual(r.rail_opening, 20.4)
-        self.assertFalse(pointer.is_inside((r.rail_opening / 2 - 0.1, p.pointer_clamp_ys[0], -5)))
-        self.assertTrue(pointer.is_inside((r.rail_opening / 2 + 0.1, p.pointer_clamp_ys[0], -5)))
+        self.assertFalse(cradle.is_inside((r.rail_opening / 2 - 0.1, p.cradle_clamp_ys[0], -5)))
+        self.assertTrue(cradle.is_inside((r.rail_opening / 2 + 0.1, p.cradle_clamp_ys[0], -5)))
         # Vertical outside corners are rounded to the shoe's radius.
-        corner = (r.width / 2 - 0.2, pointer.bounding_box().min.Y + 0.2, -5)
-        self.assertFalse(pointer.is_inside(corner))
+        corner = (r.width / 2 - 0.2, cradle.bounding_box().min.Y + 0.2, -5)
+        self.assertFalse(cradle.is_inside(corner))
 
     @slow
     def test_thumb_nuts_clear_their_yokes(self):
@@ -440,7 +440,7 @@ class LensPointerTests(unittest.TestCase):
     def test_parts_clear_each_other_and_the_cutoff_station(self):
         own = set(self.parts)
         parts = {part.label: part for part in leaves(build_camera_support_assembly(self.p))}
-        printed = ("Pointer shoe", "Aft yoke", "Fore yoke", "Phone rest", "Aft collar", "Fore collar")
+        printed = ("Cradle shoe", "Aft yoke", "Fore yoke", "Phone rest", "Aft collar", "Fore collar")
         let_in = (" screw", " magnet", " rod")  # Threaded into, or let into, a printed part.
         optics = {"Telephoto envelope", "Focus ring"}
         for a, b in combinations(parts.values(), 2):
@@ -456,7 +456,7 @@ class LensPointerTests(unittest.TestCase):
                 continue
             with self.subTest(pair=labels):
                 self.assertLess((a & b).volume, 0.01)
-        gap = parts["Rail shoe"].bounding_box().min.Y - parts["Pointer shoe"].bounding_box().max.Y
+        gap = parts["Rail shoe"].bounding_box().min.Y - parts["Cradle shoe"].bounding_box().max.Y
         self.assertGreater(gap, 5.0)
 
     def test_rejects_collars_off_the_clampable_barrel(self):

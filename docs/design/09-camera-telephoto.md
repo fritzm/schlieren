@@ -1,6 +1,6 @@
 ## 9. Camera and telephoto support
 
-The camera and lens are chosen ([§9.1](#91-camera)–[9.2](#92-telephoto)). Their support is a lens pointer and
+The camera and lens are chosen ([§9.1](#91-camera)–[9.2](#92-telephoto)). Their support is a lens cradle and
 a phone rest ([§9.4](#94-support-concept)–[9.8](#98-retaining-bands)), with an alignment procedure
 ([§9.9](#99-lens-alignment)). **Provisional:** the phone rest's retainer and safety catch, the fit allowances
 of the printed yokes and of the rod groove, which are still to be tested, and the alignment procedure
@@ -92,16 +92,16 @@ The phone and the lens threaded onto its case are one rigid body. The lens barre
 ([§9.2](#92-telephoto)): the lens is held at two stations along its barrel, and the phone hangs from its lens
 mount. Two separate rail fixtures carry them:
 
-- the lens pointer, specific to the lens, holds the barrel at both stations on four adjusting screws
-  ([§9.5](#95-lens-pointer)) and is held down by two retaining bands ([§9.8](#98-retaining-bands));
+- the lens cradle, specific to the lens, holds the barrel at both stations on four adjusting screws
+  ([§9.5](#95-lens-cradle)) and is held down by two retaining bands ([§9.8](#98-retaining-bands));
 - the phone rest, specific to the phone, supports the phone's lower edge at one point
   ([§9.6](#96-phone-rest)). A different phone needs only this part redesigned.
 
 <p align="center">
   <img src="figures/camera-support.png" width="500" style="max-width: 90%"
-       alt="Lens pointer and phone rest on the imaging rail: two collars on the lens barrel, each on a pair of inclined screws in a yoke bolted to the pointer shoe, a retaining band round the barrel beside each yoke, and the phone hanging from the lens with its lower edge on the rest arm">
+       alt="Lens cradle and phone rest on the imaging rail: two collars on the lens barrel, each on a pair of inclined screws in a yoke bolted to the cradle shoe, a retaining band round the barrel beside each yoke, and the phone hanging from the lens with its lower edge on the rest arm">
   <br>
-  <em>Fig. 10. Lens pointer and phone rest on the imaging rail, with phone and lens envelopes</em>
+  <em>Fig. 10. Lens cradle and phone rest on the imaging rail, with phone and lens envelopes</em>
 </p>
 
 The body is located by six contacts and no more, so adjusting one station does not strain the lens mount:
@@ -122,9 +122,9 @@ The model is `src/schlieren/parts/camera_support.py`. It holds the printed parts
 fillets, and wall thicknesses, and checks contacts, clearances, and the lens and cord loads; the lens, phone,
 and purchased hardware are envelopes or vendor models.
 
-### 9.5 Lens pointer
+### 9.5 Lens cradle
 
-The pointer is five printed parts and two bands. Two split collars clamp the barrel; two yokes carry the
+The cradle is five printed parts and two bands. Two split collars clamp the barrel; two yokes carry the
 adjusting screws; one shoe straddles the rail and carries both yokes.
 
 #### Collars
@@ -227,7 +227,7 @@ The phone hangs from the lens with its body to the outboard side of the optical 
 ([§3.4](01-context-and-layout.md#34-common-optical-axis-datum)). Its weight, centered about 43 mm from the
 lens axis, would turn the lens in its collars. The phone rest stops that: the phone's lower long edge sits on
 one dowel pin lying along the rail, about 100 mm outboard of the axis, on the arm of a short printed
-shoe of its own. The shoe's lower section is that of the pointer shoe ([§9.5](#95-lens-pointer)), with a
+shoe of its own. The shoe's lower section is that of the cradle shoe ([§9.5](#95-lens-cradle)), with a
 single pair of M5 clearance holes for the side-slot screw.
 
 - The shoe is 22 mm long and centered under the rod. The arm runs across the rail from the shoe's outboard
@@ -244,7 +244,7 @@ single pair of M5 clearance holes for the side-slot screw.
 
 - With the measured 60.6 mm camera-axis height, the phone's lower edge is about 11.75 mm above the rail top.
 - The rest carries about 0.8–0.9 N (calculated, same assumptions as the contact loads in
-  [§9.8](#98-retaining-bands)). It matters to the pointer, because it keeps the fore pad load from falling
+  [§9.8](#98-retaining-bands)). It matters to the cradle, because it keeps the fore pad load from falling
   toward zero.
 - The rest is fixed. Raising or lowering the aft collar rolls the phone slightly about the lens axis, which
   does not matter; the phone is not gripped and slides on the rod.
@@ -270,7 +270,7 @@ Hardware:
   material. Each is set from the lens-side face of its arm, flange outward and recessed, so the screw's
   reaction presses it into its hole. Two more are set in the yoke feet for the joint screws
 - McMaster 92125A208, M5 × 0.8 × 10 mm 18-8 stainless hex-drive flat head screws (90°, 10 mm head), two for
-  the yoke joints ([§9.5](#95-lens-pointer))
+  the yoke joints ([§9.5](#95-lens-cradle))
 - McMaster 92815A202, M5 thumb nuts used as threadlocked mid-screw handwheels
 - Loctite 271, McMaster 91458A160
 - heat-set installation tip 92160A327;
@@ -321,7 +321,7 @@ tight.
 
 ### 9.9 Lens alignment
 
-This is the alignment the pointer must make possible, kept here as a feasibility check on the adjusters; a
+This is the alignment the cradle must make possible, kept here as a feasibility check on the adjusters; a
 consolidated setup and alignment procedure comes later. **Provisional:** the procedure is untested, and its
 targets assume that the printed shoe seats fully on the rail top and the collars seat on their barrel sections.
 
@@ -340,9 +340,9 @@ pitch of 0.8 mm (calculated):
 The sequence:
 
 1. Fit both collars and the phone on the lens at their stations, set the four thumb nuts to equal exposed screw
-   length (mid-travel), and note their positions. Put the pointer shoe on the rail with its clamp screws loose.
+   length (mid-travel), and note their positions. Put the cradle shoe on the rail with its clamp screws loose.
 2. Slide the shoe along the rail to put the lens front at the planned gap from the slip ring's rear face, then
-   snug the clamp screws. The groove at the aft left screw fixes the lens fore/aft on the pointer, so nothing
+   snug the clamp screws. The groove at the aft left screw fixes the lens fore/aft on the cradle, so nothing
    later moves it.
 3. Center the barrel at each collar mechanically, aft first, and re-measure the other collar after each
    change. Height: from the shoe deck, beside the yoke, up to the barrel top, whose target is 72.35 + 18.5 − 5

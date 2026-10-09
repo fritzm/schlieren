@@ -72,7 +72,7 @@ rail follows one optical chief ray:
 
 The source rail contains, in optical order:
 
-1. light source (interchangeable threaded LED/heatsink source, condenser, and adjustable iris)
+1. light source (interchangeable threaded LED/heatsink modules, condenser, and adjustable iris)
 2. source-slit flexure head
 
 The slit is the effective optical source. The LED primarily illuminates that slit through the condenser and
@@ -81,29 +81,30 @@ therefore does not itself require the same precision vertical positioning as the
 The imaging rail contains:
 
 1. cutoff carriage at the returned slit-image plane;
-2. lens pointer, holding the telephoto lens;
+2. lens cradle, which supports and aligns the telephoto lens;
 3. phone rest, under the iPhone hanging from the lens.
 
 The spherical mirror forms an image of the source slit back near the optical head. Refractive-index gradients
 in the test region near the mirror deflect portions of this return beam relative to the cutoff, producing
 schlieren contrast.
 
-Several source-side and cutoff-side fixtures deliberately share common mechanics. Three locations use a
-common TR50/M post + printed rail shoe concept:
+Several source-side and imaging-side fixtures deliberately share common mechanics. Three locations use a
+common Thorlabs TR50/M optical post + printed rail shoe concept:
 
-1. LED/condenser/iris;
-2. source-slit flexure head;
-3. cutoff carriage.
+1. light source;
+2. source-slit;
+3. cutoff.
 
-The source slit and the cutoff both rotate about the optical axis in a Thorlabs SM1RC/M SM1 slip ring. The
-slit uses a flexure head with fine centering and slit-width adjustment
-([§7](07-source-slit.md#7-source-slit)); the cutoff uses a rotating carriage with a 64 mm cassette envelope,
+The source slit and the cutoff both rotate about the optical axis on printed fixtures mounted in Thorlabs
+SM1RC/M SM1 slip rings. The slit uses a flexure head with fine centering and slit-width adjustment
+([§7](07-source-slit.md#7-source-slit)); the cutoff uses a carriage that accepts interchangeable cassettes,
 allowing knife-edge, wire, and color-filter experiments without changing the supporting mechanism
 ([§8](08-cutoff.md#8-cutoff)).
 
 The mirror cell uses a three-point, approximately 120°-spaced fine-adjustment architecture with compression
-springs and spherical washer interfaces. The mirror is compliantly supported in the moving plate by six radial
-DOWSIL 737 pads between the mirror edge and the inner surface of the plywood aperture.
+springs and spherical washer interfaces ([§10](10-mirror-cell.md#10-mirror-cell)). The mirror is compliantly
+supported in the moving plate by six radial silicone pads, which are cast and cured in place between the
+mirror edge and the inner surface of the plywood aperture.
 
 ## 3. System-level geometry
 
