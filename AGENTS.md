@@ -228,6 +228,13 @@ Commands live in `src/schlieren/cli/` and are registered in `pyproject.toml` `[p
 current directory. To add a command: write `cli/<name>.py` with `main()` and register it in
 `[project.scripts]`.
 
+A `Makefile` rebuilds every derived artifact that is out of date (design-doc figures, the consolidated
+design document and PDF, the BOM workbook) and nothing else: run `make` (or `make figures`, `doc`, `pdf`,
+`bom`; `make -n` previews; `make test` runs the full suite) instead of invoking the part commands and
+builders one by one. Its dependencies are declared by hand: when a part module gains an import, or a new
+figure or `--figure` output is added, update the matching rule in the `Makefile`. Do not use `make -t`; it
+marks stale targets current without rebuilding them.
+
 A `.claude/` PostToolUse hook auto-formats edited `.py` files with ruff, and a PreToolUse hook blocks direct
 edits to `exports/`. Project skills: `/finalize-decision` (propagate an accepted decision) and
 `/reconcile-bom` (review and apply edits made in a copy of the BOM workbook).

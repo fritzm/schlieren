@@ -50,6 +50,5 @@ Design areas marked **Provisional** in the sections above:
    hole sizes ([§10.9](10-mirror-cell.md#109-tripod-interface)).
 5. Assemble the tabletop optical head.
 6. Perform a dry optical layout near 3.2 m before making any remaining irreversible holes or bonds.
-7. Bond the mirror into the moving plate ([§10.5](10-mirror-cell.md#105-mirror-mounting)) at the destination,
-   after a dry fit and an adhesion test. The cell is otherwise assembled; the mirror travels separately,
-   protected, because there is not enough cure time before departure.
+7. Bond the mirror into the moving plate ([§10.5](10-mirror-cell.md#105-mirror-mounting))
+   after a dry fit and an adhesion test.
