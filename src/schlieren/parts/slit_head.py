@@ -36,23 +36,48 @@ from math import isfinite
 from build123d import Axis, Pos, Rot, fillet
 
 from schlieren.cad import assembly, box_between, compression_spring, labeled, y_cylinder, y_hex, z_cylinder
+from schlieren.hardware import (
+    FAS100_PITCH,
+    FAS100_THREAD_LENGTH,
+    INSERT_98625A950_BODY_DIAMETER,
+    INSERT_98625A950_FLANGE_DIAMETER,
+    INSERT_98625A950_FLANGE_THICKNESS,
+    INSERT_98625A950_LENGTH,
+    INSERT_98625A950_MIN_MATERIAL,
+    M3_NUT_ACROSS_FLATS,
+    M3_NUT_THICKNESS,
+    M3_SOCKET_HEAD_DIAMETER,
+    M3_SOCKET_HEAD_HEIGHT,
+    MAGNET_LENGTH,
+    MAGNET_THICKNESS,
+    MAGNET_WIDTH,
+    SPRING_2006N292_FREE_LENGTH,
+    SPRING_2006N292_OUTER_DIAMETER,
+    SPRING_2006N292_WIRE_DIAMETER,
+)
 from schlieren.palette import (
     BRASS,
-    INDEX_DIMPLE,
-    KNOB_BLACK,
     METAL,
     PRINTED_BLUE,
     PRINTED_DENIM,
     RUBBER,
     STEEL,
 )
+from schlieren.parts.adjuster import bearing_magnet, fas100_children, insert_98625a950
 from schlieren.parts.rail_shoe import post_stack
-from schlieren.standards import DATUM_DISC_THICKNESS, INCH, OPTICAL_HEIGHT, POST_DIAMETER, POST_LENGTH
+from schlieren.standards import (
+    DATUM_DISC_THICKNESS,
+    INCH,
+    NUT_POCKET_ACROSS_FLATS_CLEARANCE,
+    OPTICAL_HEIGHT,
+    PLA_MODULUS,
+    POST_DIAMETER,
+    POST_LENGTH,
+)
 from schlieren.vendor_cad import (
     SM1RC_M_THICKNESS,
     mcmaster_91292a114,
     mcmaster_91828a211,
-    thorlabs_fas100_parts,
 )
 
 LBF = 4.44822  # N
@@ -76,39 +101,39 @@ class SlitHeadParameters:
     spine_width: float = 2.0  # Display only; fold width not measured.
     slit_width: float = 0.20  # Display/setup value in the likely 0.15-0.20 mm working region.
     # Thorlabs FAS100 (drawing): 1/4"-80, 1.00 in thread from knob shoulder to ball tip.
-    adjuster_thread_length: float = 1.00 * INCH
-    adjuster_pitch: float = INCH / 80
+    adjuster_thread_length: float = FAS100_THREAD_LENGTH
+    adjuster_pitch: float = FAS100_PITCH
     adjuster_knob_diameter: float = 0.49 * INCH
     # McMaster 98625A950 brass insert (§8.3 drawing values).
-    insert_bore: float = 0.313 * INCH  # Print as pilot; finish with a 5/16 in drill.
-    insert_length: float = 0.313 * INCH
-    insert_min_material: float = 0.298 * INCH
-    insert_flange_diameter: float = 0.352 * INCH
-    insert_flange_thickness: float = 0.010 * INCH
+    insert_bore: float = INSERT_98625A950_BODY_DIAMETER  # Print as pilot; finish with a 5/16 in drill.
+    insert_length: float = INSERT_98625A950_LENGTH
+    insert_min_material: float = INSERT_98625A950_MIN_MATERIAL
+    insert_flange_diameter: float = INSERT_98625A950_FLANGE_DIAMETER
+    insert_flange_thickness: float = INSERT_98625A950_FLANGE_THICKNESS
     # N52 10 x 5 x 2 mm magnet bearing pads under each FAS100 ball tip (§8.3).
-    magnet_length: float = 10.0
-    magnet_width: float = 5.0
-    magnet_thickness: float = 2.0
+    magnet_length: float = MAGNET_LENGTH
+    magnet_width: float = MAGNET_WIDTH
+    magnet_thickness: float = MAGNET_THICKNESS
     magnet_fit_clearance: float = 0.15
     # McMaster 2006N292 spring (§§8.4-8.5): free length and rate; 9 mm compression at mid travel.
-    spring_free_length: float = 25.5
+    spring_free_length: float = SPRING_2006N292_FREE_LENGTH
     spring_mid_length: float = 16.5
     spring_rate: float = 0.14 * LBF  # N/mm
     spring_guide_pin_diameter: float = 3.6  # Inside the coil, which passes a 4 mm shoulder (§8.5).
     spring_guide_pin_length: float = 5.0
-    spring_outer_diameter: float = 0.272 * INCH  # Measured (calipers), in-hand spring.
-    spring_wire_diameter: float = 0.63  # Catalog; display only.
+    spring_outer_diameter: float = SPRING_2006N292_OUTER_DIAMETER
+    spring_wire_diameter: float = SPRING_2006N292_WIRE_DIAMETER
     spring_display_coils: float = 10.0  # Total turns of the displayed helix; approximate.
     spring_pocket_clearance: float = 1.0  # Diametral; printed-hole shrink and coil growth under compression.
     # Common M3 hardware: 91292A114 M3 x 12 SHCS, 91828A211 nut.
     screw_length: float = 12.0
-    screw_clearance: float = 3.4
-    screw_head_diameter: float = 5.5
-    screw_head_height: float = 3.0
+    screw_clearance: float = 3.4  # Not the common M3_CLEARANCE_DIAMETER (3.3); the reason is not recorded.
+    screw_head_diameter: float = M3_SOCKET_HEAD_DIAMETER
+    screw_head_height: float = M3_SOCKET_HEAD_HEIGHT
     counterbore_clearance: float = 0.5  # Diametral.
-    nut_across_flats: float = 5.5
-    nut_thickness: float = 2.4
-    nut_across_flats_clearance: float = 0.3
+    nut_across_flats: float = M3_NUT_ACROSS_FLATS
+    nut_thickness: float = M3_NUT_THICKNESS
+    nut_across_flats_clearance: float = NUT_POCKET_ACROSS_FLATS_CLEARANCE
     nut_axial_clearance: float = 0.3
     thread_protrusion: float = 0.5  # Screw tip beyond the far nut face.
     # McMaster 9852N37 EPDM on the clamp-bar faces, uncompressed.
@@ -167,7 +192,7 @@ class SlitHeadParameters:
     spigot_shoulder_diameter: float = 34.0  # Bears on the SM1RC/M face outside its Ø30.6 mm bore.
     post_clearance: float = 2.0  # Minimum, rotating parts to post and rail shoe over the working range.
     # PLA material, typical values (provisional).
-    pla_modulus: float = 3000.0  # MPa
+    pla_modulus: float = PLA_MODULUS
     flexure_strain_limit: float = 0.006
 
     @property
@@ -724,29 +749,20 @@ def build_slit_head_assembly(p=None, rotation=0.0, include_support=True):
         ("FAS100 width", p.width_screw_x, p.width_tip_z, p.platform_top_bar, False),
     )
     for name, x, tip_z, bar, flange_inboard in tips:
-        fas100 = loc * Pos(x, p.axis_y, tip_z)
-        screw, knob, dimple = thorlabs_fas100_parts()
-        children.append(labeled(screw, name, metal, fas100))
-        children.append(labeled(knob, f"{name} knob", KNOB_BLACK, fas100))
-        children.append(labeled(dimple, f"{name} index dimple", INDEX_DIMPLE, fas100))
-        if flange_inboard:
-            seat, body0, body1 = bar[0], bar[0], bar[0] + p.insert_length
-            flange0, flange1 = seat - p.insert_flange_thickness, seat
-        else:
-            seat, body0, body1 = bar[1], bar[1] - p.insert_length, bar[1]
-            flange0, flange1 = seat, seat + p.insert_flange_thickness
-        insert = z_cylinder(p.insert_bore, x, p.axis_y, body0, body1)
-        insert += z_cylinder(p.insert_flange_diameter, x, p.axis_y, flange0, flange1)
-        insert -= z_cylinder(INCH / 4, x, p.axis_y, bar[0] - 10, bar[1] + 1)
-        children.append(labeled(insert, f"{name} insert", BRASS, loc))
-        magnet = box_between(
-            x - p.magnet_length / 2,
-            x + p.magnet_length / 2,
-            p.axis_y - p.magnet_width / 2,
-            p.axis_y + p.magnet_width / 2,
-            tip_z - p.magnet_thickness,
-            tip_z,
+        children += fas100_children(loc * Pos(x, p.axis_y, tip_z), name)
+        # The flange is against the bar's inner face when flange_inboard, its outer face otherwise.
+        insert = insert_98625a950(
+            bar[0] if flange_inboard else bar[1] - p.insert_length,
+            p.insert_length,
+            flange_side=-1 if flange_inboard else 1,
+            x=x,
+            y=p.axis_y,
+            body_diameter=p.insert_bore,
+            flange_diameter=p.insert_flange_diameter,
+            flange_thickness=p.insert_flange_thickness,
         )
+        children.append(labeled(insert, f"{name} insert", BRASS, loc))
+        magnet = bearing_magnet(x, p.axis_y, tip_z, p.magnet_length, p.magnet_width, p.magnet_thickness)
         children.append(labeled(magnet, f"{name} magnet", STEEL, loc))
     sx, s0, s1 = p.centering_screw_x, p.frame_spring_seat_z, p.platform_spring_seat_z
     spring = compression_spring(

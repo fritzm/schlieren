@@ -65,6 +65,7 @@ from schlieren.cad import (
     z_cone,
     z_cylinder,
 )
+from schlieren.hardware import MAGNET_LENGTH, MAGNET_THICKNESS, MAGNET_WIDTH
 from schlieren.palette import (
     AXIS_RED,
     BAND_RED,
@@ -129,9 +130,9 @@ class CameraSupportParameters:
     ball_diameter: float = MCMASTER_93339A252_BALL_DIAMETER
     nut_below_tip: float = 5.0  # Ball apex to the near face of the thumb nut.
     screw_angle: float = 45.0  # Each side of straight down, degrees.
-    magnet_length: float = 10.0  # Across the rail: the direction each pad slides most.
-    magnet_width: float = 5.0
-    magnet_thickness: float = 2.0
+    magnet_length: float = MAGNET_LENGTH  # Across the rail: the direction each pad slides most.
+    magnet_width: float = MAGNET_WIDTH
+    magnet_thickness: float = MAGNET_THICKNESS
     groove_rod_diameter: float = 3.0
     groove_rod_length: float = 10.0
 

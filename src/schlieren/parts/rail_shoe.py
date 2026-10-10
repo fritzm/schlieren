@@ -31,11 +31,13 @@ from schlieren.cad import (
     y_hex,
     z_cylinder,
 )
+from schlieren.hardware import M3_CLEARANCE_DIAMETER, M3_NUT_ACROSS_FLATS, M3_NUT_THICKNESS
 from schlieren.palette import BLACK_ANODIZED, METAL, PRINTED_ORANGE, STEEL_GRAY
 from schlieren.parts.rail import build_rail
 from schlieren.standards import (
     DATUM_DISC_DIAMETER,
     DATUM_DISC_THICKNESS,
+    NUT_POCKET_ACROSS_FLATS_CLEARANCE,
     OPTICAL_HEIGHT,
     POST_DIAMETER,
     POST_LENGTH,
@@ -61,17 +63,17 @@ class RailShoeParameters:
     datum_disc_diameter: float = DATUM_DISC_DIAMETER
     datum_disc_thickness: float = DATUM_DISC_THICKNESS
     clamp_screw_length: float = 12.0
-    clamp_nut_across_flats: float = 5.5
-    clamp_nut_thickness: float = 2.4
+    clamp_nut_across_flats: float = M3_NUT_ACROSS_FLATS
+    clamp_nut_thickness: float = M3_NUT_THICKNESS
 
     # PLA fabrication allowances, set by fit test (not measured shrink compensation).
     rail_lateral_clearance_per_side: float = 0.20
     datum_disc_diametral_clearance: float = 1.0
     post_diametral_clearance: float = 0.10
-    nut_across_flats_clearance: float = 0.30
+    nut_across_flats_clearance: float = NUT_POCKET_ACROSS_FLATS_CLEARANCE
     nut_axial_clearance: float = 0.30
     m5_clearance_diameter: float = 5.5
-    m3_clearance_diameter: float = 3.3
+    m3_clearance_diameter: float = M3_CLEARANCE_DIAMETER
 
     # Part geometry.
     length: float = 30.0

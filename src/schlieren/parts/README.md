@@ -12,7 +12,10 @@ Exports land in the ignored `exports/step` and `exports/stl` directories. Select
 interpreter in VS Code for the viewer.
 
 Project-wide dimensions (`INCH`, the 72.35 mm optical height, the TR50/M post and datum disc) are defined once
-in `src/schlieren/standards.py`; the parameter classes take them as defaults. Every viewer color is named in
+in `src/schlieren/standards.py`; the parameter classes take them as defaults. Catalog dimensions of hardware shared by
+several models (the magnet, FAS100, 98625A950 insert, 2006N292 spring, common M3 hardware) are in
+`src/schlieren/hardware.py`, and `adjuster.py` builds the FAS100, insert, and magnet the slit head and
+carriage show. Every viewer color is named in
 `src/schlieren/palette.py`. The primitive solids the models are built from are in `src/schlieren/cad.py`:
 `box_between`, `floor_box`, and `centered_box`; `x_cylinder`, `y_cylinder`, `z_cylinder`, and
 `centered_cylinder`; `y_cone` and `z_cone`; `y_hex` and `z_hex`. `post_stack` in `rail_shoe.py` builds the post,

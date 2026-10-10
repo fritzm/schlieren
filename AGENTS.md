@@ -146,8 +146,13 @@ Use these instead of redefining them in a part module:
   `centered_box`, `x_cylinder`/`y_cylinder`/`z_cylinder`, `centered_cylinder`, `y_cone`/`z_cone`,
   `y_hex`/`z_hex`), the axis planes, and the assembly helpers (`labeled`, `place`, `assembly`). Cylinders take
   diameters.
+- `schlieren/hardware.py`: catalog dimensions of purchased hardware that more than one model uses (the
+  bar magnet, the FAS100, the 98625A950 insert, the 2006N292 spring, common M3 hardware). Parameter classes
+  take them as defaults and add their own fabrication allowances; hardware used by one model stays with it.
 - `post_stack` in `parts/rail_shoe.py`: the post, rail shoe, shoe clamp hardware, and optional SM1RC/M ring
   and side-slot screws that every fixture on a rail shows.
+- `parts/adjuster.py`: the FAS100, its brass insert, and its bearing magnet, as the slit head and cutoff
+  carriage show them.
 
 Place assembly children with `labeled(shape, label, color, loc)` and `place`, not `loc * shape`: build123d's
 `Location * shape` deep-copies the whole B-rep, and `labeled` only composes locations. That difference was
@@ -174,6 +179,7 @@ Prefer this structure as the project grows:
 src/schlieren/
     __init__.py
     standards.py   # project-wide dimensions
+    hardware.py    # catalog dimensions of shared purchased hardware
     palette.py     # viewer colors
     cad.py         # primitive solids, axis planes, assembly helpers
     vendor_cad.py  # vendor STEP models placed in documented mounting frames
@@ -268,7 +274,7 @@ design document and PDF, the BOM workbook) and nothing else: run `make` (or `mak
 `bom`; `make -n` previews; `make test` runs the full suite) instead of invoking the part commands and
 builders one by one. Its dependencies are declared by hand: when a part module gains an import, or a new
 figure or `--figure` output is added, update the matching rule in the `Makefile`; the shared modules
-(`cad.py`, `standards.py`, `palette.py`, `vendor_cad.py`, `render.py`, `cli/_common.py`) are in its `CORE` list.
+(`cad.py`, `standards.py`, `palette.py`, `hardware.py`, `vendor_cad.py`, `render.py`, `cli/_common.py`) are in its `CORE` list.
 Do not use `make -t`; it marks stale targets current without rebuilding them.
 
 A `.claude/` PostToolUse hook auto-formats edited `.py` files with ruff, and a PreToolUse hook blocks direct

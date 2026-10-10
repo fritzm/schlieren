@@ -22,6 +22,7 @@ from build123d import (
 )
 
 from schlieren.cad import assembly, floor_box, labeled, z_cone, z_cylinder
+from schlieren.hardware import M3_NUT_ACROSS_FLATS, M3_NUT_THICKNESS
 from schlieren.palette import HARDWARE_GRAY, PRINTED_AZURE, PRINTED_ORANGE, RUBBER
 from schlieren.standards import INCH
 
@@ -140,8 +141,8 @@ class ClampBarParameters:
     washer_od: float = 7.0
     washer_id: float = 3.2
     washer_thickness: float = 0.5
-    nut_af: float = 5.5
-    nut_height: float = 2.4
+    nut_af: float = M3_NUT_ACROSS_FLATS
+    nut_height: float = M3_NUT_THICKNESS
     screw_length: float = 14.0  # Overall, including head.
     head_recess: float = 0.1
 

@@ -16,6 +16,7 @@ from dataclasses import dataclass
 from itertools import combinations
 from math import hypot
 
+from schlieren.hardware import M3_CLEARANCE_DIAMETER, M3_SOCKET_HEAD_DIAMETER
 from schlieren.parts.light_source import STAR_NOTCH_CENTER_RADIUS, STAR_NOTCH_WIDTH
 from schlieren.standards import INCH
 
@@ -55,8 +56,8 @@ class HoleLayoutParameters:
     m2_tap_drill: float = 1.6
     m2_thread_major: float = 2.0
     # Heatsink base: M3 clearance, and the M3 socket-head screw head (ISO 4762).
-    m3_clearance_diameter: float = 3.3
-    m3_head_diameter: float = 5.5
+    m3_clearance_diameter: float = M3_CLEARANCE_DIAMETER
+    m3_head_diameter: float = M3_SOCKET_HEAD_DIAMETER
     # Lead holes, in both the cap and the heatsink base. **Provisional:** the lead insulation must fit.
     lead_hole_diameter: float = 2.0
     lead_radius: float = 11.0  # Just outside the star's flat edge, whose radius is star_across_flats / 2.

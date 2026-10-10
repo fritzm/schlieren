@@ -33,10 +33,26 @@ from schlieren.cad import (
     z_cylinder,
     z_hex,
 )
+from schlieren.hardware import (
+    FAS100_PITCH,
+    FAS100_THREAD_LENGTH,
+    INSERT_98625A950_BODY_DIAMETER,
+    INSERT_98625A950_BODY_LENGTH,
+    INSERT_98625A950_FLANGE_DIAMETER,
+    INSERT_98625A950_FLANGE_THICKNESS,
+    INSERT_98625A950_LENGTH,
+    INSERT_98625A950_MIN_MATERIAL,
+    M3_CLEARANCE_DIAMETER,
+    M3_NUT_ACROSS_FLATS,
+    MAGNET_LENGTH,
+    MAGNET_THICKNESS,
+    MAGNET_WIDTH,
+    SPRING_2006N292_FREE_LENGTH,
+    SPRING_2006N292_OUTER_DIAMETER,
+    SPRING_2006N292_WIRE_DIAMETER,
+)
 from schlieren.palette import (
     BRASS,
-    INDEX_DIMPLE,
-    KNOB_BLACK,
     METAL,
     PRINTED_AMBER,
     PRINTED_GRAY,
@@ -45,9 +61,18 @@ from schlieren.palette import (
     PRINTED_SKY,
     STEEL,
 )
+from schlieren.parts.adjuster import bearing_magnet, fas100_children, insert_98625a950
 from schlieren.parts.rail_shoe import RailShoeParameters, post_stack
-from schlieren.standards import DATUM_DISC_THICKNESS, INCH, OPTICAL_HEIGHT, POST_DIAMETER, POST_LENGTH
-from schlieren.vendor_cad import SM1RC_M_THICKNESS, thorlabs_fas100_parts
+from schlieren.standards import (
+    DATUM_DISC_THICKNESS,
+    INCH,
+    NUT_POCKET_ACROSS_FLATS_CLEARANCE,
+    OPTICAL_HEIGHT,
+    PLA_MODULUS,
+    POST_DIAMETER,
+    POST_LENGTH,
+)
+from schlieren.vendor_cad import SM1RC_M_THICKNESS
 
 
 @dataclass(frozen=True)
@@ -108,7 +133,7 @@ class CarriageParameters:
     # Side keeper screws beside each plunger's ear travel, in round lugs that widen the plate locally.
     side_fastener_x: float = 42.0
     side_lug_radius: float = 5.0  # Leaves ~1.65 mm PLA outside the captive nut.
-    pla_modulus: float = 3000.0  # MPa, typical (provisional), for first-order keeper estimates.
+    pla_modulus: float = PLA_MODULUS
     datum_pin_shank: float = 0.050 * INCH  # Measured (calipers), in-hand brads.
     # Brad holes only. Measured on the first base-plate print: the Ø24 mm aperture printed Ø23.62 mm (0.930 in);
     # brad holes with 0.08 mm diametral clearance would not start a shank. Compensate them, where a few
@@ -118,11 +143,11 @@ class CarriageParameters:
     datum_projection: float = 1.0  # UNMEASURED domed-head contact height.
     bevel_depth: float = 1.25
     bevel_angle: float = 27.5  # Provisional convention: from cassette plane.
-    spring_free_length: float = 25.5
+    spring_free_length: float = SPRING_2006N292_FREE_LENGTH
     spring_fiducial_length: float = 16.5
     spring_axis_z: float = 7.5
-    spring_outer_diameter: float = 0.272 * INCH  # Measured (calipers), in-hand spring (as the slit head).
-    spring_wire_diameter: float = 0.63  # Catalog; display only.
+    spring_outer_diameter: float = SPRING_2006N292_OUTER_DIAMETER
+    spring_wire_diameter: float = SPRING_2006N292_WIRE_DIAMETER
     spring_display_coils: float = 10.0  # Total turns of the displayed helix; approximate.
     # Each spring end sits in a printed cup open toward the deck: sides and roof locate the coil, the deck
     # carries it, and nothing penetrates the frame end wall.
@@ -139,28 +164,28 @@ class CarriageParameters:
     )
     thumb_tab_bead_radius: float = 0.8  # Grip bead along the inner (thumb-side) top edge; prints unsupported.
     # McMaster 98625A950 manufacturer drawing, canonical baseline §8.3.
-    insert_body_diameter: float = 0.313 * INCH
-    insert_drill_diameter: float = 0.313 * INCH
-    insert_overall_length: float = 0.313 * 25.4  # Conservative thread-engagement envelope.
-    insert_body_length: float = 0.298 * 25.4  # Under-flange length, independently specified.
-    insert_min_material_thickness: float = 0.298 * INCH
-    insert_flange_diameter: float = 0.352 * INCH
-    insert_flange_thickness: float = 0.010 * INCH
+    insert_body_diameter: float = INSERT_98625A950_BODY_DIAMETER
+    insert_drill_diameter: float = INSERT_98625A950_BODY_DIAMETER
+    insert_overall_length: float = INSERT_98625A950_LENGTH
+    insert_body_length: float = INSERT_98625A950_BODY_LENGTH  # Under the flange, independently specified.
+    insert_min_material_thickness: float = INSERT_98625A950_MIN_MATERIAL
+    insert_flange_diameter: float = INSERT_98625A950_FLANGE_DIAMETER
+    insert_flange_thickness: float = INSERT_98625A950_FLANGE_THICKNESS
     insert_entry_chamfer: float = 0.1  # 45-degree entry, outboard face.
     insert_flange_pocket_clearance: float = 0.2  # Diametral, flange pocket on the inner face of the block.
-    adjuster_screw_length: float = INCH
-    adjuster_pitch: float = INCH / 80
+    adjuster_screw_length: float = FAS100_THREAD_LENGTH
+    adjuster_pitch: float = FAS100_PITCH
     adjuster_clearance_travel: float = 15.5  # Maximum tip extension from insert inner end.
     adjuster_support_length: float = 8.5
     support_top: float = 14.0
-    magnet_length: float = 10.0
-    magnet_width: float = 5.0
-    magnet_thickness: float = 2.0
+    magnet_length: float = MAGNET_LENGTH
+    magnet_width: float = MAGNET_WIDTH
+    magnet_thickness: float = MAGNET_THICKNESS
     magnet_fit_clearance: float = 0.15
-    screw_clearance: float = 3.3
+    screw_clearance: float = M3_CLEARANCE_DIAMETER
     screw_head_clearance: float = 5.8
     screw_head_recess: float = 0.5
-    nut_pocket_af: float = 5.8  # 5.5 nominal + 0.3 across-flats allowance.
+    nut_pocket_af: float = M3_NUT_ACROSS_FLATS + NUT_POCKET_ACROSS_FLATS_CLEARANCE
     nut_pocket_depth: float = 2.5
 
     @property
@@ -783,7 +808,7 @@ def build_carriage(p=None, *, travel=0.0, retract=0.0, include_support=False, in
             datum_thickness=p.datum_thickness,
         )
     if include_hardware:
-        children += [labeled(part, name, color) for name, part, color in _adjuster_hardware(p, travel)]
+        children += _adjuster_hardware(p, travel)
         length = p.spring_fiducial_length + travel - retract
         spring = compression_spring(
             p.spring_outer_diameter, p.spring_wire_diameter, length, p.spring_display_coils
@@ -794,38 +819,23 @@ def build_carriage(p=None, *, travel=0.0, retract=0.0, include_support=False, in
 
 
 def _adjuster_hardware(p, travel):
-    """FAS100, bushing, and magnet pad as (name, part, rgb); the ball tip bears on the pad face."""
+    """FAS100, bushing, and magnet pad as labeled children; the ball tip bears on the pad face."""
     tip_y = p.magnet_contact_y + travel
     # Vendor model axis +Z toward the knob, turned to +Y (outboard, toward the insert).
     fas100_loc = Pos(0, tip_y, p.adjuster_axis_z) * Rot(X=-90)
-    screw, knob, dimple = (fas100_loc * part for part in thorlabs_fas100_parts())
-    # Flange on the inner face of the block, body running outboard.
-    flange_face = p.insert_flange_face
-    body_start = flange_face + p.insert_flange_thickness
-    bushing = y_cylinder(
-        p.insert_flange_diameter, 0, p.adjuster_axis_z, flange_face, flange_face + p.insert_flange_thickness
+    # Flange on the inner face of the block, body running outboard. The frame's z runs along global +Y.
+    along_y_axis = Pos(0, 0, p.adjuster_axis_z) * Rot(X=-90)
+    bushing = insert_98625a950(
+        p.insert_flange_face + p.insert_flange_thickness,
+        p.insert_body_length,
+        flange_side=-1,
+        body_diameter=p.insert_body_diameter,
+        flange_diameter=p.insert_flange_diameter,
+        flange_thickness=p.insert_flange_thickness,
     )
-    bushing += y_cylinder(
-        p.insert_body_diameter, 0, p.adjuster_axis_z, body_start, body_start + p.insert_body_length
-    )
-    bushing -= y_cylinder(
-        0.25 * INCH,
-        0,
-        p.adjuster_axis_z,
-        flange_face - 1,
-        flange_face + p.insert_body_length + p.insert_flange_thickness + 1,
-    )
-    magnet = floor_box(
-        p.magnet_length,
-        p.magnet_thickness,
-        p.magnet_width,
-        y=tip_y - p.magnet_thickness / 2,
-        z=p.adjuster_axis_z - p.magnet_width / 2,
-    )
-    return (
-        ("FAS100", screw, METAL),
-        ("FAS100 knob", knob, KNOB_BLACK),
-        ("FAS100 index dimple", dimple, INDEX_DIMPLE),
-        ("98625A950 bushing", bushing, BRASS),
-        ("Magnet pad", magnet, STEEL),
-    )
+    magnet = bearing_magnet(length=p.magnet_length, width=p.magnet_width, thickness=p.magnet_thickness)
+    return [
+        *fas100_children(fas100_loc),
+        labeled(bushing, "98625A950 bushing", BRASS, along_y_axis),
+        labeled(magnet, "Magnet pad", STEEL, fas100_loc),
+    ]

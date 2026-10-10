@@ -15,3 +15,9 @@ DATUM_DISC_THICKNESS = 0.010 * INCH
 DATUM_DISC_DIAMETER = 0.75 * INCH
 POST_LENGTH = 50.0
 POST_DIAMETER = 12.7
+
+# PLA (provisional): typical flexural modulus, for first-order flexure and keeper estimates.
+PLA_MODULUS = 3000.0  # MPa
+
+# Printed hex-nut pockets: across-flats allowance over the nut, as fit-tested on the common rail shoe.
+NUT_POCKET_ACROSS_FLATS_CLEARANCE = 0.3
