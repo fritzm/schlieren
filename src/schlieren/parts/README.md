@@ -12,7 +12,10 @@ Exports land in the ignored `exports/step` and `exports/stl` directories. Select
 interpreter in VS Code for the viewer.
 
 Project-wide dimensions (`INCH`, the 72.35 mm optical height, the TR50/M post and datum disc) are defined once
-in `src/schlieren/standards.py`; the parameter classes take them as defaults. `post_stack` in `rail_shoe.py` builds the post,
+in `src/schlieren/standards.py`; the parameter classes take them as defaults. Every viewer color is named in
+`src/schlieren/palette.py`. The primitive solids the models are built from are in `src/schlieren/cad.py`:
+`box_between`, `floor_box`, and `centered_box`; `x_cylinder`, `y_cylinder`, `z_cylinder`, and
+`centered_cylinder`; `y_cone` and `z_cone`; `y_hex` and `z_hex`. `post_stack` in `rail_shoe.py` builds the post,
 rail shoe, shoe clamp hardware, and optional SM1RC/M ring and side-slot screws that the light source, slit
 head, cutoff carriage, and the shoe's own viewer assembly share.
 

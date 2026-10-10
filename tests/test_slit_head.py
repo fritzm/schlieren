@@ -5,12 +5,11 @@ from dataclasses import replace
 
 from build123d import Pos
 
+from schlieren.cad import box_between, z_cylinder
 from schlieren.parts.rail_shoe import build_rail_shoe
 from schlieren.parts.slit_head import (
     SlitHeadParameters,
     _blade,
-    _box,
-    _z_cylinder,
     build_clamp_bar,
     build_slit_head,
     build_spigot_adapter,
@@ -59,7 +58,7 @@ class SlitHeadTests(unittest.TestCase):
         ):
             mid = sum(span) / 2
             for z0, z1 in blades:
-                cut -= _box(mid - 1, mid + 1, -p.body_thickness - 1, 1, z0 - 0.1, z1 + 0.1)
+                cut -= box_between(mid - 1, mid + 1, -p.body_thickness - 1, 1, z0 - 0.1, z1 + 0.1)
         self.assertEqual(len(cut.solids()), 3)
 
     def test_adjustment_keeps_slit_parallel_and_square(self):
@@ -147,8 +146,8 @@ class SlitHeadTests(unittest.TestCase):
         # Nominal envelopes (the vendor solids make distance queries very slow): the metric post, and the M4
         # stud at its drawing maximum of 5.2 mm above the post top.
         post_top = p.datum_thickness + p.post_length
-        body = _z_cylinder(p.post_diameter, 0, 0, p.datum_thickness, post_top)
-        stud = _z_cylinder(4.0, 0, 0, post_top, post_top + TR50_STUD_MAX)
+        body = z_cylinder(p.post_diameter, 0, 0, p.datum_thickness, post_top)
+        stud = z_cylinder(4.0, 0, 0, post_top, post_top + TR50_STUD_MAX)
         shoe = build_rail_shoe()
         for rotation in ROTATION_SWEEP:
             loc = head_location(p, rotation)

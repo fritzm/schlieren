@@ -31,17 +31,20 @@ local +y is rail -y and the spigot, ring, and post are on the mirror side of the
 """
 
 from dataclasses import dataclass
-from math import cos, isfinite, pi
+from math import isfinite
 
-from build123d import Axis, Box, Cylinder, Pos, RegularPolygon, Rot, extrude, fillet
+from build123d import Axis, Pos, Rot, fillet
 
-from schlieren.cad import (
-    FROM_CORNER,
-    ON_FLOOR,
-    along_y,
-    assembly,
-    compression_spring,
-    labeled,
+from schlieren.cad import assembly, box_between, compression_spring, labeled, y_cylinder, y_hex, z_cylinder
+from schlieren.palette import (
+    BRASS,
+    INDEX_DIMPLE,
+    KNOB_BLACK,
+    METAL,
+    PRINTED_BLUE,
+    PRINTED_DENIM,
+    RUBBER,
+    STEEL,
 )
 from schlieren.parts.rail_shoe import post_stack
 from schlieren.standards import DATUM_DISC_THICKNESS, INCH, OPTICAL_HEIGHT, POST_DIAMETER, POST_LENGTH
@@ -491,29 +494,12 @@ class SlitHeadParameters:
             raise ValueError("Adapter screw heads must sit below the head front")
 
 
-def _box(x0, x1, y0, y1, z0, z1):
-    return Pos(x0, y0, z0) * Box(x1 - x0, y1 - y0, z1 - z0, align=FROM_CORNER)
-
-
-def _z_cylinder(diameter, x, y, z0, z1):
-    return Pos(x, y, z0) * Cylinder(diameter / 2, z1 - z0, align=ON_FLOOR)
-
-
-def _y_cylinder(diameter, x, z, y0, y1):
-    return along_y((x, y0, z)) * Cylinder(diameter / 2, y1 - y0, align=ON_FLOOR)
-
-
-def _y_hex(across_flats, x, z, y0, y1):
-    """Hex pocket along y with flats facing ±z (the thin direction of the bars)."""
-    return extrude(along_y((x, y0, z)) * RegularPolygon(across_flats / cos(pi / 6) / 2, 6), amount=y1 - y0)
-
-
 def _magnet_pocket(p, x, z_top, well=0.0):
     """Magnet seat with its top face at z_top - well, plus a well above it for the ball tip."""
     length = p.magnet_length + 2 * p.magnet_fit_clearance
     width = p.magnet_width + 2 * p.magnet_fit_clearance
     seat_top = z_top - well
-    pocket = _box(
+    pocket = box_between(
         x - length / 2,
         x + length / 2,
         p.axis_y - width / 2,
@@ -523,7 +509,7 @@ def _magnet_pocket(p, x, z_top, well=0.0):
     )
     if well:  # Open the well wide enough for the 1/4"-80 thread.
         thread = p.insert_bore - 0.5
-        pocket += _box(
+        pocket += box_between(
             x - length / 2,
             x + length / 2,
             p.axis_y - thread / 2,
@@ -551,23 +537,23 @@ def build_slit_head(p=None):
 
     parts = [
         # Blade carriers stand proud to the blade-seat plane.
-        _box(-po, po, back, 0, -co, -ce),  # Platform: datum-blade carrier.
-        _box(-p.carrier_half_length, p.carrier_half_length, back, 0, ce, co),  # Width stage carrier.
+        box_between(-po, po, back, 0, -co, -ce),  # Platform: datum-blade carrier.
+        box_between(-p.carrier_half_length, p.carrier_half_length, back, 0, ce, co),  # Width stage carrier.
         # Platform ring.
-        _box(-po, -pi_, back, front, -co, ptb[1]),
-        _box(pi_, po, back, front, -co, ptb[1]),
-        _box(-po, po, back, front, *ptb),
+        box_between(-po, -pi_, back, front, -co, ptb[1]),
+        box_between(pi_, po, back, front, -co, ptb[1]),
+        box_between(-po, po, back, front, *ptb),
         # Width stage connector and blades (anchored on the platform's right post).
-        _box(wx0, wx1, back, front, co - overlap, wb[1][1]),
-        *(_box(wx1 - overlap, pi_ + overlap, back, front, *z) for z in wb),
+        box_between(wx0, wx1, back, front, co - overlap, wb[1][1]),
+        *(box_between(wx1 - overlap, pi_ + overlap, back, front, *z) for z in wb),
         # Platform connectors and centering blades (anchored on the frame post).
-        _box(cx0, cx1, back, front, ptb[1] - overlap, upper[1]),
-        _box(cx0, cx1, back, front, lower[0], -co + overlap),
-        *(_box(cx1 - overlap, fi + overlap, back, front, *z) for z in (upper, lower)),
+        box_between(cx0, cx1, back, front, ptb[1] - overlap, upper[1]),
+        box_between(cx0, cx1, back, front, lower[0], -co + overlap),
+        *(box_between(cx1 - overlap, fi + overlap, back, front, *z) for z in (upper, lower)),
         # Frame: C-shaped, open on the -x side.
-        _box(fi, fo, back, front, fbb[0], ftb[1]),
-        _box(p.frame_top_bar_x0, fo, back, front, *ftb),
-        _box(p.frame_bottom_bar_x0, fo, back, front, *fbb),
+        box_between(fi, fo, back, front, fbb[0], ftb[1]),
+        box_between(p.frame_top_bar_x0, fo, back, front, *ftb),
+        box_between(p.frame_bottom_bar_x0, fo, back, front, *fbb),
     ]
     head = parts[0]
     for part in parts[1:]:
@@ -577,27 +563,27 @@ def build_slit_head(p=None):
     # FAS100 inserts: #1 in the frame top bar, #2 in the platform top bar; FAS100 #1's flange
     # is inboard (-z, on the bar's inner face) so the spring load seats the insert; #2's is outboard (+z).
     for x, (z0, z1) in ((p.centering_screw_x, ftb), (p.width_screw_x, ptb)):
-        cuts.append(_z_cylinder(p.insert_bore, x, p.axis_y, z0 - 1, z1 + 1))
+        cuts.append(z_cylinder(p.insert_bore, x, p.axis_y, z0 - 1, z1 + 1))
     cuts.append(_magnet_pocket(p, p.centering_screw_x, upper[1], p.centering_tip_well))
     cuts.append(_magnet_pocket(p, p.width_screw_x, wb[1][1], p.width_tip_well))
     # Spring, coaxial with FAS100 #1: pockets in the frame bottom bar and the lower platform connector, each
     # with a guide pin inside the coil.
     x, y = p.centering_screw_x, p.axis_y
-    cuts.append(_z_cylinder(p.spring_pocket_diameter, x, y, p.frame_spring_seat_z, fbb[1] + 1))
-    cuts.append(_z_cylinder(p.spring_pocket_diameter, x, y, lower[0] - 1, p.platform_spring_seat_z))
+    cuts.append(z_cylinder(p.spring_pocket_diameter, x, y, p.frame_spring_seat_z, fbb[1] + 1))
+    cuts.append(z_cylinder(p.spring_pocket_diameter, x, y, lower[0] - 1, p.platform_spring_seat_z))
     for sign in (-1, 1):
         # Blade clamp screws and captive nuts (pockets open from the back).
         for cx in (-p.clamp_screw_x, p.clamp_screw_x):
             z = sign * p.clamp_bar_z
-            cuts.append(_y_cylinder(p.screw_clearance, cx, z, back - 1, 1))
+            cuts.append(y_cylinder(p.screw_clearance, cx, z, back - 1, 1))
             cuts.append(
-                _y_hex(p.nut_across_flats + p.nut_across_flats_clearance, cx, z, back - 1, p.clamp_nut_floor)
+                y_hex(p.nut_across_flats + p.nut_across_flats_clearance, cx, z, back - 1, p.clamp_nut_floor)
             )
     # Adapter screws: counterbored from the front, clearance through to the back.
     for ax, az in p.adapter_screw_xz():
-        cuts.append(_y_cylinder(p.screw_clearance, ax, az, back - 1, 1))
+        cuts.append(y_cylinder(p.screw_clearance, ax, az, back - 1, 1))
         cuts.append(
-            _y_cylinder(
+            y_cylinder(
                 p.screw_head_diameter + p.counterbore_clearance, ax, az, p.adapter_counterbore_floor, 1
             )
         )
@@ -609,7 +595,7 @@ def build_slit_head(p=None):
         (p.frame_spring_seat_z - overlap, p.frame_spring_seat_z + pin),
         (p.platform_spring_seat_z - pin, p.platform_spring_seat_z + overlap),
     ):
-        head += _z_cylinder(p.spring_guide_pin_diameter, x, y, z0, z1)
+        head += z_cylinder(p.spring_guide_pin_diameter, x, y, z0, z1)
     return head
 
 
@@ -625,15 +611,15 @@ def build_spigot_adapter(p=None):
     points = p.adapter_screw_xz()
     xs = [x for x, _ in points]
     zs = [z for _, z in points]
-    plate = _box(min(xs) - m, max(xs) + m, p.adapter_back, p.adapter_front, min(zs) - m, max(zs) + m)
+    plate = box_between(min(xs) - m, max(xs) + m, p.adapter_back, p.adapter_front, min(zs) - m, max(zs) + m)
     spigot_back = p.adapter_back - p.spigot_length
     ring_face = p.adapter_back - p.ring_gap
-    plate += _y_cylinder(p.spigot_shoulder_diameter, 0, 0, ring_face, p.adapter_back + 0.5)
-    plate += _y_cylinder(p.spigot_diameter, 0, 0, spigot_back, ring_face + 0.5)
-    plate -= _y_cylinder(p.spigot_bore, 0, 0, spigot_back - 1, p.adapter_front + 1)
+    plate += y_cylinder(p.spigot_shoulder_diameter, 0, 0, ring_face, p.adapter_back + 0.5)
+    plate += y_cylinder(p.spigot_diameter, 0, 0, spigot_back, ring_face + 0.5)
+    plate -= y_cylinder(p.spigot_bore, 0, 0, spigot_back - 1, p.adapter_front + 1)
     for x, z in points:
-        plate -= _y_cylinder(p.screw_clearance, x, z, p.adapter_back - 1, p.adapter_front + 1)
-        plate -= _y_hex(
+        plate -= y_cylinder(p.screw_clearance, x, z, p.adapter_back - 1, p.adapter_front + 1)
+        plate -= y_hex(
             p.nut_across_flats + p.nut_across_flats_clearance,
             x,
             z,
@@ -649,12 +635,12 @@ def build_clamp_bar(p=None):
     p.validate()
     y0 = p.clamp_bar_front - p.clamp_bar_thickness
     z0 = p.clamp_bar_z - p.clamp_bar_width / 2
-    bar = _box(
+    bar = box_between(
         -p.clamp_bar_half_length, p.clamp_bar_half_length, y0, p.clamp_bar_front, z0, z0 + p.clamp_bar_width
     )
     bar = fillet(bar.edges().filter_by(Axis.Y), 1.0)
     for x in (-p.clamp_screw_x, p.clamp_screw_x):
-        bar -= _y_cylinder(p.screw_clearance, x, p.clamp_bar_z, y0 - 1, p.clamp_bar_front + 1)
+        bar -= y_cylinder(p.screw_clearance, x, p.clamp_bar_z, y0 - 1, p.clamp_bar_front + 1)
     return bar
 
 
@@ -662,9 +648,11 @@ def _blade(p, sign):
     """Stanley blade on the seat plane, cutting edge at the slit; sign +1 above the slit, -1 below."""
     edge = sign * p.slit_width / 2
     far = edge + sign * p.blade_width
-    flat = _box(-p.blade_length / 2, p.blade_length / 2, 0, p.blade_thickness, min(edge, far), max(edge, far))
+    flat = box_between(
+        -p.blade_length / 2, p.blade_length / 2, 0, p.blade_thickness, min(edge, far), max(edge, far)
+    )
     spine_near = far - sign * p.spine_width
-    spine = _box(
+    spine = box_between(
         -p.blade_length / 2,
         p.blade_length / 2,
         0,
@@ -690,21 +678,21 @@ def build_slit_head_assembly(p=None, rotation=0.0, include_support=True):
     p = p or SlitHeadParameters()
     p.validate()
     loc = head_location(p, rotation)
-    printed = (0.35, 0.6, 0.8)
-    metal = (0.75, 0.75, 0.78)
+    printed = PRINTED_BLUE
+    metal = METAL
     children = [
         labeled(build_slit_head(p), "Flexure head", printed, loc),
-        labeled(build_spigot_adapter(p), "Spigot adapter", (0.3, 0.5, 0.7), loc),
+        labeled(build_spigot_adapter(p), "Spigot adapter", PRINTED_DENIM, loc),
     ]
     for i, (x, z) in enumerate(p.adapter_screw_xz(), 1):
-        stack = _y_cylinder(p.washer_outer_diameter, x, z, p.adapter_front, -p.body_thickness)
-        stack -= _y_cylinder(p.screw_clearance, x, z, p.adapter_front - 1, -p.body_thickness + 1)
+        stack = y_cylinder(p.washer_outer_diameter, x, z, p.adapter_front, -p.body_thickness)
+        stack -= y_cylinder(p.screw_clearance, x, z, p.adapter_front - 1, -p.body_thickness + 1)
         children.append(labeled(stack, f"Spacer washers {i}", metal, loc))
     bar = build_clamp_bar(p)
     for sign, name in ((1, "Width"), (-1, "Datum")):
         placed = loc * Rot(Y=0 if sign > 0 else 180)
         children.append(labeled(bar, f"{name} clamp bar", printed, placed))
-        epdm = _box(
+        epdm = box_between(
             -p.clamp_bar_half_length,
             p.clamp_bar_half_length,
             p.blade_thickness,
@@ -712,7 +700,7 @@ def build_slit_head_assembly(p=None, rotation=0.0, include_support=True):
             p.clamp_bar_z - p.clamp_bar_width / 2,
             p.clamp_bar_z + p.clamp_bar_width / 2,
         )
-        children.append(labeled(epdm, f"{name} EPDM", (0.15, 0.15, 0.15), placed))
+        children.append(labeled(epdm, f"{name} EPDM", RUBBER, placed))
         children.append(labeled(_blade(p, sign), f"{name} blade", metal, loc))
     # M3 hardware, axes along y: screw heads toward +y, shanks toward -y into captive nuts seated on their
     # pocket floors (local +z of each vendor model turned to -y).
@@ -739,19 +727,19 @@ def build_slit_head_assembly(p=None, rotation=0.0, include_support=True):
         fas100 = loc * Pos(x, p.axis_y, tip_z)
         screw, knob, dimple = thorlabs_fas100_parts()
         children.append(labeled(screw, name, metal, fas100))
-        children.append(labeled(knob, f"{name} knob", (0.16, 0.16, 0.17), fas100))
-        children.append(labeled(dimple, f"{name} index dimple", (0.95, 0.95, 0.95), fas100))
+        children.append(labeled(knob, f"{name} knob", KNOB_BLACK, fas100))
+        children.append(labeled(dimple, f"{name} index dimple", INDEX_DIMPLE, fas100))
         if flange_inboard:
             seat, body0, body1 = bar[0], bar[0], bar[0] + p.insert_length
             flange0, flange1 = seat - p.insert_flange_thickness, seat
         else:
             seat, body0, body1 = bar[1], bar[1] - p.insert_length, bar[1]
             flange0, flange1 = seat, seat + p.insert_flange_thickness
-        insert = _z_cylinder(p.insert_bore, x, p.axis_y, body0, body1)
-        insert += _z_cylinder(p.insert_flange_diameter, x, p.axis_y, flange0, flange1)
-        insert -= _z_cylinder(INCH / 4, x, p.axis_y, bar[0] - 10, bar[1] + 1)
-        children.append(labeled(insert, f"{name} insert", (0.8, 0.65, 0.25), loc))
-        magnet = _box(
+        insert = z_cylinder(p.insert_bore, x, p.axis_y, body0, body1)
+        insert += z_cylinder(p.insert_flange_diameter, x, p.axis_y, flange0, flange1)
+        insert -= z_cylinder(INCH / 4, x, p.axis_y, bar[0] - 10, bar[1] + 1)
+        children.append(labeled(insert, f"{name} insert", BRASS, loc))
+        magnet = box_between(
             x - p.magnet_length / 2,
             x + p.magnet_length / 2,
             p.axis_y - p.magnet_width / 2,
@@ -759,12 +747,12 @@ def build_slit_head_assembly(p=None, rotation=0.0, include_support=True):
             tip_z - p.magnet_thickness,
             tip_z,
         )
-        children.append(labeled(magnet, f"{name} magnet", (0.6, 0.6, 0.62), loc))
+        children.append(labeled(magnet, f"{name} magnet", STEEL, loc))
     sx, s0, s1 = p.centering_screw_x, p.frame_spring_seat_z, p.platform_spring_seat_z
     spring = compression_spring(
         p.spring_outer_diameter, p.spring_wire_diameter, s1 - s0, p.spring_display_coils
     )
-    children.append(labeled(spring, "2006N292 spring", (0.75, 0.75, 0.78), loc * Pos(sx, p.axis_y, s0)))
+    children.append(labeled(spring, "2006N292 spring", METAL, loc * Pos(sx, p.axis_y, s0)))
     if include_support:
         children += post_stack(ring=True, optical_height=p.optical_height, datum_thickness=p.datum_thickness)
     return assembly("Flexure slit head (exploratory)", children)

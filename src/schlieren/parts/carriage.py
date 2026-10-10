@@ -12,20 +12,38 @@ from math import cos, pi, radians, tan
 
 from build123d import (
     Axis,
-    Box,
-    Cone,
-    Cylinder,
     Plane,
     Polygon,
     Pos,
-    RegularPolygon,
     Rot,
     chamfer,
     extrude,
     mirror,
 )
 
-from schlieren.cad import ON_FLOOR, along_x, along_y, assembly, compression_spring, labeled
+from schlieren.cad import (
+    assembly,
+    compression_spring,
+    floor_box,
+    labeled,
+    x_cylinder,
+    y_cone,
+    y_cylinder,
+    z_cylinder,
+    z_hex,
+)
+from schlieren.palette import (
+    BRASS,
+    INDEX_DIMPLE,
+    KNOB_BLACK,
+    METAL,
+    PRINTED_AMBER,
+    PRINTED_GRAY,
+    PRINTED_GREEN,
+    PRINTED_INDIGO,
+    PRINTED_SKY,
+    STEEL,
+)
 from schlieren.parts.rail_shoe import RailShoeParameters, post_stack
 from schlieren.standards import DATUM_DISC_THICKNESS, INCH, OPTICAL_HEIGHT, POST_DIAMETER, POST_LENGTH
 from schlieren.vendor_cad import SM1RC_M_THICKNESS, thorlabs_fas100_parts
@@ -397,30 +415,13 @@ class CarriageParameters:
             raise ValueError("Spring space exhausted")
 
 
-def _box(width, length, height, x=0, y=0, z=0):
-    return Pos(x, y, z) * Box(width, length, height, align=ON_FLOOR)
-
-
-def _z_cylinder(radius, height, x=0, y=0, z=0):
-    return Pos(x, y, z) * Cylinder(radius, height, align=ON_FLOOR)
-
-
-def _y_hole(radius, length, y, z):
-    return along_y((0, y, z)) * Cylinder(radius, length, align=ON_FLOOR)
-
-
-def _z_hex(across_flats, height, x, y, z):
-    """Hex prism along z with two vertices on the x axis."""
-    return extrude(Pos(x, y, z) * RegularPolygon(across_flats / cos(pi / 6) / 2, 6), amount=height)
-
-
 def _build_fixed_body(p=None):
     p = p or CarriageParameters()
     p.validate()
-    base = _box(p.plate_width, p.plate_length, p.plate_thickness, y=p.plate_center_y)
+    base = floor_box(p.plate_width, p.plate_length, p.plate_thickness, y=p.plate_center_y)
     for sign in (-1, 1):
         floor_width = p.track_outer_x - p.track_inner_x
-        base += _box(
+        base += floor_box(
             floor_width,
             p.plate_length,
             p.guide_floor_rise,
@@ -429,7 +430,7 @@ def _build_fixed_body(p=None):
             z=p.plate_thickness,
         )
         land_width = p.plate_width / 2 - p.track_outer_x
-        base += _box(
+        base += floor_box(
             land_width,
             p.plate_length,
             p.keeper_z - p.plate_thickness,
@@ -438,7 +439,7 @@ def _build_fixed_body(p=None):
             z=p.plate_thickness,
         )
     for start, end in p.support_spans:
-        base += _box(
+        base += floor_box(
             p.plate_width,
             end - start,
             p.support_top - p.plate_thickness,
@@ -450,7 +451,7 @@ def _build_fixed_body(p=None):
     for sign in (-1, 1):
         x = sign * (p.track_inner_x + p.track_outer_x) / 2
         for y0, y1 in ((p.plate_ymin, spring_stop), (driven_stop, p.plate_ymax)):
-            base += _box(
+            base += floor_box(
                 p.track_outer_x - p.track_inner_x,
                 y1 - y0,
                 p.keeper_z - p.plate_thickness,
@@ -462,42 +463,40 @@ def _build_fixed_body(p=None):
     # original screw stack while the support blocks extend to all plate edges.
     base -= _keeper_envelope(p, p.support_top - p.keeper_z)
     start, end = p.support_spans[0]
-    base -= _y_hole(p.insert_bore_diameter / 2, end - start + 2, start - 1, p.adjuster_axis_z)
+    base -= y_cylinder(p.insert_bore_diameter, 0, p.adjuster_axis_z, start - 1, end + 1)
     base -= _insert_flange_pocket(p)
     # End-wall spring cup; the guide-frame split truncates it at the keeper plane, and the keeper carries its roof.
     base += _spring_cup(p, p.spring_seat_y, p.plate_thickness)
     # The spigot and optical axis remain fixed while the cassette translates.
-    base -= _z_cylinder(p.aperture_diameter / 2, p.plate_thickness)
+    base -= z_cylinder(p.aperture_diameter, 0, 0, 0, p.plate_thickness)
     for x, y in p.datum_points:
-        base -= _z_cylinder(p.datum_hole_diameter / 2, p.plate_thickness, x, y)
+        base -= z_cylinder(p.datum_hole_diameter, x, y, 0, p.plate_thickness)
     for x, y in p.fasteners:
-        base -= _z_cylinder(p.screw_clearance / 2, p.keeper_z, x, y)
-        base -= _z_hex(p.nut_pocket_af, p.nut_pocket_depth, x, y, 0)
+        base -= z_cylinder(p.screw_clearance, x, y, 0, p.keeper_z)
+        base -= z_hex(p.nut_pocket_af, x, y, 0, p.nut_pocket_depth)
     return _add_spigot(base - _insert_entry(p), p) & _rotation_envelope(p)
 
 
 def _split_fixed_body(p):
     stock = _build_fixed_body(p)
     width = 2 * (p.side_fastener_x + p.side_lug_radius) + 2  # Includes the side lugs.
-    base = stock & _box(
+    base = stock & floor_box(
         width, p.plate_length, p.spigot_length + p.plate_thickness, y=p.plate_center_y, z=-p.spigot_length
     )
-    frame = stock & _box(
+    frame = stock & floor_box(
         width, p.plate_length, p.keeper_z - p.plate_thickness, y=p.plate_center_y, z=p.plate_thickness
     )
     # Male locators belong to the frame: the base deck stays flat for spigot-up printing.
     locator_x = (p.track_outer_x + p.plate_width / 2) / 2
     for x in (-locator_x, locator_x):
-        pin = _z_cylinder(
-            p.locator_diameter / 2, p.locator_height, x, 0, p.plate_thickness - p.locator_height
-        )
+        pin = z_cylinder(p.locator_diameter, x, 0, p.plate_thickness - p.locator_height, p.plate_thickness)
         pocket_depth = p.locator_height + p.locator_depth_clearance
-        pocket = _z_cylinder(
-            (p.locator_diameter + p.locator_diametral_clearance) / 2,
-            pocket_depth,
+        pocket = z_cylinder(
+            p.locator_diameter + p.locator_diametral_clearance,
             x,
             0,
             p.plate_thickness - pocket_depth,
+            p.plate_thickness,
         )
         base -= pocket
         frame += pin
@@ -518,9 +517,9 @@ def _add_spigot(base, p):
     Printed with the base deck down and the spigot up, so it needs no supports.
     """
     ring_face = -p.ring_gap
-    shoulder = _z_cylinder(p.spigot_shoulder_diameter / 2, p.ring_gap, z=ring_face)
-    spigot = _z_cylinder(p.spigot_diameter / 2, p.ring_thickness, z=-p.spigot_length)
-    bore = _z_cylinder(p.spigot_bore / 2, p.spigot_length + 1, z=-p.spigot_length - 1)
+    shoulder = z_cylinder(p.spigot_shoulder_diameter, 0, 0, ring_face, ring_face + p.ring_gap)
+    spigot = z_cylinder(p.spigot_diameter, 0, 0, -p.spigot_length, -p.spigot_length + p.ring_thickness)
+    bore = z_cylinder(p.spigot_bore, 0, 0, -p.spigot_length - 1, 0)
     base = base + shoulder + spigot - bore
     if len(base.solids()) != 1 or not base.is_valid:
         raise ValueError("Base plate and spigot must remain one valid solid")
@@ -545,7 +544,7 @@ def _side_lugs(p, z, height):
     outer = p.side_fastener_x + p.side_lug_radius
     for x, y in p.side_fasteners:
         sign = 1 if x > 0 else -1
-        lug = _z_cylinder(p.side_lug_radius, height, x, y, z) & _box(
+        lug = z_cylinder(2 * p.side_lug_radius, x, y, z, z + height) & floor_box(
             outer - p.track_outer_x,
             2 * p.side_lug_radius,
             height,
@@ -560,7 +559,7 @@ def _side_lugs(p, z, height):
 def _thumb_tab(p, outer_y):
     """Tab on the spring plunger's front face at its outboard end (+Y, unmirrored), with chamfered exposed edges
     except those of the spring-facing face, and a grip bead along the inner top edge, where the thumb pushes."""
-    tab = _box(
+    tab = floor_box(
         p.thumb_tab_width,
         p.thumb_tab_thickness,
         p.thumb_tab_height,
@@ -572,8 +571,12 @@ def _thumb_tab(p, outer_y):
     tab = chamfer(edges, p.thumb_tab_chamfer)
     top = p.body_top + p.thumb_tab_height
     length = p.thumb_tab_width - 2 * p.thumb_tab_chamfer
-    bead = along_x((-length / 2, outer_y - p.thumb_tab_thickness, top - p.thumb_tab_bead_radius)) * Cylinder(
-        p.thumb_tab_bead_radius, length, align=ON_FLOOR
+    bead = x_cylinder(
+        2 * p.thumb_tab_bead_radius,
+        outer_y - p.thumb_tab_thickness,
+        top - p.thumb_tab_bead_radius,
+        -length / 2,
+        length / 2,
     )
     return tab + bead
 
@@ -581,7 +584,7 @@ def _thumb_tab(p, outer_y):
 def _rotation_envelope(p):
     """Cylinder about the optical axis that the fixed body and keeper are trimmed to; clips the plate corners."""
     height = 4 * p.spigot_length + p.support_top
-    return _z_cylinder(p.rotation_envelope_radius, height, z=-height / 2)
+    return z_cylinder(2 * p.rotation_envelope_radius, 0, 0, -height / 2, height / 2)
 
 
 def _spring_cup(p, seat_y, bottom):
@@ -592,10 +595,12 @@ def _spring_cup(p, seat_y, bottom):
     """
     y0 = seat_y
     width = p.spring_cup_bore + 2 * p.spring_cup_wall
-    cup = _box(width, p.spring_cup_depth, p.spring_cup_top - bottom, y=y0 + p.spring_cup_depth / 2, z=bottom)
-    pocket = _y_hole(p.spring_cup_bore / 2, p.spring_cup_depth + 2, y0 - 1, p.spring_axis_z)
+    cup = floor_box(
+        width, p.spring_cup_depth, p.spring_cup_top - bottom, y=y0 + p.spring_cup_depth / 2, z=bottom
+    )
+    pocket = y_cylinder(p.spring_cup_bore, 0, p.spring_axis_z, y0 - 1, y0 + p.spring_cup_depth + 1)
     if bottom < p.spring_axis_z:
-        pocket += _box(
+        pocket += floor_box(
             p.spring_cup_bore,
             p.spring_cup_depth + 2,
             p.spring_axis_z - bottom + 1,
@@ -606,27 +611,30 @@ def _spring_cup(p, seat_y, bottom):
 
 
 def _keeper_envelope(p, height):
-    return _box(p.plate_width, p.plate_length, height, y=p.plate_center_y, z=p.keeper_z) - _box(
+    return floor_box(p.plate_width, p.plate_length, height, y=p.plate_center_y, z=p.keeper_z) - floor_box(
         p.keeper_opening_width, p.keeper_opening_length, height, y=p.keeper_opening_y, z=p.keeper_z
     )
 
 
 def _insert_entry(p):
-    return along_y((0, p.plate_ymax - p.insert_entry_chamfer, p.adjuster_axis_z)) * Cone(
-        p.insert_bore_diameter / 2,
-        p.insert_bore_diameter / 2 + p.insert_entry_chamfer,
-        p.insert_entry_chamfer,
-        align=ON_FLOOR,
+    return y_cone(
+        p.insert_bore_diameter,
+        p.insert_bore_diameter + 2 * p.insert_entry_chamfer,
+        0,
+        p.adjuster_axis_z,
+        p.plate_ymax - p.insert_entry_chamfer,
+        p.plate_ymax,
     )
 
 
 def _insert_flange_pocket(p):
     # Flange-thick counterbore in the inner face of the adjuster block, so the flange sits flush.
-    return _y_hole(
-        (p.insert_flange_diameter + p.insert_flange_pocket_clearance) / 2,
-        p.insert_flange_thickness,
-        p.insert_flange_face,
+    return y_cylinder(
+        p.insert_flange_diameter + p.insert_flange_pocket_clearance,
+        0,
         p.adjuster_axis_z,
+        p.insert_flange_face,
+        p.insert_flange_face + p.insert_flange_thickness,
     )
 
 
@@ -638,7 +646,7 @@ def build_keeper_plate(p=None):
     # the insert bore. Clip at the mating plane to keep the base unchanged.
     start, end = p.support_spans[0]
     crown_radius = p.insert_bore_diameter / 2 + p.keeper_thickness
-    crown = _y_hole(crown_radius, end - start, start, p.adjuster_axis_z) & _box(
+    crown = y_cylinder(2 * crown_radius, 0, p.adjuster_axis_z, start, end) & floor_box(
         2 * crown_radius,
         end - start,
         p.adjuster_axis_z + crown_radius - p.keeper_z,
@@ -646,12 +654,12 @@ def build_keeper_plate(p=None):
         z=p.keeper_z,
     )
     keeper += crown
-    keeper -= _y_hole(p.insert_bore_diameter / 2, end - start + 2, start - 1, p.adjuster_axis_z)
+    keeper -= y_cylinder(p.insert_bore_diameter, 0, p.adjuster_axis_z, start - 1, end + 1)
     keeper -= _insert_flange_pocket(p)
     keeper += _spring_cup(p, p.spring_seat_y, p.keeper_z)
     extra = p.keeper_side_thickness - p.keeper_thickness
     for sign in (-1, 1) if extra > 0 else ():
-        keeper += _box(
+        keeper += floor_box(
             p.keeper_side_width,
             p.plate_length,
             extra,
@@ -662,10 +670,8 @@ def build_keeper_plate(p=None):
     keeper += _side_lugs(p, p.keeper_z, p.keeper_side_thickness)
     top = p.keeper_z + p.keeper_side_thickness
     for x, y in p.fasteners:
-        keeper -= _z_cylinder(p.screw_clearance / 2, p.keeper_side_thickness, x, y, p.keeper_z)
-        keeper -= _z_cylinder(
-            p.screw_head_clearance / 2, top - p.keeper_screw_seat_z, x, y, p.keeper_screw_seat_z
-        )
+        keeper -= z_cylinder(p.screw_clearance, x, y, p.keeper_z, p.keeper_z + p.keeper_side_thickness)
+        keeper -= z_cylinder(p.screw_head_clearance, x, y, p.keeper_screw_seat_z, top)
     return (keeper - _insert_entry(p)) & _rotation_envelope(p)
 
 
@@ -691,7 +697,7 @@ def build_plunger(p=None, *, spring=False):
     # Overlap the body slightly to ensure a single connected printed solid.
     ear_root = p.body_width / 2 - 0.5
     for sign in (-1, 1):
-        body += _box(
+        body += floor_box(
             p.ear_outer_x - ear_root,
             p.body_length,
             p.ear_thickness,
@@ -708,7 +714,7 @@ def build_plunger(p=None, *, spring=False):
     else:
         # Outward-opening, fully backed magnet pocket. A small adhesive tack is
         # needed for retention; the ball bears on the exposed broad XZ face.
-        body -= _box(
+        body -= floor_box(
             p.magnet_length + p.magnet_fit_clearance,
             p.magnet_thickness + p.magnet_fit_clearance,
             p.magnet_width + p.magnet_fit_clearance,
@@ -735,13 +741,11 @@ def build_carriage(p=None, *, travel=0.0, retract=0.0, include_support=False, in
         raise ValueError("Return to fiducial before retracting for loading")
     base, frame = _split_fixed_body(p)
     children = [
-        labeled(base, "Base plate", (0.65, 0.65, 0.7)),
-        labeled(frame, "Guide frame", (0.6, 0.75, 0.8)),
-        labeled(build_keeper_plate(p), "Keeper plate", (0.35, 0.5, 0.75)),
-        labeled(build_plunger(p), "Driven plunger", (0.85, 0.65, 0.25), Pos(0, travel, 0)),
-        labeled(
-            build_plunger(p, spring=True), "Spring plunger", (0.4, 0.75, 0.5), Pos(0, travel - retract, 0)
-        ),
+        labeled(base, "Base plate", PRINTED_GRAY),
+        labeled(frame, "Guide frame", PRINTED_SKY),
+        labeled(build_keeper_plate(p), "Keeper plate", PRINTED_INDIGO),
+        labeled(build_plunger(p), "Driven plunger", PRINTED_AMBER, Pos(0, travel, 0)),
+        labeled(build_plunger(p, spring=True), "Spring plunger", PRINTED_GREEN, Pos(0, travel - retract, 0)),
     ]
     if include_support:
         children += post_stack(
@@ -757,7 +761,7 @@ def build_carriage(p=None, *, travel=0.0, retract=0.0, include_support=False, in
             p.spring_outer_diameter, p.spring_wire_diameter, length, p.spring_display_coils
         )
         placed = Pos(0, p.spring_seat_y, p.spring_axis_z) * Rot(X=-90) * spring
-        children.append(labeled(placed, "2006N292 spring", (0.75, 0.75, 0.78)))
+        children.append(labeled(placed, "2006N292 spring", METAL))
     return assembly("Carriage (preliminary)", children)
 
 
@@ -770,15 +774,20 @@ def _adjuster_hardware(p, travel):
     # Flange on the inner face of the block, body running outboard.
     flange_face = p.insert_flange_face
     body_start = flange_face + p.insert_flange_thickness
-    bushing = _y_hole(p.insert_flange_diameter / 2, p.insert_flange_thickness, flange_face, p.adjuster_axis_z)
-    bushing += _y_hole(p.insert_body_diameter / 2, p.insert_body_length, body_start, p.adjuster_axis_z)
-    bushing -= _y_hole(
-        0.25 * INCH / 2,
-        p.insert_body_length + p.insert_flange_thickness + 2,
-        flange_face - 1,
-        p.adjuster_axis_z,
+    bushing = y_cylinder(
+        p.insert_flange_diameter, 0, p.adjuster_axis_z, flange_face, flange_face + p.insert_flange_thickness
     )
-    magnet = _box(
+    bushing += y_cylinder(
+        p.insert_body_diameter, 0, p.adjuster_axis_z, body_start, body_start + p.insert_body_length
+    )
+    bushing -= y_cylinder(
+        0.25 * INCH,
+        0,
+        p.adjuster_axis_z,
+        flange_face - 1,
+        flange_face + p.insert_body_length + p.insert_flange_thickness + 1,
+    )
+    magnet = floor_box(
         p.magnet_length,
         p.magnet_thickness,
         p.magnet_width,
@@ -786,9 +795,9 @@ def _adjuster_hardware(p, travel):
         z=p.adjuster_axis_z - p.magnet_width / 2,
     )
     return (
-        ("FAS100", screw, (0.75, 0.75, 0.78)),
-        ("FAS100 knob", knob, (0.16, 0.16, 0.17)),
-        ("FAS100 index dimple", dimple, (0.95, 0.95, 0.95)),
-        ("98625A950 bushing", bushing, (0.8, 0.65, 0.25)),
-        ("Magnet pad", magnet, (0.6, 0.6, 0.62)),
+        ("FAS100", screw, METAL),
+        ("FAS100 knob", knob, KNOB_BLACK),
+        ("FAS100 index dimple", dimple, INDEX_DIMPLE),
+        ("98625A950 bushing", bushing, BRASS),
+        ("Magnet pad", magnet, STEEL),
     )

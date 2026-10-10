@@ -23,9 +23,10 @@ are from the drawings in docs/reference/.
 from dataclasses import dataclass
 from math import isfinite
 
-from build123d import Box, Circle, Compound, Cylinder, Pos, Rectangle, RegularPolygon, Rot, Sphere, extrude
+from build123d import Circle, Compound, Pos, Rectangle, RegularPolygon, Rot, Sphere, extrude
 
-from schlieren.cad import BLACK_ANODIZED, METAL, ON_FLOOR, assembly, labeled
+from schlieren.cad import assembly, centered_box, floor_box, labeled, z_cylinder
+from schlieren.palette import BLACK_ANODIZED, GLASS, LED_YELLOW, METAL, SOLDER_MASK_WHITE
 from schlieren.parts.rail_shoe import post_stack
 from schlieren.standards import DATUM_DISC_THICKNESS, INCH, OPTICAL_HEIGHT, POST_DIAMETER, POST_LENGTH
 from schlieren.vendor_cad import (
@@ -47,9 +48,6 @@ WHOLE_IN_SECTION = (  # The LED module and condenser, shown entire in light_sour
     "ACL2520U-A condenser",
 )
 SECTION_BOX_SIZE = 1000.0  # Cutting box for light_source_section; larger than the module.
-GLASS = (0.7, 0.85, 0.95, 0.5)
-BOARD_COLOR = (0.92, 0.92, 0.9)  # White solder mask.
-LED_COLOR = (0.95, 0.9, 0.6)
 
 # Star-board outline, NewEnergy LST1-01F06 drawing: a hexagon with a U-notch at each corner. Used as a
 # representative outline for both boards; transfer hole geometry from the physical boards, not from this.
@@ -233,11 +231,9 @@ def build_led_package(board):
     """Representative LED package: square substrate and silicone dome; solder face on z=0, +z toward the lens."""
     dome_radius = board.dome_diameter / 2
     dome_center = board.package_height - dome_radius
-    package = Box(board.package_side, board.package_side, board.package_base, align=ON_FLOOR)
-    package += Pos(0, 0, board.package_base) * Cylinder(
-        dome_radius, dome_center - board.package_base, align=ON_FLOOR
-    )
-    hemisphere = Sphere(dome_radius) & Box(2 * dome_radius, 2 * dome_radius, dome_radius, align=ON_FLOOR)
+    package = floor_box(board.package_side, board.package_side, board.package_base)
+    package += z_cylinder(board.dome_diameter, 0, 0, board.package_base, dome_center)
+    hemisphere = Sphere(dome_radius) & floor_box(2 * dome_radius, 2 * dome_radius, dome_radius)
     return package + Pos(0, 0, dome_center) * hemisphere
 
 
@@ -282,10 +278,12 @@ def build_light_source_assembly(p=None, board=GREEN, engagement=None):
     children.append(labeled(thorlabs_acl2520u_a(), "ACL2520U-A condenser", GLASS, Pos(0, plano, z)))
     # Labels are viewer tree paths, so they must not contain "/".
     children.append(
-        labeled(build_star_board(board), "LED star board", BOARD_COLOR, Pos(0, p.cap_face, z) * toward_lens)
+        labeled(
+            build_star_board(board), "LED star board", SOLDER_MASK_WHITE, Pos(0, p.cap_face, z) * toward_lens
+        )
     )
     children.append(
-        labeled(build_led_package(board), "LED package", LED_COLOR, Pos(0, led_face, z) * toward_lens)
+        labeled(build_led_package(board), "LED package", LED_YELLOW, Pos(0, led_face, z) * toward_lens)
     )
     return assembly("Light source", children)
 
@@ -297,7 +295,7 @@ def light_source_section(module: Compound) -> Compound:
     WHOLE_IN_SECTION are kept entire. The post, rail shoe, and its clamp screw and nut (REFERENCE_HARDWARE_LABEL)
     are omitted.
     """
-    half_space = Pos(-SECTION_BOX_SIZE / 2, 0, 0) * Box(SECTION_BOX_SIZE, SECTION_BOX_SIZE, SECTION_BOX_SIZE)
+    half_space = centered_box(SECTION_BOX_SIZE, SECTION_BOX_SIZE, SECTION_BOX_SIZE, x=-SECTION_BOX_SIZE / 2)
     kept = []
     for child in module.children:
         if child.label == REFERENCE_HARDWARE_LABEL:

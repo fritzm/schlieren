@@ -30,11 +30,7 @@ from dataclasses import dataclass
 from math import cos, pi, radians, sin, sqrt
 
 from build123d import (
-    Align,
-    Box,
     Compound,
-    Cone,
-    Cylinder,
     Face,
     Helix,
     Location,
@@ -49,7 +45,32 @@ from build123d import (
     extrude,
 )
 
-from schlieren.cad import ON_FLOOR, along_y, assembly, labeled, leaves
+from schlieren.cad import (
+    along_y,
+    assembly,
+    box_between,
+    centered_box,
+    centered_cylinder,
+    labeled,
+    leaves,
+    y_cylinder,
+    z_cone,
+    z_cylinder,
+)
+from schlieren.palette import (
+    BLACK_OXIDE,
+    BRACKET_ALUMINUM,
+    BUSHING_BRASS,
+    HARDWARE_GRAY,
+    KNOB_SILVER,
+    MIRROR_GLASS,
+    NYLON,
+    PLYWOOD,
+    QR_PLATE_DARK,
+    RTV,
+    STAINLESS,
+    STEEL,
+)
 from schlieren.standards import INCH
 from schlieren.vendor_cad import (
     KOZAK_KB250_BORE_BOTTOM_X,
@@ -76,21 +97,9 @@ from schlieren.vendor_cad import (
     mcmaster_98164a527,
 )
 
-PLYWOOD_COLOR = (0.82, 0.68, 0.45)
-BUSHING_COLOR = (0.75, 0.62, 0.3)
-SCREW_COLOR = (0.6, 0.6, 0.62)
-KNOB_COLOR = (0.78, 0.78, 0.8)
-BLACK_OXIDE = (0.13, 0.13, 0.14)
-SPRING_COLOR = (0.7, 0.7, 0.72)
-BRACKET_COLOR = (0.7, 0.72, 0.75)
-NYLON_COLOR = (0.92, 0.92, 0.85)
 BRACKETS = {"left": -1, "right": 1}  # Side of the cell, by sign of x.
-MIRROR_COLOR = (0.55, 0.78, 0.9)
-QR_PLATE_COLOR = (0.16, 0.16, 0.18)
-STAINLESS = (0.72, 0.73, 0.75)
 QR_SIDES = {"left": -1, "right": 1}  # By sign of x.
 QR_STATIONS = ("front", "rear")
-RTV_COLOR = (0.92, 0.92, 0.88)
 
 # Knob seat: the screw's end bottoms in the knob's Ø6.35 bore. Distance from the ball tip to
 # the knob's open face, along the screw.
@@ -294,11 +303,6 @@ class MirrorCellParameters:
         assert KOZAK_TB250_LENGTH <= self.moving_plate_thickness
 
 
-def _cylinder(x: float, y0: float, z: float, diameter: float, length: float) -> Part:
-    """Cylinder along +y from y0 at (x, z)."""
-    return along_y((x, y0, z)) * Cylinder(diameter / 2, length, align=ON_FLOOR)
-
-
 def moving_plate_outline(p: MirrorCellParameters) -> list[tuple[float, float]]:
     """(x, z) vertices of the truncated hexagon, about the mirror center; one vertex up, the lower one clipped."""
     radius, apothem = p.hex_circumradius, p.apothem
@@ -331,17 +335,29 @@ def build_moving_plate(p: MirrorCellParameters | None = None) -> Part:
     cz = p.mirror_center_z
     outline = [(x, z + cz) for x, z in moving_plate_outline(p)]
     plate = _plate(outline, p.moving_plate_thickness, p.moving_plate_rear_y)
-    plate -= _cylinder(0, p.moving_plate_front_y - 1, cz, p.aperture_diameter, p.moving_plate_thickness + 2)
+    plate -= y_cylinder(
+        p.aperture_diameter,
+        0,
+        cz,
+        p.moving_plate_front_y - 1,
+        p.moving_plate_front_y + p.moving_plate_thickness + 1,
+    )
     for name in STATIONS:
         x, z = p.station_center(name)
-        plate -= _cylinder(x, p.moving_plate_front_y - 1, z, p.bushing_bore, p.moving_plate_thickness + 2)
-        # Spring seat registration counterbore in the rear face.
-        plate -= _cylinder(
+        plate -= y_cylinder(
+            p.bushing_bore,
             x,
-            p.moving_plate_rear_y - p.seat_counterbore_depth,
             z,
+            p.moving_plate_front_y - 1,
+            p.moving_plate_front_y + p.moving_plate_thickness + 1,
+        )
+        # Spring seat registration counterbore in the rear face.
+        plate -= y_cylinder(
             p.seat_counterbore_diameter,
-            p.seat_counterbore_depth + 1,
+            x,
+            z,
+            p.moving_plate_rear_y - p.seat_counterbore_depth,
+            p.moving_plate_rear_y + 1,
         )
     return plate
 
@@ -354,21 +370,29 @@ def build_fixed_plate(p: MirrorCellParameters | None = None) -> Part:
     plate = _plate(outline, p.fixed_plate_thickness, p.fixed_plate_rear_y)
     for name in STATIONS:
         x, z = p.station_center(name)
-        plate -= _cylinder(
-            x, p.fixed_plate_front_y - 1, z, p.fixed_hole_diameter, p.fixed_plate_thickness + 2
+        plate -= y_cylinder(
+            p.fixed_hole_diameter,
+            x,
+            z,
+            p.fixed_plate_front_y - 1,
+            p.fixed_plate_front_y + p.fixed_plate_thickness + 1,
         )
-        plate -= _cylinder(
-            x, p.fixed_plate_front_y - 1, z, p.seat_counterbore_diameter, p.seat_counterbore_depth + 1
+        plate -= y_cylinder(
+            p.seat_counterbore_diameter,
+            x,
+            z,
+            p.fixed_plate_front_y - 1,
+            p.fixed_plate_front_y + p.seat_counterbore_depth,
         )
-        plate -= _cylinder(x, p.washer_back_y, z, p.socket_diameter, p.socket_depth + 1)
+        plate -= y_cylinder(p.socket_diameter, x, z, p.washer_back_y, p.washer_back_y + p.socket_depth + 1)
     for side in BRACKETS.values():
         for z in p.upright_hole_z():
-            plate -= _cylinder(
-                p.bracket_center_x(side),
-                p.fixed_plate_front_y - 1,
-                z,
+            plate -= y_cylinder(
                 p.bracket_hole_diameter,
-                p.fixed_plate_thickness + 2,
+                p.bracket_center_x(side),
+                z,
+                p.fixed_plate_front_y - 1,
+                p.fixed_plate_front_y + p.fixed_plate_thickness + 1,
             )
     return plate
 
@@ -376,19 +400,18 @@ def build_fixed_plate(p: MirrorCellParameters | None = None) -> Part:
 def build_base_plate(p: MirrorCellParameters | None = None) -> Part:
     """The base plate, with the four bracket-screw holes and the four countersunk quick-release screw holes."""
     p = p or MirrorCellParameters()
-    plate = Box(p.plate_width, p.base_depth, p.base_thickness, align=(Align.CENTER, Align.MIN, Align.MAX))
+    plate = box_between(-p.plate_width / 2, p.plate_width / 2, 0, p.base_depth, -p.base_thickness, 0)
     for side in BRACKETS.values():
         for y in p.base_hole_y():
-            plate -= Pos(p.bracket_center_x(side), y, -p.base_thickness / 2) * Cylinder(
-                p.bracket_hole_diameter / 2, p.base_thickness + 2
+            plate -= z_cylinder(
+                p.bracket_hole_diameter, p.bracket_center_x(side), y, -p.base_thickness - 1, 1
             )
     hole_radius, top_radius = p.qr_clearance_hole / 2, p.qr_countersink_diameter / 2
     depth = top_radius - hole_radius  # Of the 90° countersink.
     for x, y in p.qr_screw_positions().values():
-        plate -= Pos(x, y, -p.base_thickness / 2) * Cylinder(hole_radius, p.base_thickness + 2)
+        plate -= z_cylinder(2 * hole_radius, x, y, -p.base_thickness - 1, 1)
         # A 90° cone, carried 1 mm above the surface so the cut is clean.
-        cone = Cone(hole_radius, top_radius + 1, depth + 1)
-        plate -= Pos(x, y, -depth + (depth + 1) / 2) * cone
+        plate -= z_cone(2 * hole_radius, 2 * top_radius + 2, x, y, -depth, 1)
     return plate
 
 
@@ -397,9 +420,8 @@ def build_qr_screw(p: MirrorCellParameters | None = None) -> Part:
     p = p or MirrorCellParameters()
     head_radius, shank_radius = p.qr_screw_head_diameter / 2, p.qr_screw_diameter / 2
     head_depth = head_radius - shank_radius  # The 90° cone down to the shank.
-    head = Pos(0, 0, -head_depth / 2) * Cone(shank_radius, head_radius, head_depth)
-    shank_length = p.qr_screw_length - head_depth
-    shank = Pos(0, 0, -head_depth - shank_length / 2) * Cylinder(shank_radius, shank_length)
+    head = z_cone(2 * shank_radius, 2 * head_radius, 0, 0, -head_depth, 0)
+    shank = z_cylinder(2 * shank_radius, 0, 0, -p.qr_screw_length, -head_depth)
     return head + shank
 
 
@@ -418,9 +440,9 @@ def build_quick_release_plate(p: MirrorCellParameters | None = None) -> Part:
     thickness = p.qr_plate_thickness
     center_z = -p.base_thickness - thickness / 2
     plate = _plate(quick_release_outline(p), p.qr_plate_length, p.qr_plate_length)
-    slot = Box(p.qr_slot_width, p.qr_slot_length, thickness + 2)
+    slot = centered_box(p.qr_slot_width, p.qr_slot_length, thickness + 2)
     for end in (-1, 1):
-        slot += Pos(0, end * p.qr_slot_length / 2, 0) * Cylinder(p.qr_slot_width / 2, thickness + 2)
+        slot += centered_cylinder(p.qr_slot_width, thickness + 2, y=end * p.qr_slot_length / 2)
     plate -= Pos(0, p.qr_plate_length / 2, center_z) * slot
     half = p.qr_notch_width / 2
     notch = Polygon(
@@ -434,9 +456,7 @@ def build_quick_release_plate(p: MirrorCellParameters | None = None) -> Part:
     plate -= Pos(0, 0, center_z - thickness / 2 - 1) * extrude(notch, amount=thickness + 2)
     top = -p.base_thickness
     for x, y in p.qr_screw_positions().values():  # Tapped holes, drawn at the nominal thread diameter.
-        plate -= Pos(x, y, top - p.qr_tapped_hole_depth / 2 + 0.5) * Cylinder(
-            p.qr_screw_diameter / 2, p.qr_tapped_hole_depth + 1
-        )
+        plate -= z_cylinder(p.qr_screw_diameter, x, y, top - p.qr_tapped_hole_depth, top + 1)
     return plate
 
 
@@ -444,7 +464,7 @@ def build_mirror(p: MirrorCellParameters | None = None) -> Part:
     """Concave front toward -y, back flush with the rear face of the moving plate."""
     p = p or MirrorCellParameters()
     front = p.mirror_front_y
-    blank = _cylinder(0, front, p.mirror_center_z, p.mirror_diameter, p.mirror_edge_thickness)
+    blank = y_cylinder(p.mirror_diameter, 0, p.mirror_center_z, front, front + p.mirror_edge_thickness)
     radius = 2 * p.mirror_focal_length
     center = (0, front + p.mirror_sag - radius, p.mirror_center_z)
     return blank - Pos(*center) * Sphere(radius)
@@ -457,11 +477,9 @@ def build_rtv_pad(p: MirrorCellParameters, index: int) -> Part:
     # Built about the z axis, then stood on the y axis. The pad is the part of the gap annulus within reach of a
     # block of the pad's length, so its ends follow the mirror edge and the aperture wall.
     depth = p.rtv_pad_depth
-    annulus = Cylinder(p.aperture_diameter / 2, depth) - Cylinder(p.mirror_diameter / 2, depth + 2)
-    reach = (
-        Rot(Z=360.0 / p.rtv_pad_count * index)
-        * Pos(mid_radius, 0, 0)
-        * Box(p.rtv_gap + 2, p.rtv_pad_length, depth)
+    annulus = centered_cylinder(p.aperture_diameter, depth) - centered_cylinder(p.mirror_diameter, depth + 2)
+    reach = Rot(Z=360.0 / p.rtv_pad_count * index) * centered_box(
+        p.rtv_gap + 2, p.rtv_pad_length, depth, x=mid_radius
     )
     return Pos(0, mirror_mid, p.mirror_center_z) * Rot(X=90) * (annulus & reach)
 
@@ -480,7 +498,7 @@ def build_spring(p: MirrorCellParameters, x: float, y0: float, z: float) -> Part
 
 
 def _tube(x: float, y0: float, z: float, outer: float, inner: float, length: float) -> Part:
-    return _cylinder(x, y0, z, outer, length) - _cylinder(x, y0 - 1, z, inner, length + 2)
+    return y_cylinder(outer, x, z, y0, y0 + length) - y_cylinder(inner, x, z, y0 - 1, y0 + length + 1)
 
 
 def _bracket_fasteners(p: MirrorCellParameters, name: str, side: int) -> list[Part]:
@@ -519,10 +537,10 @@ def _bracket_fasteners(p: MirrorCellParameters, name: str, side: int) -> list[Pa
     parts = []
     for label, screw_loc, washer_loc, nut_loc in stacks:
         parts += [
-            labeled(screw, f"Bracket screw {label}", SCREW_COLOR, screw_loc),
+            labeled(screw, f"Bracket screw {label}", STEEL, screw_loc),
             labeled(washer, f"Bracket washer {label}", BLACK_OXIDE, washer_loc),
-            labeled(nut, f"Locknut {label}", SCREW_COLOR, nut_loc),
-            labeled(insert, f"Locknut insert {label}", NYLON_COLOR, nut_loc),
+            labeled(nut, f"Locknut {label}", STEEL, nut_loc),
+            labeled(insert, f"Locknut insert {label}", NYLON, nut_loc),
         ]
     return parts
 
@@ -531,21 +549,21 @@ def build_mirror_cell_assembly(p: MirrorCellParameters | None = None) -> Compoun
     p = p or MirrorCellParameters()
     p.validate()
     children = [
-        labeled(build_base_plate(p), "Base plate", PLYWOOD_COLOR),
-        labeled(build_fixed_plate(p), "Cell-adjuster plate", PLYWOOD_COLOR),
-        labeled(build_moving_plate(p), "Moving mirror plate", PLYWOOD_COLOR),
-        labeled(build_mirror(p), "Mirror", MIRROR_COLOR),
-        labeled(build_quick_release_plate(p), "Quick-release plate", QR_PLATE_COLOR),
+        labeled(build_base_plate(p), "Base plate", PLYWOOD),
+        labeled(build_fixed_plate(p), "Cell-adjuster plate", PLYWOOD),
+        labeled(build_moving_plate(p), "Moving mirror plate", PLYWOOD),
+        labeled(build_mirror(p), "Mirror", MIRROR_GLASS),
+        labeled(build_quick_release_plate(p), "Quick-release plate", QR_PLATE_DARK),
     ]
     bracket = mcmaster_8681n11()
     for name, side in BRACKETS.items():
         # Flush with the side edge of the plates; the base leg points forward and the upright leg rises on the
         # fixed plate's front face.
         loc = Location((p.bracket_center_x(side), p.fixed_plate_front_y, 0)) * Rot(Z=180)
-        children.append(labeled(bracket, f"Bracket {name}", BRACKET_COLOR, loc))
+        children.append(labeled(bracket, f"Bracket {name}", BRACKET_ALUMINUM, loc))
         children += _bracket_fasteners(p, name, side)
     for i in range(p.rtv_pad_count):
-        children.append(labeled(build_rtv_pad(p, i), f"RTV pad {i + 1}", RTV_COLOR))
+        children.append(labeled(build_rtv_pad(p, i), f"RTV pad {i + 1}", RTV))
     qr_screw = build_qr_screw(p)
     for (station, side), (x, y) in p.qr_screw_positions().items():
         loc = Location((x, y, -p.qr_head_recess))
@@ -564,15 +582,15 @@ def build_mirror_cell_assembly(p: MirrorCellParameters | None = None) -> Compoun
     for name in STATIONS:
         x, z = p.station_center(name)
         children += [
-            labeled(screw, f"Adjuster screw {name}", SCREW_COLOR, Location((x, p.screw_tip_y, z))),
-            labeled(ball, f"Adjuster ball {name}", SCREW_COLOR, Location((x, p.screw_tip_y, z))),
+            labeled(screw, f"Adjuster screw {name}", STEEL, Location((x, p.screw_tip_y, z))),
+            labeled(ball, f"Adjuster ball {name}", STEEL, Location((x, p.screw_tip_y, z))),
             labeled(
                 bushing,
                 f"Bushing {name}",
-                BUSHING_COLOR,
+                BUSHING_BRASS,
                 Location((x, p.moving_plate_front_y - KOZAK_TB250_FLANGE_THICKNESS, z)),
             ),
-            labeled(knob, f"Knob {name}", KNOB_COLOR, Location((x, p.washer_front_y, z))),
+            labeled(knob, f"Knob {name}", KNOB_SILVER, Location((x, p.washer_front_y, z))),
             labeled(
                 female, f"Spherical washer, female {name}", BLACK_OXIDE, Location((x, p.washer_back_y, z))
             ),
@@ -580,10 +598,10 @@ def build_mirror_cell_assembly(p: MirrorCellParameters | None = None) -> Compoun
         ]
         spring_y0 = p.moving_plate_rear_y + (p.seat_washer_thickness - p.seat_counterbore_depth)
         spring = build_spring(p, x, spring_y0, z)
-        children.append(labeled(spring, f"Compression spring {name}", SPRING_COLOR))
+        children.append(labeled(spring, f"Compression spring {name}", HARDWARE_GRAY))
         for side, (y0, label) in seat_y.items():
             washer = _tube(x, y0, z, p.seat_washer_od, p.seat_washer_id, p.seat_washer_thickness)
-            children.append(labeled(washer, f"{label} {name}", SPRING_COLOR))
+            children.append(labeled(washer, f"{label} {name}", HARDWARE_GRAY))
     return assembly("Mirror cell", children)
 
 
@@ -613,7 +631,7 @@ def adjuster_section(cell: Compound, p: MirrorCellParameters, name: str) -> Comp
     y0 = p.screw_tip_y - ADJUSTER_SECTION_FRONT_MARGIN
     y1 = p.washer_front_y + KOZAK_KB250_LENGTH + ADJUSTER_SECTION_REAR_MARGIN
     r = ADJUSTER_SECTION_RADIUS
-    keep = Pos(x + r / 2, (y0 + y1) / 2, z) * Box(r, y1 - y0, 2 * r)
+    keep = centered_box(r, y1 - y0, 2 * r, x + r / 2, (y0 + y1) / 2, z)
     kept = []
     for leaf in leaves(cell):
         if leaf.label.endswith(f" {name}") and leaf.label.startswith(ADJUSTER_HARDWARE_LABELS):

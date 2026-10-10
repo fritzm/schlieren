@@ -17,9 +17,10 @@ without threads or sockets, and the T-nuts are not modeled.
 from dataclasses import dataclass
 from math import atan, cos, degrees, pi, sin
 
-from build123d import Align, Box, Compound, Cylinder, Location, Part, Pos, Rot
+from build123d import Compound, Location, Part, Pos, Rot
 
-from schlieren.cad import BLACK_ANODIZED, ON_FLOOR, assembly, labeled, place
+from schlieren.cad import assembly, box_between, floor_box, labeled, place, z_cylinder
+from schlieren.palette import BLACK_ANODIZED, BLACK_OXIDE, METAL, PLYWOOD, RUBBER, SORBOTHANE, STEEL_GRAY
 from schlieren.parts.rail import RailProfile, build_rail
 from schlieren.standards import INCH
 from schlieren.vendor_cad import (
@@ -48,15 +49,6 @@ M5_HEAD_DIAMETER = 8.5
 M5_WASHER_DIAMETER = 10.0
 M5_WASHER_THICKNESS = MCMASTER_93475A240_THICKNESS
 M5_NYLOC_HEIGHT = MCMASTER_93625A225_HEIGHT
-
-PLYWOOD_COLOR = (0.82, 0.68, 0.45)
-ALUMINUM_COLOR = (0.75, 0.75, 0.78)
-STEEL_COLOR = (0.6, 0.6, 0.6)
-BLACK_OXIDE_COLOR = (0.13, 0.13, 0.14)  # The pivot nylocs and the yaw thumb nuts.
-RUBBER_COLOR = (0.15, 0.15, 0.15)
-SORBOTHANE_COLOR = (0.25, 0.2, 0.3)
-
-TOP_AT_ORIGIN = (Align.CENTER, Align.CENTER, Align.MAX)
 
 
 @dataclass(frozen=True)
@@ -255,15 +247,20 @@ class FrameParameters:
 def _bore(diameter: float, length: float, x: float = 0.0, y: float = 0.0, z: float = 0.0) -> Part:
     """Through-hole cutter along +z from z, overrunning both ends."""
     overrun = 1.0
-    return Pos(x, y, z - overrun) * Cylinder(diameter / 2, length + 2 * overrun, align=ON_FLOOR)
+    return z_cylinder(diameter, x, y, z - overrun, z + length + overrun)
 
 
 def build_pivot_plate(p: FrameParameters | None = None) -> Part:
     """The front pivot plate with its two pivot holes and four yaw-bolt holes."""
     p = p or FrameParameters()
     p.validate()
-    plate = Pos(0, 0, p.plate_top) * Box(
-        p.plate_width, p.plate_depth, p.plywood_thickness, align=(Align.CENTER, Align.MIN, Align.MAX)
+    plate = box_between(
+        -p.plate_width / 2,
+        p.plate_width / 2,
+        0,
+        p.plate_depth,
+        p.plate_top - p.plywood_thickness,
+        p.plate_top,
     )
     for x, y in p.plate_holes().values():
         plate -= _bore(p.m5_clearance_diameter, p.plywood_thickness, x, y, p.plate_bottom)
@@ -274,7 +271,7 @@ def build_foot_block(p: FrameParameters | None = None) -> Part:
     """One rear foot block, centered on x=y=0 with its length along y and its top (rail) face at z=0."""
     p = p or FrameParameters()
     p.validate()
-    block = Box(p.foot_block_width, p.foot_block_length, p.plywood_thickness, align=TOP_AT_ORIGIN)
+    block = floor_box(p.foot_block_width, p.foot_block_length, p.plywood_thickness, z=-p.plywood_thickness)
     for y in (-p.foot_screw_spacing / 2, p.foot_screw_spacing / 2):
         block -= _bore(p.m5_clearance_diameter, p.plywood_thickness, 0, y, -p.plywood_thickness)
     return block
@@ -283,7 +280,7 @@ def build_foot_block(p: FrameParameters | None = None) -> Part:
 def build_joining_plate(p: FrameParameters | None = None) -> Part:
     """A 3-hole joining plate, centered on x=y=0 with its length along y and its bottom face at z=0."""
     p = p or FrameParameters()
-    plate = Box(p.joining_plate_width, p.joining_plate_length, p.joining_plate_thickness, align=ON_FLOOR)
+    plate = floor_box(p.joining_plate_width, p.joining_plate_length, p.joining_plate_thickness)
     for hole in (-1, 0, 1):
         plate -= _bore(
             p.m5_clearance_diameter, p.joining_plate_thickness, 0, hole * p.joining_plate_hole_pitch
@@ -292,7 +289,7 @@ def build_joining_plate(p: FrameParameters | None = None) -> Part:
 
 
 def _ring(outer_diameter: float, inner_diameter: float, height: float) -> Part:
-    return Cylinder(outer_diameter / 2, height, align=ON_FLOOR) - _bore(inner_diameter, height)
+    return z_cylinder(outer_diameter, 0, 0, 0, height) - _bore(inner_diameter, height)
 
 
 def _rail_assembly(p: FrameParameters, name: str) -> Compound:
@@ -308,14 +305,14 @@ def _rail_assembly(p: FrameParameters, name: str) -> Compound:
             BLACK_ANODIZED,
             Pos(0, -(p.rail_front_setback + p.rail_length / 2), 0),
         ),
-        labeled(build_joining_plate(p), "Pivot lug", ALUMINUM_COLOR, Pos(0, lug_center, 0)),
-        labeled(build_foot_block(p), "Foot block", PLYWOOD_COLOR, Pos(0, block_y, p.plate_top)),
-        labeled(mcmaster_8215k2(), "Foot", SORBOTHANE_COLOR, Pos(0, block_y, block_bottom)),
+        labeled(build_joining_plate(p), "Pivot lug", METAL, Pos(0, lug_center, 0)),
+        labeled(build_foot_block(p), "Foot block", PLYWOOD, Pos(0, block_y, p.plate_top)),
+        labeled(mcmaster_8215k2(), "Foot", SORBOTHANE, Pos(0, block_y, block_bottom)),
     ]
     for index, y in enumerate((lug_center, lug_center - p.joining_plate_hole_pitch), start=1):
         head_down = Pos(0, y, p.joining_plate_thickness) * Rot(X=180)
         parts.append(
-            labeled(m5_socket_screw(p.lug_screw_length), f"Lug screw {index}", STEEL_COLOR, head_down)
+            labeled(m5_socket_screw(p.lug_screw_length), f"Lug screw {index}", STEEL_GRAY, head_down)
         )
     for index, offset in enumerate((-p.foot_screw_spacing / 2, p.foot_screw_spacing / 2), start=1):
         y = block_y + offset
@@ -324,14 +321,14 @@ def _rail_assembly(p: FrameParameters, name: str) -> Compound:
             z = under_head + layer * M5_WASHER_THICKNESS
             parts.append(
                 labeled(
-                    mcmaster_93475a240(), f"Foot screw {index} washer {layer + 1}", STEEL_COLOR, Pos(0, y, z)
+                    mcmaster_93475a240(), f"Foot screw {index} washer {layer + 1}", STEEL_GRAY, Pos(0, y, z)
                 )
             )
         parts.append(
             labeled(
                 m5_socket_screw(p.foot_screw_length),
                 f"Foot screw {index}",
-                STEEL_COLOR,
+                STEEL_GRAY,
                 Pos(0, y, under_head),
             )
         )
@@ -342,14 +339,14 @@ def _plate_assembly(p: FrameParameters) -> Compound:
     """The pivot plate and everything fixed to it: front foot, pivot stacks, yaw straps and their bolts."""
     under_head = p.plate_bottom - p.oversize_washer_thickness
     spacer = _ring(p.pivot_spacer_outer_diameter, p.pivot_spacer_inner_diameter, p.pivot_spacer_length)
-    strip = Box(p.joining_plate_width, p.friction_strip_length, p.friction_strip_thickness, align=ON_FLOOR)
+    strip = floor_box(p.joining_plate_width, p.friction_strip_length, p.friction_strip_thickness)
 
     parts = [
-        labeled(build_pivot_plate(p), "Pivot plate", PLYWOOD_COLOR),
+        labeled(build_pivot_plate(p), "Pivot plate", PLYWOOD),
         labeled(
             mcmaster_8215k2(),
             "Front foot",
-            SORBOTHANE_COLOR,
+            SORBOTHANE,
             Pos(0, p.plate_depth - p.pivot_setback, p.plate_bottom),
         ),
     ]
@@ -357,27 +354,27 @@ def _plate_assembly(p: FrameParameters) -> Compound:
     def stack(label: str, x: float, y: float, top: float, nut: Compound) -> None:
         """Screw up through the plate at (x, y), with washers under the plate and on the surface at top."""
         for part, name, z, color in (
-            (mcmaster_92290a265(), "screw", under_head, STEEL_COLOR),
-            (mcmaster_91116a350(), "lower washer", under_head, STEEL_COLOR),
-            (mcmaster_91116a350(), "upper washer", top, STEEL_COLOR),
-            (nut, "nut", top + p.oversize_washer_thickness, BLACK_OXIDE_COLOR),
+            (mcmaster_92290a265(), "screw", under_head, STEEL_GRAY),
+            (mcmaster_91116a350(), "lower washer", under_head, STEEL_GRAY),
+            (mcmaster_91116a350(), "upper washer", top, STEEL_GRAY),
+            (nut, "nut", top + p.oversize_washer_thickness, BLACK_OXIDE),
         ):
             parts.append(labeled(part, f"{label} {name}", color, Pos(x, y, z)))
 
     for name, side in SIDES.items():
         x, y = p.pivot_center(side)
         stack(f"{name} pivot", x, y, p.joining_plate_thickness, mcmaster_93625a225())
-        parts.append(labeled(spacer, f"{name} pivot spacer", STEEL_COLOR, Pos(x, y, p.plate_top)))
+        parts.append(labeled(spacer, f"{name} pivot spacer", STEEL_GRAY, Pos(x, y, p.plate_top)))
 
         # The strap lies across the nominal rail axis and stays there when the rail is yawed.
         x, y = p.strap_center(side)
         across_rail = Pos(x, y, 0) * Rot(Z=degrees(side * p.half_angle) + 90)
-        parts.append(labeled(strip, f"{name} friction strip", RUBBER_COLOR, across_rail))
+        parts.append(labeled(strip, f"{name} friction strip", RUBBER, across_rail))
         parts.append(
             labeled(
                 build_joining_plate(p),
                 f"{name} yaw strap",
-                ALUMINUM_COLOR,
+                METAL,
                 across_rail * Pos(0, 0, p.strap_bottom),
             )
         )

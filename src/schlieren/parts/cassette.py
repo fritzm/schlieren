@@ -11,10 +11,7 @@ from math import cos, isfinite, pi, radians, tan
 
 from build123d import (
     Axis,
-    Box,
     Circle,
-    Cone,
-    Cylinder,
     Plane,
     Polygon,
     Pos,
@@ -24,7 +21,8 @@ from build123d import (
     fillet,
 )
 
-from schlieren.cad import ON_FLOOR, assembly, labeled
+from schlieren.cad import assembly, floor_box, labeled, z_cone, z_cylinder
+from schlieren.palette import HARDWARE_GRAY, PRINTED_AZURE, PRINTED_ORANGE, RUBBER
 from schlieren.standards import INCH
 
 
@@ -112,15 +110,13 @@ def build_cassette(p=None):
     ]
     pair = extrude(Plane.YZ.offset(-half) * Polygon(*profile, align=None), amount=p.size)
     blank = pair & (Rot(Z=90) * pair)
-    blank -= Cylinder(p.aperture_diameter / 2, p.thickness, align=ON_FLOOR)
+    blank -= z_cylinder(p.aperture_diameter, 0, 0, 0, p.thickness)
     for x, y in p.clamp_holes:
-        blank -= Pos(x, y, 0) * Cylinder(p.bore_diameter / 2, p.thickness, align=ON_FLOOR)
-        blank -= Pos(x, y, 0) * Cone(
-            p.countersink_diameter / 2, p.bore_diameter / 2, p.countersink_depth, align=ON_FLOOR
-        )
+        blank -= z_cylinder(p.bore_diameter, x, y, 0, p.thickness)
+        blank -= z_cone(p.countersink_diameter, p.bore_diameter, x, y, 0, p.countersink_depth)
     for x in (-p.cleat_x, p.cleat_x):
-        cleat = Pos(x, 0, p.thickness) * Cone(
-            p.cleat_base_diameter / 2, p.cleat_top_diameter / 2, p.cleat_height, align=ON_FLOOR
+        cleat = z_cone(
+            p.cleat_base_diameter, p.cleat_top_diameter, x, 0, p.thickness, p.thickness + p.cleat_height
         )
         cleat = fillet(cleat.edges().sort_by(Axis.Z)[-1], p.cleat_top_round)
         blank += cleat
@@ -175,10 +171,9 @@ def build_clamp_bar(p=None, b=None):
     bar = fillet(bar.edges().filter_by(Axis.Z), b.corner_radius)
     for sign in (-1, 1):
         relief_width = x + half - b.end_relief_start_x
-        bar -= Pos(sign * (b.end_relief_start_x + relief_width / 2), 0, 0) * Box(
-            relief_width, p.size, b.end_relief_depth, align=ON_FLOOR
-        )
-        bar -= Pos(sign * x, y, 0) * Cylinder(p.bore_diameter / 2, b.thickness, align=ON_FLOOR)
+        relief_x = sign * (b.end_relief_start_x + relief_width / 2)
+        bar -= floor_box(relief_width, p.size, b.end_relief_depth, x=relief_x)
+        bar -= z_cylinder(p.bore_diameter, sign * x, y, 0, b.thickness)
     return bar
 
 
@@ -192,8 +187,12 @@ def build_cassette_assembly(p=None, b=None):
     b = b or ClampBarParameters()
     bottom = b.bar_bottom(p)
     bar = Pos(0, 0, bottom) * build_clamp_bar(p, b)
-    pad = Pos(0, (b.inner_edge_y + b.outer_edge_y) / 2, bottom - b.epdm_thickness) * Box(
-        2 * b.bridge_half_length, b.outer_edge_y - b.inner_edge_y, b.epdm_thickness, align=ON_FLOOR
+    pad = floor_box(
+        2 * b.bridge_half_length,
+        b.outer_edge_y - b.inner_edge_y,
+        b.epdm_thickness,
+        y=(b.inner_edge_y + b.outer_edge_y) / 2,
+        z=bottom - b.epdm_thickness,
     )
     hardware = []
     for i, x in enumerate((-p.clamp_hole_x, p.clamp_hole_x), 1):
@@ -210,20 +209,17 @@ def build_cassette_assembly(p=None, b=None):
         )
         # Ideal 90° head cone and plain shank; drive socket/threads omitted.
         head_depth = (p.screw_head_diameter - p.screw_diameter) / 2
-        screw = Pos(x, y, b.head_recess) * Cone(
-            p.screw_head_diameter / 2, p.screw_diameter / 2, head_depth, align=ON_FLOOR
-        )
-        screw += Pos(x, y, b.head_recess + head_depth) * Cylinder(
-            p.screw_diameter / 2, b.screw_length - head_depth, align=ON_FLOOR
-        )
+        head_end = b.head_recess + head_depth
+        screw = z_cone(p.screw_head_diameter, p.screw_diameter, x, y, b.head_recess, head_end)
+        screw += z_cylinder(p.screw_diameter, x, y, head_end, b.head_recess + b.screw_length)
         hardware += [(f"Washer {i}", washer), (f"Nut {i}", nut), (f"Screw {i}", screw)]
-    children = [labeled(build_cassette(p), "Cassette base", (0.8, 0.4, 0.25))]
+    children = [labeled(build_cassette(p), "Cassette base", PRINTED_ORANGE)]
     for sign, label in ((1, "Upper clamp"), (-1, "Lower clamp")):
         loc = Rot(Z=0 if sign == 1 else 180)
         clamp = [
-            labeled(bar, "Printed bar", (0.3, 0.55, 0.8), loc),
-            labeled(pad, "EPDM reference", (0.15, 0.15, 0.15), loc),
-            *(labeled(part, name, (0.7, 0.7, 0.72), loc) for name, part in hardware),
+            labeled(bar, "Printed bar", PRINTED_AZURE, loc),
+            labeled(pad, "EPDM reference", RUBBER, loc),
+            *(labeled(part, name, HARDWARE_GRAY, loc) for name, part in hardware),
         ]
         children.append(assembly(label, clamp))
     return assembly("Cassette assembly (preliminary)", children)

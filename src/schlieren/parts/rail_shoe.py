@@ -11,28 +11,34 @@ from dataclasses import dataclass
 from math import cos, pi, sqrt
 
 from build123d import (
-    Align,
     Axis,
-    Box,
     Compound,
-    Cylinder,
     GeomType,
     Location,
     Part,
     Pos,
-    RegularPolygon,
     Rot,
-    extrude,
     fillet,
 )
 
-from schlieren.cad import BLACK_ANODIZED, FROM_CORNER, METAL, ON_FLOOR, along_x, along_y, assembly, labeled
+from schlieren.cad import (
+    assembly,
+    box_between,
+    floor_box,
+    labeled,
+    x_cylinder,
+    y_cylinder,
+    y_hex,
+    z_cylinder,
+)
+from schlieren.palette import BLACK_ANODIZED, METAL, PRINTED_ORANGE, STEEL_GRAY
 from schlieren.parts.rail import build_rail
 from schlieren.standards import (
     DATUM_DISC_DIAMETER,
     DATUM_DISC_THICKNESS,
     OPTICAL_HEIGHT,
     POST_DIAMETER,
+    POST_LENGTH,
 )
 from schlieren.vendor_cad import (
     MCMASTER_93475A240_THICKNESS,
@@ -182,8 +188,6 @@ class RailShoeParameters:
             raise ValueError("Screw bore must fit within the ear face")
 
 
-SHOE_COLOR = (0.8, 0.4, 0.25)  # The printed rail shoe, as in every assembly.
-REFERENCE_COLOR = (0.6, 0.6, 0.6)
 VIEWER_RAIL_OVERHANG = 15.0  # Rail shown beyond each end of the shoe.
 
 
@@ -193,20 +197,18 @@ def build_rail_shoe(p: RailShoeParameters | None = None) -> Part:
     p.validate()
     overrun = 1.0
 
-    shoe = Pos(0, 0, -p.skirt_depth) * Box(p.width, p.length, p.skirt_depth + p.bridge_top, align=ON_FLOOR)
+    shoe = floor_box(p.width, p.length, p.skirt_depth + p.bridge_top, z=-p.skirt_depth)
     shoe = fillet(shoe.edges().filter_by(Axis.Z), p.outside_corner_radius)
 
-    rail_void = Pos(0, 0, -p.skirt_depth - overrun) * Box(
-        p.rail_opening, p.length + 2 * overrun, p.skirt_depth + overrun, align=ON_FLOOR
+    rail_void = floor_box(
+        p.rail_opening, p.length + 2 * overrun, p.skirt_depth + overrun, z=-p.skirt_depth - overrun
     )
     shoe -= rail_void
 
-    counterbore = Pos(0, 0, -overrun) * Cylinder(
-        p.datum_counterbore_diameter / 2, p.datum_counterbore_depth + overrun, align=ON_FLOOR
-    )
+    counterbore = z_cylinder(p.datum_counterbore_diameter, 0, 0, -overrun, p.datum_counterbore_depth)
     shoe -= counterbore
 
-    collar = Pos(0, 0, p.collar_bottom) * Cylinder(p.collar_outer_radius, p.collar_height, align=ON_FLOOR)
+    collar = z_cylinder(2 * p.collar_outer_radius, 0, 0, p.collar_bottom, p.collar_bottom + p.collar_height)
     shoe += collar
 
     root = [
@@ -223,13 +225,18 @@ def build_rail_shoe(p: RailShoeParameters | None = None) -> Part:
     ear_y_min = p.split_gap / 2
     collar_x_at_inner_face = sqrt(p.collar_outer_radius**2 - ear_y_min**2)
     ear_x_end = collar_x_at_inner_face + p.ear_width
-    nut_ear = Pos(0, ear_y_min, p.ear_bottom) * Box(
-        ear_x_end, p.nut_ear_thickness, p.ear_height, align=FROM_CORNER
+    nut_ear = box_between(
+        0, ear_x_end, ear_y_min, ear_y_min + p.nut_ear_thickness, p.ear_bottom, p.ear_bottom + p.ear_height
     )
     shoe += nut_ear
 
-    screw_ear = Pos(0, -ear_y_min - p.screw_ear_thickness, p.ear_bottom) * Box(
-        ear_x_end, p.screw_ear_thickness, p.ear_height, align=FROM_CORNER
+    screw_ear = box_between(
+        0,
+        ear_x_end,
+        -ear_y_min - p.screw_ear_thickness,
+        -ear_y_min,
+        p.ear_bottom,
+        p.ear_bottom + p.ear_height,
     )
     shoe += screw_ear
 
@@ -250,25 +257,22 @@ def build_rail_shoe(p: RailShoeParameters | None = None) -> Part:
         raise ValueError("Expected two outer ear-to-collar root edges")
     shoe = fillet(outer_root_edges, p.ear_root_fillet)
 
-    bore = Pos(0, 0, -overrun) * Cylinder(p.post_bore / 2, p.collar_top + 2 * overrun, align=ON_FLOOR)
+    bore = z_cylinder(p.post_bore, 0, 0, -overrun, p.collar_top + overrun)
     shoe -= bore
 
     # Radial split toward +x, centered on y=0. The rectangle ends at
     # the relief center; the circular bore extends another radius below it.
     # Include the bridge/skirt if the requested relief depth reaches them.
     split_length = max(ear_x_end, p.width / 2) + overrun
-    split = Pos(0, 0, p.split_relief_z) * Box(
-        split_length,
-        p.split_gap,
-        p.collar_top - p.split_relief_z + overrun,
-        align=(Align.MIN, Align.CENTER, Align.MIN),
+    split = box_between(
+        0, split_length, -p.split_gap / 2, p.split_gap / 2, p.split_relief_z, p.collar_top + overrun
     )
-    relief = along_x((0, 0, p.split_relief_z)) * Cylinder(p.split_relief_radius, split_length, align=ON_FLOOR)
+    relief = x_cylinder(2 * p.split_relief_radius, 0, p.split_relief_z, 0, split_length)
     shoe -= split
     shoe -= relief
 
-    side_holes = along_x((-p.width / 2 - overrun, 0, -p.rail_height / 2)) * Cylinder(
-        p.m5_clearance_diameter / 2, p.width + 2 * overrun, align=ON_FLOOR
+    side_holes = x_cylinder(
+        p.m5_clearance_diameter, 0, -p.rail_height / 2, -p.width / 2 - overrun, p.width / 2 + overrun
     )
     shoe -= side_holes
 
@@ -276,16 +280,17 @@ def build_rail_shoe(p: RailShoeParameters | None = None) -> Part:
     # collar_x_at_inner_face .. ear_x_end. Both features share a y-axis.
     clamp_x, clamp_z = p.clamp_axis_x, p.clamp_axis_z
     screw_outer_y, nut_outer_y = p.clamp_screw_outer_y, p.clamp_nut_outer_y
-    clamp_hole = along_y((clamp_x, screw_outer_y - overrun, clamp_z)) * Cylinder(
-        p.m3_clearance_diameter / 2, nut_outer_y - screw_outer_y + 2 * overrun, align=ON_FLOOR
+    clamp_hole = y_cylinder(
+        p.m3_clearance_diameter, clamp_x, clamp_z, screw_outer_y - overrun, nut_outer_y + overrun
     )
     # Nut inserts from +y; the inner wall carries its axial clamp load.
     # Hex vertices lie along x, with horizontal flats in z.
-    nut_across_corners = (p.clamp_nut_across_flats + p.nut_across_flats_clearance) / cos(pi / 6)
-    nut = extrude(
-        along_y((clamp_x, nut_outer_y - p.nut_pocket_depth, clamp_z))
-        * RegularPolygon(nut_across_corners / 2, 6),
-        amount=p.nut_pocket_depth + overrun,
+    nut = y_hex(
+        p.clamp_nut_across_flats + p.nut_across_flats_clearance,
+        clamp_x,
+        clamp_z,
+        nut_outer_y - p.nut_pocket_depth,
+        nut_outer_y + overrun,
     )
     shoe -= clamp_hole
     shoe -= nut
@@ -300,11 +305,13 @@ def reference_parts(p: RailShoeParameters | None = None) -> dict[str, Part]:
     """Nominal envelopes of the parts the shoe must clear; the post is its exact metric nominal cylinder."""
     p = p or RailShoeParameters()
     return {
-        "rail envelope": Pos(0, 0, -p.rail_height)
-        * Box(p.rail_width, p.length + 2 * VIEWER_RAIL_OVERHANG, p.rail_height, align=ON_FLOOR),
-        "datum disc": Cylinder(p.datum_disc_diameter / 2, p.datum_disc_thickness, align=ON_FLOOR),
-        "TR50/M post envelope": Pos(0, 0, p.datum_disc_thickness)
-        * Cylinder(p.post_diameter / 2, 50.0, align=ON_FLOOR),
+        "rail envelope": floor_box(
+            p.rail_width, p.length + 2 * VIEWER_RAIL_OVERHANG, p.rail_height, z=-p.rail_height
+        ),
+        "datum disc": z_cylinder(p.datum_disc_diameter, 0, 0, 0, p.datum_disc_thickness),
+        "TR50/M post envelope": z_cylinder(
+            p.post_diameter, 0, 0, p.datum_disc_thickness, p.datum_disc_thickness + POST_LENGTH
+        ),
     }
 
 
@@ -319,8 +326,8 @@ def side_clamp_hardware(p: RailShoeParameters | None = None, y: float = 0.0) -> 
     for name, side in (("left", -1), ("right", 1)):
         axis = Pos(side * p.width / 2, y, -p.rail_height / 2) * Rot(Y=-90 * side)
         seat = axis * Pos(0, 0, -MCMASTER_93475A240_THICKNESS)
-        parts.append(labeled(mcmaster_93475a240(), f"Side screw washer {name}", REFERENCE_COLOR, seat))
-        parts.append(labeled(mcmaster_92290a228(), f"Side screw {name}", REFERENCE_COLOR, seat))
+        parts.append(labeled(mcmaster_93475a240(), f"Side screw washer {name}", STEEL_GRAY, seat))
+        parts.append(labeled(mcmaster_92290a228(), f"Side screw {name}", STEEL_GRAY, seat))
     return parts
 
 
@@ -332,8 +339,8 @@ def split_clamp_hardware(p: RailShoeParameters | None = None) -> list[Part]:
     nut_seat = p.clamp_nut_outer_y - p.nut_pocket_depth  # The pocket bottom, which carries the clamp load.
     nut = Pos(0, 0, nut_seat) * Rot(Z=90) * mcmaster_91828a211()  # Corners along x, as pocketed.
     return [
-        labeled(screw, "Clamp screw", REFERENCE_COLOR, along_axis),
-        labeled(nut, "Clamp nut", REFERENCE_COLOR, along_axis),
+        labeled(screw, "Clamp screw", STEEL_GRAY, along_axis),
+        labeled(nut, "Clamp nut", STEEL_GRAY, along_axis),
     ]
 
 
@@ -367,7 +374,7 @@ def post_stack(
         ring_seat = on_rail * Pos(0, y - SM1RC_M_THICKNESS / 2, optical_height)
         parts.append(labeled(thorlabs_sm1rc_m(), "SM1RC M ring", BLACK_ANODIZED, ring_seat))
     parts.append(labeled(thorlabs_tr50_m(), "TR50 M post", METAL, at_post * Pos(0, 0, datum_thickness)))
-    parts.append(labeled(build_rail_shoe(p) if shoe is None else shoe, "Rail shoe", SHOE_COLOR, at_post))
+    parts.append(labeled(build_rail_shoe(p) if shoe is None else shoe, "Rail shoe", PRINTED_ORANGE, at_post))
     hardware = split_clamp_hardware(p) if clamp_hardware else []
     hardware += side_clamp_hardware(p) if side_screws else []
     for part in hardware:
@@ -385,8 +392,8 @@ def viewer_assembly(shoe: Part, p: RailShoeParameters | None = None) -> Compound
     rparts = assembly(
         "Reference parts",
         [
-            labeled(build_rail(p.length + 2 * VIEWER_RAIL_OVERHANG), "Rail", REFERENCE_COLOR),
-            labeled(refs["datum disc"], "Datum disc", REFERENCE_COLOR),
+            labeled(build_rail(p.length + 2 * VIEWER_RAIL_OVERHANG), "Rail", STEEL_GRAY),
+            labeled(refs["datum disc"], "Datum disc", STEEL_GRAY),
             *stack.values(),
         ],
     )
