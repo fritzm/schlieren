@@ -12,6 +12,7 @@ from math import cos, pi, radians, tan
 
 from build123d import (
     Axis,
+    Compound,
     Plane,
     Polygon,
     Pos,
@@ -722,6 +723,33 @@ def build_plunger(p=None, *, spring=False):
             z=p.adjuster_axis_z - (p.magnet_width + p.magnet_fit_clearance) / 2,
         )
     return body
+
+
+def build_print_layout(p=None, plunger_gap=5.0):
+    """The printed parts as exported, keyed by name: base_plate, guide_frame, keeper_plate, plungers.
+
+    The base is flipped deck-down on z=0 for spigot-up printing; the guide frame and keeper keep assembly
+    coordinates. The two plungers sit on z=0 side by side along y, centered on x, with plunger_gap between
+    their bounding boxes, the spring plunger turned about z to match the driven one. The layout does not
+    depend on the pose of the assembly.
+    """
+    p = p or CarriageParameters()
+    base, frame = _split_fixed_body(p)
+    plungers = []
+    next_y = 0.0
+    for spring in (False, True):
+        solid = build_plunger(p, spring=spring)
+        if spring:
+            solid = Rot(Z=180) * solid
+        box = solid.bounding_box()
+        plungers.append(Pos(-(box.min.X + box.max.X) / 2, next_y - box.min.Y, -box.min.Z) * solid)
+        next_y += box.size.Y + plunger_gap
+    return {
+        "base_plate": labeled(base, "Base plate", loc=Pos(0, 0, p.plate_thickness) * Rot(X=180)),
+        "guide_frame": labeled(frame, "Guide frame"),
+        "keeper_plate": labeled(build_keeper_plate(p), "Keeper plate"),
+        "plungers": Compound([s for plunger in plungers for s in plunger.solids()]),
+    }
 
 
 def build_carriage(p=None, *, travel=0.0, retract=0.0, include_support=False, include_hardware=False):

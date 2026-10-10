@@ -3,7 +3,14 @@
 import argparse
 from pathlib import Path
 
-from schlieren.cad import EXPORTERS
+from schlieren.cli._common import (
+    add_figure_option,
+    add_output_option,
+    add_show_option,
+    export_models,
+    render,
+    show,
+)
 from schlieren.parts.slit_head import (
     SlitHeadParameters,
     build_clamp_bar,
@@ -25,18 +32,12 @@ SLIT_TO_MIRROR = 3200.0
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--show", action="store_true")
+    add_show_option(parser, "Display the head on its post and shoe in OCP CAD Viewer")
     parser.add_argument(
         "--rotation", type=float, default=0.0, help="Degrees about the optical axis; 0 = horizontal slit"
     )
-    parser.add_argument("--output", type=Path, default=Path("exports"))
-    parser.add_argument(
-        "--figure",
-        type=Path,
-        nargs="?",
-        const=DEFAULT_FIGURE,
-        help=f"Render the design-doc figure, head on its post and shoe (default path: {DEFAULT_FIGURE})",
-    )
+    add_output_option(parser)
+    add_figure_option(parser, DEFAULT_FIGURE, "the head on its post and shoe")
     args = parser.parse_args()
     p = SlitHeadParameters()
     p.validate()
@@ -63,21 +64,10 @@ def main():
         "slit_head_adapter": build_spigot_adapter(p),
         "slit_head_clamp_bar": build_clamp_bar(p),
     }
-    for name, part in parts.items():
-        for kind in ("step", "stl"):
-            path = args.output / kind / f"{name}.{kind}"
-            path.parent.mkdir(parents=True, exist_ok=True)
-            EXPORTERS[kind](part, path)
-            print(path)
+    export_models(parts, args.output)
     if args.figure:
-        from schlieren.render import render_figure
-
-        args.figure.parent.mkdir(parents=True, exist_ok=True)
-        render_figure(build_slit_head_assembly(p), args.figure, FIGURE_VIEW_DIRECTION, perspective=True)
-        print(args.figure)
+        render(build_slit_head_assembly(p), args.figure, FIGURE_VIEW_DIRECTION)
     if args.show:
-        from ocp_vscode import show
-
         show(build_slit_head_assembly(p, args.rotation))
 
 

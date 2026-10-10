@@ -5,7 +5,15 @@ from pathlib import Path
 
 from build123d import Pos
 
-from schlieren.cad import EXPORTERS, assembly, labeled
+from schlieren.cad import assembly, labeled
+from schlieren.cli._common import (
+    add_figure_option,
+    add_output_option,
+    add_show_option,
+    export_models,
+    render,
+    show,
+)
 from schlieren.parts.camera_support import (
     build_camera_support_assembly,
     build_collar_for_print,
@@ -32,7 +40,7 @@ VIEWS = {
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--show", action="store_true", help="Display the model in OCP CAD Viewer")
+    add_show_option(parser)
     parser.add_argument("--no-cutoff", action="store_true", help="Leave the cutoff station out of --show")
     parser.add_argument(
         "--yoke",
@@ -54,14 +62,8 @@ def main() -> None:
         action="store_true",
         help="Export the phone rest in print orientation (STEP and STL); with --show, display it",
     )
-    parser.add_argument("--output", type=Path, default=Path("exports"))
-    parser.add_argument(
-        "--figure",
-        type=Path,
-        nargs="?",
-        const=DEFAULT_FIGURE,
-        help=f"Render the design-doc figure (default path: {DEFAULT_FIGURE})",
-    )
+    add_output_option(parser)
+    add_figure_option(parser, DEFAULT_FIGURE, "the lens cradle and phone rest")
     parser.add_argument(
         "--views",
         type=Path,
@@ -80,29 +82,15 @@ def main() -> None:
         printed["cradle_shoe"] = build_cradle_shoe_for_print()
     if args.rest:
         printed["phone_rest"] = build_phone_rest_for_print()
-    for name, part in printed.items():
-        for kind in ("step", "stl"):
-            destination = args.output / kind / f"{name}.{kind}"
-            destination.parent.mkdir(parents=True, exist_ok=True)
-            EXPORTERS[kind](part, destination)
-            print(destination)
+    export_models(printed, args.output)
     if args.figure or args.views:
-        from schlieren.render import render_figure
-
         built = {flag: build_camera_support_assembly(include_cutoff=flag) for flag in (True, False)}
         if args.figure:
-            args.figure.parent.mkdir(parents=True, exist_ok=True)
-            render_figure(built[False], args.figure, FIGURE_VIEW_DIRECTION, perspective=True)
-            print(args.figure)
+            render(built[False], args.figure, FIGURE_VIEW_DIRECTION)
         if args.views:
-            args.views.mkdir(parents=True, exist_ok=True)
             for name, (direction, cutoff, perspective) in VIEWS.items():
-                path = args.views / f"camera-support-{name}.png"
-                render_figure(built[cutoff], path, direction, perspective=perspective)
-                print(path)
+                render(built[cutoff], args.views / f"camera-support-{name}.png", direction, perspective)
     if args.show:
-        from ocp_vscode import show
-
         if args.collar:  # Both are centered on the origin for printing; set them apart for viewing.
             gap = 5.0
             named = {"lens_collar_fore": "Fore Collar", "lens_collar_aft": "Aft Collar"}

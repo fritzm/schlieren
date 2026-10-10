@@ -3,6 +3,14 @@
 import argparse
 from pathlib import Path
 
+from schlieren.cli._common import (
+    add_figure_option,
+    add_show_option,
+    render,
+    show,
+    with_suffix_name,
+    write_text,
+)
 from schlieren.parts.mirror_cell import MirrorCellParameters, adjuster_section, build_mirror_cell_assembly
 from schlieren.parts.mirror_cell_drawing import base_plate_drawing_svg
 
@@ -16,14 +24,11 @@ ADJUSTER_STATION = "top"
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--show", action="store_true", help="Display the model in OCP CAD Viewer")
-    parser.add_argument(
-        "--figure",
-        type=Path,
-        nargs="?",
-        const=DEFAULT_FIGURE,
-        help=f"Render the front, underside, and adjuster-section design-doc views (default path: {DEFAULT_FIGURE}; "
-        "the others get -below and -adjuster suffixes)",
+    add_show_option(parser)
+    add_figure_option(
+        parser,
+        DEFAULT_FIGURE,
+        "the front view, plus the underside and adjuster section with -below and -adjuster suffixes",
     )
     parser.add_argument(
         "--drawing",
@@ -35,27 +40,17 @@ def main() -> None:
     args = parser.parse_args()
     p = MirrorCellParameters()
     if args.drawing:
-        args.drawing.parent.mkdir(parents=True, exist_ok=True)
-        args.drawing.write_text(base_plate_drawing_svg(p), encoding="utf-8")
-        print(args.drawing)
+        write_text(args.drawing, base_plate_drawing_svg(p))
     cell = build_mirror_cell_assembly(p)
     if args.figure:
-        from schlieren.render import render_figure
-
-        args.figure.parent.mkdir(parents=True, exist_ok=True)
-        render_figure(cell, args.figure, FIGURE_VIEW_DIRECTION, perspective=True)
+        render(cell, args.figure, FIGURE_VIEW_DIRECTION)
         views = (
             ("-below", cell, BELOW_VIEW_DIRECTION),
             ("-adjuster", adjuster_section(cell, p, ADJUSTER_STATION), ADJUSTER_VIEW_DIRECTION),
         )
         for suffix, shape, direction in views:
-            path = args.figure.with_name(f"{args.figure.stem}{suffix}{args.figure.suffix}")
-            render_figure(shape, path, direction, perspective=True)
-            print(path)
-        print(args.figure)
+            render(shape, with_suffix_name(args.figure, suffix), direction)
     if args.show:
-        from ocp_vscode import show
-
         show(cell)
 
 

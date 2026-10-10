@@ -7,7 +7,12 @@ from math import cos, pi, radians, sin, tan
 from build123d import Align, Box, Cylinder, Plane, Polygon, Pos, RegularPolygon, Rot, extrude
 
 from schlieren.cad import ON_FLOOR, along_y, children_by_label
-from schlieren.parts.carriage import CarriageParameters, build_carriage, support_location
+from schlieren.parts.carriage import (
+    CarriageParameters,
+    build_carriage,
+    build_print_layout,
+    support_location,
+)
 from schlieren.testing import slow
 
 
@@ -467,6 +472,28 @@ class CarriageTests(unittest.TestCase):
             for name in ("FAS100", "98625A950 bushing", "Magnet pad"):
                 for part in printed:
                     self.assertLess((solids[name] & part).volume, 1e-3, (travel, name))
+
+    def test_print_layout_orients_and_spaces_the_printed_parts(self):
+        p = self.p
+        layout = build_print_layout(p)
+        self.assertEqual(set(layout), {"base_plate", "guide_frame", "keeper_plate", "plungers"})
+        base = layout["base_plate"].bounding_box()
+        # Deck down on the bed, spigot up: the plate's front face is on z=0 and the spigot rises above it.
+        self.assertAlmostEqual(base.min.Z, 0.0, places=4)
+        self.assertAlmostEqual(base.max.Z, p.plate_thickness + p.spigot_length, places=4)
+        # The guide frame and keeper keep assembly coordinates.
+        for name, part in (("guide_frame", "Guide frame"), ("keeper_plate", "Keeper plate")):
+            self.assertAlmostEqual(
+                layout[name].bounding_box().min.Z, self.parts[part].bounding_box().min.Z, places=4
+            )
+        plungers = layout["plungers"]
+        self.assertEqual(len(plungers.solids()), 2)
+        first, second = sorted((s.bounding_box() for s in plungers.solids()), key=lambda b: b.min.Y)
+        self.assertAlmostEqual(first.min.Z, 0.0, places=4)
+        self.assertAlmostEqual(second.min.Z, 0.0, places=4)
+        self.assertAlmostEqual(second.min.Y - first.max.Y, 5.0, places=4)
+        self.assertAlmostEqual(first.center().X, 0.0, places=4)
+        self.assertAlmostEqual(second.center().X, 0.0, places=4)
 
     def test_unsupported_poses_rejected(self):
         for args in ({"travel": 5.1}, {"retract": 6.1}, {"travel": 1, "retract": 1}):

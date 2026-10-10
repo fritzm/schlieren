@@ -18,7 +18,7 @@ FIG := docs/design/figures
 PARTS := src/schlieren/parts
 CLI := src/schlieren/cli
 CORE := src/schlieren/cad.py src/schlieren/render.py src/schlieren/vendor_cad.py src/schlieren/standards.py \
-    src/schlieren/palette.py
+    src/schlieren/palette.py $(CLI)/_common.py
 
 FRAGMENTS := $(sort $(wildcard docs/design/[0-9][0-9]-*.md))
 FIGURES := $(addprefix $(FIG)/,\

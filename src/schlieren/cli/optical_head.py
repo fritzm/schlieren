@@ -3,6 +3,7 @@
 import argparse
 from pathlib import Path
 
+from schlieren.cli._common import add_show_option, render, show
 from schlieren.parts.optical_head import OpticalHeadParameters, build_optical_head
 
 FIGURE_VIEW_DIRECTION = (1.0, -0.9, 0.7)  # From behind, outboard of the imaging rail and above.
@@ -10,7 +11,7 @@ FIGURE_VIEW_DIRECTION = (1.0, -0.9, 0.7)  # From behind, outboard of the imaging
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--show", action="store_true", help="Display the assembly in OCP CAD Viewer")
+    add_show_option(parser, "Display the assembly in OCP CAD Viewer")
     parser.add_argument(
         "--slit-station", type=float, help="Slit blade plane along the rail, mm (negative aft)"
     )
@@ -39,14 +40,8 @@ def main() -> None:
         print(f"  {name:<22} {station:8.2f}")
     head = build_optical_head(h, args.left_yaw, args.right_yaw, args.slit_rotation)
     if args.figure:
-        from schlieren.render import render_figure
-
-        args.figure.parent.mkdir(parents=True, exist_ok=True)
-        render_figure(head, args.figure, FIGURE_VIEW_DIRECTION, perspective=True)
-        print(args.figure)
+        render(head, args.figure, FIGURE_VIEW_DIRECTION)
     if args.show:
-        from ocp_vscode import show
-
         show(head)
 
 

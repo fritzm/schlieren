@@ -3,6 +3,15 @@
 import argparse
 from pathlib import Path
 
+from schlieren.cli._common import (
+    add_figure_option,
+    add_output_option,
+    add_show_option,
+    render,
+    show,
+    with_suffix_name,
+    write_text,
+)
 from schlieren.parts.light_source import (
     GREEN,
     MODULES,
@@ -23,10 +32,8 @@ SECTION_VIEW_DIRECTION = (1.0, 0.3, 0.2)  # Square to the cut face, slightly ahe
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--show", action="store_true")
-    parser.add_argument(
-        "--output", type=Path, default=Path("exports"), help="Directory for the drilling templates"
-    )
+    add_show_option(parser, "Display the assembly in OCP CAD Viewer")
+    add_output_option(parser, "Directory for the drilling templates")
     parser.add_argument(
         "--templates",
         action="store_true",
@@ -34,13 +41,7 @@ def main():
     )
     parser.add_argument("--module", choices=("green", "white"), default="green", help="Board shown in viewer")
     parser.add_argument("--engagement", type=float, help="SM1V05 thread engagement, mm (default: focus)")
-    parser.add_argument(
-        "--figure",
-        type=Path,
-        nargs="?",
-        const=DEFAULT_FIGURE,
-        help=f"Render the design-doc figure and its -section cutaway, green module at focus (default path: {DEFAULT_FIGURE})",
-    )
+    add_figure_option(parser, DEFAULT_FIGURE, "and its -section cutaway, green module at focus")
     args = parser.parse_args()
     p = LightSourceParameters()
     p.validate()
@@ -58,28 +59,14 @@ def main():
     print(f"Lens vertex {p.lens_vertex_inside_open_end:.2f} mm inside the SM1V05 open end")
     print("Hole layout gaps, mm: " + ", ".join(f"{k} {v:.2f}" for k, v in holes.clearances().items()))
     if args.templates:
-        templates = args.output / "drawings" / TEMPLATES_NAME
-        templates.parent.mkdir(parents=True, exist_ok=True)
-        templates.write_text(drilling_templates_svg(holes), encoding="utf-8")
-        print(templates)
+        write_text(args.output / "drawings" / TEMPLATES_NAME, drilling_templates_svg(holes))
     if args.figure:
-        from schlieren.render import render_figure
-
-        holes_figure = args.figure.with_name(HOLES_FIGURE_NAME)
-        holes_figure.parent.mkdir(parents=True, exist_ok=True)
-        holes_figure.write_text(layout_drawing_svg(holes), encoding="utf-8")
-        print(holes_figure)
-
-        args.figure.parent.mkdir(parents=True, exist_ok=True)
+        write_text(args.figure.with_name(HOLES_FIGURE_NAME), layout_drawing_svg(holes))
         module = build_light_source_assembly(p, GREEN)
-        render_figure(module, args.figure, FIGURE_VIEW_DIRECTION, perspective=True)
-        section = args.figure.with_name(f"{args.figure.stem}-section{args.figure.suffix}")
-        render_figure(light_source_section(module), section, SECTION_VIEW_DIRECTION)
-        print(section)
-        print(args.figure)
+        render(module, args.figure, FIGURE_VIEW_DIRECTION)
+        section = with_suffix_name(args.figure, "-section")
+        render(light_source_section(module), section, SECTION_VIEW_DIRECTION, perspective=False)
     if args.show:
-        from ocp_vscode import show
-
         board = GREEN if args.module == "green" else WHITE
         try:
             show(build_light_source_assembly(p, board, args.engagement))

@@ -134,6 +134,25 @@ POST_BORE = POST_DIAMETER + POST_DIAMETRAL_CLEARANCE
 
 Use names that make it clear whether a clearance is radial, diametral, axial, or otherwise directional.
 
+### Shared building blocks
+
+Use these instead of redefining them in a part module:
+
+- `schlieren/standards.py`: dimensions more than one model depends on (`INCH`, `OPTICAL_HEIGHT`, the TR50/M
+  post and datum disc). Parameter classes take them as defaults.
+- `schlieren/palette.py`: every viewer color, named. Do not put a color literal in a part module; add it
+  to the palette (or reuse the matching entry).
+- `schlieren/cad.py`: primitive solids named by axis and extents (`box_between`, `floor_box`,
+  `centered_box`, `x_cylinder`/`y_cylinder`/`z_cylinder`, `centered_cylinder`, `y_cone`/`z_cone`,
+  `y_hex`/`z_hex`), the axis planes, and the assembly helpers (`labeled`, `place`, `assembly`). Cylinders take
+  diameters.
+- `post_stack` in `parts/rail_shoe.py`: the post, rail shoe, shoe clamp hardware, and optional SM1RC/M ring
+  and side-slot screws that every fixture on a rail shows.
+
+Place assembly children with `labeled(shape, label, color, loc)` and `place`, not `loc * shape`: build123d's
+`Location * shape` deep-copies the whole B-rep, and `labeled` only composes locations. That difference was
+most of the cost of building the optical head.
+
 ### Units
 
 Use millimeters for internal CAD geometry unless there is a strong reason not to.
@@ -154,10 +173,16 @@ Prefer this structure as the project grows:
 ```text
 src/schlieren/
     __init__.py
-    standards.py
+    standards.py   # project-wide dimensions
+    palette.py     # viewer colors
+    cad.py         # primitive solids, axis planes, assembly helpers
+    vendor_cad.py  # vendor STEP models placed in documented mounting frames
+    render.py      # offscreen figure rendering
+    testing.py     # test helpers: @slow, bounding-box prefilters
     parts/
         ...
     cli/
+        _common.py # shared options and export/drawing/figure/viewer steps
         ...        # command-line entry points, registered in pyproject.toml [project.scripts]
 
 tests/
@@ -174,7 +199,8 @@ README.md
 
 This is a default organization, not a requirement to create empty directories prematurely.
 
-Put genuinely project-wide dimensional standards in `schlieren/standards.py`.
+Put genuinely project-wide dimensional standards in `schlieren/standards.py`, and project-wide colors in
+`schlieren/palette.py`.
 
 Keep part-specific calibration dimensions and experimental compensation values with the relevant part unless
 they have clearly become project-wide standards.
@@ -200,8 +226,15 @@ Run relevant tests after modifying CAD or supporting code.
 
 Tests that take more than a few seconds, typically exhaustive pairwise interference or rotation-sweep
 checks, are marked `@slow` (`schlieren.testing`) and skipped by default so that iteration stays quick; the
-skip count is reported. Run `uv run run-tests --full` before presenting completed work. Prefer a bounding-box
-prefilter (`boxes_overlap`) before exact boolean or distance queries in new pairwise checks.
+skip count is reported. Run `uv run run-tests --full` before presenting completed work. Use a bounding-box
+prefilter before exact boolean or distance queries in new pairwise checks: `near_pairs(first, second, margin)`
+boxes each shape once, and `boxes_overlap(a, b, loose=True)` is the single-pair form. Exact bounding boxes of
+vendor models cost tens of milliseconds each and are not cached, so a pair loop that recomputes them is slow;
+the loose box is much cheaper and only ever larger, so it is safe for a prefilter. Leave `loose` off where the
+box test is itself the assertion.
+
+The full run takes well under a minute. If it grows to minutes, suspect per-pair bounding boxes, `loc * shape`
+on large models, or an assembly built more than once per module.
 
 Do not change a test merely to make an unintended geometry change pass.
 
@@ -226,14 +259,17 @@ uv run reconcile-bom [workbook.xlsx] [--apply]        # edited workbook -> diffe
 Commands live in `src/schlieren/cli/` and are registered in `pyproject.toml` `[project.scripts]`; run them with
 `uv run <command>` from the repo root. Output paths such as `--output` default to `exports/` relative to the
 current directory. To add a command: write `cli/<name>.py` with `main()` and register it in
-`[project.scripts]`.
+`[project.scripts]`. Build the options and the export, drawing, figure, and viewer steps from
+`cli/_common.py` (`add_output_option`, `add_show_option`, `add_figure_option`, `export_models`,
+`write_text`, `render`, `show`); keep geometry, such as a print layout, in the part module so it can be tested.
 
 A `Makefile` rebuilds every derived artifact that is out of date (design-doc figures, the consolidated
 design document and PDF, the BOM workbook) and nothing else: run `make` (or `make figures`, `doc`, `pdf`,
 `bom`; `make -n` previews; `make test` runs the full suite) instead of invoking the part commands and
 builders one by one. Its dependencies are declared by hand: when a part module gains an import, or a new
-figure or `--figure` output is added, update the matching rule in the `Makefile`. Do not use `make -t`; it
-marks stale targets current without rebuilding them.
+figure or `--figure` output is added, update the matching rule in the `Makefile`; the shared modules
+(`cad.py`, `standards.py`, `palette.py`, `vendor_cad.py`, `render.py`, `cli/_common.py`) are in its `CORE` list.
+Do not use `make -t`; it marks stale targets current without rebuilding them.
 
 A `.claude/` PostToolUse hook auto-formats edited `.py` files with ruff, and a PreToolUse hook blocks direct
 edits to `exports/`. Project skills: `/finalize-decision` (propagate an accepted decision) and

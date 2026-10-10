@@ -7,7 +7,15 @@ import argparse
 from math import degrees
 from pathlib import Path
 
-from schlieren.cad import EXPORTERS
+from schlieren.cli._common import (
+    add_figure_option,
+    add_output_option,
+    add_show_option,
+    export_models,
+    render,
+    show,
+    write_text,
+)
 from schlieren.parts.frame import FrameParameters, build_foot_block, build_frame_assembly, build_pivot_plate
 from schlieren.parts.frame_drawing import pivot_plate_drawing_svg
 
@@ -22,19 +30,16 @@ FIGURE_VIEW_DIRECTION = (
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--show", action="store_true", help="Display the assembly in OCP CAD Viewer")
-    parser.add_argument("--output", type=Path, default=Path("exports"))
+    add_show_option(parser, "Display the assembly in OCP CAD Viewer")
+    add_output_option(parser)
     parser.add_argument("--left-yaw", type=float, default=0.0, help="Left rail yaw outward from nominal, deg")
     parser.add_argument(
         "--right-yaw", type=float, default=0.0, help="Right rail yaw outward from nominal, deg"
     )
-    parser.add_argument(
-        "--figure",
-        type=Path,
-        nargs="?",
-        const=DEFAULT_FIGURE,
-        help="Render the design-doc figure, the frame at nominal yaw, and write the pivot-plate drilling "
-        f"drawing beside it (default path: {DEFAULT_FIGURE})",
+    add_figure_option(
+        parser,
+        DEFAULT_FIGURE,
+        "the frame at nominal yaw, and write the pivot-plate drilling drawing beside it",
     )
     args = parser.parse_args()
     p = FrameParameters()
@@ -52,30 +57,19 @@ def main() -> None:
     )
     print(f"Rail top {-p.table:.2f} mm above the table (feet uncompressed)")
 
-    for name, part in (
-        ("frame_pivot_plate", build_pivot_plate(p)),
-        ("frame_foot_block", build_foot_block(p)),
-    ):
-        destination = args.output / "step" / f"{name}.step"
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        EXPORTERS["step"](part, destination)
-        print(destination)
+    export_models(
+        {"frame_pivot_plate": build_pivot_plate(p), "frame_foot_block": build_foot_block(p)},
+        args.output,
+        kinds=("step",),
+    )
     drawings = [args.output / "drawings" / "frame_pivot_plate.svg"]
     if args.figure:
         drawings.append(args.figure.with_name(DRAWING_FIGURE_NAME))
     for drawing in drawings:
-        drawing.parent.mkdir(parents=True, exist_ok=True)
-        drawing.write_text(pivot_plate_drawing_svg(p), encoding="utf-8")
-        print(drawing)
+        write_text(drawing, pivot_plate_drawing_svg(p))
     if args.figure:
-        from schlieren.render import render_figure
-
-        args.figure.parent.mkdir(parents=True, exist_ok=True)
-        render_figure(build_frame_assembly(p), args.figure, FIGURE_VIEW_DIRECTION, perspective=True)
-        print(args.figure)
+        render(build_frame_assembly(p), args.figure, FIGURE_VIEW_DIRECTION)
     if args.show:
-        from ocp_vscode import show
-
         show(build_frame_assembly(p, args.left_yaw, args.right_yaw))
 
 
