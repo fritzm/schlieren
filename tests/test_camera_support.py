@@ -463,7 +463,7 @@ class LensCradleTests(unittest.TestCase):
             fitted = any(word in label for label in labels for word in let_in)
             if fitted and any(label in printed for label in labels):
                 continue
-            if not boxes_overlap(a, b):
+            if not boxes_overlap(a, b, loose=True):
                 continue
             with self.subTest(pair=labels):
                 self.assertLess((a & b).volume, 0.01)

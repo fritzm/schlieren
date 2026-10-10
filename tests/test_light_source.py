@@ -287,7 +287,7 @@ class LightSourceTests(unittest.TestCase):
                 names = list(parts)
                 for i, a in enumerate(names):
                     for b in names[i + 1 :]:
-                        if not boxes_overlap(parts[a], parts[b]):
+                        if not boxes_overlap(parts[a], parts[b], loose=True):
                             continue
                         overlap = parts[a] & parts[b]
                         if overlap.volume < 1e-6:

@@ -1,7 +1,6 @@
 """Engineering invariants for the assembled tabletop optical head (design §§2, 3)."""
 
 import unittest
-from itertools import product
 
 from schlieren.cad import children_by_label, leaves
 from schlieren.parts.optical_head import (
@@ -10,7 +9,7 @@ from schlieren.parts.optical_head import (
     build_optical_head,
     build_source_fixtures,
 )
-from schlieren.testing import boxes_overlap, slow
+from schlieren.testing import near_pairs, slow
 
 POST_TOP = 0.254 + 50.0  # Datum disc plus TR50/M, above the rail top (§3.4).
 INTERFERENCE_TOLERANCE = 1e-3  # mm^3.
@@ -95,15 +94,14 @@ class OpticalHeadTests(unittest.TestCase):
 
     @slow
     def test_source_and_imaging_fixtures_clear_each_other(self):
-        for s, i in product(
-            leaves(self.groups["Source rail fixtures"]), leaves(self.groups["Imaging rail fixtures"])
-        ):
-            if boxes_overlap(s, i, MIN_CLEARANCE):
-                self.assertGreaterEqual(
-                    s.distance_to(i),
-                    MIN_CLEARANCE,
-                    f"{s.label} and {i.label} are closer than {MIN_CLEARANCE} mm",
-                )
+        source = leaves(self.groups["Source rail fixtures"])
+        imaging = leaves(self.groups["Imaging rail fixtures"])
+        for s, i in near_pairs(source, imaging, MIN_CLEARANCE):
+            self.assertGreaterEqual(
+                s.distance_to(i),
+                MIN_CLEARANCE,
+                f"{s.label} and {i.label} are closer than {MIN_CLEARANCE} mm",
+            )
 
     @slow
     def test_fixtures_clear_the_frame(self):
@@ -115,9 +113,7 @@ class OpticalHeadTests(unittest.TestCase):
             for leaf in leaves(self.groups[name])
         ]
         for group in ("Source rail fixtures", "Imaging rail fixtures"):
-            for s, f in product(leaves(self.groups[group]), frame):
-                if not boxes_overlap(s, f, MIN_CLEARANCE):
-                    continue
+            for s, f in near_pairs(leaves(self.groups[group]), frame, MIN_CLEARANCE):
                 if f.label == "Rail":
                     common = s.intersect(f)
                     volume = common.volume if common is not None else 0.0

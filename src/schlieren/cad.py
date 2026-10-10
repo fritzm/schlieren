@@ -22,6 +22,7 @@ from build123d import (
     export_step,
     export_stl,
 )
+from build123d.topology.shape_core import downcast
 
 ON_FLOOR = (Align.CENTER, Align.CENTER, Align.MIN)  # Centered in the plane, rising from it.
 FROM_CORNER = (Align.MIN, Align.MIN, Align.MIN)
@@ -53,6 +54,17 @@ def compression_spring(outer_diameter: float, wire_diameter: float, length: floa
     return Pos(0, 0, wire_diameter / 2) * coil
 
 
+def _located(shape: Shape, loc: Location | None) -> Shape:
+    """shape moved by loc, sharing its geometry.
+
+    `loc * shape` deep-copies the whole B-rep and then discards the copy, which dominates the cost of
+    placing vendor models in a large assembly. Moving the underlying OCCT shape only composes locations.
+    """
+    if loc is None:
+        return shape
+    return Shape.cast(downcast(shape.wrapped.Moved(loc.wrapped)))
+
+
 def labeled(
     shape: Shape, label: str, color: Color | tuple | None = None, loc: Location | None = None
 ) -> Part:
@@ -62,8 +74,7 @@ def labeled(
     """
     if color is not None and not isinstance(color, Color):
         color = Color(*color)
-    moved = shape if loc is None else loc * shape
-    return Part(Compound(moved.solids()).wrapped, label=label, color=color)
+    return Part(Compound(_located(shape, loc).solids()).wrapped, label=label, color=color)
 
 
 def assembly(label: str, children) -> Compound:
