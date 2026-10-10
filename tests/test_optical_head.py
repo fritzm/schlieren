@@ -13,6 +13,7 @@ from schlieren.standards import DATUM_DISC_THICKNESS, POST_LENGTH
 from schlieren.testing import near_pairs, slow
 
 POST_TOP = DATUM_DISC_THICKNESS + POST_LENGTH  # Datum disc plus TR50/M, above the rail top (§3.4).
+TR50_MODEL_ROUNDING = 0.03  # The TR50/M STEP model is rounded to inches.
 INTERFERENCE_TOLERANCE = 1e-3  # mm^3.
 MIN_CLEARANCE = 1.0  # mm, between any source-side and imaging-side part.
 
@@ -46,7 +47,8 @@ class OpticalHeadTests(unittest.TestCase):
             posts = by_label(group, "TR50 M post")
             self.assertTrue(posts)
             for post in posts:
-                self.assertAlmostEqual(post.bounding_box().max.Z, POST_TOP, delta=0.01)
+                body = max(post.solids(), key=lambda s: s.volume)  # Not the setscrew stud above the top.
+                self.assertAlmostEqual(body.bounding_box().max.Z, POST_TOP, delta=TR50_MODEL_ROUNDING)
         self.assertEqual(len(by_label(self.source, "TR50 M post")), 2)  # Light source and slit.
         self.assertEqual(len(by_label(self.imaging, "TR50 M post")), 1)  # Cutoff.
 
@@ -61,7 +63,7 @@ class OpticalHeadTests(unittest.TestCase):
     def test_condenser_is_the_design_distance_from_the_slit(self):
         (lens,) = by_label(self.source, "ACL2520U-A condenser")
         ls = self.h.light_source
-        vertex = lens.bounding_box().min.Y
+        vertex = lens.bounding_box().max.Y  # Plano face toward the LED, convex vertex toward the slit (§6).
         self.assertAlmostEqual(self.h.slit_station - vertex, ls.lens_to_slit, delta=0.05)
 
     def test_cutoff_plane_follows_the_stagger(self):
