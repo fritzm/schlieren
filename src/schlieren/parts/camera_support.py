@@ -71,6 +71,7 @@ from schlieren.vendor_cad import (
 
 INCH = 25.4
 YOKE_BOSS_OVERRUN = 0.5  # Arm material behind the end of the screw at nominal.
+LENS_TO_SLIP_RING = 10.0  # Assumed gap, lens front to the cutoff slip ring's rear face (§8.1).
 CRADLE_COLOR = (0.8, 0.4, 0.25)
 REST_COLOR = (0.35, 0.6, 0.8)
 COLLAR_COLOR = (0.4, 0.75, 0.5)
@@ -912,6 +913,12 @@ def build_phone_rest_for_print(p: CameraSupportParameters | None = None) -> Part
     return Pos(-(box.min.X + box.max.X) / 2, -(box.min.Y + box.max.Y) / 2, -box.min.Z) * rest
 
 
+def cutoff_post_station(p: CameraSupportParameters, c) -> float:
+    """Cutoff post axis along the rail, from the back of the phone (y=0): the lens front, the assumed gap to
+    the slip ring's rear face, and half the ring."""
+    return p.lens_length + LENS_TO_SLIP_RING + c.ring_thickness / 2
+
+
 def build_camera_support_assembly(
     p: CameraSupportParameters | None = None, include_cutoff: bool = True
 ) -> Compound:
@@ -971,8 +978,7 @@ def build_camera_support_assembly(
     from schlieren.parts.carriage import CarriageParameters, build_carriage, support_location
 
     c = CarriageParameters()
-    lens_to_ring = 10.0  # Assumed gap, lens front to the slip ring's rear face (§8.1).
-    post_y = p.lens_length + lens_to_ring + c.ring_thickness / 2
+    post_y = cutoff_post_station(p, c)
     carriage = build_carriage(c, include_support=True, include_hardware=True)
     on_rail = Pos(0, post_y, 0) * support_location(c).inverse()
     return assembly("Imaging rail (concept mock-up)", [support, place(on_rail, carriage)])
