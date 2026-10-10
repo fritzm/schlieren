@@ -17,6 +17,7 @@ from build123d import (
     Compound,
     Cylinder,
     GeomType,
+    Location,
     Part,
     Pos,
     RegularPolygon,
@@ -25,14 +26,22 @@ from build123d import (
     fillet,
 )
 
-from schlieren.cad import FROM_CORNER, ON_FLOOR, along_x, along_y, assembly, labeled
+from schlieren.cad import BLACK_ANODIZED, FROM_CORNER, METAL, ON_FLOOR, along_x, along_y, assembly, labeled
 from schlieren.parts.rail import build_rail
+from schlieren.standards import (
+    DATUM_DISC_DIAMETER,
+    DATUM_DISC_THICKNESS,
+    OPTICAL_HEIGHT,
+    POST_DIAMETER,
+)
 from schlieren.vendor_cad import (
     MCMASTER_93475A240_THICKNESS,
+    SM1RC_M_THICKNESS,
     mcmaster_91292a114,
     mcmaster_91828a211,
     mcmaster_92290a228,
     mcmaster_93475a240,
+    thorlabs_sm1rc_m,
     thorlabs_tr50_m,
 )
 
@@ -42,9 +51,9 @@ class RailShoeParameters:
     # Physical interfaces from docs/design/.
     rail_width: float = 20.0
     rail_height: float = 20.0
-    post_diameter: float = 12.7
-    datum_disc_diameter: float = 0.75 * 25.4
-    datum_disc_thickness: float = 0.010 * 25.4
+    post_diameter: float = POST_DIAMETER
+    datum_disc_diameter: float = DATUM_DISC_DIAMETER
+    datum_disc_thickness: float = DATUM_DISC_THICKNESS
     clamp_screw_length: float = 12.0
     clamp_nut_across_flats: float = 5.5
     clamp_nut_thickness: float = 2.4
@@ -173,7 +182,7 @@ class RailShoeParameters:
             raise ValueError("Screw bore must fit within the ear face")
 
 
-SHOE_COLOR = (0.8, 0.65, 0.3)
+SHOE_COLOR = (0.8, 0.4, 0.25)  # The printed rail shoe, as in every assembly.
 REFERENCE_COLOR = (0.6, 0.6, 0.6)
 VIEWER_RAIL_OVERHANG = 15.0  # Rail shown beyond each end of the shoe.
 
@@ -328,19 +337,57 @@ def split_clamp_hardware(p: RailShoeParameters | None = None) -> list[Part]:
     ]
 
 
+def post_stack(
+    loc: Location | None = None,
+    *,
+    y: float = 0.0,
+    shoe: Part | None = None,
+    ring: bool = False,
+    clamp_hardware: bool = True,
+    side_screws: bool = False,
+    p: RailShoeParameters | None = None,
+    optical_height: float = OPTICAL_HEIGHT,
+    datum_thickness: float = DATUM_DISC_THICKNESS,
+) -> list[Part]:
+    """The common post stack as shown in assemblies, for the post at rail station y, moved by loc.
+
+    Every fixture on a rail stands on this stack (§5): the TR50/M post on its datum disc and the printed rail
+    shoe clamping the post foot, with the shoe's M3 split-clamp screw and nut. The side-slot M5 screws and
+    washers that fix the shoe to the rail are added by side_screws, for the assemblies that show them. The slit head and cutoff carriage also hold their spigot in an SM1RC/M slip ring on the post top,
+    centered on the post axis at optical_height (ring); the light source's own SMR1/M plays that part.
+
+    Returns labeled children in the frame of loc (the §3.4 rail frame when loc is omitted). The hardware is
+    labeled "Shoe ...", clear of any screws the fixture itself has. shoe is built when not given, and p
+    gives the shoe's parameters.
+    """
+    on_rail = Location() if loc is None else loc
+    at_post = on_rail * Pos(0, y, 0)
+    parts = []
+    if ring:
+        ring_seat = on_rail * Pos(0, y - SM1RC_M_THICKNESS / 2, optical_height)
+        parts.append(labeled(thorlabs_sm1rc_m(), "SM1RC M ring", BLACK_ANODIZED, ring_seat))
+    parts.append(labeled(thorlabs_tr50_m(), "TR50 M post", METAL, at_post * Pos(0, 0, datum_thickness)))
+    parts.append(labeled(build_rail_shoe(p) if shoe is None else shoe, "Rail shoe", SHOE_COLOR, at_post))
+    hardware = split_clamp_hardware(p) if clamp_hardware else []
+    hardware += side_clamp_hardware(p) if side_screws else []
+    for part in hardware:
+        parts.append(labeled(part, f"Shoe {part.label.lower()}", METAL, at_post))
+    return parts
+
+
 def viewer_assembly(shoe: Part, p: RailShoeParameters | None = None) -> Compound:
-    """Shoe on a generic 2020 rail segment, with the datum disc, the vendor TR50/M model seated on it, and the
-    vendor side-slot and split-clamp hardware, all grouped as reference parts."""
+    """Shoe on a generic 2020 rail segment, with the datum disc and the post stack's vendor post and
+    hardware (including the side-slot screws), all but the shoe grouped as reference parts."""
     p = p or RailShoeParameters()
     refs = reference_parts(p)
+    stack = {part.label: part for part in post_stack(shoe=shoe, side_screws=True, p=p)}
+    shoe_part = stack.pop("Rail shoe")
     rparts = assembly(
         "Reference parts",
         [
             labeled(build_rail(p.length + 2 * VIEWER_RAIL_OVERHANG), "Rail", REFERENCE_COLOR),
             labeled(refs["datum disc"], "Datum disc", REFERENCE_COLOR),
-            labeled(thorlabs_tr50_m(), "TR50_M", REFERENCE_COLOR, Pos(0, 0, p.datum_disc_thickness)),
-            *side_clamp_hardware(p),
-            *split_clamp_hardware(p),
+            *stack.values(),
         ],
     )
-    return assembly("Rail shoe prototype", [labeled(shoe, "Shoe", SHOE_COLOR), rparts])
+    return assembly("Rail shoe prototype", [shoe_part, rparts])

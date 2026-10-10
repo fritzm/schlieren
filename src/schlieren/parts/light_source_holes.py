@@ -16,7 +16,8 @@ from dataclasses import dataclass
 from itertools import combinations
 from math import hypot
 
-from schlieren.parts.light_source import INCH, STAR_NOTCH_CENTER_RADIUS, STAR_NOTCH_WIDTH
+from schlieren.parts.light_source import STAR_NOTCH_CENTER_RADIUS, STAR_NOTCH_WIDTH
+from schlieren.standards import INCH
 
 Point = tuple[float, float]
 

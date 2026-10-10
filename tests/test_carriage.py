@@ -290,7 +290,7 @@ class CarriageTests(unittest.TestCase):
         support = children_by_label(build_carriage(include_support=True))
         fixed = list(self.parts.values())
         for rotation in (-120, -90, -45, 0, 45, 90, 120):
-            for name in ("TR50 M post", "Rail shoe"):
+            for name in ("TR50 M post", "Rail shoe", "Shoe clamp screw", "Shoe clamp nut"):
                 solid = Rot(Z=-rotation) * support[name]
                 # Shifting the support forward by the minimum clearance must still leave it clear.
                 shifted = Pos(0, 0, p.post_clearance) * solid

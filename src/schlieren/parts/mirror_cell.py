@@ -50,6 +50,7 @@ from build123d import (
 )
 
 from schlieren.cad import ON_FLOOR, along_y, assembly, labeled, leaves
+from schlieren.standards import INCH
 from schlieren.vendor_cad import (
     KOZAK_KB250_BORE_BOTTOM_X,
     KOZAK_KB250_LENGTH,
@@ -75,7 +76,6 @@ from schlieren.vendor_cad import (
     mcmaster_98164a527,
 )
 
-INCH = 25.4
 PLYWOOD_COLOR = (0.82, 0.68, 0.45)
 BUSHING_COLOR = (0.75, 0.62, 0.3)
 SCREW_COLOR = (0.6, 0.6, 0.62)

@@ -17,7 +17,7 @@
 FIG := docs/design/figures
 PARTS := src/schlieren/parts
 CLI := src/schlieren/cli
-CORE := src/schlieren/cad.py src/schlieren/render.py src/schlieren/vendor_cad.py
+CORE := src/schlieren/cad.py src/schlieren/render.py src/schlieren/vendor_cad.py src/schlieren/standards.py
 
 FRAGMENTS := $(sort $(wildcard docs/design/[0-9][0-9]-*.md))
 FIGURES := $(addprefix $(FIG)/,\
@@ -62,7 +62,7 @@ $(FIG)/camera-support.png: $(CLI)/camera_support.py $(PARTS)/camera_support.py $
     $(PARTS)/rail_shoe.py $(PARTS)/rail.py $(CORE)
 	uv run camera-support --figure
 
-$(FIG)/slit-head.png: $(CLI)/slit_head.py $(PARTS)/slit_head.py $(CORE)
+$(FIG)/slit-head.png: $(CLI)/slit_head.py $(PARTS)/slit_head.py $(PARTS)/rail_shoe.py $(PARTS)/rail.py $(CORE)
 	uv run slit-head --figure
 
 $(FIG)/frame.png: $(CLI)/frame.py $(PARTS)/frame.py $(PARTS)/frame_drawing.py $(PARTS)/rail.py $(CORE)

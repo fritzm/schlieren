@@ -28,6 +28,7 @@ ON_FLOOR = (Align.CENTER, Align.CENTER, Align.MIN)  # Centered in the plane, ris
 FROM_CORNER = (Align.MIN, Align.MIN, Align.MIN)
 EXPORTERS = {"step": export_step, "stl": export_stl}  # By export kind, as `EXPORTERS[kind](part, path)`.
 BLACK_ANODIZED = (0.2, 0.2, 0.22)  # Viewer color for black-anodized aluminum (Thorlabs SM1 optomechanics).
+METAL = (0.75, 0.75, 0.78)  # Viewer color for stainless steel: posts, screws, nuts, washers.
 
 
 def along_x(origin) -> Plane:

@@ -25,11 +25,10 @@ from build123d import (
     mirror,
 )
 
-from schlieren.cad import BLACK_ANODIZED, ON_FLOOR, along_x, along_y, assembly, compression_spring, labeled
-from schlieren.parts.rail_shoe import RailShoeParameters
-from schlieren.vendor_cad import SM1RC_M_THICKNESS, thorlabs_fas100_parts, thorlabs_sm1rc_m, thorlabs_tr50_m
-
-INCH = 25.4
+from schlieren.cad import ON_FLOOR, along_x, along_y, assembly, compression_spring, labeled
+from schlieren.parts.rail_shoe import RailShoeParameters, post_stack
+from schlieren.standards import DATUM_DISC_THICKNESS, INCH, OPTICAL_HEIGHT, POST_DIAMETER, POST_LENGTH
+from schlieren.vendor_cad import SM1RC_M_THICKNESS, thorlabs_fas100_parts
 
 
 @dataclass(frozen=True)
@@ -46,10 +45,10 @@ class CarriageParameters:
     locator_diametral_clearance: float = 0.3
     locator_depth_clearance: float = 0.2
     # Post stack (§5) and Thorlabs SM1RC/M (vendor STEP model): Ø1.21 in bore accepting Ø1.20 in SM1 tubes.
-    optical_height: float = 72.35
-    datum_thickness: float = 0.010 * INCH
-    post_length: float = 50.0
-    post_diameter: float = 12.7
+    optical_height: float = OPTICAL_HEIGHT
+    datum_thickness: float = DATUM_DISC_THICKNESS
+    post_length: float = POST_LENGTH
+    post_diameter: float = POST_DIAMETER
     ring_thickness: float = SM1RC_M_THICKNESS
     ring_bore: float = 1.21 * INCH
     # Rear spigot, same interface as the slit-head adapter (§7.6); printed at the SM1 tube nominal.
@@ -121,17 +120,17 @@ class CarriageParameters:
     )
     thumb_tab_bead_radius: float = 0.8  # Grip bead along the inner (thumb-side) top edge; prints unsupported.
     # McMaster 98625A950 manufacturer drawing, canonical baseline §8.3.
-    insert_body_diameter: float = 0.313 * 25.4
-    insert_drill_diameter: float = 0.313 * 25.4
+    insert_body_diameter: float = 0.313 * INCH
+    insert_drill_diameter: float = 0.313 * INCH
     insert_overall_length: float = 0.313 * 25.4  # Conservative thread-engagement envelope.
     insert_body_length: float = 0.298 * 25.4  # Under-flange length, independently specified.
-    insert_min_material_thickness: float = 0.298 * 25.4
-    insert_flange_diameter: float = 0.352 * 25.4
-    insert_flange_thickness: float = 0.010 * 25.4
+    insert_min_material_thickness: float = 0.298 * INCH
+    insert_flange_diameter: float = 0.352 * INCH
+    insert_flange_thickness: float = 0.010 * INCH
     insert_entry_chamfer: float = 0.1  # 45-degree entry, outboard face.
     insert_flange_pocket_clearance: float = 0.2  # Diametral, flange pocket on the inner face of the block.
-    adjuster_screw_length: float = 25.4
-    adjuster_pitch: float = 25.4 / 80
+    adjuster_screw_length: float = INCH
+    adjuster_pitch: float = INCH / 80
     adjuster_clearance_travel: float = 15.5  # Maximum tip extension from insert inner end.
     adjuster_support_length: float = 8.5
     support_top: float = 14.0
@@ -745,15 +744,12 @@ def build_carriage(p=None, *, travel=0.0, retract=0.0, include_support=False, in
         ),
     ]
     if include_support:
-        from schlieren.parts.rail_shoe import build_rail_shoe
-
-        loc = support_location(p)
-        metal = (0.75, 0.75, 0.78)
-        ring = Pos(0, -p.ring_thickness / 2, p.optical_height)
-        children.append(labeled(thorlabs_sm1rc_m(), "SM1RC M ring", BLACK_ANODIZED, loc * ring))
-        post = Pos(0, 0, p.datum_thickness)
-        children.append(labeled(thorlabs_tr50_m(), "TR50 M post", metal, loc * post))
-        children.append(labeled(build_rail_shoe(), "Rail shoe", (0.8, 0.4, 0.25), loc))
+        children += post_stack(
+            support_location(p),
+            ring=True,
+            optical_height=p.optical_height,
+            datum_thickness=p.datum_thickness,
+        )
     if include_hardware:
         children += [labeled(part, name, color) for name, part, color in _adjuster_hardware(p, travel)]
         length = p.spring_fiducial_length + travel - retract

@@ -9,9 +9,10 @@ from schlieren.parts.optical_head import (
     build_optical_head,
     build_source_fixtures,
 )
+from schlieren.standards import DATUM_DISC_THICKNESS, POST_LENGTH
 from schlieren.testing import near_pairs, slow
 
-POST_TOP = 0.254 + 50.0  # Datum disc plus TR50/M, above the rail top (§3.4).
+POST_TOP = DATUM_DISC_THICKNESS + POST_LENGTH  # Datum disc plus TR50/M, above the rail top (§3.4).
 INTERFERENCE_TOLERANCE = 1e-3  # mm^3.
 MIN_CLEARANCE = 1.0  # mm, between any source-side and imaging-side part.
 

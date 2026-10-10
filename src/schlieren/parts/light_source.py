@@ -25,7 +25,9 @@ from math import isfinite
 
 from build123d import Box, Circle, Compound, Cylinder, Pos, Rectangle, RegularPolygon, Rot, Sphere, extrude
 
-from schlieren.cad import BLACK_ANODIZED, ON_FLOOR, assembly, labeled
+from schlieren.cad import BLACK_ANODIZED, METAL, ON_FLOOR, assembly, labeled
+from schlieren.parts.rail_shoe import post_stack
+from schlieren.standards import DATUM_DISC_THICKNESS, INCH, OPTICAL_HEIGHT, POST_DIAMETER, POST_LENGTH
 from schlieren.vendor_cad import (
     alpha_cn40_40b,
     thorlabs_acl2520u_a,
@@ -34,11 +36,8 @@ from schlieren.vendor_cad import (
     thorlabs_sm1l03,
     thorlabs_sm1v05,
     thorlabs_smr1_m,
-    thorlabs_tr50_m,
 )
 
-INCH = 25.4
-METAL = (0.75, 0.75, 0.78)  # Stainless TR50/M post and the iris lever.
 REFERENCE_HARDWARE_LABEL = "Reference hardware"
 WHOLE_IN_SECTION = (  # The LED module and condenser, shown entire in light_source_section.
     "CN40-40B heatsink",
@@ -48,7 +47,6 @@ WHOLE_IN_SECTION = (  # The LED module and condenser, shown entire in light_sour
     "ACL2520U-A condenser",
 )
 SECTION_BOX_SIZE = 1000.0  # Cutting box for light_source_section; larger than the module.
-SHOE_COLOR = (0.8, 0.4, 0.25)  # Printed rail shoe, as in the other models.
 GLASS = (0.7, 0.85, 0.95, 0.5)
 BOARD_COLOR = (0.92, 0.92, 0.9)  # White solder mask.
 LED_COLOR = (0.95, 0.9, 0.6)
@@ -91,12 +89,12 @@ MODULES = (GREEN, WHITE)
 @dataclass(frozen=True)
 class LightSourceParameters:
     # Frozen project datum (§3.4).
-    optical_height: float = 72.35
-    datum_thickness: float = 0.010 * INCH
+    optical_height: float = OPTICAL_HEIGHT
+    datum_thickness: float = DATUM_DISC_THICKNESS
     # Thorlabs TR50/M: metric-primary; its STEP model is rounded to inches (1.969 in, 0.499 in), so the
     # metric nominal values are exact.
-    post_length: float = 50.0
-    post_diameter: float = 12.7
+    post_length: float = POST_LENGTH
+    post_diameter: float = POST_DIAMETER
     # Thorlabs SMR1/M, SM1CP2M, SM1V05, SM1L03, SM1D12: inch-primary; exact values from the STEP models in
     # cad/vendor/ (the drawings' mm values are rounded).
     smr1_thickness: float = 0.400 * INCH
@@ -248,11 +246,6 @@ def build_light_source_assembly(p=None, board=GREEN, engagement=None):
 
     The post, the printed rail shoe under it, and the shoe's vendor hardware are grouped as REFERENCE_HARDWARE_LABEL.
     """
-    from schlieren.parts.rail_shoe import (
-        build_rail_shoe,
-        split_clamp_hardware,
-    )
-
     p = p or LightSourceParameters()
     p.validate()
     engagement = p.focus_engagement(board) if engagement is None else engagement
@@ -280,12 +273,7 @@ def build_light_source_assembly(p=None, board=GREEN, engagement=None):
         "SM1L03 tube": (thorlabs_sm1l03(), p.open_end_u(engagement)),
         "SM1D12 iris": (iris, iris_seat),
     }
-    on_post = Pos(0, post_y, 0)
-    reference = [
-        labeled(thorlabs_tr50_m(), "TR50 M post", METAL, Pos(0, post_y, p.datum_thickness)),
-        labeled(build_rail_shoe(), "Rail shoe", SHOE_COLOR, on_post),
-        *(labeled(h, h.label, METAL, on_post) for h in split_clamp_hardware()),
-    ]
+    reference = post_stack(y=post_y, datum_thickness=p.datum_thickness)
     children = [assembly(REFERENCE_HARDWARE_LABEL, reference)]
     children += [
         labeled(part, name, BLACK_ANODIZED, Pos(0, u, z)) for name, (part, u) in vendor_parts.items()

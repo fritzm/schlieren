@@ -11,6 +11,11 @@ they disagree with `docs/design/`, the design fragments govern.
 Exports land in the ignored `exports/step` and `exports/stl` directories. Select the project's `.venv`
 interpreter in VS Code for the viewer.
 
+Project-wide dimensions (`INCH`, the 72.35 mm optical height, the TR50/M post and datum disc) are defined once
+in `src/schlieren/standards.py`; the parameter classes take them as defaults. `post_stack` in `rail_shoe.py` builds the post,
+rail shoe, shoe clamp hardware, and optional SM1RC/M ring and side-slot screws that the light source, slit
+head, cutoff carriage, and the shoe's own viewer assembly share.
+
 ## Tabletop frame
 
 `src/schlieren/parts/frame.py` encodes the §4 frame: the two 400 mm rails on

@@ -10,8 +10,9 @@ from pathlib import Path
 
 from build123d import Box, Compound, Location, Pos, Rot, import_step
 
+from schlieren.standards import INCH
+
 VENDOR_CAD_DIR = Path(__file__).resolve().parents[2] / "cad" / "vendor"
-INCH = 25.4
 
 # Vendor-frame features used for placement (Thorlabs drawings are inch-primary).
 SM1CP2M_SEAT_Y = 0.110 * INCH  # Flange seat face (thread shoulder) above the knurled back face.

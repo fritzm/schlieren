@@ -36,7 +36,6 @@ from math import cos, isfinite, pi
 from build123d import Axis, Box, Cylinder, Pos, RegularPolygon, Rot, extrude, fillet
 
 from schlieren.cad import (
-    BLACK_ANODIZED,
     FROM_CORNER,
     ON_FLOOR,
     along_y,
@@ -44,26 +43,25 @@ from schlieren.cad import (
     compression_spring,
     labeled,
 )
+from schlieren.parts.rail_shoe import post_stack
+from schlieren.standards import DATUM_DISC_THICKNESS, INCH, OPTICAL_HEIGHT, POST_DIAMETER, POST_LENGTH
 from schlieren.vendor_cad import (
     SM1RC_M_THICKNESS,
     mcmaster_91292a114,
     mcmaster_91828a211,
     thorlabs_fas100_parts,
-    thorlabs_sm1rc_m,
-    thorlabs_tr50_m,
 )
 
-INCH = 25.4
 LBF = 4.44822  # N
 
 
 @dataclass(frozen=True)
 class SlitHeadParameters:
     # Frozen project datum (§3.4) and post stack.
-    optical_height: float = 72.35
-    datum_thickness: float = 0.010 * INCH
-    post_length: float = 50.0
-    post_diameter: float = 12.7
+    optical_height: float = OPTICAL_HEIGHT
+    datum_thickness: float = DATUM_DISC_THICKNESS
+    post_length: float = POST_LENGTH
+    post_diameter: float = POST_DIAMETER
     # Thorlabs SM1RC/M (vendor STEP model): Ø1.21 in bore accepting Ø1.20 in SM1 tubes.
     ring_thickness: float = SM1RC_M_THICKNESS
     ring_bore: float = 1.21 * INCH
@@ -768,14 +766,5 @@ def build_slit_head_assembly(p=None, rotation=0.0, include_support=True):
     )
     children.append(labeled(spring, "2006N292 spring", (0.75, 0.75, 0.78), loc * Pos(sx, p.axis_y, s0)))
     if include_support:
-        from schlieren.parts.rail_shoe import build_rail_shoe, split_clamp_hardware
-
-        ring_y = -SM1RC_M_THICKNESS / 2
-        children.append(
-            labeled(thorlabs_sm1rc_m(), "SM1RC M ring", BLACK_ANODIZED, Pos(0, ring_y, p.optical_height))
-        )
-        children.append(labeled(thorlabs_tr50_m(), "TR50 M post", metal, Pos(0, 0, p.datum_thickness)))
-        children.append(labeled(build_rail_shoe(), "Rail shoe", (0.8, 0.4, 0.25)))
-        for hardware in split_clamp_hardware():
-            children.append(labeled(hardware, f"Shoe {hardware.label.lower()}", metal))
+        children += post_stack(ring=True, optical_height=p.optical_height, datum_thickness=p.datum_thickness)
     return assembly("Flexure slit head (exploratory)", children)

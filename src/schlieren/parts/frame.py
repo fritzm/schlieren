@@ -21,6 +21,7 @@ from build123d import Align, Box, Compound, Cylinder, Location, Part, Pos, Rot
 
 from schlieren.cad import BLACK_ANODIZED, ON_FLOOR, assembly, labeled, place
 from schlieren.parts.rail import RailProfile, build_rail
+from schlieren.standards import INCH
 from schlieren.vendor_cad import (
     MCMASTER_8215K2_DIAMETER,
     MCMASTER_8215K2_HEIGHT,
@@ -39,7 +40,6 @@ from schlieren.vendor_cad import (
     mcmaster_93625a225,
 )
 
-INCH = 25.4
 SIDES = {"Left": -1, "Right": 1}
 
 # Nominal M5 hardware envelopes (ISO 4762 socket head, ISO 7089 washer, nyloc), for the viewer and stack checks.

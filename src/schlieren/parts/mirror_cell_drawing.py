@@ -20,7 +20,8 @@ from schlieren.parts.frame_drawing import (
     TEXT_GAP,
     TITLE_FONT_SIZE,
 )
-from schlieren.parts.mirror_cell import BRACKETS, INCH, MirrorCellParameters
+from schlieren.parts.mirror_cell import BRACKETS, MirrorCellParameters
+from schlieren.standards import INCH
 from schlieren.vendor_cad import MCMASTER_8681N11_WIDTH
 
 PAGE_WIDTH = 17.0 * INCH

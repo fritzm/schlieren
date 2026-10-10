@@ -25,6 +25,7 @@ from build123d import (
 )
 
 from schlieren.cad import ON_FLOOR, assembly, labeled
+from schlieren.standards import INCH
 
 
 @dataclass(frozen=True)
@@ -138,7 +139,7 @@ class ClampBarParameters:
     end_relief_start_x: float = 21.0
     end_relief_depth: float = 1.6  # Clears plunger lips even with thin media.
     corner_radius: float = 0.5
-    epdm_thickness: float = 25.4 / 32  # Uncompressed reference only.
+    epdm_thickness: float = INCH / 32  # Uncompressed reference only.
     media_lift: float = 0.6  # Provisional bar elevation, NOT measured blade thickness.
     washer_od: float = 7.0
     washer_id: float = 3.2

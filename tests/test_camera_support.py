@@ -20,6 +20,7 @@ from schlieren.parts.camera_support import (
     build_phone_rest_for_print,
     screw_location,
 )
+from schlieren.standards import OPTICAL_HEIGHT
 from schlieren.testing import boxes_overlap, slow
 from schlieren.vendor_cad import MCMASTER_94459A797_FLANGE_DIAMETER, MCMASTER_94459A797_LENGTH, vendor_step
 
@@ -56,10 +57,10 @@ class LensCradleTests(unittest.TestCase):
     def test_lens_and_main_camera_are_on_the_optical_axis(self):
         p = self.p
         lens = self.parts["Telephoto envelope"].bounding_box()
-        self.assertAlmostEqual((lens.min.Z + lens.max.Z) / 2, 72.35, places=4)
+        self.assertAlmostEqual((lens.min.Z + lens.max.Z) / 2, OPTICAL_HEIGHT, places=4)
         self.assertAlmostEqual((lens.min.X + lens.max.X) / 2, 0.0, places=4)
         phone = self.parts["Phone envelope"].bounding_box()
-        self.assertAlmostEqual(72.35 - phone.min.Z, 60.6, places=4)  # Measured, §9.1.
+        self.assertAlmostEqual(OPTICAL_HEIGHT - phone.min.Z, 60.6, places=4)  # Measured, §9.1.
         self.assertAlmostEqual(-phone.min.X, 34.3, places=4)  # Measured, §9.1.
         self.assertGreater(phone.max.X, -phone.min.X)  # The body hangs outboard, toward +x.
         self.assertLessEqual(phone.max.Y, lens.min.Y + CONTACT)  # Lens ahead of the phone back.
@@ -85,7 +86,7 @@ class LensCradleTests(unittest.TestCase):
             center = self.parts[f"{station} magnet"].center()
             # Pads are tangent to a circle about the axis: equal offsets across and below it.
             with self.subTest(pad=station):
-                self.assertAlmostEqual(abs(center.X), 72.35 - center.Z, places=3)
+                self.assertAlmostEqual(abs(center.X), OPTICAL_HEIGHT - center.Z, places=3)
         # Pads lie with their long side across the rail, the direction they slide most.
         self.assertAlmostEqual(self.parts["Fore left magnet"].bounding_box().size.Y, p.magnet_width, places=4)
 

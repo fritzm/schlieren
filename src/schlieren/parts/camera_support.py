@@ -56,6 +56,7 @@ from build123d import (
 from schlieren.cad import BLACK_ANODIZED, ON_FLOOR, along_x, along_y, assembly, labeled, place
 from schlieren.parts.rail import build_rail
 from schlieren.parts.rail_shoe import RailShoeParameters
+from schlieren.standards import INCH, OPTICAL_HEIGHT
 from schlieren.vendor_cad import (
     MCMASTER_92815A202_HEIGHT,
     MCMASTER_93339A252_BALL_DIAMETER,
@@ -69,7 +70,6 @@ from schlieren.vendor_cad import (
     mcmaster_94459a797,
 )
 
-INCH = 25.4
 YOKE_BOSS_OVERRUN = 0.5  # Arm material behind the end of the screw at nominal.
 LENS_TO_SLIP_RING = 10.0  # Assumed gap, lens front to the cutoff slip ring's rear face (§8.1).
 CRADLE_COLOR = (0.8, 0.4, 0.25)
@@ -87,7 +87,7 @@ AXIS_COLOR = (0.9, 0.1, 0.1)
 
 @dataclass(frozen=True)
 class CameraSupportParameters:
-    optical_height: float = 72.35  # §3.4.
+    optical_height: float = OPTICAL_HEIGHT  # §3.4.
     rail_size: float = 20.0
 
     # Phone in its case, landscape, screen aft (§9.1), Main camera (the lower aperture in portrait) on the axis.

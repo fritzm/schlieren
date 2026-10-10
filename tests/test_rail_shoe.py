@@ -118,19 +118,19 @@ class RailShoeTests(unittest.TestCase):
     def test_reference_parts_viewer_group(self):
         assembly = viewer_assembly(self.shoe, self.p)
         groups = {child.label: child for child in assembly.children}
-        self.assertEqual(set(groups), {"Shoe", "Reference parts"})
+        self.assertEqual(set(groups), {"Rail shoe", "Reference parts"})
         self.assertEqual(
             [child.label for child in groups["Reference parts"].children],
             [
                 "Rail",
                 "Datum disc",
-                "TR50_M",
-                "Side screw washer left",
-                "Side screw left",
-                "Side screw washer right",
-                "Side screw right",
-                "Clamp screw",
-                "Clamp nut",
+                "TR50 M post",
+                "Shoe clamp screw",
+                "Shoe clamp nut",
+                "Shoe side screw washer left",
+                "Shoe side screw left",
+                "Shoe side screw washer right",
+                "Shoe side screw right",
             ],
         )
 
@@ -140,8 +140,8 @@ class RailShoeTests(unittest.TestCase):
         parts = reference_children(self.shoe, p)
         for side, name in ((-1, "left"), (1, "right")):
             with self.subTest(side=name):
-                washer = parts[f"Side screw washer {name}"].bounding_box()
-                screw = parts[f"Side screw {name}"].bounding_box()
+                washer = parts[f"Shoe side screw washer {name}"].bounding_box()
+                screw = parts[f"Shoe side screw {name}"].bounding_box()
                 self.assertAlmostEqual(
                     abs(washer.min.X) if side < 0 else washer.max.X, p.width / 2 + 1.0, places=4
                 )
@@ -157,13 +157,13 @@ class RailShoeTests(unittest.TestCase):
                     entry, rail.lip_thickness + 3.0
                 )  # Through the thickness of a roll-in T-nut.
                 self.assertLess(entry, rail.slot_depth - 0.5)
-                for part in (parts[f"Side screw washer {name}"], parts[f"Side screw {name}"]):
+                for part in (parts[f"Shoe side screw washer {name}"], parts[f"Shoe side screw {name}"]):
                     self.assertLess((self.shoe & part).volume, 1e-6)
 
     def test_split_clamp_screw_and_nut_sit_in_their_ears(self):
         p = self.p
         parts = reference_children(self.shoe, p)
-        screw, nut = parts["Clamp screw"].bounding_box(), parts["Clamp nut"].bounding_box()
+        screw, nut = parts["Shoe clamp screw"].bounding_box(), parts["Shoe clamp nut"].bounding_box()
         self.assertAlmostEqual(screw.center().X, p.clamp_axis_x, places=4)
         self.assertAlmostEqual(screw.center().Z, p.clamp_axis_z, places=4)
         self.assertAlmostEqual(nut.center().X, p.clamp_axis_x, places=4)
@@ -172,13 +172,13 @@ class RailShoeTests(unittest.TestCase):
         self.assertAlmostEqual(screw.min.Y + MCMASTER_91292A114_HEAD_HEIGHT, p.clamp_screw_outer_y, places=4)
         self.assertAlmostEqual(nut.min.Y, p.clamp_nut_outer_y - p.nut_pocket_depth, places=4)
         self.assertGreater(screw.max.Y, nut.max.Y)
-        for label in ("Clamp screw", "Clamp nut"):
+        for label in ("Shoe clamp screw", "Shoe clamp nut"):
             self.assertLess((self.shoe & parts[label]).volume, 1e-6)
 
     def test_viewer_post_is_vendor_model_seated_on_datum_disc(self):
         p = self.p
         references = viewer_assembly(self.shoe, p).children[1]
-        post = {child.label: child for child in references.children}["TR50_M"]
+        post = {child.label: child for child in references.children}["TR50 M post"]
         body = max(post.solids(), key=lambda s: s.volume).bounding_box()  # Not the stud.
         self.assertAlmostEqual(body.min.Z, p.datum_disc_thickness, places=5)
         self.assertAlmostEqual(body.size.X, p.post_diameter, delta=TR50_MODEL_ROUNDING)
