@@ -142,8 +142,10 @@ class CarriageTests(unittest.TestCase):
             self.assertTrue(base.is_inside((10, y, p.keeper_z - 0.1)))
             self.assertFalse(base.is_inside((10, y, p.keeper_z + 0.1)))
             self.assertTrue(keeper.is_inside((10, y, p.keeper_z + 0.1)))
-            # Lowering the axis now leaves a continuous roof over the insert bore.
-            self.assertTrue(keeper.is_inside((0, y, p.adjuster_axis_z + p.insert_bore_diameter / 2 + 0.5)))
+            # Lowering the axis now leaves a continuous roof over the insert bore; the flange pocket
+            # in the block's inner face takes only the first flange-thickness of it.
+            roof = (0, max(y, start + p.insert_flange_thickness + 0.1), p.adjuster_axis_z)
+            self.assertTrue(keeper.is_inside((0, roof[1], roof[2] + p.insert_bore_diameter / 2 + 0.5)))
         self.assertAlmostEqual(base.bounding_box().max.Z, p.keeper_z)
 
     def test_lowered_bodies_and_rod_axes(self):
@@ -175,12 +177,16 @@ class CarriageTests(unittest.TestCase):
         start, end = p.support_spans[0]
         inner = p.insert_bore_diameter / 2
         outer = inner + p.keeper_thickness
-        for y in (start + 0.1, (start + end) / 2, end - 0.1):
+        for y in (start + p.insert_flange_thickness + 0.1, (start + end) / 2, end - 0.1):
             for angle in (30, 45, 60, 90, 120, 135, 150):
                 a = radians(angle)
                 for r in (inner + p.insert_entry_chamfer + 0.05, outer - 0.05):
                     self.assertTrue(keeper.is_inside((r * cos(a), y, p.adjuster_axis_z + r * sin(a))))
             self.assertFalse(keeper.is_inside((0, y, p.adjuster_axis_z + outer + 0.05)))
+        # Over the flange pocket the crown keeps a wall of at least 2 mm outside the pocket radius.
+        pocket_r = (p.insert_flange_diameter + p.insert_flange_pocket_clearance) / 2
+        self.assertGreaterEqual(outer - pocket_r, 2.0)
+        self.assertTrue(keeper.is_inside((0, start + 0.1, p.adjuster_axis_z + pocket_r + 1.0)))
         # Flat regions retain their original 3 mm section.
         self.assertFalse(keeper.is_inside((20, (start + end) / 2, p.keeper_z + p.keeper_thickness + 0.05)))
 
@@ -320,37 +326,45 @@ class CarriageTests(unittest.TestCase):
         )
         self.assertAlmostEqual(p.adjuster_screw_length - p.insert_overall_length, 17.4498)
         self.assertAlmostEqual(p.adjuster_pitch, 0.3175)
-        flange_face = p.plate_ymax
-        insert_inner = flange_face - p.insert_overall_length
+        # The flange is on the cassette-side (inner) face of the adjuster block, so the outboard adjuster
+        # reaction bears it against the block; the body runs outboard and stays inside the block.
+        flange_face = p.insert_flange_face
+        self.assertAlmostEqual(flange_face, p.plate_ymax - p.adjuster_support_length)
+        body_start = flange_face + p.insert_flange_thickness
+        insert_inner = flange_face
+        insert_outer = flange_face + p.insert_overall_length
+        self.assertLessEqual(insert_outer + p.insert_entry_chamfer, p.plate_ymax)
         # Check the actual screw envelope and engagement at both travel limits.
         for travel in (-5, 0, 5):
             tip = p.magnet_contact_y + travel
             extension = insert_inner - tip
             self.assertGreater(extension, 0)
             self.assertLessEqual(extension, 15.5 + 1e-6)
-            self.assertGreater(tip + p.adjuster_screw_length, flange_face + p.insert_flange_thickness)
+            self.assertGreater(tip + p.adjuster_screw_length, insert_outer)
             screw = y_cylinder(6.35 / 2, p.adjuster_screw_length, tip, p.adjuster_axis_z)
             for name in ("Base plate", "Guide frame", "Keeper plate"):
                 self.assertLess((self.parts[name] & screw).volume, 1e-6)
+        # The flange sits in a flush pocket: nothing intersects it, and the block material directly
+        # outboard of it (between bore and flange edge) is there to take the reaction.
         flange = y_cylinder(
             p.insert_flange_diameter / 2, p.insert_flange_thickness, flange_face, p.adjuster_axis_z
         )
         for name in ("Base plate", "Guide frame", "Keeper plate"):
             self.assertLess((self.parts[name] & flange).volume, 1e-6)
+        land_x = (p.insert_bore_diameter + p.insert_flange_diameter) / 4
+        z = p.adjuster_axis_z
+        self.assertTrue(self.fixed.is_inside((land_x, body_start + 0.1, z)))
+        self.assertFalse(self.fixed.is_inside((land_x, flange_face + p.insert_flange_thickness / 2, z)))
+        self.assertFalse(self.fixed.is_inside((land_x, flange_face - 0.1, z)))
         # Nominal manufacturer barrel envelope clears the CAD bore; printed fit must be finished.
         bore = y_cylinder(
             p.insert_bore_diameter / 2,
             p.adjuster_support_length,
-            flange_face - p.adjuster_support_length,
+            flange_face,
             p.adjuster_axis_z,
         )
         self.assertLess((self.fixed & bore).volume, 1e-6)
-        barrel = y_cylinder(
-            p.insert_body_diameter / 2,
-            p.insert_body_length,
-            flange_face - p.insert_body_length,
-            p.adjuster_axis_z,
-        )
+        barrel = y_cylinder(p.insert_body_diameter / 2, p.insert_body_length, body_start, p.adjuster_axis_z)
         for name in ("Base plate", "Guide frame", "Keeper plate"):
             self.assertLess((self.parts[name] & barrel).volume, 1e-6)
         self.assertAlmostEqual(p.adjuster_axis_z, 8.0751)

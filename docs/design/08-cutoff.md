@@ -89,8 +89,11 @@ The insert bore is nominally 0.313 in (7.950 mm), matching the drawing. The prin
 after printing with a 5/16 in (0.3125 in) drill rather than relying on FDM accuracy; on the slit head this
 gave a good press fit ([§7.7](07-source-slit.md#77-fabrication-and-fit)). The 8.5 mm insert support exceeds
 the drawing's 0.298 in (7.569 mm) minimum material thickness, with about 3 mm of radial PLA around the insert
-body. The flange is on the adjuster/outboard side, unrecessed, so the axial reaction from the FAS100 seats it
-against the carriage.
+body. The spring plunger loads the FAS100 tip, so the screw pushes the insert outboard, toward the knob. The
+flange is therefore on the inner (cassette-side) face of the adjuster block, in a flush counterbore 0.2 mm
+larger in diameter than the flange, with the body running outboard: the reaction bears the flange against the
+block instead of relying on the press fit. The insert is pressed in from the cassette side before the plungers
+are installed, with the flange bottoming in its pocket.
 
 FAS100 / insert travel envelope for CAD: the FAS100 uses a 1.000 in (25.4 mm) long 1/4 in-80 adjuster screw.
 The 80 TPI pitch gives 0.0125 in (0.3175 mm) axial motion per revolution. Using the insert's 0.313 in overall

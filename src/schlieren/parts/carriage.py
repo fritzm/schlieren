@@ -129,6 +129,7 @@ class CarriageParameters:
     insert_flange_diameter: float = 0.352 * 25.4
     insert_flange_thickness: float = 0.010 * 25.4
     insert_entry_chamfer: float = 0.1  # 45-degree entry, outboard face.
+    insert_flange_pocket_clearance: float = 0.2  # Diametral, flange pocket on the inner face of the block.
     adjuster_screw_length: float = 25.4
     adjuster_pitch: float = 25.4 / 80
     adjuster_clearance_travel: float = 15.5  # Maximum tip extension from insert inner end.
@@ -202,13 +203,19 @@ class CarriageParameters:
 
     @property
     def plate_ymax(self):
-        # Locate the flange face to retain full insert engagement at -5 mm travel.
+        # Outer face of the adjuster block, placed to retain full insert engagement at -5 mm travel.
         return (
             self.magnet_contact_y
             - self.working_half_travel
             + self.adjuster_clearance_travel
             + self.insert_overall_length
         )
+
+    @property
+    def insert_flange_face(self):
+        # Inner (cassette-side) face of the adjuster block: the flange bottoms here, in a flush pocket, and
+        # the outboard reaction of the adjuster screw bears it against the block.
+        return self.plate_ymax - self.adjuster_support_length
 
     @property
     def plate_length(self):
@@ -330,10 +337,15 @@ class CarriageParameters:
     def validate(self):
         if any(v <= 0 for v in vars(self).values()):
             raise ValueError("Dimensions must be positive")
-        if self.insert_bore_diameter + 2 * self.insert_entry_chamfer >= self.insert_flange_diameter:
-            raise ValueError("Bushing flange needs a bearing land outside the chamfer")
+        if self.insert_bore_diameter >= self.insert_flange_diameter:
+            raise ValueError("Bushing flange needs a bearing land outside the bore")
         if self.adjuster_support_length - self.insert_entry_chamfer < self.insert_min_material_thickness:
             raise ValueError("Insert support must meet the drawing minimum beyond the entry chamfer")
+        if (
+            self.insert_flange_thickness + self.insert_body_length + self.insert_entry_chamfer
+            > self.adjuster_support_length
+        ):
+            raise ValueError("Flush-flanged insert must fit inside the adjuster block")
         if self.adjuster_clearance_travel >= self.adjuster_screw_length - self.insert_overall_length:
             raise ValueError("Adjuster must retain full insert engagement with end margin")
         if self.spigot_diameter >= self.ring_bore or self.spigot_bore >= self.spigot_diameter - 4:
@@ -452,6 +464,7 @@ def _build_fixed_body(p=None):
     base -= _keeper_envelope(p, p.support_top - p.keeper_z)
     start, end = p.support_spans[0]
     base -= _y_hole(p.insert_bore_diameter / 2, end - start + 2, start - 1, p.adjuster_axis_z)
+    base -= _insert_flange_pocket(p)
     # End-wall spring cup; the guide-frame split truncates it at the keeper plane, and the keeper carries its roof.
     base += _spring_cup(p, p.spring_seat_y, p.plate_thickness)
     # The spigot and optical axis remain fixed while the cassette translates.
@@ -608,6 +621,16 @@ def _insert_entry(p):
     )
 
 
+def _insert_flange_pocket(p):
+    # Flange-thick counterbore in the inner face of the adjuster block, so the flange sits flush.
+    return _y_hole(
+        (p.insert_flange_diameter + p.insert_flange_pocket_clearance) / 2,
+        p.insert_flange_thickness,
+        p.insert_flange_face,
+        p.adjuster_axis_z,
+    )
+
+
 def build_keeper_plate(p=None):
     p = p or CarriageParameters()
     p.validate()
@@ -625,6 +648,7 @@ def build_keeper_plate(p=None):
     )
     keeper += crown
     keeper -= _y_hole(p.insert_bore_diameter / 2, end - start + 2, start - 1, p.adjuster_axis_z)
+    keeper -= _insert_flange_pocket(p)
     keeper += _spring_cup(p, p.spring_seat_y, p.keeper_z)
     extra = p.keeper_side_thickness - p.keeper_thickness
     for sign in (-1, 1) if extra > 0 else ():
@@ -744,23 +768,18 @@ def build_carriage(p=None, *, travel=0.0, retract=0.0, include_support=False, in
 def _adjuster_hardware(p, travel):
     """FAS100, bushing, and magnet pad as (name, part, rgb); the ball tip bears on the pad face."""
     tip_y = p.magnet_contact_y + travel
-    # Vendor model axis +Z toward the knob, turned to +Y (outboard, toward the bushing flange).
+    # Vendor model axis +Z toward the knob, turned to +Y (outboard, toward the insert).
     fas100_loc = Pos(0, tip_y, p.adjuster_axis_z) * Rot(X=-90)
     screw, knob, dimple = (fas100_loc * part for part in thorlabs_fas100_parts())
-    flange_face = p.plate_ymax
-    bushing = _y_hole(
-        p.insert_body_diameter / 2,
-        p.insert_body_length,
-        flange_face - p.insert_body_length,
-        p.adjuster_axis_z,
-    )
-    bushing += _y_hole(
-        p.insert_flange_diameter / 2, p.insert_flange_thickness, flange_face, p.adjuster_axis_z
-    )
+    # Flange on the inner face of the block, body running outboard.
+    flange_face = p.insert_flange_face
+    body_start = flange_face + p.insert_flange_thickness
+    bushing = _y_hole(p.insert_flange_diameter / 2, p.insert_flange_thickness, flange_face, p.adjuster_axis_z)
+    bushing += _y_hole(p.insert_body_diameter / 2, p.insert_body_length, body_start, p.adjuster_axis_z)
     bushing -= _y_hole(
         0.25 * INCH / 2,
-        p.insert_body_length + 2,
-        flange_face - p.insert_body_length - 1,
+        p.insert_body_length + p.insert_flange_thickness + 2,
+        flange_face - 1,
         p.adjuster_axis_z,
     )
     magnet = _box(
