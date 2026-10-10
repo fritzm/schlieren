@@ -42,7 +42,7 @@ From the LED to the slit:
   <img src="figures/light-source-section.png" width="500" style="max-width: 95%"
        alt="Light source with the SMR1/M, SM1V05, SM1L03, and iris cut along the optical axis, and the heatsink, cap, star board with LED, and condenser lens shown whole">
   <br>
-  <em>Fig. 5. Light source cutaway</em>
+  <em>Fig. 5. Light source cutaway, showing internal position of LED module and condensing lens</em>
 </p>
 
 The ACL2520U-A convex vertex sits about 0.7 mm inside the SM1V05 open end, so the SM1L03 spacer is required

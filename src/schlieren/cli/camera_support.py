@@ -11,6 +11,7 @@ from schlieren.parts.camera_support import (
     build_collar_for_print,
     build_cradle_shoe_for_print,
     build_cradle_yoke_for_print,
+    build_phone_rest_for_print,
 )
 
 DEFAULT_FIGURE = Path("docs/design/figures/camera-support.png")
@@ -48,6 +49,11 @@ def main() -> None:
         action="store_true",
         help="Export the cradle shoe in print orientation (STEP and STL); with --show, display it",
     )
+    parser.add_argument(
+        "--rest",
+        action="store_true",
+        help="Export the phone rest in print orientation (STEP and STL); with --show, display it",
+    )
     parser.add_argument("--output", type=Path, default=Path("exports"))
     parser.add_argument(
         "--figure",
@@ -72,6 +78,8 @@ def main() -> None:
         printed["lens_collar_aft"] = build_collar_for_print(aft=True)
     if args.shoe:
         printed["cradle_shoe"] = build_cradle_shoe_for_print()
+    if args.rest:
+        printed["phone_rest"] = build_phone_rest_for_print()
     for name, part in printed.items():
         for kind in ("step", "stl"):
             destination = args.output / kind / f"{name}.{kind}"

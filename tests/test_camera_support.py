@@ -17,6 +17,7 @@ from schlieren.parts.camera_support import (
     build_cradle_shoe,
     build_cradle_yoke,
     build_phone_rest,
+    build_phone_rest_for_print,
     screw_location,
 )
 from schlieren.testing import boxes_overlap, slow
@@ -350,6 +351,16 @@ class LensCradleTests(unittest.TestCase):
         self.assertGreaterEqual(
             p.rest_arm_top - p.rest_arm_depth - r - head_top, p.clamp_screw_head_clearance
         )
+
+    def test_rest_print_orientation_lies_on_its_side_on_the_bed(self):
+        p = self.p
+        rest, printed = build_phone_rest(p), build_phone_rest_for_print(p)
+        box, model = printed.bounding_box(), rest.bounding_box()
+        self.assertAlmostEqual(box.min.Z, 0.0, places=4)
+        self.assertAlmostEqual(box.size.Z, p.rest_shoe_length, places=4)  # Stacked along the rail.
+        self.assertAlmostEqual(box.size.X, model.size.X, places=4)
+        self.assertAlmostEqual(box.size.Y, model.size.Z, places=4)
+        self.assertAlmostEqual(printed.volume, rest.volume, places=3)
 
     def test_cradle_and_rest_are_separate_single_parts(self):
         cradle, rest = build_cradle_shoe(self.p), build_phone_rest(self.p)

@@ -20,7 +20,7 @@ The cradle parts are modeled in detail: fillets, pad pockets, clamp ear, insert 
 lens, phone, and hardware are envelopes, except the McMaster screws, thumb nuts, inserts, and dowel pins, which
 are vendor models; the clamp screws and nuts and the rail clamp screws are not drawn. The phone rest has no retainer or
 safety catch yet. The phone dimensions are the §9.1 measurements and Apple's drawing, and the lens section
-lengths and barrel diameter are measured (§9.2); the cased phone thickness and the focus-ring diameter are
+lengths and barrel diameter are measured (§9.2); the focus-ring diameter is
 assumed, and the lens aft end is taken to be at the phone's back.
 
 Coordinates: the §3.4 imaging rail frame, +x right, +y along the rail toward the mirror, z up from the rail
@@ -96,7 +96,7 @@ class CameraSupportParameters:
     bare_phone_length: float = 149.61
     bare_phone_width: float = 71.45
     bare_camera_from_side_edge: float = 13.62  # Both rear cameras, from the nearer long edge.
-    phone_thickness: float = 11.0  # Assumed case envelope; the bare phone is 7.95 mm.
+    phone_thickness: float = 0.510 * INCH  # Measured over the case, §9.1; the bare phone is 7.95 mm.
 
     # Lens sections from the aft end, measured (§9.2): aft stub, rear barrel section, long barrel section,
     # focus ring, front lip. Both barrel sections are 37.0 mm in diameter to within 0.05 mm.
@@ -903,6 +903,13 @@ def build_phone_rest(p: CameraSupportParameters | None = None) -> Part:
     if len(rest.solids()) != 1 or not rest.is_valid:
         raise ValueError("Phone rest did not produce one valid solid")
     return rest
+
+
+def build_phone_rest_for_print(p: CameraSupportParameters | None = None) -> Part:
+    """The phone rest laid on its side as printed: profile plane on the bed, centered on the origin, bed at z = 0."""
+    rest = Rot(X=90) * build_phone_rest(p)
+    box = rest.bounding_box()
+    return Pos(-(box.min.X + box.max.X) / 2, -(box.min.Y + box.max.Y) / 2, -box.min.Z) * rest
 
 
 def build_camera_support_assembly(

@@ -17,6 +17,8 @@ of the printed yokes and of the rod groove, which are still to be tested, and th
 - measured camera optical axis approximately 60.6 mm above the lower long edge, in the case
 - measured Main camera axis approximately 1.350 in / 34.3 mm from the near short edge, in the case; the case
   shape makes this hard to measure accurately with calipers
+- measured case thickness approximately 0.510 in / 12.95 mm (bare phone 7.95 mm); the case corners are rounded
+- measured mass 188.7 g bare, with its glass screen protector, and 238.6 g in the case
 
 Manufacturer dimensions of the bare phone, from the drawing:
 
@@ -115,7 +117,7 @@ Each station's pair of screws places one point of the lens axis, so the two stat
 pointing without coupling between them beyond the lever ratio. A second groove would fix the fore/aft position
 a second time against the spacing of the collars on the lens, and would stop the pad sliding that yaw
 adjustment needs. Holding the lens, not the phone, takes the lens weight off the lens mount: the mount carries
-about 1 N in shear (calculated), against roughly 130–150 N·mm of bending if the lens were cantilevered from
+about 1.3 N in shear (calculated), against roughly 170 N·mm of bending if the lens were cantilevered from
 the phone.
 
 The model is `src/schlieren/parts/camera_support.py`. It holds the printed parts, with their fits, pockets,
@@ -243,7 +245,7 @@ single pair of M5 clearance holes for the side-slot screw.
   root fillet stays at least 1 mm above the side-slot screw head on the outside of the skirt.
 
 - With the measured 60.6 mm camera-axis height, the phone's lower edge is about 11.75 mm above the rail top.
-- The rest carries about 0.8–0.9 N (calculated, same assumptions as the contact loads in
+- The rest carries about 1.0 N (calculated, same assumptions as the contact loads in
   [§9.8](#98-retaining-bands)). It matters to the cradle, because it keeps the fore pad load from falling
   toward zero.
 - The rest is fixed. Raising or lowering the aft collar rolls the phone slightly about the lens axis, which
@@ -286,15 +288,14 @@ Hardware:
 
 The collars sit on their pads under gravity alone, so each pad pair is held down by an elastic band. The pairs
 carry only the lens and phone weight, and the fore pair least of all: contact loads, calculated from the
-measured 215 g lens with an assumed balance point 60–70 mm from the aft end and an assumed cased phone mass of
-177–210 g, are
+measured 215 g lens and 238.6 g cased phone, with an assumed balance point 60–70 mm from the aft end, are
 
-- aft screw pair: about 2.2–2.7 N;
-- fore screw pair: about 0.6–0.9 N. The phone hangs behind the aft collar, so its weight pivots the lens about
+- aft screw pair: about 2.7–3.0 N;
+- fore screw pair: about 0.5–0.8 N. The phone hangs behind the aft collar, so its weight pivots the lens about
   the aft screws and unloads the fore pair, but it cannot lift it: the lens moment is the larger.
 
 A downward push on the phone, such as a screen tap, lifts the fore end when it exceeds roughly 2.5 times the
-fore pair's load, about 1.5–2.2 N unaided, and a sideways nudge unseats a pad when it exceeds the load on its
+fore pair's load, about 1.2–1.9 N unaided, and a sideways nudge unseats a pad when it exceeds the load on its
 pair. The alloy-steel screw tips are attracted to the magnet pads, which adds some preload; it is not relied
 upon until measured.
 
@@ -309,13 +310,13 @@ crossbar face. The peg has a 4 mm stem and a 6 mm lip; the ring lies on the stem
   size stretched about 19% pulls about 3 N (calculated, with a 70A rubber modulus of about 5 MPa assumed).
 - Each band acts about 12 mm from its collar. With one band beside each yoke, between the collars, each pad
   pair receives the hold-down of 5 N in total from the two bands (calculated), about 4.2 N from its own band
-  and about 0.8 N from the other. That raises the tap threshold at the fore end to roughly 14 N.
+  and about 0.8 N from the other. That raises the tap threshold at the fore end to roughly 13–14 N.
 - The legs clear the thumb nuts by more than 5 mm, so the cord stays out of the way of the fingers.
 - To fit, slide the rings over the focus ring onto the bare barrel before clamping the collars on; refitting
   one afterwards means stretching it round the other collar and its ear. A band stays on the lens when the
   lens is lifted out with the peg end unhooked.
 
-**Provisional:** the contact loads rest on the assumed balance point and phone mass above, and the ring size
+**Provisional:** the contact loads rest on the assumed balance point above, and the ring size
 is chosen on an assumed modulus; the next larger inside diameter is the alternative if the 40 mm ring is too
 tight.
 
@@ -355,8 +356,8 @@ The sequence:
    until the vignetting at the corners is even; a turn of one screw is only about 0.6 mm, so turn in small
    steps. The mirror should sit centered in the frame, which sets pitch and yaw to within the spare 1.2°.
 5. Check the roll: the phone rest rod should just touch the phone's lower edge without lifting it, a paper
-   strip sliding between them with light drag. A case thickness different from the assumed 11 mm is taken up
-   by shimming the rod seat.
+   strip sliding between them with light drag. A lower-edge height different from the model is taken up by
+   shimming the rod seat.
 6. Record the final thumb nut positions, so that refitting the lens needs only a check.
 
 - Each station's range is only about ±4 mm, so a larger offset is taken up by moving the shoe on the rail, not
