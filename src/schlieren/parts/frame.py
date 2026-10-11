@@ -46,7 +46,6 @@ SIDES = {"Left": -1, "Right": 1}
 
 # Nominal M5 hardware envelopes (ISO 4762 socket head, ISO 7089 washer, nyloc), for the viewer and stack checks.
 M5_SHANK_DIAMETER = 5.0
-M5_HEAD_DIAMETER = 8.5
 M5_WASHER_DIAMETER = 10.0
 M5_WASHER_THICKNESS = MCMASTER_93475A240_THICKNESS
 M5_NYLOC_HEIGHT = MCMASTER_93625A225_HEIGHT
