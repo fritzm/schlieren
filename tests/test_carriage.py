@@ -36,7 +36,7 @@ class CarriageTests(unittest.TestCase):
         # 86 mm plate, widened to 94 mm only at the side-screw lugs.
         self.assertAlmostEqual(self.parts["Base plate"].bounding_box().size.X, 94)
         self.assertFalse(self.parts["Base plate"].is_inside((43.1, 0, 1)))
-        self.assertAlmostEqual(self.parts["Keeper plate"].bounding_box().max.Z, 15.7455, places=3)
+        self.assertAlmostEqual(self.parts["Keeper frame"].bounding_box().max.Z, 15.7455, places=3)
 
     def test_travel_and_loading_clearance(self):
         for travel, retract in ((-5, 0), (0, 0), (5, 0), (0, 6)):
@@ -48,7 +48,7 @@ class CarriageTests(unittest.TestCase):
             # Keeper has actual bearing overlap above both swept guide ears.
             for name in ("Driven plunger", "Spring plunger"):
                 raised = Pos(0, 0, 0.5) * parts[name]
-                self.assertGreater((raised & parts["Keeper plate"]).volume, 1)
+                self.assertGreater((raised & parts["Keeper frame"]).volume, 1)
 
     def test_optical_aperture_and_datum_tracks(self):
         p = self.p
@@ -101,7 +101,7 @@ class CarriageTests(unittest.TestCase):
             nut = extrude(
                 Pos(x, y, p.nut_pocket_depth - 2.4) * RegularPolygon(5.5 / cos(pi / 6) / 2, 6), amount=2.4
             )
-            for name in ("Base plate", "Guide frame", "Keeper plate"):
+            for name in ("Base plate", "Guide frame", "Keeper frame"):
                 for hardware in (screw, nut):
                     self.assertLess((self.parts[name] & hardware).volume, 1e-6)
         for travel in (-5, 0, 5):
@@ -130,16 +130,16 @@ class CarriageTests(unittest.TestCase):
             for x in (-edge, -20, 20, edge):
                 self.assertTrue(base.is_inside((x, y, p.floor_z + 1)))
         for lift in (0, 1, 3, 6):
-            self.assertLess((base & (Pos(0, 0, lift) * self.parts["Keeper plate"])).volume, 1e-6)
+            self.assertLess((base & (Pos(0, 0, lift) * self.parts["Keeper frame"])).volume, 1e-6)
         start, end = p.support_spans[0]
         bore = y_cylinder(p.insert_bore_diameter / 2, end - start, start, p.adjuster_axis_z)
-        for name in ("Base plate", "Guide frame", "Keeper plate"):
+        for name in ("Base plate", "Guide frame", "Keeper frame"):
             self.assertLess((self.parts[name] & bore).volume, 1e-6)
 
     def test_adjuster_block_is_integrated_with_end_member(self):
         p = self.p
         base = self.fixed
-        keeper = self.parts["Keeper plate"]
+        keeper = self.parts["Keeper frame"]
         start, end = p.support_spans[0]
         for y in (start + 0.1, (start + end) / 2, end - 0.1):
             self.assertTrue(base.is_inside((10, y, p.keeper_z - 0.1)))
@@ -161,7 +161,7 @@ class CarriageTests(unittest.TestCase):
             self.assertTrue(part.is_inside((35, y, p.floor_z + p.ear_lower_clearance + 0.1)))
         pocket_bottom = p.adjuster_axis_z - (p.magnet_width + p.magnet_pocket_clearance) / 2
         self.assertGreaterEqual(pocket_bottom - (p.plate_thickness + p.body_deck_clearance), 0.6)
-        roof = self.parts["Keeper plate"].bounding_box().max.Z - (
+        roof = self.parts["Keeper frame"].bounding_box().max.Z - (
             p.adjuster_axis_z + p.insert_bore_diameter / 2
         )
         self.assertAlmostEqual(roof, p.keeper_thickness)
@@ -204,7 +204,7 @@ class CarriageTests(unittest.TestCase):
 
     def test_adjuster_crown_radial_wall(self):
         p = self.p
-        keeper = self.parts["Keeper plate"]
+        keeper = self.parts["Keeper frame"]
         start, end = p.support_spans[0]
         inner = p.insert_bore_diameter / 2
         outer = inner + p.keeper_thickness
@@ -219,7 +219,7 @@ class CarriageTests(unittest.TestCase):
 
     def test_spring_cup_boss_backs_the_coil_end(self):
         p = self.p
-        keeper = self.parts["Keeper plate"]
+        keeper = self.parts["Keeper frame"]
         coil_top = p.spring_axis_z + p.spring_outer_diameter / 2
         # Behind the seat face, over the whole end member, the boss is as tall as the cup roof ...
         for y in (p.plate_ymin + 0.1, p.spring_seat_y - 0.1):
@@ -244,7 +244,7 @@ class CarriageTests(unittest.TestCase):
 
     def test_spring_end_wall_is_solid(self):
         p = self.p
-        fixed = self.fixed + self.parts["Keeper plate"]
+        fixed = self.fixed + self.parts["Keeper frame"]
         # No rod penetration: the end wall is solid on the spring axis.
         for y in (p.plate_ymin + 0.1, (p.plate_ymin + p.spring_seat_y) / 2, p.spring_seat_y - 0.1):
             self.assertTrue(fixed.is_inside((0, y, p.spring_axis_z)))
@@ -257,7 +257,7 @@ class CarriageTests(unittest.TestCase):
             ("fixed", p.spring_seat_y, 1),
             ("Spring plunger", -p.cassette_size / 2 - p.body_length, -1),
         ):
-            part = (self.fixed + self.parts["Keeper plate"]) if name == "fixed" else self.parts[name]
+            part = (self.fixed + self.parts["Keeper frame"]) if name == "fixed" else self.parts[name]
             y = seat_y + sign * p.spring_cup_depth / 2
             # Walls at both sides and over the coil; open to the deck below it.
             for x, z in (
@@ -406,7 +406,7 @@ class CarriageTests(unittest.TestCase):
             self.assertLessEqual(extension, 15.5 + 1e-6)
             self.assertGreater(tip + p.adjuster_screw_length, insert_outer)
             screw = y_cylinder(6.35 / 2, p.adjuster_screw_length, tip, p.adjuster_axis_z)
-            for name in ("Base plate", "Guide frame", "Keeper plate"):
+            for name in ("Base plate", "Guide frame", "Keeper frame"):
                 self.assertLess((self.parts[name] & screw).volume, 1e-6)
         # The flange bears flat on the block's inner face: it stands proud of it, intersecting nothing,
         # and the block material directly outboard (between bore and flange edge) takes the reaction.
@@ -416,7 +416,7 @@ class CarriageTests(unittest.TestCase):
             flange_face - p.insert_flange_thickness,
             p.adjuster_axis_z,
         )
-        for name in ("Base plate", "Guide frame", "Keeper plate"):
+        for name in ("Base plate", "Guide frame", "Keeper frame"):
             self.assertLess((self.parts[name] & flange).volume, 1e-6)
         land_x = (p.insert_bore_diameter + p.insert_flange_diameter) / 4
         z = p.adjuster_axis_z
@@ -433,13 +433,51 @@ class CarriageTests(unittest.TestCase):
         )
         self.assertLess((self.fixed & bore).volume, 1e-6)
         barrel = y_cylinder(p.insert_body_diameter / 2, p.insert_body_length, body_start, p.adjuster_axis_z)
-        for name in ("Base plate", "Guide frame", "Keeper plate"):
+        for name in ("Base plate", "Guide frame", "Keeper frame"):
             self.assertLess((self.parts[name] & barrel).volume, 1e-6)
         self.assertAlmostEqual(p.adjuster_axis_z, 8.7704, places=3)
 
+    def test_stack_retaining_hardware(self):
+        # One M3 x 12 screw and one captive nut at each of the eight keeper fastener positions.
+        p = self.p
+        parts = children_by_label(build_carriage(p, include_hardware=True))
+        self.assertEqual(len(p.fasteners), 8)
+        for i, (x, y) in enumerate(p.fasteners, start=1):
+            screw = parts[f"Keeper screw {i}"].bounding_box()
+            nut = parts[f"Keeper nut {i}"].bounding_box()
+            for box in (screw, nut):
+                self.assertAlmostEqual((box.min.X + box.max.X) / 2, x, places=3)
+                self.assertAlmostEqual((box.min.Y + box.max.Y) / 2, y, places=3)
+            # The head bears on its recess in the keeper; the shank is 12 mm long under it.
+            self.assertAlmostEqual(screw.max.Z - screw.min.Z, 12.0 + 3.0, places=3)
+            self.assertAlmostEqual(screw.max.Z - 3.0, p.keeper_screw_seat_z, places=3)
+            # The nut sits against the roof of its pocket, which opens from the plate back.
+            self.assertAlmostEqual(nut.max.Z, p.nut_pocket_depth, places=3)
+            self.assertGreaterEqual(nut.min.Z, 0.0)
+            # Slight nominal projection of the screw beyond the nut.
+            self.assertLess(screw.min.Z, nut.min.Z)
+            self.assertLess(nut.min.Z - screw.min.Z, 1.0)
+        self.assertNotIn("Keeper screw 9", parts)
+        self.assertNotIn("Keeper screw 1", children_by_label(build_carriage(p)))
+
+    def test_datum_pins_trimmed_flush_with_plate_back(self):
+        # Three brads, head up on the datum face, with the shank flush-cut at the plate back.
+        p = self.p
+        parts = children_by_label(build_carriage(p, include_hardware=True))
+        self.assertEqual(len(p.datum_points), 3)
+        for i, (x, y) in enumerate(p.datum_points, start=1):
+            box = parts[f"Datum pin {i}"].bounding_box()
+            self.assertAlmostEqual((box.min.X + box.max.X) / 2, x, places=3)
+            self.assertAlmostEqual((box.min.Y + box.max.Y) / 2, y, places=3)
+            self.assertAlmostEqual(box.min.Z, 0.0, places=3)
+            # The head stands on the datum face and its dome stays below the cassette rear face.
+            self.assertGreater(box.max.Z, p.plate_thickness)
+            self.assertLess(box.max.Z, p.plate_thickness + p.datum_projection + 1e-6)
+        self.assertNotIn("Datum pin 1", children_by_label(build_carriage(p)))
+
     def test_keeper_side_members_resist_ear_lift(self):
         p = self.p
-        keeper = self.parts["Keeper plate"]
+        keeper = self.parts["Keeper frame"]
         x = (p.keeper_opening_width / 2 + p.plate_width / 2) / 2
         top = p.keeper_z + p.keeper_side_thickness
         for y in (-40, 0, 40):
@@ -463,7 +501,7 @@ class CarriageTests(unittest.TestCase):
 
     def test_thicker_fallback_keeper(self):
         p = CarriageParameters(keeper_side_thickness=5.0)
-        keeper = children_by_label(build_carriage(p))["Keeper plate"]
+        keeper = children_by_label(build_carriage(p))["Keeper frame"]
         self.assertTrue(keeper.is_valid)
         x = (p.keeper_opening_width / 2 + p.plate_width / 2) / 2
         self.assertTrue(keeper.is_inside((x, 0, p.keeper_z + 4.9)))
@@ -481,9 +519,9 @@ class CarriageTests(unittest.TestCase):
             # Clearance hole stays outboard of the guide track wall; the lug carries the captive nut.
             self.assertGreaterEqual(abs(x) - p.screw_clearance / 2, p.track_outer_x + 1.0)
             sign = 1 if x > 0 else -1
-            for name in ("Base plate", "Guide frame", "Keeper plate"):
+            for name in ("Base plate", "Guide frame", "Keeper frame"):
                 part = self.parts[name]
-                z = {"Base plate": 1.0, "Guide frame": p.floor_z, "Keeper plate": p.keeper_z + 1}[name]
+                z = {"Base plate": 1.0, "Guide frame": p.floor_z, "Keeper frame": p.keeper_z + 1}[name]
                 self.assertTrue(part.is_inside((x + sign * (p.side_lug_radius - 0.5), y, z)), name)
                 self.assertFalse(part.is_inside((x, y, z)), name)
 
@@ -539,13 +577,13 @@ class CarriageTests(unittest.TestCase):
     def test_print_layout_orients_and_spaces_the_printed_parts(self):
         p = self.p
         layout = build_print_layout(p)
-        self.assertEqual(set(layout), {"base_plate", "guide_frame", "keeper_plate", "plungers"})
+        self.assertEqual(set(layout), {"base_plate", "guide_frame", "keeper_frame", "plungers"})
         base = layout["base_plate"].bounding_box()
         # Deck down on the bed, spigot up: the plate's front face is on z=0 and the spigot rises above it.
         self.assertAlmostEqual(base.min.Z, 0.0, places=4)
         self.assertAlmostEqual(base.max.Z, p.plate_thickness + p.spigot_length, places=4)
         # The guide frame and keeper keep assembly coordinates.
-        for name, part in (("guide_frame", "Guide frame"), ("keeper_plate", "Keeper plate")):
+        for name, part in (("guide_frame", "Guide frame"), ("keeper_frame", "Keeper frame")):
             self.assertAlmostEqual(
                 layout[name].bounding_box().min.Z, self.parts[part].bounding_box().min.Z, places=4
             )

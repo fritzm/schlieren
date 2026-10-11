@@ -11,7 +11,7 @@ Design areas marked **Provisional** in the sections above:
   against the lead insulation, cap thread root radius, and Convoy star notch geometry
   ([§6.4](06-light-source.md#64-led-board-mounting)); heatsink temperature rise at 700 mA; white-module
   long-gap focus margin.
-- **Cutoff carriage** ([§8](08-cutoff.md#8-cutoff)): spigot fit in the SM1RC/M; guide-stack, recess, and
+- **Cutoff carriage** ([§8](08-cutoff.md#8-cutoff)): guide-stack, recess, and
   pocket dimensions, sliding fits, and datum-pin projection; magnet-pocket roof and insert seat fit; keeper lift under the ear wedge reactions; bevel
   angle and seating force; the spring's solid height against the loading retraction; clearance to other equipment near the cutoff station.
 - **Cassettes** ([§8.6](08-cutoff.md#86-common-cassette-standard),
@@ -33,7 +33,8 @@ Design areas marked **Provisional** in the sections above:
 
 ### 11.2 Next steps
 
-1. Fit-test the printed cutoff carriage and a cassette blank ([§8](08-cutoff.md#8-cutoff)), including
+1. Fit-test the rest of the printed cutoff carriage (guide frame, keeper frame, plungers; the base plate is
+   verified) and a cassette blank ([§8](08-cutoff.md#8-cutoff)), including
    datum-pin seating, bevel seating, and keeper lift. Trial wire mounting on the
    filament cleats ([§8.6](08-cutoff.md#86-common-cassette-standard)).
 2. Fabricate both threaded LED modules: drill and tap the caps and heatsinks, center each board, and set focus

@@ -110,6 +110,11 @@ MCMASTER_91585A457_LENGTH = 20.0
 # McMaster 91828A211 model (M3 nut, no threads): axis +Z through the origin, centered on its 2.4 mm height; 5.5 mm
 # across flats (along x), 6.326 mm across corners (along y).
 MCMASTER_91828A211_HEIGHT = 2.4
+# McMaster 97936A109 model (brad): axis +Z through the origin; the domed Ø2.54 mm head is at -Z, apex at -4.7625 mm,
+# its underside at -3.8625 mm (head about 0.9 mm high, measured from the model); Ø1.219 mm plain shank to a point
+# at +4.7625 mm, 9.525 mm (3/8 in) overall.
+MCMASTER_97936A109_LENGTH = 9.525
+MCMASTER_97936A109_HEAD_HEIGHT = 0.9
 # McMaster 91131A028 model: axis +Y through the origin; the female half's flat back is at y=-3.378 mm.
 MCMASTER_91131A028_BACK_Y = -3.378
 MCMASTER_91131A028_HEIGHT = 6.756
@@ -372,6 +377,18 @@ def mcmaster_91292a114() -> Compound:
     """
     shift = (MCMASTER_91292A114_LENGTH - MCMASTER_91292A114_HEAD_HEIGHT) / 2
     return _moved("McMaster-91292A114.step", Pos(0, 0, shift) * Rot(X=180))
+
+
+@cache
+def mcmaster_97936a109() -> Compound:
+    """McMaster 97936A109 3/8 in brass escutcheon pin (brad), untrimmed.
+
+    Axis +Z through the origin, the head's underside at z=0 with the dome toward -Z and the shank, pointed at
+    its end, toward +Z (the 91292A114 convention).
+    """
+    return _moved(
+        "McMaster-97936A109.step", Pos(0, 0, MCMASTER_97936A109_LENGTH / 2 - MCMASTER_97936A109_HEAD_HEIGHT)
+    )
 
 
 @cache

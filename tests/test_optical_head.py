@@ -118,7 +118,7 @@ class OpticalHeadTests(unittest.TestCase):
         """The head is clear in the poses that bring its parts closest, not only at nominal.
 
         With both rails yawed inward and the slit and cutoff un-staggered, the slit's flexure head passes the
-        cutoff carriage's keeper plate at only about 1.4 mm (the stagger of §3.3 is what gives margin); the
+        cutoff carriage's keeper frame at only about 1.4 mm (the stagger of §3.3 is what gives margin); the
         assertions keep that above MIN_CLEARANCE. The other poses cover opposite yaws, slit rotations, and the
         stagger at both signs.
         """

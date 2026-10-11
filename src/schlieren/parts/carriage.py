@@ -49,6 +49,7 @@ from schlieren.hardware import (
     INSERT_98625A950_MIN_MATERIAL,
     M3_CLEARANCE_DIAMETER,
     M3_NUT_ACROSS_FLATS,
+    M3_NUT_THICKNESS,
     MAGNET_LENGTH,
     MAGNET_THICKNESS,
     MAGNET_WIDTH,
@@ -79,7 +80,7 @@ from schlieren.standards import (
     POST_LENGTH,
 )
 from schlieren.validation import require_positive_dimensions
-from schlieren.vendor_cad import SM1RC_M_THICKNESS
+from schlieren.vendor_cad import SM1RC_M_THICKNESS, mcmaster_91292a114, mcmaster_91828a211, mcmaster_97936a109
 
 
 @dataclass(frozen=True)
@@ -680,7 +681,7 @@ def _insert_entry(p):
     )
 
 
-def build_keeper_plate(p=None):
+def build_keeper_frame(p=None):
     p = p or CarriageParameters()
     p.validate()
     keeper = _keeper_envelope(p, p.keeper_thickness)
@@ -808,7 +809,7 @@ def build_plunger(p=None, *, spring=False):
 
 
 def build_print_layout(p=None, plunger_gap=5.0):
-    """The printed parts as exported, keyed by name: base_plate, guide_frame, keeper_plate, plungers.
+    """The printed parts as exported, keyed by name: base_plate, guide_frame, keeper_frame, plungers.
 
     The base is flipped deck-down on z=0 for spigot-up printing; the guide frame and keeper keep assembly
     coordinates. The two plungers sit on z=0 side by side along y, centered on x, with plunger_gap between
@@ -829,7 +830,7 @@ def build_print_layout(p=None, plunger_gap=5.0):
     return {
         "base_plate": labeled(base, "Base plate", loc=Pos(0, 0, p.plate_thickness) * Rot(X=180)),
         "guide_frame": labeled(frame, "Guide frame"),
-        "keeper_plate": labeled(build_keeper_plate(p), "Keeper plate"),
+        "keeper_frame": labeled(build_keeper_frame(p), "Keeper frame"),
         "plungers": Compound([s for plunger in plungers for s in plunger.solids()]),
     }
 
@@ -856,7 +857,7 @@ def build_carriage(
     children = [
         labeled(base, "Base plate", PRINTED_GRAY),
         labeled(frame, "Guide frame", PRINTED_SKY),
-        labeled(build_keeper_plate(p), "Keeper plate", PRINTED_INDIGO),
+        labeled(build_keeper_frame(p), "Keeper frame", PRINTED_INDIGO),
         labeled(build_plunger(p), "Driven plunger", PRINTED_AMBER, Pos(0, travel, 0)),
         labeled(build_plunger(p, spring=True), "Spring plunger", PRINTED_GREEN, Pos(0, travel - retract, 0)),
     ]
@@ -870,6 +871,8 @@ def build_carriage(
         )
     if include_hardware:
         children += _adjuster_hardware(p, travel)
+        children += _stack_hardware(p)
+        children += _datum_pins(p)
         length = p.spring_fiducial_length + travel - retract
         spring = compression_spring(
             p.spring_outer_diameter, p.spring_wire_diameter, length, p.spring_display_coils
@@ -877,6 +880,38 @@ def build_carriage(
         placed = Pos(0, p.spring_seat_y, p.spring_axis_z) * Rot(X=-90) * spring
         children.append(labeled(placed, "2006N292 spring", METAL))
     return assembly("Carriage (preliminary)", children)
+
+
+def _stack_hardware(p):
+    """The eight keeper screws and their captive nuts, which clamp the keeper frame, guide frame, and base plate.
+
+    Each M3 x 12 screw bears on the keeper's head recess and runs down through the stack; its nut sits against
+    the roof of its hex pocket, which opens from the plate back.
+    """
+    screw = mcmaster_91292a114()
+    nut = mcmaster_91828a211()
+    children = []
+    for i, (x, y) in enumerate(p.fasteners, start=1):
+        # The screw model's head is toward -z; turned about x it points up with the shank running down.
+        screw_loc = Pos(x, y, p.keeper_screw_seat_z) * Rot(X=180)
+        # The nut model has its flats along x; the pockets have corners along x.
+        nut_loc = Pos(x, y, p.nut_pocket_depth - M3_NUT_THICKNESS) * Rot(Z=90)
+        children.append(labeled(screw, f"Keeper screw {i}", METAL, screw_loc))
+        children.append(labeled(nut, f"Keeper nut {i}", METAL, nut_loc))
+    return children
+
+
+def _datum_pins(p):
+    """The three datum brads, head up on the datum face, with the shank trimmed flush with the plate back."""
+    # The model's head is toward -z; turned about x it points up with the shank running down.
+    upright = Rot(X=180) * mcmaster_97936a109()
+    # In the head-underside frame the plate back is at z = -plate_thickness.
+    keep = box_between(-2.0, 2.0, -2.0, 2.0, -p.plate_thickness, 2 * p.datum_projection + CUT_OVERRUN)
+    trimmed = upright & keep
+    return [
+        labeled(trimmed, f"Datum pin {i}", BRASS, Pos(x, y, p.plate_thickness))
+        for i, (x, y) in enumerate(p.datum_points, start=1)
+    ]
 
 
 def _adjuster_hardware(p, travel):

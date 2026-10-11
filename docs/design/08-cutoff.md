@@ -9,14 +9,14 @@ blank and clamp bars are modeled in `src/schlieren/parts/cassette.py`.
 
 <p align="center">
   <img src="figures/cutoff.png" width="500" style="max-width: 90%"
-       alt="Cutoff carriage from the mirror side with a cassette seated: base plate, guide frame, keeper plate, driven and spring plungers, FAS100 adjuster, and cassette with clamp bars">
+       alt="Cutoff carriage from the mirror side with a cassette seated: base plate, guide frame, keeper frame with its eight retaining screws, driven and spring plungers, FAS100 adjuster, and cassette with clamp bars">
   <br>
-  <em>Fig. 8. Cutoff carriage with a seated cassette: guide frame, keeper plate, driven and spring plungers, and the FAS100 fine adjuster</em>
+  <em>Fig. 8. Cutoff carriage with a seated cassette: guide frame, keeper frame and its retaining screws, driven and spring plungers, and the FAS100 fine adjuster</em>
 </p>
 
 ### 8.1 Spigot and rotation interface
 
-The carriage mounts in 1 × Thorlabs SM1RC/M through a hollow printed spigot integral with the carriage base
+The carriage mounts in 1 × Thorlabs SM1RC/M through a hollow printed spigot integral with the base
 plate, the same interface as the slit-head adapter
 ([§7.6](07-source-slit.md#76-rotation-mount-and-clearances)):
 
@@ -57,18 +57,18 @@ Rotation envelope: the 2020 rail runs beneath the carriage at every rail positio
 The base plate, guide frame, and keeper are trimmed to a 70.35 mm radius about the optical axis (the rail top
 less 2 mm clearance). Only the outer plate corners are removed; the plate is otherwise 86 mm wide, widened to
 94 mm at the side keeper-screw lugs ([§8.4](#84-cassette-seating)). Calculated from the CAD, the carriage with
-its FAS100 rotates clear of the rail over ±150°; only the FAS100 knob reaches the rail, near ±170–180°.
+its FAS100 rotates clear of the rail over ±150°; only the FAS100 knob reaches the rail, near ±170–180°. A
+printed base plate on its post and shoe was confirmed to rotate clear of the rail.
 Nothing projects below the plate at nominal zero ([§8.5](#85-spring-seating-and-retraction)). **Provisional:**
 clearance to other equipment on the rail near the cutoff station is not yet checked.
 
 ### 8.2 Spigot print and fit
 
-The carriage base plate is printed deck down with the spigot up, so the spigot and shoulder need no
+The base plate is printed deck down with the spigot up, so the spigot and shoulder need no
 supports; the guide frame above the deck is a separate print (the base/frame split exists for this). The three
 datum-pin shanks ([§8.4](#84-cassette-seating)) lie outside the shoulder and are flush-cut on the plate back.
 
-**Provisional:** the spigot is printed at the SM1 tube nominal; fit-test it in the SM1RC/M and adjust if
-needed.
+The spigot is printed at the SM1 tube nominal, and a printed base plate fits the SM1RC/M without adjustment.
 
 ### 8.3 Fine adjustment
 
@@ -143,7 +143,8 @@ smooth shank and 1/8 in (3.18 mm) domed head.
 Mount each pin through a through-hole in the printed carriage with the domed brass head on the cassette side.
 The holes are modeled Ø1.75 mm: the measured 0.050 in (1.27 mm) shank, plus the 0.38 mm diametral hole
 undersize measured on the first base-plate print (the Ø24 mm aperture printed 0.930 in), plus 0.1 mm fit
-clearance. If a shank binds, finish the hole with a #54 (0.055 in) drill. The hole fit only locates the shank; the head sets the datum. Seat the underside of the head firmly against the carriage datum face so datum height is
+clearance; the printed holes take the shanks as a slip fit, so the CA is their only retention. If a shank binds on a later print, finish the hole with a
+#54 (0.055 in) drill. The hole fit only locates the shank; the head sets the datum. Seat the underside of the head firmly against the carriage datum face so datum height is
 established mechanically rather than by adhesive thickness. Wick a small amount of CA around the shank from
 the back for retention, then flush-cut and dress the projecting shank at the back of the carriage. Keep CA out
 from beneath the head/contact surface.

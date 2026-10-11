@@ -17,7 +17,7 @@ Three fixtures use the common post/shoe architecture:
 - light source: 1 × SMR1/M ([§6.1](06-light-source.md#61-assembly-and-stack-order))
 - slit head: 1 × SM1RC/M, clamping the printed spigot of the slit-head adapter
   ([§7.6](07-source-slit.md#76-rotation-mount-and-clearances))
-- cutoff carriage: 1 × SM1RC/M, clamping the printed spigot of the carriage base plate
+- cutoff carriage: 1 × SM1RC/M, clamping the printed spigot of the base plate
   ([§8.1](08-cutoff.md#81-spigot-and-rotation-interface))
 
 The source/slit/cutoff holders preserve the 22.1 mm post-top-to-axis dimension.
