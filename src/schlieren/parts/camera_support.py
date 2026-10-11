@@ -69,7 +69,6 @@ from schlieren.cad import (
 from schlieren.hardware import MAGNET_LENGTH, MAGNET_THICKNESS, MAGNET_WIDTH
 from schlieren.palette import (
     AXIS_RED,
-    BAND_RED,
     BLACK_ANODIZED,
     BLACK_OXIDE,
     BRASS,
@@ -80,6 +79,7 @@ from schlieren.palette import (
     PRINTED_BLUE,
     PRINTED_GREEN,
     PRINTED_ORANGE,
+    RUBBER,
     STEEL,
 )
 from schlieren.parts.carriage import CarriageParameters, build_carriage, support_location
@@ -997,7 +997,7 @@ def build_camera_support_assembly(
         rod_side = -1 if where == "Aft" else None  # The aft left pad carries the groove rods.
         children.append(labeled(build_collar(p, station, rod_side), f"{where} collar", PRINTED_GREEN))
         children.append(labeled(build_cradle_yoke(p, station), f"{where} yoke", PRINTED_ORANGE))
-        children.append(labeled(build_band(p, station), f"{where} band", BAND_RED))
+        children.append(labeled(build_band(p, station), f"{where} band", RUBBER))
         children += _joint_hardware(p, where, station)
         for name, side in (("left", -1), ("right", 1)):
             loc = screw_location(p, side, station)
