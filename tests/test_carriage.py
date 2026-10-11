@@ -229,7 +229,7 @@ class CarriageTests(unittest.TestCase):
             self.assertGreater(p.spring_cup_top - 0.1, coil_top)
         # Concave fillets blend the boss sides into the end member top.
         r = p.spring_boss_root_fillet
-        half = p.spring_cup_bore / 2 + p.spring_cup_wall
+        half = p.spring_cup_bore / 2 + p.spring_cup_side_wall
         top = p.keeper_z + p.keeper_thickness
         y = p.spring_seat_y - p.rear_wall_thickness / 2
         for sign in (-1, 1):
@@ -237,7 +237,7 @@ class CarriageTests(unittest.TestCase):
             self.assertFalse(keeper.is_inside((sign * (half + r - 0.05), y, top + r - 0.05)))
             self.assertFalse(keeper.is_inside((sign * (half + r + 0.1), y, top + 0.05)))
         # It is local: the end member beside the boss keeps the nominal section.
-        side_x = (p.spring_cup_bore + 2 * p.spring_cup_wall) / 2 + 1.0
+        side_x = (p.spring_cup_bore + 2 * p.spring_cup_side_wall) / 2 + 1.0
         self.assertFalse(
             keeper.is_inside((side_x, p.spring_seat_y - 0.1, p.keeper_z + p.keeper_thickness + 0.1))
         )
@@ -279,6 +279,85 @@ class CarriageTests(unittest.TestCase):
             )
             for part in self.parts:
                 self.assertLess(overlap_volume(spring, objects[part]), 1e-6, (travel, retract, part))
+
+    def test_plunger_underside_edge_breaks(self):
+        p = self.p
+        bottom = p.plate_thickness + p.body_deck_clearance
+        c = p.body_bottom_chamfer
+        y0, y1 = p.cassette_size / 2, p.cassette_size / 2 + p.body_length
+        driven = self.parts["Driven plunger"]
+        # Leading and trailing bottom edges and both side edges of the driven plunger are chamfered.
+        for y, toward in ((y0, 1), (y1, -1)):
+            self.assertFalse(driven.is_inside((0, y + toward * 0.1, bottom + 0.1)))
+            self.assertTrue(driven.is_inside((0, y + toward * c * 0.75, bottom + c * 0.75)))
+        for sign in (-1, 1):
+            xe = sign * p.body_width / 2
+            self.assertFalse(driven.is_inside((xe - sign * 0.1, (y0 + y1) / 2, bottom + 0.1)))
+            self.assertTrue(driven.is_inside((xe - sign * c * 0.75, (y0 + y1) / 2, bottom + c * 0.75)))
+        # The spring plunger (mirrored) is chamfered the same way, and round its cup's feet and pocket opening.
+        spring = self.parts["Spring plunger"]
+        self.assertFalse(spring.is_inside((15, -y1 + 0.1, bottom + 0.1)))
+        self.assertTrue(spring.is_inside((15, -y1 + c * 0.75, bottom + c * 0.75)))
+        self.assertFalse(spring.is_inside((15, -y0 - 0.1, bottom + 0.1)))
+        bore_r = p.spring_cup_bore / 2
+        foot_x0, foot_x1 = bore_r, bore_r + p.spring_cup_side_wall
+        foot_mid = (foot_x0 + foot_x1) / 2
+        y_mid = -(y1 + p.spring_cup_depth / 2)
+        y_end = -(y1 + p.spring_cup_depth)
+        self.assertFalse(spring.is_inside((foot_x1 - 0.1, y_mid, bottom + 0.1)))  # Foot's outer edge.
+        self.assertFalse(spring.is_inside((foot_x0 + 0.1, y_mid, bottom + 0.1)))  # Pocket opening's edge.
+        self.assertFalse(spring.is_inside((foot_mid, y_end + 0.1, bottom + 0.1)))  # Cup's outboard end.
+        self.assertTrue(spring.is_inside((foot_mid, y_mid, bottom + 0.01)))  # Flat left on the foot.
+        self.assertGreater(c, 0)
+
+    def test_guide_ear_edge_breaks(self):
+        p = self.p
+        part = self.parts["Driven plunger"]
+        ear_bottom = p.floor_z + p.ear_lower_clearance
+        ear_top = ear_bottom + p.ear_thickness
+        y0, y1 = p.cassette_size / 2, p.cassette_size / 2 + p.body_length
+        ymid = (y0 + y1) / 2
+        c, f = p.ear_bottom_chamfer, p.ear_top_fillet
+        for sign in (-1, 1):
+            xo = sign * p.ear_outer_x
+            # Bottom outer edge chamfered: nothing at the corner, material beyond the chamfer plane.
+            self.assertFalse(part.is_inside((xo - sign * 0.1, ymid, ear_bottom + 0.1)))
+            self.assertTrue(part.is_inside((xo - sign * (c * 0.75), ymid, ear_bottom + c * 0.75)))
+            # Top outer edge filleted.
+            self.assertFalse(part.is_inside((xo - sign * 0.05, ymid, ear_top - 0.05)))
+            self.assertTrue(part.is_inside((xo - sign * f * 0.5, ymid, ear_top - f * 0.5)))
+            # Both ends, top and bottom, along the ear.
+            xm = xo - sign * 3.0
+            for y, toward in ((y0, 1), (y1, -1)):
+                self.assertFalse(part.is_inside((xm, y + toward * 0.1, ear_bottom + 0.1)))
+                self.assertTrue(part.is_inside((xm, y + toward * c * 0.75, ear_bottom + c * 0.75)))
+                self.assertFalse(part.is_inside((xm, y + toward * 0.05, ear_top - 0.05)))
+                self.assertTrue(part.is_inside((xm, y + toward * f * 0.5, ear_top - f * 0.5)))
+            # The land between the breaks is flat and full thickness.
+            self.assertTrue(part.is_inside((xm, ymid, ear_bottom + 0.01)))
+            self.assertTrue(part.is_inside((xm, ymid, ear_top - 0.01)))
+        self.assertGreater(p.ear_corner_fillet, max(c, f))
+
+    def test_guide_ear_root_fillets(self):
+        # Concave stress-relief fillets, top and underside, where each ear leaves the body wall.
+        p = self.p
+        ear_bottom = p.floor_z + p.ear_lower_clearance
+        ear_top = ear_bottom + p.ear_thickness
+        ymid = p.cassette_size / 2 + p.body_length / 2
+        r = p.ear_root_fillet
+        for name in ("Driven plunger", "Spring plunger"):
+            part = self.parts[name]
+            y = ymid if name == "Driven plunger" else -ymid
+            for sign in (-1, 1):
+                wall = sign * p.body_width / 2
+                for z_face, direction in ((ear_top, 1), (ear_bottom, -1)):
+                    self.assertTrue(part.is_inside((wall + sign * 0.05, y, z_face + direction * 0.05)))
+                    self.assertFalse(
+                        part.is_inside((wall + sign * (r - 0.05), y, z_face + direction * (r - 0.05)))
+                    )
+                    # Clear of the keeper opening edge and the track floor.
+                    self.assertFalse(part.is_inside((wall + sign * (r + 0.1), y, z_face + direction * 0.3)))
+        self.assertLess(p.body_width / 2 + p.ear_root_fillet, p.track_inner_x)
 
     def test_thumb_tab(self):
         p = self.p

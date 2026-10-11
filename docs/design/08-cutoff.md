@@ -159,6 +159,19 @@ The plunger bodies are constrained to the intended translation axis by ears/tabs
 rails. The guide slots prevent unwanted lateral movement or rotation while permitting the required axial
 plunger travel.
 
+The ears run with only 0.15 mm of clearance below and 0.25 mm above, so their exposed edges are broken against
+binding: a 0.4 mm chamfer on the bottom edges, which take the printed first-layer squash, a 0.5 mm fillet on
+the top edges, and 0.6 mm fillets on the outer vertical corners (larger than the two edge breaks they meet).
+Where each ear leaves the plunger body wall, a 0.8 mm concave fillet on both the top and the underside
+relieves the stress: the underside root is on the tension side under the seating reaction (about 10 N per
+ear, a few MPa nominal). It lies at x = 29.0–29.8 mm, clear of the track floor (x ≥ 32.3 mm) and the keeper
+opening edge (x = 33 mm).
+
+The plunger bodies themselves run 0.3 mm above the base plate deck, so their underside perimeter carries a
+0.4 mm chamfer, a lead-in over deck seams and a relief for first-layer squash. On the spring plunger it
+continues round the feet of the spring cup, including the edges of the pocket's opening toward the deck; the
+cassette-side bevels and lips, which generate the seating force, are left as designed.
+
 The plungers need an assembly path into their guides: both longitudinal ends of the guide path are occupied,
 by the FAS100 adjuster support on one side and the spring end wall on the other. The guide tracks are
 therefore open from the cassette-loading side; the plungers drop into them, and a separate printed keeper
@@ -237,13 +250,16 @@ mm diametral clearance:
 
 - one cup extends inboard from the end wall: its side walls are on the guide frame, and its roof is carried
   by the keeper's spring-end member, so the keeper closes over the spring end when installed. The cup's boss
-  (10.3 mm wide, roof at 13.9 mm) rises 1.5 mm above the end member and continues back over its full depth,
+  (11.5 mm wide, roof at 13.9 mm) rises 1.5 mm above the end member and continues back over its full depth,
   so the coil's end face bears on a wall as tall as the cup; 0.6 mm fillets blend its sides into the end
   member top;
 - one cup extends outboard from the spring plunger;
 - both cups are open toward the plate deck, which carries the coil. Their side walls and roofs locate the
   coil ends laterally and against escape toward the cassette-loading side. Both print with legs on the bed
   and the roof bridging the coil, without supports.
+
+The cup roof is 1.2 mm over the coil and the side walls 1.8 mm, so the feet keep a 1.0 mm flat inside the
+0.4 mm underside chamfer ([§8.4](#84-cassette-seating)).
 
 The spring's free length is about 4–4.6 times its mean coil diameter, and both ends sit on parallel faces
 because the plunger is guided. That is below the roughly 5.3 critical ratio for buckling with fixed ends,

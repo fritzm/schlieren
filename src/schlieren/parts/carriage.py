@@ -121,7 +121,17 @@ class CarriageParameters:
     # keeper is the fallback if the print shows too much lift (`uv run carriage --keeper-side-thickness 5`).
     keeper_side_thickness: float = 3.0
     ear_lower_clearance: float = 0.15
+    # Edge breaks on the ears' exposed edges, against binding on first-layer squash and layer ridges in the
+    # guide channel; the root edges, buried in the body, are left square. The corner radius exceeds both.
+    ear_bottom_chamfer: float = 0.4
+    ear_top_fillet: float = 0.5
+    ear_corner_fillet: float = 0.6
+    # Stress relief where each ear leaves the body wall, top and underside; clear of the track floor and keeper.
+    ear_root_fillet: float = 0.8
     body_deck_clearance: float = 0.3  # Provisional PLA running clearance.
+    # Chamfer on the underside perimeter, which runs 0.3 mm above the deck: a lead-in over deck seams and a
+    # relief for first-layer squash. On the spring plunger it runs round the cup's feet and pocket as well.
+    body_bottom_chamfer: float = 0.4
     body_width: float = 58.0
     body_length: float = 10.0
     body_top: float = 12.0
@@ -160,7 +170,9 @@ class CarriageParameters:
     # carries it, and nothing penetrates the frame end wall.
     spring_cup_clearance: float = 1.0  # Diametral; printed-hole shrink and coil growth under compression.
     spring_cup_depth: float = 3.0
-    spring_cup_wall: float = 1.2
+    spring_cup_wall: float = 1.2  # Roof over the coil.
+    # Beside the coil. Wider than the roof so that the feet keep a flat after the underside chamfer.
+    spring_cup_side_wall: float = 1.8
     spring_boss_root_fillet: float = 0.6  # Where the cup boss rises from the keeper end member.
     spring_cup_end_gap: float = 2.0  # Minimum, cup to cup at the most-compressed pose.
     # Retraction thumb tab on the spring plunger's front face, at its outboard end.
@@ -422,6 +434,17 @@ class CarriageParameters:
             raise ValueError("Support inner faces must lie inside the plate edges")
         if self.ear_lower_clearance >= self.guide_axial_clearance:
             raise ValueError("Ears need clearance below the keeper")
+        if not 0 < self.body_bottom_chamfer < self.body_top - self.plate_thickness - self.body_deck_clearance:
+            raise ValueError("Body bottom chamfer must be positive and small against the body")
+        edge_breaks = (self.ear_bottom_chamfer, self.ear_top_fillet, self.ear_corner_fillet)
+        if min(edge_breaks) <= 0 or self.ear_corner_fillet <= max(
+            self.ear_bottom_chamfer, self.ear_top_fillet
+        ):
+            raise ValueError("Ear corner fillet must exceed the bottom chamfer and top fillet")
+        if not 0 < self.ear_root_fillet < self.track_inner_x - self.body_width / 2:
+            raise ValueError("Ear root fillet must clear the track floor")
+        if self.ear_bottom_chamfer + self.ear_top_fillet >= self.ear_thickness - 1.0:
+            raise ValueError("Ear edge breaks must leave a flat bearing land")
         if not self.body_width / 2 <= self.track_inner_x < self.ear_outer_x < self.track_outer_x:
             raise ValueError("Guide ears must fit the open tracks")
         if not self.cassette_size < self.keeper_opening_width < 2 * self.ear_outer_x:
@@ -631,7 +654,7 @@ def _spring_cup(p, seat_y, bottom):
     Open toward the deck: the legs stand on the print bed and the roof bridges the coil.
     """
     y0 = seat_y
-    width = p.spring_cup_bore + 2 * p.spring_cup_wall
+    width = p.spring_cup_bore + 2 * p.spring_cup_side_wall
     cup = floor_box(
         width, p.spring_cup_depth, p.spring_cup_top - bottom, y=y0 + p.spring_cup_depth / 2, z=bottom
     )
@@ -652,7 +675,7 @@ def _spring_cup(p, seat_y, bottom):
 def _boss_root_fillets(p):
     """Concave fillets along both sides of the spring-cup boss where it rises from the keeper end member."""
     r = p.spring_boss_root_fillet
-    half_width = p.spring_cup_bore / 2 + p.spring_cup_wall
+    half_width = p.spring_cup_bore / 2 + p.spring_cup_side_wall
     top = p.keeper_z + p.keeper_thickness
     y0, y1 = p.spring_seat_y - p.rear_wall_thickness, p.spring_seat_y
     fillets = None
@@ -702,7 +725,7 @@ def build_keeper_frame(p=None):
     # The cup's boss continues back over the whole end member, so its roof is carried by solid material and
     # the coil's end face bears on a wall as tall as the cup rather than on the member's lower edge.
     keeper += floor_box(
-        p.spring_cup_bore + 2 * p.spring_cup_wall,
+        p.spring_cup_bore + 2 * p.spring_cup_side_wall,
         p.rear_wall_thickness,
         p.spring_cup_top - p.keeper_z,
         y=p.spring_seat_y - p.rear_wall_thickness / 2,
@@ -727,6 +750,42 @@ def build_keeper_frame(p=None):
     return (keeper - _insert_entry(p)) & _rotation_envelope(p)
 
 
+def _plunger_ear(p, sign, center_y, root_x, bottom):
+    """One guide ear, the outer face at sign * ear_outer_x, from its root inside the body (root_x).
+
+    The exposed edges are broken: the outer vertical edges filleted, the bottom edges chamfered (they take the
+    first-layer squash), and the top edges filleted.
+    """
+    length = p.ear_outer_x - root_x
+    ear = floor_box(
+        length, p.body_length, p.ear_thickness, x=(p.ear_outer_x + root_x) / 2, y=center_y, z=bottom
+    )
+    top = bottom + p.ear_thickness
+
+    def exposed(horizontal_z=None):
+        # Not the edges at the root face (x = root_x), which sit inside the body.
+        keep = [e for e in ear.edges() if root_x + 1e-3 < e.center().X]
+        if horizontal_z is None:
+            return [e for e in keep if p.ear_thickness - 1e-6 < e.bounding_box().size.Z]
+        return [e for e in keep if abs(e.center().Z - horizontal_z) < 1e-6 and e.bounding_box().size.Z < 1e-6]
+
+    ear = fillet(exposed(), p.ear_corner_fillet)
+    ear = chamfer(exposed(bottom), p.ear_bottom_chamfer)
+    ear = fillet(exposed(top), p.ear_top_fillet)
+    # Concave root fillets where the ear leaves the body wall, as webs fused to the wall and the ear faces,
+    # stopped short of the ear ends by the edge breaks there. The underside root is the tension side.
+    wall_x = p.body_width / 2
+    r = p.ear_root_fillet
+    y0 = center_y - p.body_length / 2 + max(p.ear_top_fillet, p.ear_bottom_chamfer)
+    y1 = center_y + p.body_length / 2 - max(p.ear_top_fillet, p.ear_bottom_chamfer)
+    for face_z, direction in ((top, 1), (bottom, -1)):
+        z_inner, z_outer = face_z - direction * CUT_OVERRUN, face_z + direction * r
+        web = box_between(wall_x, wall_x + r, y0, y1, min(z_inner, z_outer), max(z_inner, z_outer))
+        web -= y_cylinder(2 * r, wall_x + r, face_z + direction * r, y0 - CUT_OVERRUN, y1 + CUT_OVERRUN)
+        ear += web
+    return mirror(ear, Plane.YZ) if sign < 0 else ear
+
+
 def build_plunger(p=None, *, spring=False):
     """Return plunger at fiducial; spring body mirrored across XZ."""
     p = p or CarriageParameters()
@@ -746,21 +805,25 @@ def build_plunger(p=None, *, spring=False):
         (edge, bevel_z),
     ]
     body = extrude(Plane.YZ.offset(-p.body_width / 2) * Polygon(*profile, align=None), amount=p.body_width)
+    outer_y = edge + p.body_length
+
+    def break_underside(shape):
+        edges = [
+            e for e in shape.edges() if abs(e.center().Z - bottom) < 1e-6 and e.bounding_box().size.Z < 1e-6
+        ]
+        return chamfer(edges, p.body_bottom_chamfer)
+
+    if not spring:
+        body = break_underside(body)
     # Overlap the body slightly to ensure a single connected printed solid.
     ear_root = p.body_width / 2 - 0.5
     for sign in (-1, 1):
-        body += floor_box(
-            p.ear_outer_x - ear_root,
-            p.body_length,
-            p.ear_thickness,
-            x=sign * (p.ear_outer_x + ear_root) / 2,
-            y=edge + p.body_length / 2,
-            z=ear_bottom,
-        )
-    outer_y = edge + p.body_length
+        body += _plunger_ear(p, sign, edge + p.body_length / 2, ear_root, ear_bottom)
     if spring:
         # Spring cup outboard; thumb tab on the front face, pushed outboard from above the cassette to retract.
         body += _spring_cup(p, outer_y, bottom)
+        # The cup continues the underside, so the chamfer runs round the cup's feet and pocket opening too.
+        body = break_underside(body)
         body += _thumb_tab(p, outer_y)
         # Root fillets on the thumb side and both ends of the tab; its spring-facing face is the outer face.
         tab_half = p.thumb_tab_width / 2
