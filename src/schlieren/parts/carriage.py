@@ -21,12 +21,14 @@ from build123d import (
     Rot,
     chamfer,
     extrude,
+    fillet,
     mirror,
 )
 
 from schlieren.cad import (
     CUT_OVERRUN,
     assembly,
+    box_between,
     compression_spring,
     floor_box,
     labeled,
@@ -150,7 +152,6 @@ class CarriageParameters:
     bevel_angle: float = 27.5  # Provisional convention: from cassette plane.
     spring_free_length: float = SPRING_2006N292_FREE_LENGTH
     spring_fiducial_length: float = 16.5
-    spring_axis_z: float = 7.5
     spring_outer_diameter: float = SPRING_2006N292_OUTER_DIAMETER
     spring_wire_diameter: float = SPRING_2006N292_WIRE_DIAMETER
     spring_display_coils: float = 10.0  # Total turns of the displayed helix; approximate.
@@ -159,6 +160,7 @@ class CarriageParameters:
     spring_cup_clearance: float = 1.0  # Diametral; printed-hole shrink and coil growth under compression.
     spring_cup_depth: float = 3.0
     spring_cup_wall: float = 1.2
+    spring_boss_root_fillet: float = 0.6  # Where the cup boss rises from the keeper end member.
     spring_cup_end_gap: float = 2.0  # Minimum, cup to cup at the most-compressed pose.
     # Retraction thumb tab on the spring plunger's front face, at its outboard end.
     thumb_tab_width: float = 20.0
@@ -167,6 +169,7 @@ class CarriageParameters:
     thumb_tab_chamfer: float = (
         0.5  # Exposed edges, for comfort; the spring-facing (outboard) face stays square.
     )
+    thumb_tab_root_fillet: float = 0.5  # Where the tab rises from the plunger top.
     thumb_tab_bead_radius: float = 0.8  # Grip bead along the inner (thumb-side) top edge; prints unsupported.
     # McMaster 98625A950 manufacturer drawing, canonical baseline §8.3.
     insert_body_diameter: float = INSERT_98625A950_BODY_DIAMETER
@@ -177,17 +180,24 @@ class CarriageParameters:
     insert_flange_diameter: float = INSERT_98625A950_FLANGE_DIAMETER
     insert_flange_thickness: float = INSERT_98625A950_FLANGE_THICKNESS
     insert_entry_chamfer: float = 0.1  # 45-degree entry, outboard face.
-    insert_flange_pocket_clearance: float = 0.2  # Diametral, flange pocket on the inner face of the block.
+    # Flange underside to the deck: the flange stands proud on the block's inner face, so it must clear it.
+    adjuster_flange_deck_clearance: float = 0.3
     adjuster_screw_length: float = FAS100_THREAD_LENGTH
     adjuster_pitch: float = FAS100_PITCH
     adjuster_clearance_travel: float = 15.5  # Maximum tip extension from insert inner end.
-    adjuster_support_length: float = 8.5
+    adjuster_support_length: float = 9.3
     support_top: float = 14.0
     magnet_length: float = MAGNET_LENGTH
     magnet_width: float = MAGNET_WIDTH
     magnet_thickness: float = MAGNET_THICKNESS
     magnet_pocket_clearance: float = MAGNET_POCKET_CLEARANCE  # Total, across the magnet's length and width.
     magnet_face_recess: float = 0.15  # Magnet face below the plunger's outer face: the pocket's extra depth.
+    # Local boss over the driven plunger's magnet pocket, so its roof keeps this thickness although the pocket
+    # top is near the plunger top; it stays at the outboard end, clear of the cassette's clamp bars.
+    magnet_crown_roof: float = 1.3
+    magnet_crown_length: float = 5.0  # Along y, from the outer face.
+    magnet_crown_wall: float = 1.5  # Beside the pocket, along x.
+    magnet_crown_root_fillet: float = 0.4  # Where the crown rises from the plunger top.
     screw_clearance: float = M3_CLEARANCE_DIAMETER
     screw_head_clearance: float = 5.8
     screw_head_recess: float = 0.5
@@ -223,8 +233,8 @@ class CarriageParameters:
 
     @property
     def adjuster_axis_z(self):
-        # Preserve the deck even at the chamfer mouth.
-        return self.plate_thickness + self.insert_bore_diameter / 2 + self.insert_entry_chamfer
+        # The flange stands proud of the block face, so it clears the deck rather than dipping into it.
+        return self.plate_thickness + self.insert_flange_diameter / 2 + self.adjuster_flange_deck_clearance
 
     @property
     def floor_z(self):
@@ -262,8 +272,8 @@ class CarriageParameters:
 
     @property
     def insert_flange_face(self):
-        # Inner (cassette-side) face of the adjuster block: the flange bottoms here, in a flush pocket, and
-        # the outboard reaction of the adjuster screw bears it against the block.
+        # Inner (cassette-side) face of the adjuster block: the flange bears flat on it, so the outboard
+        # reaction of the adjuster screw seats it against the block.
         return self.plate_ymax - self.adjuster_support_length
 
     @property
@@ -293,6 +303,11 @@ class CarriageParameters:
     @property
     def spring_cup_bore(self):
         return self.spring_outer_diameter + self.spring_cup_clearance
+
+    @property
+    def spring_axis_z(self):
+        # Coaxial with the adjuster, so the two plungers load the cassette along one line.
+        return self.adjuster_axis_z
 
     @property
     def spring_cup_top(self):
@@ -385,11 +400,10 @@ class CarriageParameters:
             raise ValueError("Bushing flange needs a bearing land outside the bore")
         if self.adjuster_support_length - self.insert_entry_chamfer < self.insert_min_material_thickness:
             raise ValueError("Insert support must meet the drawing minimum beyond the entry chamfer")
-        if (
-            self.insert_flange_thickness + self.insert_body_length + self.insert_entry_chamfer
-            > self.adjuster_support_length
-        ):
-            raise ValueError("Flush-flanged insert must fit inside the adjuster block")
+        if self.insert_body_length + self.insert_entry_chamfer > self.adjuster_support_length:
+            raise ValueError("Insert body must fit inside the adjuster block")
+        if self.adjuster_flange_deck_clearance <= 0:
+            raise ValueError("Insert flange must clear the deck")
         if self.adjuster_clearance_travel >= self.adjuster_screw_length - self.insert_overall_length:
             raise ValueError("Adjuster must retain full insert engagement with end margin")
         if self.spigot_diameter >= self.ring_bore or self.spigot_bore >= self.spigot_diameter - 4:
@@ -411,6 +425,8 @@ class CarriageParameters:
             raise ValueError("Guide ears must fit the open tracks")
         if not self.cassette_size < self.keeper_opening_width < 2 * self.ear_outer_x:
             raise ValueError("Keeper must clear cassette and overlap ears")
+        if self.spring_cup_top > self.support_top:
+            raise ValueError("Spring cup roof must stay below the support top")
         if self.spring_axis_z - self.spring_outer_diameter / 2 < self.plate_thickness:
             raise ValueError("Spring must ride clear of the deck")
         shortest = self.spring_fiducial_length - max(self.working_half_travel, self.loading_retraction)
@@ -432,6 +448,8 @@ class CarriageParameters:
             raise ValueError("Keeper side members must be at least the nominal keeper thickness")
         if not 0 < self.thumb_tab_chamfer < min(self.thumb_tab_thickness, self.thumb_tab_height) / 2:
             raise ValueError("Thumb-tab chamfer must fit the tab")
+        if not 0 < self.thumb_tab_root_fillet < self.thumb_tab_thickness / 2:
+            raise ValueError("Thumb tab root fillet must be positive and under half the tab thickness")
         if self.thumb_tab_bead_radius >= self.thumb_tab_thickness:
             raise ValueError("Thumb-tab bead must be smaller than the tab")
         if self.thumb_tab_width >= self.body_width:
@@ -491,7 +509,6 @@ def _build_fixed_body(p=None):
     base -= _keeper_envelope(p, p.support_top - p.keeper_z)
     start, end = p.support_spans[0]
     base -= y_cylinder(p.insert_bore_diameter, 0, p.adjuster_axis_z, start - CUT_OVERRUN, end + CUT_OVERRUN)
-    base -= _insert_flange_pocket(p)
     # End-wall spring cup; the guide-frame split truncates it at the keeper plane, and the keeper carries its roof.
     base += _spring_cup(p, p.spring_seat_y, p.plate_thickness)
     # The spigot and optical axis remain fixed while the cassette translates.
@@ -631,6 +648,21 @@ def _spring_cup(p, seat_y, bottom):
     return cup - pocket
 
 
+def _boss_root_fillets(p):
+    """Concave fillets along both sides of the spring-cup boss where it rises from the keeper end member."""
+    r = p.spring_boss_root_fillet
+    half_width = p.spring_cup_bore / 2 + p.spring_cup_wall
+    top = p.keeper_z + p.keeper_thickness
+    y0, y1 = p.spring_seat_y - p.rear_wall_thickness, p.spring_seat_y
+    fillets = None
+    for sign in (-1, 1):
+        x0, x1 = sorted((sign * half_width, sign * (half_width + r)))
+        web = box_between(x0, x1, y0, y1, top - CUT_OVERRUN, top + r)
+        web -= y_cylinder(2 * r, sign * (half_width + r), top + r, y0 - CUT_OVERRUN, y1 + CUT_OVERRUN)
+        fillets = web if fillets is None else fillets + web
+    return fillets
+
+
 def _keeper_envelope(p, height):
     return floor_box(p.plate_width, p.plate_length, height, y=p.plate_center_y, z=p.keeper_z) - floor_box(
         p.keeper_opening_width, p.keeper_opening_length, height, y=p.keeper_opening_y, z=p.keeper_z
@@ -645,17 +677,6 @@ def _insert_entry(p):
         p.adjuster_axis_z,
         p.plate_ymax - p.insert_entry_chamfer,
         p.plate_ymax,
-    )
-
-
-def _insert_flange_pocket(p):
-    # Flange-thick counterbore in the inner face of the adjuster block, so the flange sits flush.
-    return y_cylinder(
-        p.insert_flange_diameter + p.insert_flange_pocket_clearance,
-        0,
-        p.adjuster_axis_z,
-        p.insert_flange_face,
-        p.insert_flange_face + p.insert_flange_thickness,
     )
 
 
@@ -676,8 +697,17 @@ def build_keeper_plate(p=None):
     )
     keeper += crown
     keeper -= y_cylinder(p.insert_bore_diameter, 0, p.adjuster_axis_z, start - CUT_OVERRUN, end + CUT_OVERRUN)
-    keeper -= _insert_flange_pocket(p)
     keeper += _spring_cup(p, p.spring_seat_y, p.keeper_z)
+    # The cup's boss continues back over the whole end member, so its roof is carried by solid material and
+    # the coil's end face bears on a wall as tall as the cup rather than on the member's lower edge.
+    keeper += floor_box(
+        p.spring_cup_bore + 2 * p.spring_cup_wall,
+        p.rear_wall_thickness,
+        p.spring_cup_top - p.keeper_z,
+        y=p.spring_seat_y - p.rear_wall_thickness / 2,
+        z=p.keeper_z,
+    )
+    keeper += _boss_root_fillets(p)
     extra = p.keeper_side_thickness - p.keeper_thickness
     for sign in (-1, 1) if extra > 0 else ():
         keeper += floor_box(
@@ -731,8 +761,40 @@ def build_plunger(p=None, *, spring=False):
         # Spring cup outboard; thumb tab on the front face, pushed outboard from above the cassette to retract.
         body += _spring_cup(p, outer_y, bottom)
         body += _thumb_tab(p, outer_y)
+        # Root fillets on the thumb side and both ends of the tab; its spring-facing face is the outer face.
+        tab_half = p.thumb_tab_width / 2
+        inner_y = outer_y - p.thumb_tab_thickness
+        roots = [
+            e
+            for e in body.edges()
+            if abs(e.center().Z - p.body_top) < 1e-6
+            and abs(e.center().X) <= tab_half + 1e-6
+            and inner_y - 1e-6 <= e.center().Y < outer_y - 1e-6
+        ]
+        body = fillet(roots, p.thumb_tab_root_fillet)
         body = mirror(body, Plane.XZ)
     else:
+        pocket_width = p.magnet_width + p.magnet_pocket_clearance
+        crown_top = p.adjuster_axis_z + pocket_width / 2 + p.magnet_crown_roof
+        if crown_top > p.body_top:
+            body += floor_box(
+                p.magnet_length + p.magnet_pocket_clearance + 2 * p.magnet_crown_wall,
+                p.magnet_crown_length,
+                crown_top - p.body_top + CUT_OVERRUN,
+                y=outer_y - p.magnet_crown_length / 2,
+                z=p.body_top - CUT_OVERRUN,
+            )
+            # Root fillets on the two sides and the inboard end; the outboard end is the plunger's outer face.
+            half = (p.magnet_length + p.magnet_pocket_clearance) / 2 + p.magnet_crown_wall
+            inboard_y = outer_y - p.magnet_crown_length
+            roots = [
+                e
+                for e in body.edges()
+                if abs(e.center().Z - p.body_top) < 1e-6
+                and abs(e.center().X) <= half + 1e-6
+                and inboard_y - 1e-6 <= e.center().Y < outer_y - 1e-6
+            ]
+            body = fillet(roots, p.magnet_crown_root_fillet)
         # Outward-opening, fully backed magnet pocket. A small adhesive tack is
         # needed for retention; the ball bears on the exposed broad XZ face.
         body -= floor_box(
@@ -772,11 +834,14 @@ def build_print_layout(p=None, plunger_gap=5.0):
     }
 
 
-def build_carriage(p=None, *, travel=0.0, retract=0.0, include_support=False, include_hardware=False):
+def build_carriage(
+    p=None, *, travel=0.0, retract=0.0, include_support=False, include_hardware=False, side_screws=False
+):
     """Five independently selectable printed parts; retraction only at fiducial.
 
     `include_support` adds the SM1RC/M, TR50/M post, and rail shoe as references; `include_hardware` adds the
-    FAS100 (vendor model), its 98625A950 bushing, the magnet bearing pad, and the 2006N292 spring (a display helix).
+    FAS100 (vendor model), its 98625A950 bushing, the magnet bearing pad, and the 2006N292 spring (a display helix); `side_screws` adds the shoe's
+    side-slot screws and washers to the support.
 
     Spring solid height is unverified: the loading pose checks printed geometry,
     not whether the purchased spring can safely reach that compression.
@@ -801,6 +866,7 @@ def build_carriage(p=None, *, travel=0.0, retract=0.0, include_support=False, in
             ring=True,
             optical_height=p.optical_height,
             datum_thickness=p.datum_thickness,
+            side_screws=side_screws,
         )
     if include_hardware:
         children += _adjuster_hardware(p, travel)
@@ -821,7 +887,7 @@ def _adjuster_hardware(p, travel):
     # Flange on the inner face of the block, body running outboard. The frame's z runs along global +Y.
     along_y_axis = Pos(0, 0, p.adjuster_axis_z) * Rot(X=-90)
     bushing = insert_98625a950(
-        p.insert_flange_face + p.insert_flange_thickness,
+        p.insert_flange_face,
         p.insert_body_length,
         flange_side=-1,
         body_diameter=p.insert_body_diameter,

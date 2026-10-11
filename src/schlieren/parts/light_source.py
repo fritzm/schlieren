@@ -237,10 +237,11 @@ def build_led_package(board):
     return package + Pos(0, 0, dome_center) * hemisphere
 
 
-def build_light_source_assembly(p=None, board=GREEN, engagement=None):
+def build_light_source_assembly(p=None, board=GREEN, engagement=None, side_screws=False):
     """Purchased parts in rail-top coordinates; the post is centered at the SMR1/M midplane.
 
-    The post, the printed rail shoe under it, and the shoe's vendor hardware are grouped as REFERENCE_HARDWARE_LABEL.
+    The post, the printed rail shoe under it, and the shoe's vendor hardware are grouped as REFERENCE_HARDWARE_LABEL;
+    side_screws adds the shoe's side-slot screws to that group.
     """
     p = p or LightSourceParameters()
     p.validate()
@@ -269,7 +270,7 @@ def build_light_source_assembly(p=None, board=GREEN, engagement=None):
         "SM1L03 tube": (thorlabs_sm1l03(), p.open_end_u(engagement)),
         "SM1D12 iris": (iris, iris_seat),
     }
-    reference = post_stack(y=post_y, datum_thickness=p.datum_thickness)
+    reference = post_stack(y=post_y, datum_thickness=p.datum_thickness, side_screws=side_screws)
     children = [assembly(REFERENCE_HARDWARE_LABEL, reference)]
     children += [
         labeled(part, name, BLACK_ANODIZED, Pos(0, u, z)) for name, (part, u) in vendor_parts.items()

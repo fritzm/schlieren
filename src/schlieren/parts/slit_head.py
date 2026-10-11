@@ -719,8 +719,10 @@ def head_location(p, rotation=0.0):
     return Pos(0, -blade_plane, p.optical_height) * Rot(Z=180) * Rot(Y=rotation)
 
 
-def build_slit_head_assembly(p=None, rotation=0.0, include_support=True):
-    """Head, adapter, bars, blades, and adjusters on the slit post; rotation 0 is a horizontal slit."""
+def build_slit_head_assembly(p=None, rotation=0.0, include_support=True, side_screws=False):
+    """Head, adapter, bars, blades, and adjusters on the slit post; rotation 0 is a horizontal slit.
+
+    side_screws adds the rail shoe's side-slot screws and washers to the support."""
     p = p or SlitHeadParameters()
     p.validate()
     loc = head_location(p, rotation)
@@ -793,5 +795,10 @@ def build_slit_head_assembly(p=None, rotation=0.0, include_support=True):
     )
     children.append(labeled(spring, "2006N292 spring", METAL, loc * Pos(sx, p.axis_y, s0)))
     if include_support:
-        children += post_stack(ring=True, optical_height=p.optical_height, datum_thickness=p.datum_thickness)
+        children += post_stack(
+            ring=True,
+            optical_height=p.optical_height,
+            datum_thickness=p.datum_thickness,
+            side_screws=side_screws,
+        )
     return assembly("Flexure slit head (exploratory)", children)

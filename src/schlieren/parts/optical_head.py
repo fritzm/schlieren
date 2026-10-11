@@ -108,8 +108,8 @@ class OpticalHeadParameters:
 
 def build_source_fixtures(h: OpticalHeadParameters, rotation: float = 0.0) -> Compound:
     """Light source and slit head in the source rail frame; rotation is the slit's, in degrees."""
-    light_source = build_light_source_assembly(h.light_source, h.board)
-    slit_head = build_slit_head_assembly(h.slit, rotation)
+    light_source = build_light_source_assembly(h.light_source, h.board, side_screws=True)
+    slit_head = build_slit_head_assembly(h.slit, rotation, side_screws=True)
     return assembly(
         "Source rail fixtures",
         [
@@ -121,7 +121,7 @@ def build_source_fixtures(h: OpticalHeadParameters, rotation: float = 0.0) -> Co
 
 def build_imaging_fixtures(h: OpticalHeadParameters) -> Compound:
     """Lens cradle, phone, phone rest, and cutoff carriage in the imaging rail frame."""
-    stand_alone = build_camera_support_assembly(h.camera, include_cutoff=True)
+    stand_alone = build_camera_support_assembly(h.camera, include_cutoff=True, side_screws=True)
     children = []
     for group in stand_alone.children:
         if group.children:  # The lens cradle and phone rest group.

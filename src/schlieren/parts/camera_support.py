@@ -75,6 +75,7 @@ from schlieren.palette import (
     BRASS,
     FOCUS_RING_GRAY,
     LENS_BLACK,
+    METAL,
     PHONE_BODY,
     PRINTED_BLUE,
     PRINTED_GREEN,
@@ -83,7 +84,7 @@ from schlieren.palette import (
 )
 from schlieren.parts.carriage import CarriageParameters, build_carriage, support_location
 from schlieren.parts.rail import build_rail
-from schlieren.parts.rail_shoe import RailShoeParameters
+from schlieren.parts.rail_shoe import RailShoeParameters, side_clamp_hardware
 from schlieren.standards import INCH, MAGNET_POCKET_CLEARANCE, OPTICAL_HEIGHT
 from schlieren.vendor_cad import (
     MCMASTER_92815A202_HEIGHT,
@@ -950,9 +951,12 @@ def cutoff_post_station(p: CameraSupportParameters, c) -> float:
 
 
 def build_camera_support_assembly(
-    p: CameraSupportParameters | None = None, include_cutoff: bool = True
+    p: CameraSupportParameters | None = None, include_cutoff: bool = True, side_screws: bool = False
 ) -> Compound:
-    """The mock-up on the imaging rail, with phone and lens envelopes and, optionally, the cutoff station."""
+    """The mock-up on the imaging rail, with phone and lens envelopes and, optionally, the cutoff station.
+
+    side_screws adds the side-slot screws and washers that fix the cradle shoe and the cutoff post's rail shoe
+    to the rail."""
     p = p or CameraSupportParameters()
     p.validate()
     axis_z = p.optical_height
@@ -977,6 +981,12 @@ def build_camera_support_assembly(
         labeled(ring, "Focus ring", FOCUS_RING_GRAY),
         labeled(axis, "Optical axis", AXIS_RED),
     ]
+    if side_screws:
+        for where, y in zip(("aft", "fore"), p.cradle_clamp_ys, strict=True):
+            children.extend(
+                labeled(part, f"Cradle shoe {where} {part.label.lower()}", METAL)
+                for part in side_clamp_hardware(p.rail_shoe, y)
+            )
     # Pads lie with their 10 mm length across the rail: each pad slides that way by the travel of the other
     # screw of its pair, and only slightly along the rail.
     pad = floor_box(p.magnet_length, p.magnet_width, p.magnet_thickness)
@@ -1008,6 +1018,6 @@ def build_camera_support_assembly(
         return support
     c = CarriageParameters()
     post_y = cutoff_post_station(p, c)
-    carriage = build_carriage(c, include_support=True, include_hardware=True)
+    carriage = build_carriage(c, include_support=True, include_hardware=True, side_screws=side_screws)
     on_rail = Pos(0, post_y, 0) * support_location(c).inverse()
     return assembly("Imaging rail (concept mock-up)", [support, place(on_rail, carriage)])

@@ -12,7 +12,7 @@ Design areas marked **Provisional** in the sections above:
   ([§6.4](06-light-source.md#64-led-board-mounting)); heatsink temperature rise at 700 mA; white-module
   long-gap focus margin.
 - **Cutoff carriage** ([§8](08-cutoff.md#8-cutoff)): spigot fit in the SM1RC/M; guide-stack, recess, and
-  pocket dimensions, sliding fits, and datum-pin projection; keeper lift under the ear wedge reactions; bevel
+  pocket dimensions, sliding fits, and datum-pin projection; magnet-pocket roof and insert seat fit; keeper lift under the ear wedge reactions; bevel
   angle and seating force; the spring's solid height against the loading retraction; clearance to other equipment near the cutoff station.
 - **Cassettes** ([§8.6](08-cutoff.md#86-common-cassette-standard),
   [§8.7](08-cutoff.md#87-cassette-clamp-bars)): filament-cleat geometry.

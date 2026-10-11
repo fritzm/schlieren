@@ -87,13 +87,18 @@ under-flange/body length 0.298 in (7.569 mm); flange outside diameter 0.352 in (
 
 The insert bore is nominally 0.313 in (7.950 mm), matching the drawing. The printed bore is a pilot, finished
 after printing with a 5/16 in (0.3125 in) drill rather than relying on FDM accuracy; on the slit head this
-gave a good press fit ([§7.7](07-source-slit.md#77-fabrication-and-fit)). The 8.5 mm insert support exceeds
-the drawing's 0.298 in (7.569 mm) minimum material thickness, with about 3 mm of radial PLA around the insert
-body. The spring plunger loads the FAS100 tip, so the screw pushes the insert outboard, toward the knob. The
-flange is therefore on the inner (cassette-side) face of the adjuster block, in a flush counterbore 0.2 mm
-larger in diameter than the flange, with the body running outboard: the reaction bears the flange against the
-block instead of relying on the press fit. The insert is pressed in from the cassette side before the plungers
-are installed, with the flange bottoming in its pocket.
+gave a good press fit ([§7.7](07-source-slit.md#77-fabrication-and-fit)). The 9.3 mm insert support exceeds
+the drawing's 0.298 in (7.569 mm) minimum material thickness, leaving 1.7 mm of PLA beyond the end of the
+insert body (1.6 mm past the entry chamfer) and 3 mm of keeper crown over the bore. The spring plunger loads
+the FAS100 tip, so the screw pushes the insert outboard, toward the knob. The flange is therefore on the inner
+(cassette-side) face of the adjuster block, with the body running outboard: the reaction bears the flange
+against the block instead of relying on the press fit. The flange stands 0.254 mm proud of the flat block
+face; the plungers stop about 9 mm short of it. The insert is pressed in from the cassette side before the
+plungers are installed, with the flange bottoming on the face.
+
+The adjuster axis is 8.77 mm above the plate back: the 8.94 mm flange clears the deck by 0.3 mm, so the flange
+seat is a plain face and the plate is not notched. The spring axis ([§8.5](#85-spring-seating-and-retraction))
+is the same line, so both plungers load the cassette along one axis.
 
 FAS100 / insert travel envelope for CAD: the FAS100 uses a 1.000 in (25.4 mm) long 1/4 in-80 adjuster screw.
 The 80 TPI pitch gives 0.0125 in (0.3175 mm) axial motion per revolution. Using the insert's 0.313 in overall
@@ -112,6 +117,15 @@ insert made from a nickel-plated rectangular NdFeB magnet:
 The magnet is used as a hard, wear-resistant plated bearing surface; its magnetic function is incidental. It
 sits in a close-fitting printed pocket with its rear face fully supported by PLA, with a small CA or epoxy
 tack for retention. The FAS100 ball contacts the broad plated face rather than bare PLA.
+
+The plunger top is held near 12.0 mm by the cassette clamp-bar relief, which leaves only 0.6 mm of roof over
+the pocket (top at 11.37 mm). A local crown on the driven plunger over the pocket, 5 mm long from the outer
+face and 1.5 mm wider than the pocket on each side, restores a 1.3 mm roof (top at 12.67 mm). It is at the
+outboard end, clear of the clamp bars; it is blended into the plunger top by a 0.4 mm root fillet on its
+sides and inboard end.
+
+**Provisional:** the magnet-pocket roof and crown fillet, and the insert's fit on the flat flange seat, are
+first-print values, to be confirmed on the printed plunger and block.
 
 ### 8.4 Cassette seating
 
@@ -213,15 +227,18 @@ are pending a cassette insertion, seating, and tilt trial.
 ### 8.5 Spring seating and retraction
 
 The spring plunger is preloaded by the McMaster 2006N292 compression spring ([§8.3](#83-fine-adjustment)),
-acting between the frame's spring end wall and the plunger's outboard face on an axis 7.5 mm above the plate
-back. No guide rod, retract handle, or penetration of the end wall is used; a guide rod through the end wall
+acting between the frame's spring end wall and the plunger's outboard face on the adjuster axis, 8.77 mm above
+the plate back. No guide rod, retract handle, or penetration of the end wall is used; a guide rod through the end wall
 would project below the axis past the rail top at nominal zero.
 
 Each spring end sits in a printed cup, 3 mm deep, sized to the measured 0.272 in (6.91 mm) coil OD plus 1.0
 mm diametral clearance:
 
 - one cup extends inboard from the end wall: its side walls are on the guide frame, and its roof is carried
-  by the keeper's spring-end member, so the keeper closes over the spring end when installed;
+  by the keeper's spring-end member, so the keeper closes over the spring end when installed. The cup's boss
+  (10.3 mm wide, roof at 13.9 mm) rises 1.5 mm above the end member and continues back over its full depth,
+  so the coil's end face bears on a wall as tall as the cup; 0.6 mm fillets blend its sides into the end
+  member top;
 - one cup extends outboard from the spring plunger;
 - both cups are open toward the plate deck, which carries the coil. Their side walls and roofs locate the
   coil ends laterally and against escape toward the cassette-loading side. Both print with legs on the bed
@@ -253,7 +270,8 @@ Retraction for cassette loading uses a thumb tab on the spring plunger's front f
 - 20 mm wide × 3 mm thick × 6 mm tall, centered between the guide ears and outside the cassette footprint;
 - the thumb reaches over the cassette and pushes the tab's inner face outboard, at about 9 N at full
   retraction;
-- 0.5 mm chamfers on the exposed edges; the spring-facing face is left square;
+- 0.5 mm chamfers on the exposed edges and 0.5 mm root fillets on its thumb-side face and ends; the
+  spring-facing face is left square;
 - a Ø1.6 mm grip bead along the inner top edge, flush with the tab top, prevents finger slip.
 
 The tab is kept low, close to the plane of the guide ears, so that pushing on it does not twist the plunger
