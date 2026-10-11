@@ -1,8 +1,8 @@
 """Engineering invariants for the mirror cell model (design §10)."""
 
 import unittest
+import xml.etree.ElementTree as ET
 from math import atan2, degrees, hypot
-from xml.etree import ElementTree
 
 from build123d import Box, Cylinder, Pos
 
@@ -111,7 +111,7 @@ class MirrorCellTests(unittest.TestCase):
         self.assertEqual(len(positions), 4)
         centers = sorted(((b.min.X + b.max.X) / 2, (b.min.Y + b.max.Y) / 2) for b in positions.values())
         expected = sorted((sx * 0.5 * INCH, y) for sx in (-1, 1) for y in (47.625, 130.175))
-        for (x, y), (ex, ey) in zip(centers, expected):
+        for (x, y), (ex, ey) in zip(centers, expected, strict=True):
             self.assertAlmostEqual(x, ex, delta=TOLERANCE)
             self.assertAlmostEqual(y, ey, delta=TOLERANCE)
         self.assertAlmostEqual(p.qr_plate_length - 2 * p.qr_screw_inset, 130.175 - 47.625, delta=TOLERANCE)
@@ -161,7 +161,7 @@ class MirrorCellTests(unittest.TestCase):
 
     def test_base_plate_drawing_is_full_scale_and_dimensions_every_hole(self):
         p = self.p
-        svg = ElementTree.fromstring(base_plate_drawing_svg(p))
+        svg = ET.fromstring(base_plate_drawing_svg(p))
         ns = "{http://www.w3.org/2000/svg}"
         _, _, width, height = (float(v) for v in svg.get("viewBox").split())
         self.assertEqual(svg.get("width"), f"{width:.1f}mm")  # One user unit is 1 mm.
@@ -378,14 +378,11 @@ class MirrorCellTests(unittest.TestCase):
     def test_screws_stand_proud_of_the_locknuts_by_several_threads(self):
         thread_pitch = INCH / 18
         for side in ("left", "right"):
-            for where, axis in (("upright", "Y"), ("base", "Z")):
+            for where in ("upright", "base"):
                 for i in (1, 2):
                     screw = self.box(f"Bracket screw {side} {where} {i}")
                     nut = self.box(f"Locknut {side} {where} {i}")
-                    if where == "upright":
-                        projection = screw.max.Y - nut.max.Y
-                    else:
-                        projection = nut.min.Z - screw.min.Z
+                    projection = screw.max.Y - nut.max.Y if where == "upright" else nut.min.Z - screw.min.Z
                     self.assertGreater(projection, 2 * thread_pitch)  # At least two threads clear of the nut.
 
     def test_upright_and_base_screw_heads_clear_each_other_at_the_inside_corner(self):

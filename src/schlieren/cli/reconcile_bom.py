@@ -86,7 +86,7 @@ def diff_bom(header: list[str], csv_rows: list[list[str]], workbook_rows: list[l
         removed=[row for row_id, row in old.items() if row_id not in new],
     )
     for row_id, row in new.items():
-        fields = [(col, a, b) for col, a, b in zip(header, old.get(row_id, row), row) if a != b]
+        fields = [(col, a, b) for col, a, b in zip(header, old.get(row_id, row), row, strict=True) if a != b]
         if fields:
             diff.changed[row_id] = fields
     diff.reordered = [i for i in old if i in new] != [i for i in new if i in old]
@@ -98,8 +98,10 @@ def report(diff: BomDiff, header: list[str]) -> str:
         return "The workbook matches bom/bom.csv."
     lines = []
     for title, rows in (("Added in the workbook", diff.added), ("Removed in the workbook", diff.removed)):
-        for row in rows:
-            lines.append(f"{title}: " + "; ".join(f"{col}={val}" for col, val in zip(header, row) if val))
+        lines.extend(
+            f"{title}: " + "; ".join(f"{col}={val}" for col, val in zip(header, row, strict=True) if val)
+            for row in rows
+        )
     for row_id, fields in diff.changed.items():
         lines.append(f"Changed {row_id}:")
         lines.extend(f"    {col}: {a!r} -> {b!r}" for col, a, b in fields)

@@ -1,9 +1,9 @@
 """Engineering invariants for the tabletop frame (design §4)."""
 
 import unittest
+import xml.etree.ElementTree as ET
 from dataclasses import replace
 from math import degrees, pi
-from xml.etree import ElementTree
 
 from schlieren.cad import children_by_label, leaves
 from schlieren.parts.frame import (
@@ -41,7 +41,7 @@ class FrameTests(unittest.TestCase):
         return children_by_label(children_by_label(frame)[f"{name} rail assembly"])
 
     def assert_point(self, actual, expected):
-        for a, e in zip(actual, expected):
+        for a, e in zip(actual, expected, strict=True):
             self.assertAlmostEqual(a, e, delta=0.005)
 
     def test_half_angle_and_hole_layout_match_design(self):
@@ -256,7 +256,7 @@ class FrameTests(unittest.TestCase):
 
     def test_drilling_drawing_is_full_scale_with_holes_dimensioned_from_the_edges(self):
         p = self.p
-        svg = ElementTree.fromstring(pivot_plate_drawing_svg(p))
+        svg = ET.fromstring(pivot_plate_drawing_svg(p))
         ns = "{http://www.w3.org/2000/svg}"
         _, _, width, height = (float(v) for v in svg.get("viewBox").split())
         self.assertEqual(svg.get("width"), f"{width}mm")  # One user unit is 1 mm.

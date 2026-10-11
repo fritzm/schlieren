@@ -126,8 +126,9 @@ def build_imaging_fixtures(h: OpticalHeadParameters) -> Compound:
     for group in stand_alone.children:
         if group.children:  # The lens cradle and phone rest group.
             kept = [child for child in group.children if child.label not in STAND_ALONE_LABELS]
-            group = assembly(group.label, kept)
-        children.append(group)
+            children.append(assembly(group.label, kept))
+        else:
+            children.append(group)
     return assembly(
         "Imaging rail fixtures", [place(Pos(0, h.phone_back_station, 0), group) for group in children]
     )

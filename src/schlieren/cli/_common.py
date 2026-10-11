@@ -16,14 +16,14 @@ DEFAULT_OUTPUT = Path("exports")
 MODEL_KINDS = ("step", "stl")
 
 
-def add_output_option(parser: argparse.ArgumentParser, help: str | None = None) -> None:
-    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT, help=help)
+def add_output_option(parser: argparse.ArgumentParser, description: str | None = None) -> None:
+    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT, help=description)
 
 
 def add_show_option(
-    parser: argparse.ArgumentParser, help: str = "Display the model in OCP CAD Viewer"
+    parser: argparse.ArgumentParser, description: str = "Display the model in OCP CAD Viewer"
 ) -> None:
-    parser.add_argument("--show", action="store_true", help=help)
+    parser.add_argument("--show", action="store_true", help=description)
 
 
 def add_figure_option(parser: argparse.ArgumentParser, default: Path, what: str) -> None:

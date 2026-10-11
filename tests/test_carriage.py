@@ -59,9 +59,8 @@ class CarriageTests(unittest.TestCase):
         for travel in (-5, 0, 5):
             beam = Cylinder(p.aperture_diameter / 2, 15, align=ON_FLOOR)
             for name, part in self.parts.items():
-                if "plunger" in name:
-                    part = Pos(0, travel, 0) * part
-                self.assertLess((part & beam).volume, 1e-6)
+                placed = Pos(0, travel, 0) * part if "plunger" in name else part
+                self.assertLess((placed & beam).volume, 1e-6)
             for x, y in p.datum_points:
                 self.assertLess(abs(x) + 3.18 / 2, 32)
                 self.assertLess(abs(y - travel) + 3.18 / 2, 32)
@@ -87,11 +86,10 @@ class CarriageTests(unittest.TestCase):
         blank = extrude(Plane.YZ.offset(-32) * Polygon(*profile, align=None), amount=64)
         cassette = blank & (Rot(Z=90) * blank)
         for travel in (-5, 0, 5):
-            moved = Pos(0, travel, 0) * cassette
+            shifted = Pos(0, travel, 0) * cassette
             for name, part in self.parts.items():
-                if "plunger" in name:
-                    part = Pos(0, travel, 0) * part
-                self.assertLess((part & moved).volume, 1e-6, (travel, name))
+                placed = Pos(0, travel, 0) * part if "plunger" in name else part
+                self.assertLess((placed & shifted).volume, 1e-6, (travel, name))
 
     def test_hardware_stack(self):
         p = self.p
@@ -457,7 +455,7 @@ class CarriageTests(unittest.TestCase):
             self.assertLess((moved & self.fixed).volume, 1e-6)
             sign = 1 if shift > 0 else -1
             self.assertGreater(((Pos(0, sign * (p.ear_stop_gap + 0.1), 0) * moved) & self.fixed).volume, 0.1)
-        for fx, fy in p.fasteners:
+        for _fx, fy in p.fasteners:
             self.assertLess(abs(fy), abs(spring_stop) + p.fastener_stop_margin + 1e-6)
 
     @slow

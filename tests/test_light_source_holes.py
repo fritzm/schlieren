@@ -2,9 +2,9 @@
 
 import math
 import unittest
+import xml.etree.ElementTree as ET
 from dataclasses import replace
 from itertools import combinations
-from xml.etree import ElementTree
 
 from build123d import GeomType
 
@@ -42,7 +42,7 @@ class HoleLayoutTest(unittest.TestCase):
         model = set()
         for x, zs in columns.items():
             zs.sort()
-            for lo, hi in zip(zs[0::2], zs[1::2]):
+            for lo, hi in zip(zs[0::2], zs[1::2], strict=True):
                 model.add((x, round((lo + hi) / 2, 2)))
         self.assertEqual(len(model), 24)
         self.assertEqual(model, {(round(x, 2), round(y, 2)) for x, y in self.p.pin_positions()})
@@ -127,7 +127,7 @@ class HoleDrawingTest(unittest.TestCase):
 
     @staticmethod
     def holes_in(svg_text):
-        svg = ElementTree.fromstring(svg_text)
+        svg = ET.fromstring(svg_text)
         return svg, {e.get("data-hole"): e for e in svg.iter(f"{NS}circle") if e.get("data-hole")}
 
     def test_templates_are_full_scale_letter(self):
@@ -141,7 +141,7 @@ class HoleDrawingTest(unittest.TestCase):
     def test_template_holes_are_those_of_the_layout_in_both_templates(self):
         """Cap holes (all seven) and heatsink holes (no M2) sit at the layout positions, relative to each center."""
         svg, _ = self.holes_in(drilling_templates_svg(self.p))
-        by_name: dict[str, list[ElementTree.Element]] = {}
+        by_name: dict[str, list[ET.Element]] = {}
         for e in svg.iter(f"{NS}circle"):
             if e.get("data-hole"):
                 by_name.setdefault(e.get("data-hole"), []).append(e)
@@ -149,10 +149,10 @@ class HoleDrawingTest(unittest.TestCase):
             circles = by_name[hole.name]
             self.assertEqual(len(circles), 2 if hole.kind != "m2" else 1, hole.name)
             circles.sort(key=lambda e: float(e.get("cx")))  # cap template is the left one
-            for e, diameter in zip(
-                circles,
-                [self.p.cap_hole_diameter(hole.kind), self.p.heatsink_hole_diameter(hole.kind)],
-            ):
+            expected = [self.p.cap_hole_diameter(hole.kind)]
+            if hole.kind != "m2":  # The M2 board screws are in the cap only.
+                expected.append(self.p.heatsink_hole_diameter(hole.kind))
+            for e, diameter in zip(circles, expected, strict=True):
                 self.assertAlmostEqual(float(e.get("r")) * 2, diameter)
         cap = {n: c[0] for n, c in by_name.items()}
         centers = {n: (float(c.get("cx")), float(c.get("cy"))) for n, c in cap.items()}
@@ -167,9 +167,7 @@ class HoleDrawingTest(unittest.TestCase):
         return {h.name: h for h in self.p.holes()}
 
     def test_templates_state_through_holes_and_plug_taps(self):
-        text = " ".join(
-            e.text or "" for e in ElementTree.fromstring(drilling_templates_svg(self.p)).iter(f"{NS}text")
-        )
+        text = " ".join(e.text or "" for e in ET.fromstring(drilling_templates_svg(self.p)).iter(f"{NS}text"))
         self.assertIn("THROUGH", text)
         self.assertIn("plug taps", text)
 

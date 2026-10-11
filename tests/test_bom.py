@@ -150,7 +150,7 @@ class ReconcileBomTests(unittest.TestCase):
         return rows
 
     def test_unedited_workbook_round_trips(self):
-        rows = self.edited_workbook_rows(lambda ws: None)
+        rows = self.edited_workbook_rows(lambda _ws: None)
         self.assertEqual(rows, self.rows)
         self.assertFalse(reconcile_bom.diff_bom(self.header, self.rows, rows))
 

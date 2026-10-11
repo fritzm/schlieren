@@ -81,6 +81,7 @@ from schlieren.palette import (
     PRINTED_ORANGE,
     STEEL,
 )
+from schlieren.parts.carriage import CarriageParameters, build_carriage, support_location
 from schlieren.parts.rail import build_rail
 from schlieren.parts.rail_shoe import RailShoeParameters
 from schlieren.standards import INCH, MAGNET_POCKET_CLEARANCE, OPTICAL_HEIGHT
@@ -731,7 +732,11 @@ def _yoke_profile(p: CameraSupportParameters) -> Face:
     face_s = p.pad_radius + p.boss_top_below_tip  # Lens-side face of the arm, from the lens axis.
     back_s = face_s + p.yoke_boss_length + YOKE_BOSS_OVERRUN
     outer = p.yoke_boss_width / 2
-    cross = lambda s, z: (z - p.optical_height + s * cos(a)) / sin(a)  # t on the face/back line at height z.
+
+    def cross(s: float, z: float) -> float:
+        """t on the face or back line at distance s from the lens axis, at height z."""
+        return (z - p.optical_height + s * cos(a)) / sin(a)
+
     face_foot = _arm_point(p, 1, face_s, cross(face_s, top))  # Lens-side face meets the crossbar top.
     back_foot = _arm_point(p, 1, back_s, cross(back_s, bottom))  # Back face meets the crossbar underside.
     right = [
@@ -975,7 +980,7 @@ def build_camera_support_assembly(
     # Pads lie with their 10 mm length across the rail: each pad slides that way by the travel of the other
     # screw of its pair, and only slightly along the rail.
     pad = floor_box(p.magnet_length, p.magnet_width, p.magnet_thickness)
-    for where, station in zip(("Aft", "Fore"), p.stations):
+    for where, station in zip(("Aft", "Fore"), p.stations, strict=True):
         rod_side = -1 if where == "Aft" else None  # The aft left pad carries the groove rods.
         children.append(labeled(build_collar(p, station, rod_side), f"{where} collar", PRINTED_GREEN))
         children.append(labeled(build_cradle_yoke(p, station), f"{where} yoke", PRINTED_ORANGE))
@@ -1001,8 +1006,6 @@ def build_camera_support_assembly(
     support = assembly("Lens cradle and phone rest (concept mock-up)", children)
     if not include_cutoff:
         return support
-    from schlieren.parts.carriage import CarriageParameters, build_carriage, support_location
-
     c = CarriageParameters()
     post_y = cutoff_post_station(p, c)
     carriage = build_carriage(c, include_support=True, include_hardware=True)

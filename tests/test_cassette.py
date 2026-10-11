@@ -58,11 +58,10 @@ class CassetteTests(unittest.TestCase):
         for rotation in (0, 90, 180, 270):
             blank = Rot(Z=rotation) * self.blank
             for travel in (-5, 0, 5):
-                moved = Pos(0, travel, p.plate_thickness + p.datum_projection) * blank
+                seated = Pos(0, travel, p.plate_thickness + p.datum_projection) * blank
                 for name, part in parts.items():
-                    if "plunger" in name:
-                        part = Pos(0, travel, 0) * part
-                    self.assertLess((moved & part).volume, 1e-6, (rotation, travel, name))
+                    placed = Pos(0, travel, 0) * part if "plunger" in name else part
+                    self.assertLess((seated & placed).volume, 1e-6, (rotation, travel, name))
                 for x, y in p.datum_points:
                     self.assertTrue(blank.is_inside((x, y - travel, 0.01)))
                     # Entire nominal pin-head footprint stays on uninterrupted land.
@@ -118,9 +117,8 @@ class CassetteTests(unittest.TestCase):
                     moved(assembly, Rot(Z=rotation)), Pos(0, travel, c.plate_thickness + c.datum_projection)
                 )
                 for name, part in parts.items():
-                    if "plunger" in name:
-                        part = moved(part, Pos(0, travel, 0))
-                    self.assertLess(overlap_volume(seated, part), 1e-6, (rotation, travel, name))
+                    placed = moved(part, Pos(0, travel, 0)) if "plunger" in name else part
+                    self.assertLess(overlap_volume(seated, placed), 1e-6, (rotation, travel, name))
         # Thin media at zero lift still clears the 12 mm plunger top with relief.
         self.assertGreater(
             c.plate_thickness + c.datum_projection + p.thickness + b.epdm_thickness + b.end_relief_depth,

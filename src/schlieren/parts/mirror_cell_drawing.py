@@ -178,7 +178,7 @@ def base_plate_drawing_svg(p: MirrorCellParameters | None = None) -> str:
         y_ordinate(edge, -width / 2)
 
     done_x: set[float] = set()
-    for name, (x, y, _) in holes.items():
+    for x, y, _ in holes.values():
         if round(x, 3) not in done_x:  # One extension line per column of holes.
             x_ordinate(x, min(hy for hx, hy, _ in holes.values() if round(hx, 3) == round(x, 3)))
             done_x.add(round(x, 3))

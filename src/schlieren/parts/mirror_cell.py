@@ -315,7 +315,7 @@ class MirrorCellParameters:
                 "The washer socket must leave the fixed plate a floor",
             ),
             (
-                KOZAK_TB250_LENGTH <= self.moving_plate_thickness,
+                self.moving_plate_thickness >= KOZAK_TB250_LENGTH,
                 "The bushing must fit within the moving plate's thickness",
             ),
         )
@@ -632,7 +632,7 @@ def build_mirror_cell_assembly(p: MirrorCellParameters | None = None) -> Compoun
         spring_y0 = p.moving_plate_rear_y + (p.seat_washer_thickness - p.seat_counterbore_depth)
         spring = build_spring(p, x, spring_y0, z)
         children.append(labeled(spring, f"Compression spring {name}", HARDWARE_GRAY))
-        for side, (y0, label) in seat_y.items():
+        for y0, label in seat_y.values():
             washer = _tube(x, y0, z, p.seat_washer_od, p.seat_washer_id, p.seat_washer_thickness)
             children.append(labeled(washer, f"{label} {name}", HARDWARE_GRAY))
     return assembly("Mirror cell", children)

@@ -1,6 +1,7 @@
 """Engineering invariants for the lens cradle and phone rest concept mock-up (design §§9.4-9.7)."""
 
 import unittest
+from dataclasses import replace
 from itertools import pairwise
 from math import radians, sin, sqrt
 
@@ -132,7 +133,7 @@ class LensCradleTests(unittest.TestCase):
         self.assertGreaterEqual((p.rail_size - counterbore) / 2, p.yoke_min_insert_wall)
         bottom = p.yoke_top - p.yoke_crossbar
         back_s = p.pad_radius + p.boss_top_below_tip + p.yoke_boss_length + 0.5
-        for where, station in zip(("Aft", "Fore"), p.stations):
+        for where, station in zip(("Aft", "Fore"), p.stations, strict=True):
             yoke = self.parts[f"{where} yoke"]
             with self.subTest(yoke=where):
                 for side in (-1, 1):
@@ -158,7 +159,7 @@ class LensCradleTests(unittest.TestCase):
     def test_collar_is_a_thin_filleted_split_ring(self):
         p, r = self.p, self.p.rail_shoe
         zc = p.optical_height
-        for where, station in zip(("Aft", "Fore"), p.stations):
+        for where, station in zip(("Aft", "Fore"), p.stations, strict=True):
             collar = self.parts[f"{where} collar"]
             with self.subTest(collar=where):
                 self.assertTrue(collar.is_valid)
@@ -186,7 +187,7 @@ class LensCradleTests(unittest.TestCase):
 
     def test_collar_ears_have_the_clamp_screw_hole_and_nut_pocket(self):
         p, r = self.p, self.p.rail_shoe
-        for where, station in zip(("Aft", "Fore"), p.stations):
+        for where, station in zip(("Aft", "Fore"), p.stations, strict=True):
             collar = self.parts[f"{where} collar"]
             screw_z = p.optical_height + p.collar_radius + p.clamp_screw_above_ring
             with self.subTest(collar=where):
@@ -205,7 +206,7 @@ class LensCradleTests(unittest.TestCase):
 
     def test_pad_pockets_hold_the_bearing_surfaces_with_a_rim(self):
         p = self.p
-        for where, station in zip(("Aft", "Fore"), p.stations):
+        for where, station in zip(("Aft", "Fore"), p.stations, strict=True):
             collar = self.parts[f"{where} collar"]
             for name, side in (("left", -1), ("right", 1)):
                 loc = screw_location(p, side, station)
@@ -268,7 +269,7 @@ class LensCradleTests(unittest.TestCase):
         lens = self.parts["Telephoto envelope"]
         rear_end = p.aft_stub_length + p.rear_section_length
         long_end = rear_end + p.long_section_length
-        for where, station in zip(("Aft", "Fore"), p.stations):
+        for where, station in zip(("Aft", "Fore"), p.stations, strict=True):
             band = self.parts[f"{where} band"]
             yoke, collar = self.parts[f"{where} yoke"], self.parts[f"{where} collar"]
             with self.subTest(band=where):
@@ -305,7 +306,10 @@ class LensCradleTests(unittest.TestCase):
                 )
         # The hold-down seen by each pad pair, from both bands, each acting at its own place on the barrel.
         aft, fore = p.stations
-        fore_share = lambda y: (y - aft) / (fore - aft)
+
+        def fore_share(y):
+            return (y - aft) / (fore - aft)
+
         y_aft, y_fore = p.band_y(aft), p.band_y(fore)
         on_fore = p.band_hold_down * (fore_share(y_aft) + fore_share(y_fore))
         on_aft = 2 * p.band_hold_down - on_fore
@@ -376,7 +380,7 @@ class LensCradleTests(unittest.TestCase):
     def test_yokes_bolt_to_the_shoe_through_a_countersunk_hole_into_an_insert(self):
         p = self.p
         shoe = self.parts["Cradle shoe"]
-        for where, station in zip(("Aft", "Fore"), p.stations):
+        for where, station in zip(("Aft", "Fore"), p.stations, strict=True):
             yoke = self.parts[f"{where} yoke"]
             screw_part, insert_part = self.parts[f"{where} yoke screw"], self.parts[f"{where} yoke insert"]
             screw, insert = screw_part.bounding_box(), insert_part.bounding_box()
@@ -470,8 +474,6 @@ class LensCradleTests(unittest.TestCase):
         self.assertGreater(gap, 5.0)
 
     def test_rejects_collars_off_the_clampable_barrel(self):
-        from dataclasses import replace
-
         for bad in (
             {"aft_station": 10.0},
             {"aft_station": 45.0},

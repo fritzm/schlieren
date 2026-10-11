@@ -129,7 +129,7 @@ class VendorModelTests(unittest.TestCase):
     def test_models_match_their_catalog_extents(self):
         for name, (filename, expected) in MODELS.items():
             with self.subTest(model=name):
-                for found, wanted in zip(extents(vendor_step(filename)), sorted(expected)):
+                for found, wanted in zip(extents(vendor_step(filename)), sorted(expected), strict=True):
                     self.assertAlmostEqual(found, wanted, delta=MODEL_ROUNDING)
 
     def test_spherical_washer_halves(self):

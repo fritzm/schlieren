@@ -126,11 +126,11 @@ def render_figure(
 
     low = [min(e[axis] for e in extents) for axis in range(3)]
     high = [max(e[axis] for e in extents) for axis in range(3)]
-    middle = [(a + b) / 2 for a, b in zip(low, high)]
+    middle = [(a + b) / 2 for a, b in zip(low, high, strict=True)]
     if perspective:
         # Frame in tangent space: each vertex's page offset from the view axis over its distance from the
         # camera. Slide the view axis until the vertices are centered about it, then open the lens to fit.
-        distance = PERSPECTIVE_DISTANCE * sqrt(sum((b - a) ** 2 for a, b in zip(low, high)))
+        distance = PERSPECTIVE_DISTANCE * sqrt(sum((b - a) ** 2 for a, b in zip(low, high, strict=True)))
         for _ in range(PERSPECTIVE_CENTERING_PASSES):
             tangents = [
                 ((x - middle[0]) / depth, (y - middle[1]) / depth)

@@ -35,6 +35,41 @@ build-backend = "uv_build"
 [tool.ruff]
 line-length = 110
 
+[tool.ruff.lint]
+select = [
+    "E", "W",   # pycodestyle
+    "F",        # pyflakes
+    "I",        # import order
+    "B",        # bugbear
+    "UP",       # pyupgrade
+    "SIM",      # simplifications
+    "C4",       # comprehensions
+    "PIE",      # misc. flake8-pie
+    "RET",      # return statements
+    "RUF",      # ruff-specific
+    "N",        # naming
+    "A",        # builtin shadowing
+    "ARG",      # unused arguments
+    "ERA",      # commented-out code
+    "PERF",     # performance anti-patterns
+    "PL",       # pylint (errors, warnings, conventions; refactor rules are ignored below)
+    "TRY",      # exception handling
+    "T20",      # print
+    "ICN",      # import aliases
+]
+ignore = [
+    "E501",     # The formatter wraps code; long comments and docstrings are the author's call.
+    "TRY003",   # Long messages in raised exceptions are how the checks here explain themselves.
+    "RUF001", "RUF002", "RUF003",  # ×, –, °, § and similar are deliberate in dimensions and design references.
+    "PLR",      # Complexity and magic-value rules do not fit parametric CAD code.
+]
+
+[tool.ruff.lint.per-file-ignores]
+# The commands print their results and defer heavy imports (the renderer, the viewer) to the step that needs them.
+"src/schlieren/cli/*" = ["T201", "PLC0415"]
+# The Claude Code hook reports to the model by printing.
+".claude/hooks/*" = ["T201"]
+
 [dependency-groups]
 dev = [
     "markdown>=3.11",

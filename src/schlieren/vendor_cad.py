@@ -432,10 +432,8 @@ def m5_socket_screw(length: float) -> Compound:
         (MCMASTER_92290A242_LENGTH, mcmaster_92290a242),
         (MCMASTER_92290A265_LENGTH, mcmaster_92290a265),
     )
-    for model_length, model in models:
-        if length <= model_length:
-            break
-    else:
+    model_length, model = next(((n, m) for n, m in models if length <= n), (None, None))
+    if model is None:
         raise ValueError(f"No M5 screw model reaches {length} mm")
     if length == model_length:
         return model()

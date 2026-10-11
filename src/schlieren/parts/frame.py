@@ -389,6 +389,6 @@ def build_frame_assembly(
     p = p or FrameParameters()
     p.validate()
     children = [_plate_assembly(p)]
-    for (name, side), yaw in zip(SIDES.items(), (left_yaw, right_yaw)):
+    for (name, side), yaw in zip(SIDES.items(), (left_yaw, right_yaw), strict=True):
         children.append(place(p.rail_location(side, yaw * pi / 180), _rail_assembly(p, name)))
     return assembly("Tabletop frame", children)

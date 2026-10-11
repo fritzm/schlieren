@@ -265,7 +265,7 @@ def drilling_templates_svg(p: HoleLayoutParameters | None = None) -> str:
     pitch = p.lattice_pitch
     for i in range(-3, 3):
         c = (2 * i + 1) * pitch / 2
-        for sx_, sy_ in ((1, 0), (0, 1)):
+        for sx_, _sy in ((1, 0), (0, 1)):
             for sign in (1, -1):
                 a, b = heat_radius + EDGE_TICK[0], heat_radius + EDGE_TICK[1]
                 if sx_:

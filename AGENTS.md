@@ -262,7 +262,7 @@ uv run run-tests                                      # fast tests, one process 
 uv run run-tests --full                               # adds the slow interference/sweep tests; run before presenting work
 uv run run-tests test_carriage                        # chosen modules only
 uv run python -m unittest tests.test_carriage -v      # one module, serial and verbose (SCHLIEREN_TESTS=full for slow tests)
-uvx ruff check . && uvx ruff format .                 # lint/format (line length 110, from pyproject.toml)
+uvx ruff check . && uvx ruff format .                 # lint/format (rule set and line length 110 in pyproject.toml)
 uv run <command> --help                               # part commands: build/export (--show opens the viewer)
 uv run rail-shoe --figure                             # re-render docs/design/figures/rail-shoe.png
 uv run build-design-doc [--pdf]                       # docs/design/ -> exports/docs/, docs/schlieren-design.pdf

@@ -118,7 +118,7 @@ def write_bom_sheet(ws, header: list[str], rows: list[list[str]]) -> None:
     for cell in ws[1]:
         cell.font = Font(bold=True)
     for row in rows:
-        ws.append([convert(col, val) for col, val in zip(header, row)])
+        ws.append([convert(col, val) for col, val in zip(header, row, strict=True)])
     ws.freeze_panes = "A2"
     ws.auto_filter.ref = ws.dimensions
 
@@ -137,7 +137,7 @@ def write_bom_sheet(ws, header: list[str], rows: list[list[str]]) -> None:
     picker.add(state_range)
     ws.add_data_validation(picker)
 
-    for col, width in zip("ABCDEFGHIJKL", (10, 16, 6, 60, 36, 14, 22, 9, 13, 17, 14, 60)):
+    for col, width in zip("ABCDEFGHIJKL", (10, 16, 6, 60, 36, 14, 22, 9, 13, 17, 14, 60), strict=True):
         ws.column_dimensions[col].width = width
 
 

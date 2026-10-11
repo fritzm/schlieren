@@ -275,10 +275,6 @@ class CarriageParameters:
         return (self.plate_ymax + self.plate_ymin) / 2
 
     @property
-    def adjuster_support_y(self):
-        return self.plate_ymax - self.adjuster_support_length / 2
-
-    @property
     def keeper_opening_length(self):
         return self.plate_length - self.keeper_end_member_width - self.adjuster_support_length
 
@@ -534,14 +530,6 @@ def _split_fixed_body(p):
     return base, frame
 
 
-def build_base_plate(p=None):
-    return _split_fixed_body(p or CarriageParameters())[0]
-
-
-def build_guide_frame(p=None):
-    return _split_fixed_body(p or CarriageParameters())[1]
-
-
 def _add_spigot(base, p):
     """Rear hollow spigot clamped by the SM1RC/M; the ring seats against the shoulder.
 
@@ -598,7 +586,7 @@ def _thumb_tab(p, outer_y):
         z=p.body_top,
     )
     top_and_vertical = tab.edges().group_by(Axis.Z)[-1] + tab.edges().filter_by(Axis.Z)
-    edges = [e for e in top_and_vertical if e.center().Y < outer_y - 1e-6]
+    edges = [e for e in top_and_vertical if outer_y - 1e-6 > e.center().Y]
     tab = chamfer(edges, p.thumb_tab_chamfer)
     top = p.body_top + p.thumb_tab_height
     length = p.thumb_tab_width - 2 * p.thumb_tab_chamfer

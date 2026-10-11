@@ -382,8 +382,7 @@ def post_stack(
     parts.append(labeled(build_rail_shoe(p) if shoe is None else shoe, "Rail shoe", PRINTED_ORANGE, at_post))
     hardware = split_clamp_hardware(p) if clamp_hardware else []
     hardware += side_clamp_hardware(p) if side_screws else []
-    for part in hardware:
-        parts.append(labeled(part, f"Shoe {part.label.lower()}", METAL, at_post))
+    parts.extend(labeled(part, f"Shoe {part.label.lower()}", METAL, at_post) for part in hardware)
     return parts
 
 
