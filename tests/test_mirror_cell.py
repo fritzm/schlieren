@@ -1,7 +1,6 @@
 """Engineering invariants for the mirror cell model (design §10)."""
 
 import unittest
-from itertools import combinations
 from math import atan2, degrees, hypot
 from xml.etree import ElementTree
 
@@ -20,7 +19,7 @@ from schlieren.parts.mirror_cell import (
     moving_plate_outline,
 )
 from schlieren.parts.mirror_cell_drawing import base_plate_drawing_svg, base_plate_holes
-from schlieren.testing import boxes_overlap, slow
+from schlieren.testing import boxes_overlap, near_pairs_among, slow
 from schlieren.vendor_cad import (
     KOZAK_TB250_FLANGE_THICKNESS,
     KOZAK_TB250_LENGTH,
@@ -434,22 +433,14 @@ class MirrorCellTests(unittest.TestCase):
         def is_hardware(part):
             return part.label.startswith(hardware)
 
-        # Bounding boxes of the vendor models are slow, so compute each once rather than once per pair.
-        parts = [(part, part.bounding_box()) for part in leaves(self.assembly)]
         found = []
-        for (a, box_a), (b, box_b) in combinations(parts, 2):
+        for a, b in near_pairs_among(leaves(self.assembly)):
             if is_hardware(a) and is_hardware(b):
                 continue
             # A bracket screw head grazes the bracket's inside-corner fillet at the hole 0.5 in from the corner
             # (about 0.8 mm³); the screw still seats on the flat leg, so it is accepted.
             if {a.label.split()[0], b.label.split()[0]} == {"Bracket"} and any(
                 part.label in ("Bracket left", "Bracket right") for part in (a, b)
-            ):
-                continue
-            if not all(
-                getattr(box_a.min, k) < getattr(box_b.max, k)
-                and getattr(box_b.min, k) < getattr(box_a.max, k)
-                for k in "XYZ"
             ):
                 continue
             volume = (a & b).volume

@@ -1,7 +1,7 @@
 """Engineering invariants for the lens cradle and phone rest concept mock-up (design §§9.4-9.7)."""
 
 import unittest
-from itertools import combinations, pairwise
+from itertools import pairwise
 from math import radians, sin, sqrt
 
 from build123d import Cylinder, Pos, Vector
@@ -21,7 +21,7 @@ from schlieren.parts.camera_support import (
     screw_location,
 )
 from schlieren.standards import OPTICAL_HEIGHT
-from schlieren.testing import boxes_overlap, slow
+from schlieren.testing import bounded_distance, near_pairs_among, slow
 from schlieren.vendor_cad import MCMASTER_94459A797_FLANGE_DIAMETER, MCMASTER_94459A797_LENGTH, vendor_step
 
 CONTACT = 1e-3  # mm
@@ -319,7 +319,7 @@ class LensCradleTests(unittest.TestCase):
             for side in ("left", "right"):
                 nut = self.parts[f"{where} {side} thumb nut"]
                 with self.subTest(nut=(where, side)):
-                    self.assertGreater(band.distance_to(nut), 5.0)
+                    self.assertGreater(bounded_distance(band, nut, 5.0), 5.0)
 
     def test_phone_lower_edge_rests_on_the_rod(self):
         p = self.p
@@ -446,7 +446,7 @@ class LensCradleTests(unittest.TestCase):
         for name in ADJUSTERS:
             nut, yoke = self.parts[f"{name} thumb nut"], self.parts[f"{name.split()[0]} yoke"]
             with self.subTest(adjuster=name):
-                self.assertGreater(nut.distance_to(yoke), 4.0)
+                self.assertGreater(bounded_distance(nut, yoke, 4.0), 4.0)
 
     @slow
     def test_parts_clear_each_other_and_the_cutoff_station(self):
@@ -455,7 +455,7 @@ class LensCradleTests(unittest.TestCase):
         printed = ("Cradle shoe", "Aft yoke", "Fore yoke", "Phone rest", "Aft collar", "Fore collar")
         let_in = (" screw", " magnet", " rod")  # Threaded into, or let into, a printed part.
         optics = {"Telephoto envelope", "Focus ring"}
-        for a, b in combinations(parts.values(), 2):
+        for a, b in near_pairs_among(parts.values()):
             labels = (a.label, b.label)
             if not own.intersection(labels) or "Optical axis" in labels or set(labels) == optics:
                 continue  # The cutoff station's own fits are covered by its tests.
@@ -463,8 +463,6 @@ class LensCradleTests(unittest.TestCase):
                 continue  # Inserts are checked in their bosses above; their knurled model is slow to intersect.
             fitted = any(word in label for label in labels for word in let_in)
             if fitted and any(label in printed for label in labels):
-                continue
-            if not boxes_overlap(a, b, loose=True):
                 continue
             with self.subTest(pair=labels):
                 self.assertLess((a & b).volume, 0.01)

@@ -122,8 +122,8 @@ def compression_spring(outer_diameter: float, wire_diameter: float, length: floa
     return Pos(0, 0, wire_diameter / 2) * coil
 
 
-def _located(shape: Shape, loc: Location | None) -> Shape:
-    """shape moved by loc, sharing its geometry.
+def moved(shape: Shape, loc: Location | None) -> Shape:
+    """shape moved by loc, sharing its geometry; use it in place of `loc * shape` for large models.
 
     `loc * shape` deep-copies the whole B-rep and then discards the copy, which dominates the cost of
     placing vendor models in a large assembly. Moving the underlying OCCT shape only composes locations.
@@ -142,7 +142,7 @@ def labeled(
     """
     if color is not None and not isinstance(color, Color):
         color = Color(*color)
-    return Part(Compound(_located(shape, loc).solids()).wrapped, label=label, color=color)
+    return Part(Compound(moved(shape, loc).solids()).wrapped, label=label, color=color)
 
 
 def assembly(label: str, children) -> Compound:

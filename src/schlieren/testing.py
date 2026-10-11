@@ -8,6 +8,8 @@ The default test run is the fast one, for iterating. Set SCHLIEREN_TESTS=full to
 import os
 import unittest
 from collections.abc import Iterable, Iterator
+from itertools import combinations
+from math import inf
 
 from build123d import BoundBox, Shape
 
@@ -72,3 +74,29 @@ def near_pairs(
         for b, box_b in boxed_second:
             if _boxes_overlap(box_a, box_b, margin):
                 yield a, b
+
+
+def near_pairs_among(shapes: Iterable[Shape], margin: float = 0.0) -> Iterator[tuple[Shape, Shape]]:
+    """Each distinct pair of shapes whose bounding boxes overlap to within margin, each shape boxed once."""
+    boxed = [(shape, loose_box(shape)) for shape in shapes]
+    for (a, box_a), (b, box_b) in combinations(boxed, 2):
+        if _boxes_overlap(box_a, box_b, margin):
+            yield a, b
+
+
+def overlap_volume(a: Shape, b: Shape) -> float:
+    """Volume of the intersection of a and b, without the boolean when their bounding boxes are apart."""
+    if not boxes_overlap(a, b, loose=True):
+        return 0.0
+    return (a & b).volume
+
+
+def bounded_distance(a: Shape, b: Shape, limit: float) -> float:
+    """The distance between a and b if it is less than limit, otherwise infinity.
+
+    For asserting a clearance of at least limit: shapes whose bounding boxes are limit or more apart cannot be
+    closer, so the exact distance query, which is expensive on vendor models, is skipped for them.
+    """
+    if not boxes_overlap(a, b, limit, loose=True):
+        return inf
+    return a.distance_to(b)

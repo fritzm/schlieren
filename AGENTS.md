@@ -238,7 +238,11 @@ Tests that take more than a few seconds, typically exhaustive pairwise interfere
 checks, are marked `@slow` (`schlieren.testing`) and skipped by default so that iteration stays quick; the
 skip count is reported. Run `uv run run-tests --full` before presenting completed work. Use a bounding-box
 prefilter before exact boolean or distance queries in new pairwise checks: `near_pairs(first, second, margin)`
-boxes each shape once, and `boxes_overlap(a, b, loose=True)` is the single-pair form. Exact bounding boxes of
+and `near_pairs_among(shapes, margin)` box each shape once; `boxes_overlap(a, b, loose=True)` is the
+single-pair form; `overlap_volume(a, b)` and `bounded_distance(a, b, limit)` are the intersection volume and
+the distance with the exact query skipped when the boxes already settle it. Move large models with
+`cad.moved(shape, loc)` rather than `loc * shape`. Where a group of parts keeps the same relative placement
+across a sweep (an engagement, a board), check the pairs inside the group once, not per step. Exact bounding boxes of
 vendor models cost tens of milliseconds each and are not cached, so a pair loop that recomputes them is slow;
 the loose box is much cheaper and only ever larger, so it is safe for a prefilter. Leave `loose` off where the
 box test is itself the assertion.

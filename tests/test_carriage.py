@@ -6,14 +6,14 @@ from math import cos, pi, radians, sin, tan
 
 from build123d import Align, Box, Cylinder, Plane, Polygon, Pos, RegularPolygon, Rot, extrude
 
-from schlieren.cad import ON_FLOOR, along_y, children_by_label
+from schlieren.cad import ON_FLOOR, along_y, children_by_label, moved
 from schlieren.parts.carriage import (
     CarriageParameters,
     build_carriage,
     build_print_layout,
     support_location,
 )
-from schlieren.testing import slow
+from schlieren.testing import overlap_volume, slow
 
 
 def y_cylinder(radius, length, y, z):
@@ -231,7 +231,7 @@ class CarriageTests(unittest.TestCase):
                 p.spring_outer_diameter / 2, length, align=(Align.CENTER, Align.CENTER, Align.MIN)
             )
             for part in self.parts:
-                self.assertLess((spring & objects[part]).volume, 1e-6, (travel, retract, part))
+                self.assertLess(overlap_volume(spring, objects[part]), 1e-6, (travel, retract, part))
 
     def test_thumb_tab(self):
         p = self.p
@@ -296,11 +296,11 @@ class CarriageTests(unittest.TestCase):
         fixed = list(self.parts.values())
         for rotation in (-120, -90, -45, 0, 45, 90, 120):
             for name in ("TR50 M post", "Rail shoe", "Shoe clamp screw", "Shoe clamp nut"):
-                solid = Rot(Z=-rotation) * support[name]
+                solid = moved(support[name], Rot(Z=-rotation))
                 # Shifting the support forward by the minimum clearance must still leave it clear.
-                shifted = Pos(0, 0, p.post_clearance) * solid
+                shifted = moved(solid, Pos(0, 0, p.post_clearance))
                 for part in fixed:
-                    self.assertLess((part & shifted).volume, 1e-6, (rotation, name))
+                    self.assertLess(overlap_volume(part, shifted), 1e-6, (rotation, name))
 
     def test_sandwich_interface_and_locators(self):
         p = self.p
@@ -471,7 +471,7 @@ class CarriageTests(unittest.TestCase):
             self.assertLess(solids["FAS100"].distance_to(magnet), 1e-3)
             for name in ("FAS100", "98625A950 bushing", "Magnet pad"):
                 for part in printed:
-                    self.assertLess((solids[name] & part).volume, 1e-3, (travel, name))
+                    self.assertLess(overlap_volume(solids[name], part), 1e-3, (travel, name))
 
     def test_print_layout_orients_and_spaces_the_printed_parts(self):
         p = self.p

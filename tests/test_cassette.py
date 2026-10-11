@@ -6,7 +6,7 @@ from math import radians, tan
 
 from build123d import Circle, Compound, Cylinder, Pos, Rot, extrude
 
-from schlieren.cad import ON_FLOOR, children_by_label, leaves
+from schlieren.cad import ON_FLOOR, children_by_label, leaves, moved
 from schlieren.parts.carriage import CarriageParameters, build_carriage
 from schlieren.parts.cassette import (
     CassetteParameters,
@@ -15,7 +15,7 @@ from schlieren.parts.cassette import (
     build_cassette_assembly,
     build_clamp_bar,
 )
-from schlieren.testing import slow
+from schlieren.testing import overlap_volume, slow
 
 
 class CassetteTests(unittest.TestCase):
@@ -114,11 +114,13 @@ class CassetteTests(unittest.TestCase):
         parts = children_by_label(build_carriage(c))
         for rotation in (0, 90, 180, 270):
             for travel in (-5, 0, 5):
-                moved = Pos(0, travel, c.plate_thickness + c.datum_projection) * (Rot(Z=rotation) * assembly)
+                seated = moved(
+                    moved(assembly, Rot(Z=rotation)), Pos(0, travel, c.plate_thickness + c.datum_projection)
+                )
                 for name, part in parts.items():
                     if "plunger" in name:
-                        part = Pos(0, travel, 0) * part
-                    self.assertLess((moved & part).volume, 1e-6, (rotation, travel, name))
+                        part = moved(part, Pos(0, travel, 0))
+                    self.assertLess(overlap_volume(seated, part), 1e-6, (rotation, travel, name))
         # Thin media at zero lift still clears the 12 mm plunger top with relief.
         self.assertGreater(
             c.plate_thickness + c.datum_projection + p.thickness + b.epdm_thickness + b.end_relief_depth,

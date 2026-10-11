@@ -5,7 +5,7 @@ from dataclasses import replace
 
 from build123d import Pos
 
-from schlieren.cad import box_between, z_cylinder
+from schlieren.cad import box_between, moved, z_cylinder
 from schlieren.parts.rail_shoe import build_rail_shoe
 from schlieren.parts.slit_head import (
     SlitHeadParameters,
@@ -15,7 +15,7 @@ from schlieren.parts.slit_head import (
     build_spigot_adapter,
     head_location,
 )
-from schlieren.testing import slow
+from schlieren.testing import bounded_distance, overlap_volume, slow
 from schlieren.vendor_cad import SM1RC_M_THICKNESS, thorlabs_fas100, thorlabs_sm1rc_m, thorlabs_tr50_m
 
 MODEL_MATCH = 0.001
@@ -25,7 +25,7 @@ TR50_STUD_MAX = 5.2  # TR50/M drawing: setscrew stud 4.6-5.2 mm above the post t
 
 
 def _overlap(a, b):
-    return (a & b).volume
+    return overlap_volume(a, b)
 
 
 class SlitHeadTests(unittest.TestCase):
@@ -130,7 +130,7 @@ class SlitHeadTests(unittest.TestCase):
         ]
         for rotation in WORKING_ROTATIONS:
             loc = head_location(p, rotation)
-            moving = [(loc * self.head), (loc * self.adapter)] + [(loc * f) for f in self.fas]
+            moving = [moved(self.head, loc), moved(self.adapter, loc)] + [moved(f, loc) for f in self.fas]
             for part in moving:
                 for other in support:
                     self.assertAlmostEqual(_overlap(part, other), 0, places=3, msg=f"rotation {rotation}")
@@ -151,12 +151,14 @@ class SlitHeadTests(unittest.TestCase):
         shoe = build_rail_shoe()
         for rotation in ROTATION_SWEEP:
             loc = head_location(p, rotation)
-            moving = [(loc * self.head), (loc * self.adapter)] + [(loc * f) for f in self.fas]
+            moving = [moved(self.head, loc), moved(self.adapter, loc)] + [moved(f, loc) for f in self.fas]
             for name, fixed in (("post", body), ("shoe", shoe)):
-                clearance = min(part.distance_to(fixed) for part in moving)
+                clearance = min(bounded_distance(part, fixed, p.post_clearance) for part in moving)
                 self.assertGreaterEqual(clearance, p.post_clearance, msg=f"{name} at rotation {rotation}")
             self.assertGreater(
-                min(part.distance_to(stud) for part in moving), 1.0, msg=f"stud at rotation {rotation}"
+                min(bounded_distance(part, stud, 1.0) for part in moving),
+                1.0,
+                msg=f"stud at rotation {rotation}",
             )
 
     def test_adapter_prints_flat_on_washer_spacers(self):

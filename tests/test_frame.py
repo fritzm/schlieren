@@ -2,7 +2,6 @@
 
 import unittest
 from dataclasses import replace
-from itertools import combinations
 from math import degrees, pi
 from xml.etree import ElementTree
 
@@ -15,7 +14,7 @@ from schlieren.parts.frame import (
     build_pivot_plate,
 )
 from schlieren.parts.frame_drawing import pivot_plate_drawing_svg
-from schlieren.testing import slow
+from schlieren.testing import near_pairs_among, slow
 from schlieren.vendor_cad import (
     MCMASTER_8215K2_DIAMETER,
     MCMASTER_8215K2_HEIGHT,
@@ -28,13 +27,6 @@ from schlieren.vendor_cad import (
 MAX_YAW = 3.0  # deg from nominal; the adjustment range §4.2 sizes the fixed yaw holes for.
 # mm^3. The foot-screw tips graze the slot-floor taper of the rail model, whose taper is nominal, not measured.
 INTERFERENCE_TOLERANCE = 1e-3
-
-
-def boxes_overlap(a, b):
-    return all(
-        getattr(a.min, axis) < getattr(b.max, axis) and getattr(b.min, axis) < getattr(a.max, axis)
-        for axis in "XYZ"
-    )
 
 
 class FrameTests(unittest.TestCase):
@@ -226,14 +218,12 @@ class FrameTests(unittest.TestCase):
     def test_no_part_interference_across_the_yaw_range(self):
         for yaw in (-MAX_YAW, 0.0, MAX_YAW):
             parts = leaves(build_frame_assembly(self.p, left_yaw=yaw, right_yaw=yaw))
-            boxes = [part.bounding_box() for part in parts]
-            for (a, box_a), (b, box_b) in combinations(zip(parts, boxes), 2):
+            for a, b in near_pairs_among(parts):
                 # A screw passes through its unthreaded nut model; catalog hardware is trusted to fit.
                 if a.label.endswith(" screw") and b.label.endswith(" nut"):
                     continue
-                if boxes_overlap(box_a, box_b):
-                    with self.subTest(yaw=yaw, pair=(a.label, b.label)):
-                        self.assertLess((a & b).volume, INTERFERENCE_TOLERANCE)
+                with self.subTest(yaw=yaw, pair=(a.label, b.label)):
+                    self.assertLess((a & b).volume, INTERFERENCE_TOLERANCE)
 
     def test_thumb_nuts_are_vendor_models_seated_on_the_strap_washers(self):
         p = self.p

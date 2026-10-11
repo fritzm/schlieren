@@ -18,7 +18,7 @@ from schlieren.parts.light_source import (
     build_star_board,
     light_source_section,
 )
-from schlieren.testing import boxes_overlap, slow
+from schlieren.testing import near_pairs_among, slow
 from schlieren.vendor_cad import (
     alpha_cn40_40b,
     thorlabs_acl2520u_a,
@@ -278,28 +278,50 @@ class LightSourceTests(unittest.TestCase):
 
     @slow
     def test_assembly_parts_do_not_interfere(self):
+        # The LED module and the SM1V05 group each hold their own relative placement whatever the board or the
+        # engagement, so a pair inside one group is checked once; a pair across the groups depends on the
+        # engagement (the SM1V05 enters the ring) or the board (the star's thickness), so it is checked for each.
+        board_parts = {"LED star board", "LED package"}
+        moving = {
+            "SM1V05 body",
+            "SM1V05 retaining ring",
+            "ACL2520U-A condenser",
+            "SM1L03 tube",
+            "SM1D12 iris",
+            "SM1D12 iris lever",
+        }
+        checked = set()
+
+        def scope(a, b, board, engagement):
+            labels = {a, b}
+            if labels <= moving or not labels & (moving | board_parts):
+                return "invariant"
+            if labels & board_parts and not labels & moving:
+                return board.name
+            return (board.name, engagement)
+
+        p = self.p
         for board in MODULES:
-            p = self.p
             for e in p.engagement_range(board):
-                assembly = build_light_source_assembly(p, board, e)
-                parts = parts_by_label(assembly)
+                parts = parts_by_label(build_light_source_assembly(p, board, e))
                 self.assertTrue(all(s.is_valid for s in parts.values()))
-                names = list(parts)
-                for i, a in enumerate(names):
-                    for b in names[i + 1 :]:
-                        if not boxes_overlap(parts[a], parts[b], loose=True):
-                            continue
-                        overlap = parts[a] & parts[b]
-                        if overlap.volume < 1e-6:
-                            continue
-                        if {a, b} == {"SM1D12 iris", "SM1D12 iris lever"}:
-                            continue  # One vendor model: the lever is drawn seated in its actuating ring.
-                        # Only the inch-rounded TR50/M model may overlap its seat, by that rounding.
-                        self.assertIn("TR50 M post", (a, b), (board.name, e, a, b))
-                        bb = overlap.bounding_box()
-                        self.assertLessEqual(
-                            min(bb.size.X, bb.size.Y, bb.size.Z), TR50_MODEL_ROUNDING, (board.name, e, a, b)
-                        )
+                for first, second in near_pairs_among(parts.values()):
+                    a, b = first.label, second.label
+                    key = (frozenset((a, b)), scope(a, b, board, e))
+                    if key in checked:
+                        continue
+                    checked.add(key)
+                    overlap = first & second
+                    if overlap.volume < 1e-6:
+                        continue
+                    if {a, b} == {"SM1D12 iris", "SM1D12 iris lever"}:
+                        continue  # One vendor model: the lever is drawn seated in its actuating ring.
+                    # Only the inch-rounded TR50/M model may overlap its seat, by that rounding.
+                    self.assertIn("TR50 M post", (a, b), (board.name, e, a, b))
+                    bb = overlap.bounding_box()
+                    self.assertLessEqual(
+                        min(bb.size.X, bb.size.Y, bb.size.Z), TR50_MODEL_ROUNDING, (board.name, e, a, b)
+                    )
 
     def test_reject_out_of_range(self):
         p = self.p
