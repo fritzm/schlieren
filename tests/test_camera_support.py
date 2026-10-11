@@ -1,4 +1,4 @@
-"""Engineering invariants for the lens cradle and phone rest concept mock-up (design §§9.4-9.7)."""
+"""Engineering invariants for the lens cradle and phone rest (design §§9.4-9.7)."""
 
 import unittest
 from dataclasses import replace

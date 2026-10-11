@@ -100,9 +100,9 @@ from schlieren.vendor_cad import (
 )
 
 YOKE_BOSS_OVERRUN = 0.5  # Arm material behind the end of the screw at nominal.
-# The stand-alone mock-up's rail and optical-axis marker, drawn for the viewer only.
-MOCKUP_RAIL_LENGTH = 300.0
-MOCKUP_RAIL_PAST_LENS = 80.0  # Rail beyond the lens front, toward the mirror.
+# The stand-alone model's rail and optical-axis marker, drawn for the viewer only.
+STAND_ALONE_RAIL_LENGTH = 300.0
+STAND_ALONE_RAIL_PAST_LENS = 80.0  # Rail beyond the lens front, toward the mirror.
 AXIS_MARKER_DIAMETER = 0.8
 AXIS_MARKER_BEHIND_PHONE = 60.0
 AXIS_MARKER_PAST_LENS = 90.0
@@ -956,7 +956,7 @@ def build_camera_support_assembly(
     side_screws: bool = False,
     include_cassette: bool = False,
 ) -> Compound:
-    """The mock-up on the imaging rail, with phone and lens envelopes and, optionally, the cutoff station.
+    """The support on the imaging rail, with phone and lens envelopes and, optionally, the cutoff station.
 
     side_screws adds the side-slot screws and washers that fix the cradle shoe and the cutoff post's rail shoe
     to the rail; include_cassette seats the cassette in the cutoff carriage."""
@@ -970,8 +970,8 @@ def build_camera_support_assembly(
     lens = y_cylinder(p.lens_diameter, 0, axis_z, 0, p.lens_length)
     focus_ring_end = p.focus_ring_start + p.focus_ring_length
     ring = y_cylinder(p.focus_ring_diameter, 0, axis_z, p.focus_ring_start, focus_ring_end)
-    rail_center = p.lens_length + MOCKUP_RAIL_PAST_LENS - MOCKUP_RAIL_LENGTH / 2
-    rail = Pos(0, rail_center, 0) * build_rail(MOCKUP_RAIL_LENGTH)
+    rail_center = p.lens_length + STAND_ALONE_RAIL_PAST_LENS - STAND_ALONE_RAIL_LENGTH / 2
+    rail = Pos(0, rail_center, 0) * build_rail(STAND_ALONE_RAIL_LENGTH)
     axis = y_cylinder(
         AXIS_MARKER_DIAMETER, 0, axis_z, -AXIS_MARKER_BEHIND_PHONE, p.lens_length + AXIS_MARKER_PAST_LENS
     )
@@ -1016,7 +1016,7 @@ def build_camera_support_assembly(
     # Roll: the phone's lower edge on a rod lying along the rail.
     rest = along_y((p.rest_x, p.rest_y, p.rest_arm_top)) * mcmaster_91585a457()
     children.append(labeled(rest, "Rest rod", STEEL))
-    support = assembly("Lens cradle and phone rest (concept mock-up)", children)
+    support = assembly("Lens cradle and phone rest", children)
     if not include_cutoff:
         return support
     c = CarriageParameters()
@@ -1029,4 +1029,4 @@ def build_camera_support_assembly(
         include_cassette=include_cassette,
     )
     on_rail = Pos(0, post_y, 0) * support_location(c).inverse()
-    return assembly("Imaging rail (concept mock-up)", [support, place(on_rail, carriage)])
+    return assembly("Imaging rail", [support, place(on_rail, carriage)])

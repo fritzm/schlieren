@@ -1,7 +1,7 @@
 ## 9. Camera and telephoto support
 
 The camera and lens are chosen ([§9.1](#91-camera)–[9.2](#92-telephoto)). Their support is a lens cradle and
-a phone rest ([§9.4](#94-support-concept)–[9.8](#98-retaining-bands)), with an alignment procedure
+a phone rest ([§9.4](#94-support)–[9.8](#98-retaining-bands)), with an alignment procedure
 ([§9.9](#99-lens-alignment)). **Provisional:** the phone rest's retainer and safety catch, the fit allowances
 of the printed yokes and of the rod groove, which are still to be tested, and the alignment procedure
 ([§11](11-open-work.md#11-provisional-areas-and-next-steps)).
@@ -88,7 +88,7 @@ The resulting tolerances on the camera and lens as one body:
 Pointing is therefore the governing adjustment, and centering is forgiving. Image quality still favors
 centering well inside the vignetting limit.
 
-### 9.4 Support concept
+### 9.4 Support
 
 The phone and the lens threaded onto its case are one rigid body. The lens barrel is its datum
 ([§9.2](#92-telephoto)): the lens is held at two stations along its barrel, and the phone hangs from its lens

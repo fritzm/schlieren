@@ -89,7 +89,7 @@ in the test region near the mirror deflect portions of this return beam relative
 schlieren contrast.
 
 Several source-side and imaging-side fixtures deliberately share common mechanics. Three locations use a
-common Thorlabs TR50/M optical post + printed rail shoe concept:
+common Thorlabs TR50/M optical post and printed rail shoe:
 
 1. light source;
 2. source-slit;

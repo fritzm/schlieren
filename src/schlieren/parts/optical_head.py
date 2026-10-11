@@ -36,7 +36,7 @@ from schlieren.parts.slit_head import SlitHeadParameters, build_slit_head_assemb
 
 SOURCE_SIDE = -1  # Left rail (§3.4).
 IMAGING_SIDE = 1  # Right rail.
-# Parts of the camera support mock-up that exist only to stand it alone; the head has the frame's rails.
+# Parts of the camera support's stand-alone model that exist only to stand it alone; the head has the frame's rails.
 STAND_ALONE_LABELS = ("Rail", "Optical axis")
 
 
