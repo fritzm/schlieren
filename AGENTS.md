@@ -185,6 +185,7 @@ src/schlieren/
     hardware.py    # catalog dimensions of shared purchased hardware
     palette.py     # viewer colors
     validation.py  # shared parameter-class checks
+    bom.py         # BOM schema and row checks, shared by the workbook builder, reconciler, and tests
     cad.py         # primitive solids, axis planes, assembly helpers
     vendor_cad.py  # vendor STEP models placed in documented mounting frames
     render.py      # offscreen figure rendering
@@ -267,7 +268,7 @@ uv run <command> --help                               # part commands: build/exp
 uv run rail-shoe --figure                             # re-render docs/design/figures/rail-shoe.png
 uv run build-design-doc [--pdf]                       # docs/design/ -> exports/docs/, docs/schlieren-design.pdf
 uv run build-bom-xlsx                                 # bom/bom.csv -> bom/schlieren-bom.xlsx
-uv run reconcile-bom [workbook.xlsx] [--apply]        # edited workbook -> differences from bom/bom.csv
+uv run reconcile-bom [workbook.xlsx] [--apply]        # edited workbook -> differences from bom/bom.csv (--apply validates first)
 ```
 
 Commands live in `src/schlieren/cli/` and are registered in `pyproject.toml` `[project.scripts]`; run them with

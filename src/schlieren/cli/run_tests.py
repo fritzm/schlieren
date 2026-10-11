@@ -15,8 +15,22 @@ from pathlib import Path
 
 from schlieren.testing import FULL_ENV
 
+# Peak resident memory of one geometry-heavy test process is about 0.6 GB; budget more than that per worker so
+# a machine with many cores and little memory does not page.
+MEMORY_PER_JOB = int(1.5 * 1024**3)
+
 # Test modules with the heaviest fixtures, started first so they overlap the rest.
 HEAVY = {"test_light_source", "test_camera_support", "test_carriage", "test_slit_head"}
+
+
+def default_jobs() -> int:
+    """One worker per core, but no more than the physical memory supports."""
+    cores = os.cpu_count() or 1
+    try:
+        memory = os.sysconf("SC_PAGE_SIZE") * os.sysconf("SC_PHYS_PAGES")
+    except (AttributeError, ValueError, OSError):
+        return cores
+    return max(1, min(cores, memory // MEMORY_PER_JOB))
 
 
 def _run(module: str, env: dict) -> tuple[str, float, int, str]:
@@ -35,7 +49,13 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("modules", nargs="*", help="Test modules, such as test_frame (default: all)")
     parser.add_argument("--full", action="store_true", help="Include the slow tests")
-    parser.add_argument("-j", "--jobs", type=int, default=os.cpu_count() or 1, help="Parallel processes")
+    parser.add_argument(
+        "-j",
+        "--jobs",
+        type=int,
+        default=default_jobs(),
+        help="Parallel processes (default: by cores and memory)",
+    )
     args = parser.parse_args()
 
     tests = Path("tests")

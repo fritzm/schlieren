@@ -48,6 +48,15 @@ clean:
 	find . -name __pycache__ -type d -not -path './.venv/*' -prune -exec rm -rf {} +
 
 # --- figures ---------------------------------------------------------------------------------------------
+# Some commands write several figures. Each extra output is declared below with $(call extra,...): it depends
+# on the main one and, if it is absent while the main one is present, removes the main one and remakes it, so
+# a lost file is regenerated rather than silently skipped. (Grouped targets, `a b &:`, would do this, but need
+# GNU Make 4.3; macOS ships 3.81.)
+define extra
+$(1): $(2)
+	@test -f $$@ || { rm -f $(2); $$(MAKE) --no-print-directory $(2); }
+endef
+
 $(FIG)/rail-shoe.png: $(CLI)/rail_shoe.py $(PARTS)/rail_shoe.py $(PARTS)/rail.py $(CORE)
 	uv run rail-shoe --figure
 
@@ -68,18 +77,18 @@ $(FIG)/slit-head.png: $(CLI)/slit_head.py $(PARTS)/slit_head.py $(PARTS)/adjuste
 
 $(FIG)/frame.png: $(CLI)/frame.py $(PARTS)/frame.py $(PARTS)/frame_drawing.py $(PARTS)/rail.py $(CORE)
 	uv run frame --figure
-$(FIG)/frame-pivot-plate.svg: $(FIG)/frame.png ;
+$(eval $(call extra,$(FIG)/frame-pivot-plate.svg,$(FIG)/frame.png))
 
 $(FIG)/light-source.png: $(CLI)/light_source.py $(wildcard $(PARTS)/light_source*.py) $(PARTS)/rail_shoe.py \
     $(PARTS)/rail.py $(CORE)
 	uv run light-source --figure
-$(FIG)/light-source-section.png $(FIG)/light-source-holes.svg: $(FIG)/light-source.png ;
+$(foreach f,light-source-section.png light-source-holes.svg,$(eval $(call extra,$(FIG)/$(f),$(FIG)/light-source.png)))
 
 $(FIG)/mirror-cell.png: $(CLI)/mirror_cell.py $(PARTS)/mirror_cell.py $(PARTS)/mirror_cell_drawing.py \
     $(PARTS)/frame_drawing.py $(PARTS)/frame.py $(PARTS)/rail.py $(CORE)
 	uv run mirror-cell --figure --drawing
-$(FIG)/mirror-cell-below.png $(FIG)/mirror-cell-adjuster.png $(FIG)/mirror-cell-base-plate.svg: \
-    $(FIG)/mirror-cell.png ;
+$(foreach f,mirror-cell-below.png mirror-cell-adjuster.png mirror-cell-base-plate.svg,\
+    $(eval $(call extra,$(FIG)/$(f),$(FIG)/mirror-cell.png)))
 
 # --- design document -------------------------------------------------------------------------------------
 # The PDF is not reproducible byte for byte, so it is rebuilt only when a fragment or figure is newer.

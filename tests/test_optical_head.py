@@ -16,6 +16,16 @@ POST_TOP = DATUM_DISC_THICKNESS + POST_LENGTH  # Datum disc plus TR50/M, above t
 TR50_MODEL_ROUNDING = 0.03  # The TR50/M STEP model is rounded to inches.
 INTERFERENCE_TOLERANCE = 1e-3  # mm^3.
 MIN_CLEARANCE = 1.0  # mm, between any source-side and imaging-side part.
+# (left rail yaw, right rail yaw, slit rotation, cutoff stagger): degrees outward from nominal, degrees, mm.
+# The frame's yaw range is +-3 degrees (§4.2), the slit turns through its working range, and the stagger
+# starting point is 30-40 mm (§3.3).
+EXTREME_POSES = (
+    (-3.0, -3.0, 0.0, 0.0),  # Rails converged, slit and cutoff in the same plane: the closest approach.
+    (-3.0, -3.0, 45.0, 35.0),
+    (3.0, 3.0, 0.0, -35.0),
+    (-3.0, 3.0, 90.0, 0.0),
+    (3.0, -3.0, 90.0, 35.0),
+)
 
 
 def by_label(node, label):
@@ -97,8 +107,33 @@ class OpticalHeadTests(unittest.TestCase):
 
     @slow
     def test_source_and_imaging_fixtures_clear_each_other(self):
-        source = leaves(self.groups["Source rail fixtures"])
-        imaging = leaves(self.groups["Imaging rail fixtures"])
+        self.assert_fixtures_clear_each_other(self.groups)
+
+    @slow
+    def test_fixtures_clear_the_frame(self):
+        self.assert_fixtures_clear_the_frame(self.groups)
+
+    @slow
+    def test_clearances_hold_at_the_adjustment_extremes(self):
+        """The head is clear in the poses that bring its parts closest, not only at nominal.
+
+        With both rails yawed inward and the slit and cutoff un-staggered, the slit's flexure head passes the
+        cutoff carriage's keeper plate at only about 1.4 mm (the stagger of §3.3 is what gives margin); the
+        assertions keep that above MIN_CLEARANCE. The other poses cover opposite yaws, slit rotations, and the
+        stagger at both signs.
+        """
+        for yaw_left, yaw_right, slit_rotation, stagger in EXTREME_POSES:
+            with self.subTest(yaw=(yaw_left, yaw_right), slit_rotation=slit_rotation, stagger=stagger):
+                head = build_optical_head(
+                    OpticalHeadParameters(cutoff_stagger=stagger), yaw_left, yaw_right, slit_rotation
+                )
+                groups = children_by_label(head)
+                self.assert_fixtures_clear_each_other(groups)
+                self.assert_fixtures_clear_the_frame(groups)
+
+    def assert_fixtures_clear_each_other(self, groups):
+        source = leaves(groups["Source rail fixtures"])
+        imaging = leaves(groups["Imaging rail fixtures"])
         for s, i in near_pairs(source, imaging, MIN_CLEARANCE):
             self.assertGreaterEqual(
                 s.distance_to(i),
@@ -106,17 +141,16 @@ class OpticalHeadTests(unittest.TestCase):
                 f"{s.label} and {i.label} are closer than {MIN_CLEARANCE} mm",
             )
 
-    @slow
-    def test_fixtures_clear_the_frame(self):
+    def assert_fixtures_clear_the_frame(self, groups):
         """No part of a fixture touches the frame hardware; the shoes straddle the rails, so only an overlap
         with a rail counts there."""
         frame = [
             leaf
             for name in ("Pivot plate assembly", "Left rail assembly", "Right rail assembly")
-            for leaf in leaves(self.groups[name])
+            for leaf in leaves(groups[name])
         ]
         for group in ("Source rail fixtures", "Imaging rail fixtures"):
-            for s, f in near_pairs(leaves(self.groups[group]), frame, MIN_CLEARANCE):
+            for s, f in near_pairs(leaves(groups[group]), frame, MIN_CLEARANCE):
                 if f.label == "Rail":
                     common = s.intersect(f)
                     volume = common.volume if common is not None else 0.0

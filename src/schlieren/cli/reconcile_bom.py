@@ -13,14 +13,20 @@ The exit status is 1 when differences were found and not applied. After --apply,
 
 import argparse
 import csv
+import os
+import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
 
 from openpyxl import load_workbook
 
+from schlieren.bom import ID_COLUMN, check_rows
 from schlieren.cli.build_bom_xlsx import BOM_CSV, BOM_SHEET, DEFAULT_OUTPUT, read_bom
 
-ID_COLUMN = "ID"
+# Applying a workbook that drops more than this fraction of the BOM's rows (and more than a handful) needs
+# --allow-many-removals: it is more likely a truncated sheet than an intended edit.
+MANY_REMOVALS_FRACTION = 0.25
+MANY_REMOVALS_MINIMUM = 5
 
 
 @dataclass
@@ -37,16 +43,29 @@ class BomDiff:
 
 
 def cell_text(value) -> str:
-    """A workbook cell as the CSV would hold it; spreadsheet programs save whole numbers as floats."""
+    """A workbook cell as the CSV would hold it; spreadsheet programs save whole numbers as floats.
+
+    The BOM tab is data: a formula, a date, or any other type has no single faithful CSV text, so is refused.
+    """
     if value is None:
         return ""
+    if isinstance(value, bool) or not isinstance(value, str | int | float):
+        raise SystemExit(
+            f"The BOM tab has a {type(value).__name__} cell ({value!r}); it may hold only text and numbers"
+        )
+    if isinstance(value, str) and value.startswith("="):
+        raise SystemExit(
+            f"The BOM tab has a formula ({value!r}); replace it with its value before reconciling"
+        )
     if isinstance(value, float) and value.is_integer():
         return str(int(value))
     return str(value)
 
 
 def read_workbook_bom(path: Path) -> tuple[list[str], list[list[str]]]:
-    wb = load_workbook(path, read_only=True, data_only=True)
+    # Formulas are read as formulas, not as cached values (which a program that never calculated the sheet
+    # leaves empty), so that cell_text can refuse them.
+    wb = load_workbook(path, read_only=True, data_only=False)
     if BOM_SHEET not in wb.sheetnames:
         raise SystemExit(f"{path} has no '{BOM_SHEET}' tab")
     table = [[cell_text(v) for v in row] for row in wb[BOM_SHEET].iter_rows(values_only=True)]
@@ -112,14 +131,32 @@ def report(diff: BomDiff, header: list[str]) -> str:
 
 
 def write_bom(path: Path, header: list[str], rows: list[list[str]]) -> None:
-    with path.open("w", newline="", encoding="utf-8") as f:
-        csv.writer(f, lineterminator="\n").writerows([header, *rows])
+    """Write the BOM as canonical CSV, replacing path atomically so an interruption cannot leave half a file."""
+    fd, temporary = tempfile.mkstemp(dir=path.parent, prefix=f".{path.name}.", suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", newline="", encoding="utf-8") as f:
+            csv.writer(f, lineterminator="\n").writerows([header, *rows])
+        os.replace(temporary, path)
+    except BaseException:
+        Path(temporary).unlink(missing_ok=True)
+        raise
+
+
+def too_many_removals(diff: BomDiff, row_count: int) -> bool:
+    """Whether the workbook drops enough of the BOM that it should be confirmed rather than applied."""
+    removed = len(diff.removed)
+    return removed > MANY_REMOVALS_MINIMUM and removed > MANY_REMOVALS_FRACTION * row_count
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("workbook", type=Path, nargs="?", default=DEFAULT_OUTPUT, help="Edited .xlsx")
     parser.add_argument("--apply", action="store_true", help="Write the workbook's BOM rows to bom/bom.csv")
+    parser.add_argument(
+        "--allow-many-removals",
+        action="store_true",
+        help=f"Apply even if the workbook drops more than {MANY_REMOVALS_FRACTION:.0%} of the rows",
+    )
     args = parser.parse_args()
     header, csv_rows = read_bom(BOM_CSV)
     workbook_header, workbook_rows = read_workbook_bom(args.workbook)
@@ -131,6 +168,14 @@ def main() -> None:
         return
     if not args.apply:
         raise SystemExit(1)
+    problems = check_rows(workbook_header, workbook_rows)
+    if problems:
+        raise SystemExit("Not applied; the workbook's BOM is not sound:\n  " + "\n  ".join(problems))
+    if too_many_removals(diff, len(csv_rows)) and not args.allow_many_removals:
+        raise SystemExit(
+            f"Not applied: the workbook drops {len(diff.removed)} of {len(csv_rows)} rows. "
+            "If that is intended, repeat with --allow-many-removals."
+        )
     write_bom(BOM_CSV, header, workbook_rows)
     print(f"Wrote {BOM_CSV}; review `git diff`, run the tests, then `uv run build-bom-xlsx`.")
 

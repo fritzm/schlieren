@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.12"
 
 [[package]]
@@ -1265,27 +1265,19 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "build123d" },
-    { name = "ocp-vscode" },
-    { name = "vtk" },
-]
-
-[package.dev-dependencies]
-dev = [
     { name = "markdown" },
+    { name = "ocp-vscode" },
     { name = "openpyxl" },
+    { name = "vtk" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "build123d", specifier = ">=0.12.0" },
-    { name = "ocp-vscode", specifier = ">=4.1.0" },
-    { name = "vtk", specifier = ">=9.7.1" },
-]
-
-[package.metadata.requires-dev]
-dev = [
     { name = "markdown", specifier = ">=3.11" },
+    { name = "ocp-vscode", specifier = ">=4.1.0" },
     { name = "openpyxl", specifier = ">=3.1.5" },
+    { name = "vtk", specifier = ">=9.7.1" },
 ]
 
 [[package]]

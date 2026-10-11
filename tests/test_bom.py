@@ -1,29 +1,16 @@
 """BOM CSV integrity and generated-workbook invariants."""
 
 import csv
+import datetime as dt
 import re
 import tempfile
 import unittest
 from pathlib import Path
 
+from schlieren.bom import HEADER, STATES, SUBSYSTEMS, check_rows
 from schlieren.cli import build_bom_xlsx, reconcile_bom
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-HEADER = [
-    "ID",
-    "Subsystem",
-    "Qty",
-    "Item",
-    "Purpose",
-    "Vendor",
-    "SKU",
-    "Pkg Size",
-    "Purchase Unit",
-    "Procurement state",
-    "Source section",
-    "Notes",
-]
-STATES = {"In hand", "On order", "To procure", "Specified", "CAD ready", "CAD open"}
 
 
 class BomCsvTests(unittest.TestCase):
@@ -35,25 +22,15 @@ class BomCsvTests(unittest.TestCase):
     def test_columns(self):
         self.assertEqual(self.header, HEADER)
 
-    def test_rows_are_rectangular(self):
-        self.assertTrue(all(len(r) == len(HEADER) for r in self.rows))
+    def test_rows_meet_the_shared_bom_checks(self):
+        # The same checks reconcile-bom --apply runs on a workbook before it may replace the CSV.
+        self.assertEqual(check_rows(self.header, self.rows), [])
 
-    def test_ids_unique(self):
-        ids = [r[0] for r in self.rows]
-        self.assertEqual(len(ids), len(set(ids)))
+    def test_state_colors_cover_exactly_the_procurement_states(self):
+        self.assertEqual(tuple(build_bom_xlsx.STATE_FILLS), STATES)
 
-    def test_procurement_states_valid(self):
-        self.assertLessEqual({r[9] for r in self.rows}, STATES)
-
-    def test_one_id_prefix_per_subsystem(self):
-        prefixes = {}
-        for r in self.rows:
-            prefixes.setdefault(r[1], set()).add(r[0].split("-")[0])
-        self.assertTrue(all(len(p) == 1 for p in prefixes.values()), prefixes)
-
-    def test_subsystems_match_summary_labels(self):
-        script = build_bom_xlsx
-        self.assertLessEqual({r[1] for r in self.rows}, set(script.SUBSYSTEMS))
+    def test_subsystems_have_summary_rows(self):
+        self.assertEqual(tuple(build_bom_xlsx.SUBSYSTEMS), SUBSYSTEMS)
 
     def test_csv_is_in_canonical_form(self):
         # reconcile-bom --apply rewrites the whole file; canonical quoting keeps that diff to the edited rows.
@@ -107,7 +84,7 @@ class BomWorkbookTests(unittest.TestCase):
         ]
         self.assertEqual(len(formulas), 1 + 6 + 9)
         self.assertTrue(all("BOM!" in f for f in formulas))
-        self.assertEqual(ws["B8"].value, "=COUNTA(BOM!A2:A1000)")
+        self.assertEqual(ws["B8"].value, "=COUNTA(BOM!A:A)-1")
 
     def test_conditional_formatting_covers_bom_rows(self):
         cf = self.wb["BOM"].conditional_formatting
@@ -200,6 +177,59 @@ class ReconcileBomTests(unittest.TestCase):
     def test_rejects_duplicate_ids(self):
         with self.assertRaises(SystemExit):
             reconcile_bom.diff_bom(self.header, self.rows, [*self.rows, self.rows[0]])
+
+    def test_rejects_formulas_in_the_bom_tab(self):
+        def edit(ws):
+            ws.cell(row=2, column=4, value='=A2&"x"')  # A formula never calculated: no cached value.
+
+        with self.assertRaises(SystemExit) as caught:
+            self.edited_workbook_rows(edit)
+        self.assertIn("formula", str(caught.exception))
+
+    def test_rejects_dates_in_the_bom_tab(self):
+        def edit(ws):
+            ws.cell(row=2, column=4, value=dt.date(2026, 10, 10))
+
+        with self.assertRaises(SystemExit) as caught:
+            self.edited_workbook_rows(edit)
+        self.assertIn("date", str(caught.exception))
+
+    def test_unsound_rows_are_named_before_anything_is_written(self):
+        bad = [list(row) for row in self.rows[:3]]
+        bad[0][9] = "Maybe"  # Procurement state.
+        bad[1][2] = "two"  # Qty.
+        bad[2][0] = bad[0][0]  # Duplicate ID.
+        problems = check_rows(self.header, bad)
+        self.assertEqual(len(problems), 3, problems)
+        self.assertTrue(any("Maybe" in p for p in problems))
+        self.assertTrue(any("'two'" in p for p in problems))
+        self.assertTrue(any("more than once" in p for p in problems))
+
+    def test_large_removals_need_confirmation(self):
+        diff = reconcile_bom.BomDiff(removed=[["x"]] * 3)
+        self.assertFalse(reconcile_bom.too_many_removals(diff, 10))  # Few, even if many of a small BOM.
+        diff = reconcile_bom.BomDiff(removed=[["x"]] * 30)
+        self.assertTrue(reconcile_bom.too_many_removals(diff, 100))
+        self.assertFalse(reconcile_bom.too_many_removals(diff, 400))
+
+    def test_write_is_atomic_and_leaves_no_temporary_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "bom.csv"
+            path.write_text("old\n", encoding="utf-8")
+            reconcile_bom.write_bom(path, self.header, self.rows)
+            self.assertEqual([p.name for p in Path(tmp).iterdir()], ["bom.csv"])
+            self.assertNotEqual(path.read_text(encoding="utf-8"), "old\n")
+            # A failure while writing keeps the original and leaves no partial file behind.
+            path.write_text("keep\n", encoding="utf-8")
+
+            class Unwritable:
+                def __str__(self):
+                    raise RuntimeError("cannot be written")
+
+            with self.assertRaises(RuntimeError):
+                reconcile_bom.write_bom(path, self.header, [[Unwritable()] * 12])
+            self.assertEqual(path.read_text(encoding="utf-8"), "keep\n")
+            self.assertEqual([p.name for p in Path(tmp).iterdir()], ["bom.csv"])
 
 
 if __name__ == "__main__":

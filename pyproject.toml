@@ -9,7 +9,9 @@ authors = [
 requires-python = ">=3.12"
 dependencies = [
     "build123d>=0.12.0",
+    "markdown>=3.11",  # build-design-doc
     "ocp-vscode>=4.1.0",
+    "openpyxl>=3.1.5",  # build-bom-xlsx, reconcile-bom
     "vtk>=9.7.1",
 ]
 
@@ -69,9 +71,3 @@ ignore = [
 "src/schlieren/cli/*" = ["T201", "PLC0415"]
 # The Claude Code hook reports to the model by printing.
 ".claude/hooks/*" = ["T201"]
-
-[dependency-groups]
-dev = [
-    "markdown>=3.11",
-    "openpyxl>=3.1.5",
-]

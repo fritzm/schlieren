@@ -21,6 +21,8 @@ from openpyxl.formatting.rule import CellIsRule
 from openpyxl.styles import Font, PatternFill
 from openpyxl.worksheet.datavalidation import DataValidation
 
+from schlieren.bom import NUMERIC_COLUMNS, STATE_COLUMN, SUBSYSTEM_COLUMN, SUBSYSTEMS
+
 # src/schlieren/cli/<module>.py -> repo root (valid for the editable install that uv sync creates)
 REPO_ROOT = Path(__file__).resolve().parents[3]
 BOM_CSV = REPO_ROOT / "bom" / "bom.csv"
@@ -31,10 +33,7 @@ WORKBOOK_TIMESTAMP = datetime(2026, 1, 1, tzinfo=UTC)
 ZIP_TIMESTAMP = (1980, 1, 1, 0, 0, 0)
 CORE_PROPERTIES = "docProps/core.xml"
 
-NUMERIC_COLUMNS = {"Qty", "Pkg Size"}
 ZOOM_PERCENT = 135
-STATE_COLUMN = "Procurement state"
-SUBSYSTEM_COLUMN = "Subsystem"
 
 # Procurement state -> ARGB fill, in Summary display order.
 STATE_FILLS = {
@@ -45,18 +44,6 @@ STATE_FILLS = {
     "CAD ready": "FFD1E5FF",
     "CAD open": "FFEAD8FF",
 }
-
-SUBSYSTEMS = [
-    "Tabletop frame",
-    "Optical supports",
-    "Light source",
-    "Source slit",
-    "Carriages",
-    "Cassettes",
-    "Imager",
-    "Mirror cell",
-    "Shop supplies",
-]
 
 SUMMARY_NOTES_TOP = [
     ("iPhone Schlieren BOM / Procurement Tracker", None),
@@ -148,7 +135,7 @@ def write_summary_sheet(ws, header: list[str]) -> None:
     for label, text in SUMMARY_NOTES_TOP:
         ws.append([label, text])
     ws["A1"].font = Font(bold=True, size=14)
-    ws["A8"], ws["B8"] = "Entry count", "=COUNTA(BOM!A2:A1000)"
+    ws["A8"], ws["B8"] = "Entry count", "=COUNTA(BOM!A:A)-1"
     ws["A10"], ws["B10"], ws["D10"], ws["E10"] = "Procurement state", "Entries", "Subsystem", "Entries"
     for c in ("A10", "B10", "D10", "E10"):
         ws[c].font = Font(bold=True)
