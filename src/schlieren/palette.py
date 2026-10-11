@@ -64,6 +64,7 @@ MIRROR_GLASS = (0.55, 0.78, 0.9)
 SOLDER_MASK_WHITE = (0.92, 0.92, 0.9)
 LED_YELLOW = (0.95, 0.9, 0.6)
 PHONE_BODY = (0.25, 0.27, 0.32)
+PHONE_CASE = (0.17, 0.17, 0.19)
 LENS_BLACK = (0.12, 0.12, 0.13)
 FOCUS_RING_GRAY = (0.3, 0.3, 0.33)
 AXIS_RED = (0.9, 0.1, 0.1)  # Optical-axis marker line.

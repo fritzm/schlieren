@@ -11,8 +11,8 @@ Design areas marked **Provisional** in the sections above:
   against the lead insulation, cap thread root radius, and Convoy star notch geometry
   ([§6.4](06-light-source.md#64-led-board-mounting)); heatsink temperature rise at 700 mA; white-module
   long-gap focus margin.
-- **Cutoff carriage** ([§8](08-cutoff.md#8-cutoff)): guide-stack, recess, and pocket dimensions, sliding fits,
-  and datum-pin projection; magnet-pocket roof and insert seat fit; keeper lift under the ear wedge reactions;
+- **Cutoff carriage** ([§8](08-cutoff.md#8-cutoff)): guide-stack, recess, and pocket dimensions, sliding fits;
+  magnet-pocket roof and insert seat fit; keeper lift under the ear wedge reactions;
   bevel angle and seating force; the spring's solid height against the loading retraction; clearance to other
   equipment near the cutoff station.
 - **Cassettes** ([§8.6](08-cutoff.md#86-common-cassette-standard),
@@ -23,7 +23,9 @@ Design areas marked **Provisional** in the sections above:
   ([§9.5](09-camera-telephoto.md#95-lens-cradle), [§9.8](09-camera-telephoto.md#98-retaining-bands)); the
   phone rest's retainer and safety catch ([§9.6](09-camera-telephoto.md#96-phone-rest)); the lens alignment
   procedure, untested ([§9.9](09-camera-telephoto.md#99-lens-alignment)). The alignment tolerances rest on
-  assumed lens and camera values, and the contact loads on an assumed lens balance point and phone mass.
+  assumed lens and camera values, and the contact loads on an assumed lens balance point and phone mass. The
+  inside of the phone case (camera lip height, back and front thickness, openings) is assumed
+  ([§9.1](09-camera-telephoto.md#91-camera)).
 - **Printed PLA** ([§1.1](01-context-and-layout.md#11-fabrication-envelope)): creep and relaxation of
   sustained loads, notably the slit-head width-stage preload
   ([§7.7](07-source-slit.md#77-fabrication-and-fit)), and heat exposure of printed parts in transport and use.

@@ -60,12 +60,12 @@ class LensCradleTests(unittest.TestCase):
         lens = self.parts["Telephoto envelope"].bounding_box()
         self.assertAlmostEqual((lens.min.Z + lens.max.Z) / 2, OPTICAL_HEIGHT, places=4)
         self.assertAlmostEqual((lens.min.X + lens.max.X) / 2, 0.0, places=4)
-        phone = self.parts["Phone envelope"].bounding_box()
+        phone = self.parts["Case"].bounding_box()
         self.assertAlmostEqual(OPTICAL_HEIGHT - phone.min.Z, 60.6, places=4)  # Measured, §9.1.
         self.assertAlmostEqual(-phone.min.X, 34.3, places=4)  # Measured, §9.1.
         self.assertGreater(phone.max.X, -phone.min.X)  # The body hangs outboard, toward +x.
         self.assertLessEqual(phone.max.Y, lens.min.Y + CONTACT)  # Lens ahead of the phone back.
-        self.assertAlmostEqual(p.phone_length, 155.15, places=2)
+        self.assertAlmostEqual(p.phone.cased_length, 155.53, places=2)
 
     def test_each_screw_tip_bears_on_its_pad_or_the_groove(self):
         for station in MAGNET_PADS:
@@ -155,6 +155,20 @@ class LensCradleTests(unittest.TestCase):
                 )
                 self.assertAlmostEqual(box.min.X, -box.max.X, places=4)  # Symmetric across the rail.
         self.assertEqual(len(self.parts["Aft yoke"].solids()), 1)
+
+    def test_collar_clamp_hardware_sits_on_the_ear_axis(self):
+        p = self.p
+        zc = p.optical_height + p.collar_radius + p.clamp_screw_above_ring
+        for where, station in zip(("Aft", "Fore"), p.stations, strict=True):
+            with self.subTest(collar=where):
+                screw = self.parts[f"{where} collar clamp screw"].bounding_box()
+                nut = self.parts[f"{where} collar clamp nut"].bounding_box()
+                # The head bears on the outer face of the screw ear; the nut seats on its pocket floor.
+                self.assertAlmostEqual(screw.max.X - 12.0, p.ear_screw_side, places=3)
+                self.assertAlmostEqual(nut.min.X, p.ear_nut_side - p.rail_shoe.nut_pocket_depth, places=3)
+                for box in (screw, nut):
+                    self.assertAlmostEqual((box.min.Y + box.max.Y) / 2, station, places=3)
+                    self.assertAlmostEqual((box.min.Z + box.max.Z) / 2, zc, places=3)
 
     def test_collar_is_a_thin_filleted_split_ring(self):
         p, r = self.p, self.p.rail_shoe
@@ -328,7 +342,7 @@ class LensCradleTests(unittest.TestCase):
     def test_phone_lower_edge_rests_on_the_rod(self):
         p = self.p
         rod = self.parts["Rest rod"].bounding_box()
-        phone = self.parts["Phone envelope"].bounding_box()
+        phone = self.parts["Case"].bounding_box()
         self.assertAlmostEqual(rod.max.Z, phone.min.Z, places=4)
         self.assertGreater(rod.min.X, 60.0)  # Well outboard of the lens axis.
         self.assertLess(rod.max.X, phone.max.X)

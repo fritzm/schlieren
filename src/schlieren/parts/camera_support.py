@@ -17,10 +17,10 @@ hanging from it. Two separate rail fixtures:
   phone needs only this part redesigned.
 
 The cradle parts are modeled in detail: fillets, pad pockets, clamp ear, insert holes, joint, and pegs. The
-lens, phone, and hardware are envelopes, except the McMaster screws, thumb nuts, inserts, and dowel pins, which
-are vendor models; the clamp screws and nuts and the rail clamp screws are not drawn. The phone rest has no retainer or
-safety catch yet. The phone dimensions are the §9.1 measurements and Apple's drawing, and the lens section
-lengths and barrel diameter are measured (§9.2); the focus-ring diameter is
+lens and hardware are envelopes, except the McMaster screws, thumb nuts, inserts, dowel pins, and the collar
+clamp screws and nuts, which are vendor models; the rail clamp screws are not drawn. The phone rest has no retainer or
+safety catch yet. The phone is modeled in `parts/phone.py` from the §9.1 measurements and Apple's drawing,
+and the lens section lengths and barrel diameter are measured (§9.2); the focus-ring diameter is
 assumed, and the lens aft end is taken to be at the phone's back.
 
 Coordinates: the §3.4 imaging rail frame, +x right, +y along the rail toward the mirror, z up from the rail
@@ -75,7 +75,6 @@ from schlieren.palette import (
     FOCUS_RING_GRAY,
     LENS_BLACK,
     METAL,
-    PHONE_BODY,
     PRINTED_BLUE,
     PRINTED_GREEN,
     PRINTED_ORANGE,
@@ -83,6 +82,7 @@ from schlieren.palette import (
     STEEL,
 )
 from schlieren.parts.carriage import CarriageParameters, build_carriage, support_location
+from schlieren.parts.phone import PhoneParameters, build_phone
 from schlieren.parts.rail import build_rail
 from schlieren.parts.rail_shoe import RailShoeParameters, side_clamp_hardware
 from schlieren.standards import INCH, MAGNET_POCKET_CLEARANCE, OPTICAL_HEIGHT
@@ -92,8 +92,10 @@ from schlieren.vendor_cad import (
     MCMASTER_93339A252_LENGTH,
     MCMASTER_94459A797_FLANGE_DIAMETER,
     MCMASTER_94459A797_LENGTH,
+    mcmaster_91292a114,
     mcmaster_91585a351,
     mcmaster_91585a457,
+    mcmaster_91828a211,
     mcmaster_92815a202,
     mcmaster_93339a252,
     mcmaster_94459a797,
@@ -115,13 +117,7 @@ class CameraSupportParameters:
     rail_size: float = 20.0
 
     # Phone in its case, landscape, screen aft (§9.1), Main camera (the lower aperture in portrait) on the axis.
-    # Bare-phone dimensions are from Apple's drawing, docs/reference/Apple-iPhone-17.pdf.
-    camera_height_above_edge: float = 60.6  # Measured in the case, §9.1.
-    camera_inset_from_end: float = 34.3  # Measured in the case, §9.1: Main camera from the near short edge.
-    bare_phone_length: float = 149.61
-    bare_phone_width: float = 71.45
-    bare_camera_from_side_edge: float = 13.62  # Both rear cameras, from the nearer long edge.
-    phone_thickness: float = 0.510 * INCH  # Measured over the case, §9.1; the bare phone is 7.95 mm.
+    phone: PhoneParameters = field(default_factory=PhoneParameters)
 
     # Lens sections from the aft end, measured (§9.2): aft stub, rear barrel section, long barrel section,
     # focus ring, front lip. Both barrel sections are 37.0 mm in diameter to within 0.05 mm.
@@ -270,21 +266,12 @@ class CameraSupportParameters:
         return MCMASTER_94459A797_LENGTH + self.insert_hole_relief
 
     @property
-    def case_wall(self) -> float:
-        """Case edge wall, from the measured camera height; assumed the same on the unmeasured edges."""
-        return self.camera_height_above_edge - (self.bare_phone_width - self.bare_camera_from_side_edge)
-
-    @property
-    def phone_length(self) -> float:
-        return self.bare_phone_length + 2 * self.case_wall
-
-    @property
-    def phone_width(self) -> float:
-        return self.bare_phone_width + 2 * self.case_wall
+    def phone_thickness(self) -> float:
+        return self.phone.cased_thickness
 
     @property
     def phone_bottom(self) -> float:
-        return self.optical_height - self.camera_height_above_edge
+        return self.optical_height - self.phone.camera_height_above_edge
 
     @property
     def lens_length(self) -> float:
@@ -399,6 +386,7 @@ class CameraSupportParameters:
         return self.phone_bottom - self.rest_rod_diameter / 2
 
     def validate(self) -> None:
+        self.phone.validate()
         half = self.collar_width / 2
         if self.aft_station - half < self.aft_stub_length:
             raise ValueError("The aft collar must sit on the rear cylindrical section")
@@ -906,6 +894,19 @@ def _joint_hardware(p: CameraSupportParameters, where: str, station: float) -> l
     ]
 
 
+def _collar_clamp_hardware(p: CameraSupportParameters, where: str, station: float) -> list[Part]:
+    """The collar's M3 × 12 clamp screw and hex nut: head on the outer face of the screw ear, nut seated on
+    the floor of its pocket in the other ear with its flats up and down."""
+    screw_z = p.optical_height + p.collar_radius + p.clamp_screw_above_ring
+    screw_loc = Location(along_x((p.ear_screw_side, station, screw_z)))
+    nut_seat = p.ear_nut_side - p.rail_shoe.nut_pocket_depth
+    nut_loc = Location(along_x((nut_seat, station, screw_z))) * Rot(Z=90)  # Corners along the lens axis.
+    return [
+        labeled(mcmaster_91292a114(), f"{where} collar clamp screw", METAL, screw_loc),
+        labeled(mcmaster_91828a211(), f"{where} collar clamp nut", METAL, nut_loc),
+    ]
+
+
 def build_phone_rest(p: CameraSupportParameters | None = None) -> Part:
     """Phone-specific printed shoe with the arm that carries the rest rod, printed on its side.
 
@@ -956,17 +957,14 @@ def build_camera_support_assembly(
     side_screws: bool = False,
     include_cassette: bool = False,
 ) -> Compound:
-    """The support on the imaging rail, with phone and lens envelopes and, optionally, the cutoff station.
+    """The support on the imaging rail, with the phone and the lens envelope and, optionally, the cutoff station.
 
     side_screws adds the side-slot screws and washers that fix the cradle shoe and the cutoff post's rail shoe
     to the rail; include_cassette seats the cassette in the cutoff carriage."""
     p = p or CameraSupportParameters()
     p.validate()
     axis_z = p.optical_height
-    x0 = -p.camera_inset_from_end
-    phone = box_between(
-        x0, x0 + p.phone_length, -p.phone_thickness, 0, p.phone_bottom, p.phone_bottom + p.phone_width
-    )
+    phone = build_phone(p.phone)
     lens = y_cylinder(p.lens_diameter, 0, axis_z, 0, p.lens_length)
     focus_ring_end = p.focus_ring_start + p.focus_ring_length
     ring = y_cylinder(p.focus_ring_diameter, 0, axis_z, p.focus_ring_start, focus_ring_end)
@@ -979,7 +977,7 @@ def build_camera_support_assembly(
         labeled(rail, "Rail", BLACK_ANODIZED),
         labeled(build_cradle_shoe(p), "Cradle shoe", PRINTED_ORANGE),
         labeled(build_phone_rest(p), "Phone rest", PRINTED_BLUE),
-        labeled(phone, "Phone envelope", PHONE_BODY),
+        place(Pos(0, 0, axis_z), phone),
         labeled(lens, "Telephoto envelope", LENS_BLACK),
         labeled(ring, "Focus ring", FOCUS_RING_GRAY),
         labeled(axis, "Optical axis", AXIS_RED),
@@ -999,6 +997,7 @@ def build_camera_support_assembly(
         children.append(labeled(build_cradle_yoke(p, station), f"{where} yoke", PRINTED_ORANGE))
         children.append(labeled(build_band(p, station), f"{where} band", RUBBER))
         children += _joint_hardware(p, where, station)
+        children += _collar_clamp_hardware(p, where, station)
         for name, side in (("left", -1), ("right", 1)):
             loc = screw_location(p, side, station)
             children += _adjuster(p, f"{where} {name}", loc)

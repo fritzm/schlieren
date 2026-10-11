@@ -65,7 +65,7 @@ class CassetteTests(unittest.TestCase):
                 for x, y in p.datum_points:
                     self.assertTrue(blank.is_inside((x, y - travel, 0.01)))
                     # Entire nominal pin-head footprint stays on uninterrupted land.
-                    track = Pos(x, y - travel, 0) * Cylinder(3.18 / 2, 0.02, align=ON_FLOOR)
+                    track = Pos(x, y - travel, 0) * Cylinder(p.datum_head_diameter / 2, 0.02, align=ON_FLOOR)
                     self.assertAlmostEqual((track & blank).volume, track.volume, places=6)
 
     def test_countersinks_and_cleats(self):

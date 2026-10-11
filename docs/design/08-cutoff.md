@@ -138,7 +138,8 @@ Cassette motion is controlled by opposed plungers:
 
 The three rear datum contacts are McMaster 97936A109 brass escutcheon pins / decorative finishing nails, used
 head-first as small domed sliding contacts. Each pin is approximately 3/8 in long, with a 0.050 in (1.27 mm)
-smooth shank and 1/8 in (3.18 mm) domed head.
+smooth shank and a measured 0.093 in (2.36 mm) diameter, 0.038 in (0.97 mm) high domed head; the head height
+sets the cassette's standoff from the datum face.
 
 Mount each pin through a through-hole in the printed carriage with the domed brass head on the cassette side.
 The holes are modeled Ø1.75 mm: the measured 0.050 in (1.27 mm) shank, plus the 0.38 mm diametral hole

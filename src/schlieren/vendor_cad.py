@@ -111,7 +111,8 @@ MCMASTER_91585A457_LENGTH = 20.0
 # across flats (along x), 6.326 mm across corners (along y).
 MCMASTER_91828A211_HEIGHT = 2.4
 # McMaster 97936A109 model (brad): axis +Z through the origin; the domed Ø2.54 mm head is at -Z, apex at -4.7625 mm,
-# its underside at -3.8625 mm (head about 0.9 mm high, measured from the model); Ø1.219 mm plain shank to a point
+# its underside at -3.8625 mm (head about 0.9 mm high, measured from the model; calipers on the in-hand brads give
+# a Ø2.36 mm × 0.97 mm head, so the model is slightly large in diameter and low); Ø1.219 mm plain shank to a point
 # at +4.7625 mm, 9.525 mm (3/8 in) overall.
 MCMASTER_97936A109_LENGTH = 9.525
 MCMASTER_97936A109_HEAD_HEIGHT = 0.9

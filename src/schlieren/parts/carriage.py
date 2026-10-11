@@ -94,10 +94,6 @@ class CarriageParameters:
     loading_retraction: float = 6.0  # Additional motion from fiducial only.
     plate_width: float = 86.0
     plate_thickness: float = 4.0
-    locator_diameter: float = 3.0
-    locator_height: float = 0.8
-    locator_diametral_clearance: float = 0.3
-    locator_depth_clearance: float = 0.2
     # Post stack (§5) and Thorlabs SM1RC/M (vendor STEP model): Ø1.21 in bore accepting Ø1.20 in SM1 tubes.
     optical_height: float = OPTICAL_HEIGHT
     datum_thickness: float = DATUM_DISC_THICKNESS
@@ -160,7 +156,8 @@ class CarriageParameters:
     # tenths decide the fit; M3 holes and nut pockets printed snug but usable and are left as they are.
     datum_hole_print_allowance: float = 0.38  # Diametral.
     datum_hole_fit_clearance: float = 0.10  # Diametral, as printed; CA retains the pins.
-    datum_projection: float = 1.0  # UNMEASURED domed-head contact height.
+    datum_head_diameter: float = 0.093 * INCH  # Measured (calipers), in-hand brads.
+    datum_projection: float = 0.038 * INCH  # Measured (calipers) head height: the domed contact height.
     bevel_depth: float = 1.25
     bevel_angle: float = 27.5  # Provisional convention: from cassette plane.
     spring_free_length: float = SPRING_2006N292_FREE_LENGTH
@@ -556,20 +553,6 @@ def _split_fixed_body(p):
     frame = stock & floor_box(
         width, p.plate_length, p.keeper_z - p.plate_thickness, y=p.plate_center_y, z=p.plate_thickness
     )
-    # Male locators belong to the frame: the base deck stays flat for spigot-up printing.
-    locator_x = (p.track_outer_x + p.plate_width / 2) / 2
-    for x in (-locator_x, locator_x):
-        pin = z_cylinder(p.locator_diameter, x, 0, p.plate_thickness - p.locator_height, p.plate_thickness)
-        pocket_depth = p.locator_height + p.locator_depth_clearance
-        pocket = z_cylinder(
-            p.locator_diameter + p.locator_diametral_clearance,
-            x,
-            0,
-            p.plate_thickness - pocket_depth,
-            p.plate_thickness,
-        )
-        base -= pocket
-        frame += pin
     return base, frame
 
 

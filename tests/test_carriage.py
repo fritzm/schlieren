@@ -62,9 +62,9 @@ class CarriageTests(unittest.TestCase):
                 placed = Pos(0, travel, 0) * part if "plunger" in name else part
                 self.assertLess((placed & beam).volume, 1e-6)
             for x, y in p.datum_points:
-                self.assertLess(abs(x) + 3.18 / 2, 32)
-                self.assertLess(abs(y - travel) + 3.18 / 2, 32)
-                self.assertGreater((x * x + (y - travel) ** 2) ** 0.5 - 3.18 / 2, 12)
+                self.assertLess(abs(x) + p.datum_head_diameter / 2, 32)
+                self.assertLess(abs(y - travel) + p.datum_head_diameter / 2, 32)
+                self.assertGreater((x * x + (y - travel) ** 2) ** 0.5 - p.datum_head_diameter / 2, 12)
                 self.assertFalse(base.is_inside((x, y, 2)))
                 # Hole modeled oversize by the measured print undersize plus the fit clearance.
                 self.assertFalse(base.is_inside((x + p.datum_hole_diameter / 2 - 0.05, y, 2)))
@@ -440,21 +440,16 @@ class CarriageTests(unittest.TestCase):
                 for part in fixed:
                     self.assertLess(overlap_volume(part, shifted), 1e-6, (rotation, name))
 
-    def test_sandwich_interface_and_locators(self):
+    def test_sandwich_interface(self):
         p = self.p
         base = self.parts["Base plate"]
         frame = self.parts["Guide frame"]
         self.assertAlmostEqual(base.bounding_box().max.Z, p.plate_thickness, places=6)
-        self.assertAlmostEqual(frame.bounding_box().min.Z, p.plate_thickness - p.locator_height, places=6)
+        self.assertAlmostEqual(frame.bounding_box().min.Z, p.plate_thickness, places=6)
         self.assertLess((base & frame).volume, 1e-6)
         self.assertGreater((base & (Pos(0, 0, -0.1) * frame)).volume, 1)
         for lift in (0.2, 1, 5):
             self.assertLess((base & (Pos(0, 0, lift) * frame)).volume, 1e-6)
-        x = (p.track_outer_x + p.plate_width / 2) / 2
-        for sign in (-1, 1):
-            point = (sign * x, 0, p.plate_thickness - p.locator_height / 2)
-            self.assertTrue(frame.is_inside(point))
-            self.assertFalse(base.is_inside(point))
 
     def test_insert_manufacturing_dimensions_and_adjuster_reach(self):
         p = self.p

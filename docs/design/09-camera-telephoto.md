@@ -3,7 +3,8 @@
 The camera and lens are chosen ([§9.1](#91-camera)–[9.2](#92-telephoto)). Their support is a lens cradle and
 a phone rest ([§9.4](#94-support)–[9.8](#98-retaining-bands)), with an alignment procedure
 ([§9.9](#99-lens-alignment)). **Provisional:** the phone rest's retainer and safety catch, the fit allowances
-of the printed yokes and of the rod groove, which are still to be tested, and the alignment procedure
+of the printed yokes and of the rod groove, which are still to be tested, the inside of the phone case, and
+the alignment procedure
 ([§11](11-open-work.md#11-provisional-areas-and-next-steps)).
 
 ### 9.1 Camera
@@ -30,6 +31,16 @@ Manufacturer dimensions of the bare phone, from the drawing:
 The drawing and the two measurements agree. The cameras are 57.83 mm from the farther long edge of the bare
 phone, so the measured 60.6 mm implies a case wall of about 2.8 mm at that edge; the 31.34 mm and the measured
 34.3 mm imply about 3.0 mm at the short edge (both calculated).
+
+Phone model, from Apple's drawing and the measurements above: the bare body with the drawing's corner
+profile and glass edge, the camera plateau (1.78 mm above the back glass) with the two camera glass rings
+(3.45 mm), and the side, action, and volume buttons (0.45 mm proud). The Camera Control and SIM tray are flush
+with the edge and have no geometry. The case is an OtterBox Commuter, whose outside is the measured size:
+155.5 × 77.0 mm, with walls of 2.96 mm at the short edges and 2.77 mm at the long edges calculated from the
+measured camera position, and 12.95 mm thick. **Provisional:** OtterBox publishes no drawing, so the inside of
+the case is assumed: the bare phone sits with its camera glass 1.0 mm under the camera lip, whose top is the
+back plane where the lens seats, which leaves a 0.55 mm front rim over the screen; the camera opening clears
+the plateau by 1.0 mm, and the flash hole by 0.5 mm. The model does not show the case's port openings.
 
 Initial recording modes:
 
@@ -103,7 +114,7 @@ mount. Two separate rail fixtures carry them:
   <img src="figures/camera-support.png" width="500" style="max-width: 90%"
        alt="Lens cradle and phone rest on the imaging rail: two collars on the lens barrel, each on a pair of inclined screws in a yoke bolted to the cradle shoe, a retaining band round the barrel beside each yoke, and the phone hanging from the lens with its lower edge on the rest arm">
   <br>
-  <em>Fig. 10. Lens cradle and phone rest on the imaging rail, with phone and lens envelopes</em>
+  <em>Fig. 10. Lens cradle and phone rest on the imaging rail, with the phone and the lens envelope</em>
 </p>
 
 The body is located by six contacts and no more, so adjusting one station does not strain the lens mount:
@@ -121,8 +132,9 @@ about 1.3 N in shear (calculated), against roughly 170 N·mm of bending if the l
 the phone.
 
 The model is `src/schlieren/parts/camera_support.py`. It holds the printed parts, with their fits, pockets,
-fillets, and wall thicknesses, and checks contacts, clearances, and the lens and cord loads; the lens, phone,
-and purchased hardware are envelopes or vendor models.
+fillets, and wall thicknesses, and checks contacts, clearances, and the lens and cord loads; the lens and
+purchased hardware are envelopes or vendor models. The phone is modeled in
+`src/schlieren/parts/phone.py` ([§9.1](#91-camera)).
 
 ### 9.5 Lens cradle
 
