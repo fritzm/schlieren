@@ -68,8 +68,8 @@ $(FIG)/cutoff.png: $(CLI)/carriage.py $(PARTS)/carriage.py $(PARTS)/adjuster.py 
     $(PARTS)/rail.py $(CORE)
 	uv run carriage --figure
 
-$(FIG)/camera-support.png: $(CLI)/camera_support.py $(PARTS)/camera_support.py $(PARTS)/carriage.py $(PARTS)/adjuster.py \
-    $(PARTS)/rail_shoe.py $(PARTS)/rail.py $(CORE)
+$(FIG)/camera-support.png: $(CLI)/camera_support.py $(PARTS)/camera_support.py $(PARTS)/carriage.py $(PARTS)/cassette.py \
+    $(PARTS)/adjuster.py $(PARTS)/rail_shoe.py $(PARTS)/rail.py $(CORE)
 	uv run camera-support --figure
 
 $(FIG)/slit-head.png: $(CLI)/slit_head.py $(PARTS)/slit_head.py $(PARTS)/adjuster.py $(PARTS)/rail_shoe.py $(PARTS)/rail.py $(CORE)

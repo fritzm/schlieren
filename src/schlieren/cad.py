@@ -156,6 +156,23 @@ def place(loc: Location, node: Shape) -> Shape:
     return labeled(node, node.label, node.color, loc)
 
 
+def recolored(node: Shape, replacements: dict[tuple, tuple]) -> Shape:
+    """Copy of an assembly with each leaf whose color is a key of replacements given that entry's color.
+
+    Colors are compared as palette tuples (r, g, b[, a]); leaves of other colors keep theirs. The parts'
+    own colors are untouched, so a model reads the same alone and in the assembly that recolors it.
+    """
+    wanted = {tuple(round(v, 4) for v in Color(*key)): value for key, value in replacements.items()}
+    return _recolored(node, wanted)
+
+
+def _recolored(node: Shape, wanted: dict[tuple, tuple]) -> Shape:
+    if node.children:
+        return assembly(node.label, (_recolored(child, wanted) for child in node.children))
+    key = tuple(round(v, 4) for v in node.color) if node.color is not None else None
+    return labeled(node, node.label, wanted.get(key, node.color))
+
+
 def children_by_label(node: Compound) -> dict[str, Shape]:
     """Direct children of an assembly, keyed by label; raises if two children share one."""
     by_label = {}

@@ -951,12 +951,15 @@ def cutoff_post_station(p: CameraSupportParameters, c) -> float:
 
 
 def build_camera_support_assembly(
-    p: CameraSupportParameters | None = None, include_cutoff: bool = True, side_screws: bool = False
+    p: CameraSupportParameters | None = None,
+    include_cutoff: bool = True,
+    side_screws: bool = False,
+    include_cassette: bool = False,
 ) -> Compound:
     """The mock-up on the imaging rail, with phone and lens envelopes and, optionally, the cutoff station.
 
     side_screws adds the side-slot screws and washers that fix the cradle shoe and the cutoff post's rail shoe
-    to the rail."""
+    to the rail; include_cassette seats the cassette in the cutoff carriage."""
     p = p or CameraSupportParameters()
     p.validate()
     axis_z = p.optical_height
@@ -1018,6 +1021,12 @@ def build_camera_support_assembly(
         return support
     c = CarriageParameters()
     post_y = cutoff_post_station(p, c)
-    carriage = build_carriage(c, include_support=True, include_hardware=True, side_screws=side_screws)
+    carriage = build_carriage(
+        c,
+        include_support=True,
+        include_hardware=True,
+        side_screws=side_screws,
+        include_cassette=include_cassette,
+    )
     on_rail = Pos(0, post_y, 0) * support_location(c).inverse()
     return assembly("Imaging rail (concept mock-up)", [support, place(on_rail, carriage)])

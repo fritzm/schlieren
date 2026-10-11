@@ -32,6 +32,7 @@ from schlieren.cad import (
     compression_spring,
     floor_box,
     labeled,
+    place,
     x_cylinder,
     y_cone,
     y_cylinder,
@@ -68,6 +69,7 @@ from schlieren.palette import (
     STEEL,
 )
 from schlieren.parts.adjuster import bearing_magnet, fas100_children, insert_98625a950
+from schlieren.parts.cassette import build_cassette_assembly
 from schlieren.parts.rail_shoe import RailShoeParameters, post_stack
 from schlieren.standards import (
     DATUM_DISC_THICKNESS,
@@ -899,13 +901,21 @@ def build_print_layout(p=None, plunger_gap=5.0):
 
 
 def build_carriage(
-    p=None, *, travel=0.0, retract=0.0, include_support=False, include_hardware=False, side_screws=False
+    p=None,
+    *,
+    travel=0.0,
+    retract=0.0,
+    include_support=False,
+    include_hardware=False,
+    side_screws=False,
+    include_cassette=False,
 ):
     """Five independently selectable printed parts; retraction only at fiducial.
 
     `include_support` adds the SM1RC/M, TR50/M post, and rail shoe as references; `include_hardware` adds the
     FAS100 (vendor model), its 98625A950 bushing, the magnet bearing pad, and the 2006N292 spring (a display helix); `side_screws` adds the shoe's
-    side-slot screws and washers to the support.
+    side-slot screws and washers to the support; `include_cassette` seats the cassette assembly
+    (§8.6) on the datum pins and travels with the driven plunger.
 
     Spring solid height is unverified: the loading pose checks printed geometry,
     not whether the purchased spring can safely reach that compression.
@@ -942,6 +952,9 @@ def build_carriage(
         )
         placed = Pos(0, p.spring_seat_y, p.spring_axis_z) * Rot(X=-90) * spring
         children.append(labeled(placed, "2006N292 spring", METAL))
+    if include_cassette:
+        seat = Pos(0, travel, p.plate_thickness + p.datum_projection)
+        children.append(place(seat, build_cassette_assembly()))
     return assembly("Carriage (preliminary)", children)
 
 

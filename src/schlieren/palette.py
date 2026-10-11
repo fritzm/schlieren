@@ -34,6 +34,20 @@ PRINTED_AZURE = (0.3, 0.55, 0.8)
 PRINTED_DENIM = (0.3, 0.5, 0.7)
 QR_PLATE_DARK = (0.16, 0.16, 0.18)  # Mirror-cell quick-release plate.
 
+# Every printed-part color above, for assemblies that show the parts as printed rather than told apart.
+PRINTED_COLORS = (
+    PRINTED_ORANGE,
+    PRINTED_BLUE,
+    PRINTED_GREEN,
+    PRINTED_GRAY,
+    PRINTED_SKY,
+    PRINTED_INDIGO,
+    PRINTED_AMBER,
+    PRINTED_AZURE,
+    PRINTED_DENIM,
+)
+PRINTED_BLACK_PLA = (0.1, 0.1, 0.11)  # The filament the parts are printed in.
+
 # Metals, continued.
 STEEL_GRAY = (0.6, 0.6, 0.6)  # Frame hardware and reference rails; a touch neutral against STEEL.
 STAINLESS = (0.72, 0.73, 0.75)

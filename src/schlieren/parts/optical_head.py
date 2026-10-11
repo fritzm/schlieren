@@ -17,7 +17,8 @@ from math import pi
 
 from build123d import Compound, Pos
 
-from schlieren.cad import assembly, place
+from schlieren.cad import assembly, place, recolored
+from schlieren.palette import PRINTED_BLACK_PLA, PRINTED_COLORS
 from schlieren.parts.camera_support import (
     CameraSupportParameters,
     build_camera_support_assembly,
@@ -121,7 +122,9 @@ def build_source_fixtures(h: OpticalHeadParameters, rotation: float = 0.0) -> Co
 
 def build_imaging_fixtures(h: OpticalHeadParameters) -> Compound:
     """Lens cradle, phone, phone rest, and cutoff carriage in the imaging rail frame."""
-    stand_alone = build_camera_support_assembly(h.camera, include_cutoff=True, side_screws=True)
+    stand_alone = build_camera_support_assembly(
+        h.camera, include_cutoff=True, side_screws=True, include_cassette=True
+    )
     children = []
     for group in stand_alone.children:
         if group.children:  # The lens cradle and phone rest group.
@@ -139,8 +142,13 @@ def build_optical_head(
     left_yaw: float = 0.0,
     right_yaw: float = 0.0,
     slit_rotation: float = 0.0,
+    printed_color: tuple | None = PRINTED_BLACK_PLA,
 ) -> Compound:
-    """The frame with each rail's fixtures on it, rails yawed outward from nominal by the given degrees."""
+    """The frame with each rail's fixtures on it, rails yawed outward from nominal by the given degrees.
+
+    The printed parts are shown in printed_color, the filament they are printed in, in place of the hues
+    that tell them apart in the part models; None keeps those.
+    """
     h = h or OpticalHeadParameters()
     h.validate()
     frame = build_frame_assembly(h.frame, left_yaw, right_yaw)
@@ -152,4 +160,7 @@ def build_optical_head(
     children = list(frame.children)
     for group, side in fixtures:
         children.append(place(h.frame.rail_location(side, yaw[side] * pi / 180), group))
-    return assembly("Tabletop optical head", children)
+    head = assembly("Tabletop optical head", children)
+    if printed_color is None:
+        return head
+    return recolored(head, dict.fromkeys(PRINTED_COLORS, printed_color))
