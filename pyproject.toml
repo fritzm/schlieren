@@ -1,7 +1,7 @@
 [project]
 name = "schlieren"
 version = "0.1.0"
-description = "Add your description here"
+description = "Parametric build123d models, tests, and design documents for a portable single-mirror iPhone schlieren apparatus"
 readme = "README.md"
 authors = [
     { name = "Fritz Mueller", email = "fritzm@fritzm.org" }

@@ -52,6 +52,7 @@ from build123d import (
 )
 
 from schlieren.cad import (
+    CUT_OVERRUN,
     along_x,
     along_y,
     assembly,
@@ -97,6 +98,12 @@ from schlieren.vendor_cad import (
 )
 
 YOKE_BOSS_OVERRUN = 0.5  # Arm material behind the end of the screw at nominal.
+# The stand-alone mock-up's rail and optical-axis marker, drawn for the viewer only.
+MOCKUP_RAIL_LENGTH = 300.0
+MOCKUP_RAIL_PAST_LENS = 80.0  # Rail beyond the lens front, toward the mirror.
+AXIS_MARKER_DIAMETER = 0.8
+AXIS_MARKER_BEHIND_PHONE = 60.0
+AXIS_MARKER_PAST_LENS = 90.0
 LENS_TO_SLIP_RING = 10.0  # Assumed gap, lens front to the cutoff slip ring's rear face (§8.1).
 
 
@@ -645,13 +652,24 @@ def build_collar(
     ends = body.faces().filter_by(Axis.Y)
     body = fillet([e for f in ends for e in f.edges()], p.collar_end_fillet)
 
-    body -= ring_axis * centered_cylinder(p.collar_bore, p.collar_width + 2)
+    body -= ring_axis * centered_cylinder(p.collar_bore, p.collar_width + 2 * CUT_OVERRUN)
     body -= box_between(
-        -r.split_gap / 2, r.split_gap / 2, station - half_width - 1, station + half_width + 1, zc, ear_top + 1
+        -r.split_gap / 2,
+        r.split_gap / 2,
+        station - half_width - CUT_OVERRUN,
+        station + half_width + CUT_OVERRUN,
+        zc,
+        ear_top + CUT_OVERRUN,
     )
     # Clamp screw through the screw ear, and the nut in a hex pocket in the other, flats up and down.
     screw_z = zc + p.collar_radius + p.clamp_screw_above_ring
-    body -= x_cylinder(r.m3_clearance_diameter, station, screw_z, p.ear_screw_side - 1, p.ear_nut_side + 1)
+    body -= x_cylinder(
+        r.m3_clearance_diameter,
+        station,
+        screw_z,
+        p.ear_screw_side - CUT_OVERRUN,
+        p.ear_nut_side + CUT_OVERRUN,
+    )
     nut_across_corners = (r.clamp_nut_across_flats + r.nut_across_flats_clearance) / cos(radians(30))
     body -= extrude(
         along_x((p.ear_nut_side - r.nut_pocket_depth, station, screw_z))
@@ -757,17 +775,19 @@ def _yoke(p: CameraSupportParameters, station: float) -> Part:
     yoke += plane * z_cylinder(p.horn_lip_diameter, 0, 0, lip_start, lip_start + p.horn_lip_height)
     counterbore = MCMASTER_94459A797_FLANGE_DIAMETER + 0.2
     hole = p.insert_hole_diameter
-    yoke -= z_cylinder(hole, 0, station, p.joint_z - 1, p.joint_z + p.insert_hole_depth)
-    yoke -= z_cylinder(counterbore, 0, station, p.joint_z - 1, p.joint_z + p.insert_flange_thickness)
+    yoke -= z_cylinder(hole, 0, station, p.joint_z - CUT_OVERRUN, p.joint_z + p.insert_hole_depth)
+    yoke -= z_cylinder(
+        counterbore, 0, station, p.joint_z - CUT_OVERRUN, p.joint_z + p.insert_flange_thickness
+    )
     # Arm insert: from the lens-side face, along the screw, flange recessed flush; the screw passes on out.
     face_z = -p.boss_top_below_tip
     back_z = face_z - p.yoke_boss_length - YOKE_BOSS_OVERRUN
     for side in (-1, 1):
         loc = screw_location(p, side, station)
-        yoke -= loc * z_cylinder(hole, 0, 0, face_z - p.insert_hole_depth, face_z + 1)
-        yoke -= loc * z_cylinder(counterbore, 0, 0, face_z - p.insert_flange_thickness, face_z + 1)
+        yoke -= loc * z_cylinder(hole, 0, 0, face_z - p.insert_hole_depth, face_z + CUT_OVERRUN)
+        yoke -= loc * z_cylinder(counterbore, 0, 0, face_z - p.insert_flange_thickness, face_z + CUT_OVERRUN)
         bore = p.rail_shoe.m5_clearance_diameter
-        yoke -= loc * z_cylinder(bore, 0, 0, back_z - 1, face_z + 1 - p.insert_hole_depth)
+        yoke -= loc * z_cylinder(bore, 0, 0, back_z - CUT_OVERRUN, face_z + CUT_OVERRUN - p.insert_hole_depth)
     return yoke
 
 
@@ -794,12 +814,23 @@ def _straddle(
         e for e in shoe.edges().filter_by(Axis.Z) if (1 if e.center().X > 0 else -1) not in square_sides
     ]
     shoe = fillet(corners, r.outside_corner_radius)
-    shoe -= box_between(-r.rail_opening / 2, r.rail_opening / 2, y0 - 1, y1 + 1, -r.skirt_depth - 1, 0)
+    shoe -= box_between(
+        -r.rail_opening / 2,
+        r.rail_opening / 2,
+        y0 - CUT_OVERRUN,
+        y1 + CUT_OVERRUN,
+        -r.skirt_depth - CUT_OVERRUN,
+        0,
+    )
     feet = [f for f in shoe.faces() if abs(f.center().Z + r.skirt_depth) < 1e-6 and f.normal_at().Z < -0.99]
     shoe = chamfer([e for f in feet for e in f.edges()], p.skirt_foot_chamfer)
     for y in clamp_ys:
         shoe -= x_cylinder(
-            r.m5_clearance_diameter, y, -r.rail_height / 2, -p.shoe_outer - 1, p.shoe_outer + 1
+            r.m5_clearance_diameter,
+            y,
+            -r.rail_height / 2,
+            -p.shoe_outer - CUT_OVERRUN,
+            p.shoe_outer + CUT_OVERRUN,
         )
     head_depth = (p.joint_screw_head_diameter - r.m5_clearance_diameter) / 2
     wall_offset = p.yoke_thickness / 2 + p.locating_clearance_per_side + p.locating_wall_thickness / 2
@@ -815,7 +846,7 @@ def _straddle(
                 p.deck_top - 1,
                 p.deck_top + p.locating_wall_height,
             )
-        shoe -= z_cylinder(r.m5_clearance_diameter, 0, station, -1, p.deck_top + 1)
+        shoe -= z_cylinder(r.m5_clearance_diameter, 0, station, -CUT_OVERRUN, p.deck_top + CUT_OVERRUN)
         shoe -= z_cone(p.joint_screw_head_diameter, r.m5_clearance_diameter, 0, station, 0, head_depth)
     return shoe
 
@@ -887,7 +918,7 @@ def build_phone_rest(p: CameraSupportParameters | None = None) -> Part:
     rest = _straddle(p, y0, y1, (p.rest_center,), square_sides=(1,))
     rest += box_between(outer, tip, y0, y1, bottom, top)
     seat_r = p.rest_rod_diameter / 2 + p.rest_seat_clearance_per_side
-    seat = y_cylinder(2 * seat_r, p.rest_x, top, y0 - 1, y1 + 1)
+    seat = y_cylinder(2 * seat_r, p.rest_x, top, y0 - CUT_OVERRUN, y1 + CUT_OVERRUN)
     rest -= seat
     rest = fillet(_edges_along_rail(rest, [(outer, bottom)]), p.rest_root_fillet)
     rest = fillet(_edges_along_rail(rest, [(outer, p.deck_top)]), p.rest_step_fillet)
@@ -927,9 +958,11 @@ def build_camera_support_assembly(
     lens = y_cylinder(p.lens_diameter, 0, axis_z, 0, p.lens_length)
     focus_ring_end = p.focus_ring_start + p.focus_ring_length
     ring = y_cylinder(p.focus_ring_diameter, 0, axis_z, p.focus_ring_start, focus_ring_end)
-    rail_length = 300.0
-    rail = Pos(0, p.lens_length + 80 - rail_length / 2, 0) * build_rail(rail_length)
-    axis = y_cylinder(0.8, 0, axis_z, -60, p.lens_length + 90)
+    rail_center = p.lens_length + MOCKUP_RAIL_PAST_LENS - MOCKUP_RAIL_LENGTH / 2
+    rail = Pos(0, rail_center, 0) * build_rail(MOCKUP_RAIL_LENGTH)
+    axis = y_cylinder(
+        AXIS_MARKER_DIAMETER, 0, axis_z, -AXIS_MARKER_BEHIND_PHONE, p.lens_length + AXIS_MARKER_PAST_LENS
+    )
     children = [
         labeled(rail, "Rail", BLACK_ANODIZED),
         labeled(build_cradle_shoe(p), "Cradle shoe", PRINTED_ORANGE),

@@ -33,6 +33,7 @@ from build123d.topology.shape_core import downcast
 
 ON_FLOOR = (Align.CENTER, Align.CENTER, Align.MIN)  # Centered in the plane, rising from it.
 FROM_CORNER = (Align.MIN, Align.MIN, Align.MIN)
+CUT_OVERRUN = 1.0  # mm a cutting tool extends past the faces it cuts through, so the cut is clean.
 EXPORTERS = {"step": export_step, "stl": export_stl}  # By export kind, as `EXPORTERS[kind](part, path)`.
 
 
@@ -156,8 +157,13 @@ def place(loc: Location, node: Shape) -> Shape:
 
 
 def children_by_label(node: Compound) -> dict[str, Shape]:
-    """Direct children of an assembly, keyed by label."""
-    return {child.label: child for child in node.children}
+    """Direct children of an assembly, keyed by label; raises if two children share one."""
+    by_label = {}
+    for child in node.children:
+        if child.label in by_label:
+            raise ValueError(f"{node.label!r} has more than one child labeled {child.label!r}")
+        by_label[child.label] = child
+    return by_label
 
 
 def leaves(node: Shape) -> list[Shape]:

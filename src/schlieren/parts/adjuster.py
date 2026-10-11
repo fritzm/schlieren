@@ -11,7 +11,7 @@ knob, so the magnet occupies z from -thickness to 0.
 
 from build123d import Location, Part
 
-from schlieren.cad import box_between, labeled, z_cylinder
+from schlieren.cad import CUT_OVERRUN, box_between, labeled, z_cylinder
 from schlieren.hardware import (
     FAS100_THREAD_DIAMETER,
     INSERT_98625A950_BODY_DIAMETER,
@@ -75,5 +75,5 @@ def insert_98625a950(
         flange0, flange1 = body_end, body_end + flange_thickness
     insert = z_cylinder(body_diameter, x, y, body_start, body_end)
     insert += z_cylinder(flange_diameter, x, y, flange0, flange1)
-    through = (min(body_start, flange0) - 1, max(body_end, flange1) + 1)
+    through = (min(body_start, flange0) - CUT_OVERRUN, max(body_end, flange1) + CUT_OVERRUN)
     return insert - z_cylinder(FAS100_THREAD_DIAMETER, x, y, *through)

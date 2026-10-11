@@ -145,7 +145,10 @@ Use these instead of redefining them in a part module:
 - `schlieren/cad.py`: primitive solids named by axis and extents (`box_between`, `floor_box`,
   `centered_box`, `x_cylinder`/`y_cylinder`/`z_cylinder`, `centered_cylinder`, `y_cone`/`z_cone`,
   `y_hex`/`z_hex`), the axis planes, and the assembly helpers (`labeled`, `place`, `assembly`). Cylinders take
-  diameters.
+  diameters. `CUT_OVERRUN` is the 1 mm a cutter extends past the faces it cuts through; use it rather than a
+  bare `± 1`. `children_by_label` raises on duplicate sibling labels, so give siblings distinct labels.
+- `schlieren/validation.py`: `require_positive_dimensions`, for a parameter class's `validate`; it names the
+  offending field.
 - `schlieren/hardware.py`: catalog dimensions of purchased hardware that more than one model uses (the
   bar magnet, the FAS100, the 98625A950 insert, the 2006N292 spring, common M3 hardware). Parameter classes
   take them as defaults and add their own fabrication allowances; hardware used by one model stays with it.
@@ -181,6 +184,7 @@ src/schlieren/
     standards.py   # project-wide dimensions
     hardware.py    # catalog dimensions of shared purchased hardware
     palette.py     # viewer colors
+    validation.py  # shared parameter-class checks
     cad.py         # primitive solids, axis planes, assembly helpers
     vendor_cad.py  # vendor STEP models placed in documented mounting frames
     render.py      # offscreen figure rendering

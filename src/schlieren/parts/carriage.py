@@ -25,6 +25,7 @@ from build123d import (
 )
 
 from schlieren.cad import (
+    CUT_OVERRUN,
     assembly,
     compression_spring,
     floor_box,
@@ -75,6 +76,7 @@ from schlieren.standards import (
     POST_DIAMETER,
     POST_LENGTH,
 )
+from schlieren.validation import require_positive_dimensions
 from schlieren.vendor_cad import SM1RC_M_THICKNESS
 
 
@@ -382,8 +384,7 @@ class CarriageParameters:
         return lift
 
     def validate(self):
-        if any(v <= 0 for v in vars(self).values()):
-            raise ValueError("Dimensions must be positive")
+        require_positive_dimensions(self)
         if self.insert_bore_diameter >= self.insert_flange_diameter:
             raise ValueError("Bushing flange needs a bearing land outside the bore")
         if self.adjuster_support_length - self.insert_entry_chamfer < self.insert_min_material_thickness:
@@ -493,7 +494,7 @@ def _build_fixed_body(p=None):
     # original screw stack while the support blocks extend to all plate edges.
     base -= _keeper_envelope(p, p.support_top - p.keeper_z)
     start, end = p.support_spans[0]
-    base -= y_cylinder(p.insert_bore_diameter, 0, p.adjuster_axis_z, start - 1, end + 1)
+    base -= y_cylinder(p.insert_bore_diameter, 0, p.adjuster_axis_z, start - CUT_OVERRUN, end + CUT_OVERRUN)
     base -= _insert_flange_pocket(p)
     # End-wall spring cup; the guide-frame split truncates it at the keeper plane, and the keeper carries its roof.
     base += _spring_cup(p, p.spring_seat_y, p.plate_thickness)
@@ -549,7 +550,7 @@ def _add_spigot(base, p):
     ring_face = -p.ring_gap
     shoulder = z_cylinder(p.spigot_shoulder_diameter, 0, 0, ring_face, ring_face + p.ring_gap)
     spigot = z_cylinder(p.spigot_diameter, 0, 0, -p.spigot_length, -p.spigot_length + p.ring_thickness)
-    bore = z_cylinder(p.spigot_bore, 0, 0, -p.spigot_length - 1, 0)
+    bore = z_cylinder(p.spigot_bore, 0, 0, -p.spigot_length - CUT_OVERRUN, 0)
     base = base + shoulder + spigot - bore
     if len(base.solids()) != 1 or not base.is_valid:
         raise ValueError("Base plate and spigot must remain one valid solid")
@@ -628,7 +629,9 @@ def _spring_cup(p, seat_y, bottom):
     cup = floor_box(
         width, p.spring_cup_depth, p.spring_cup_top - bottom, y=y0 + p.spring_cup_depth / 2, z=bottom
     )
-    pocket = y_cylinder(p.spring_cup_bore, 0, p.spring_axis_z, y0 - 1, y0 + p.spring_cup_depth + 1)
+    pocket = y_cylinder(
+        p.spring_cup_bore, 0, p.spring_axis_z, y0 - CUT_OVERRUN, y0 + p.spring_cup_depth + CUT_OVERRUN
+    )
     if bottom < p.spring_axis_z:
         pocket += floor_box(
             p.spring_cup_bore,
@@ -684,7 +687,7 @@ def build_keeper_plate(p=None):
         z=p.keeper_z,
     )
     keeper += crown
-    keeper -= y_cylinder(p.insert_bore_diameter, 0, p.adjuster_axis_z, start - 1, end + 1)
+    keeper -= y_cylinder(p.insert_bore_diameter, 0, p.adjuster_axis_z, start - CUT_OVERRUN, end + CUT_OVERRUN)
     keeper -= _insert_flange_pocket(p)
     keeper += _spring_cup(p, p.spring_seat_y, p.keeper_z)
     extra = p.keeper_side_thickness - p.keeper_thickness

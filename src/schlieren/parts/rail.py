@@ -11,6 +11,8 @@ from dataclasses import dataclass
 
 from build123d import Circle, Part, Polygon, Pos, Rectangle, Rot, extrude, fillet
 
+from schlieren.cad import CUT_OVERRUN
+
 
 @dataclass(frozen=True)
 class RailProfile:
@@ -34,14 +36,13 @@ class RailProfile:
 def build_rail(length: float, profile: RailProfile | None = None) -> Part:
     """A rail segment of the given length along y, top face at z=0."""
     f = profile or RailProfile()
-    overrun = 1.0
     face = f.size / 2
 
     section = Rectangle(f.size, f.size)
     section = fillet(section.vertices(), f.corner_radius)
     # One slot, opening toward +y of the section; mirrored about its centerline and repeated on all four faces.
     half_slot = [
-        (f.slot_mouth_width / 2, face + overrun),
+        (f.slot_mouth_width / 2, face + CUT_OVERRUN),
         (f.slot_mouth_width / 2, face - f.lip_thickness),
         (f.cavity_width / 2, face - f.lip_thickness),
         (f.cavity_width / 2, face - f.lip_thickness - f.cavity_wall_height),

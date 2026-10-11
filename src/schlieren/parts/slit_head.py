@@ -35,7 +35,16 @@ from math import isfinite
 
 from build123d import Axis, Pos, Rot, fillet
 
-from schlieren.cad import assembly, box_between, compression_spring, labeled, y_cylinder, y_hex, z_cylinder
+from schlieren.cad import (
+    CUT_OVERRUN,
+    assembly,
+    box_between,
+    compression_spring,
+    labeled,
+    y_cylinder,
+    y_hex,
+    z_cylinder,
+)
 from schlieren.hardware import (
     FAS100_PITCH,
     FAS100_THREAD_LENGTH,
@@ -590,25 +599,31 @@ def build_slit_head(p=None):
     # FAS100 inserts: #1 in the frame top bar, #2 in the platform top bar; FAS100 #1's flange
     # is inboard (-z, on the bar's inner face) so the spring load seats the insert; #2's is outboard (+z).
     for x, (z0, z1) in ((p.centering_screw_x, ftb), (p.width_screw_x, ptb)):
-        cuts.append(z_cylinder(p.insert_bore, x, p.axis_y, z0 - 1, z1 + 1))
+        cuts.append(z_cylinder(p.insert_bore, x, p.axis_y, z0 - CUT_OVERRUN, z1 + CUT_OVERRUN))
     cuts.append(_magnet_pocket(p, p.centering_screw_x, upper[1], p.centering_tip_well))
     cuts.append(_magnet_pocket(p, p.width_screw_x, wb[1][1], p.width_tip_well))
     # Spring, coaxial with FAS100 #1: pockets in the frame bottom bar and the lower platform connector, each
     # with a guide pin inside the coil.
     x, y = p.centering_screw_x, p.axis_y
     cuts.append(z_cylinder(p.spring_pocket_diameter, x, y, p.frame_spring_seat_z, fbb[1] + 1))
-    cuts.append(z_cylinder(p.spring_pocket_diameter, x, y, lower[0] - 1, p.platform_spring_seat_z))
+    cuts.append(z_cylinder(p.spring_pocket_diameter, x, y, lower[0] - CUT_OVERRUN, p.platform_spring_seat_z))
     for sign in (-1, 1):
         # Blade clamp screws and captive nuts (pockets open from the back).
         for cx in (-p.clamp_screw_x, p.clamp_screw_x):
             z = sign * p.clamp_bar_z
-            cuts.append(y_cylinder(p.screw_clearance, cx, z, back - 1, 1))
+            cuts.append(y_cylinder(p.screw_clearance, cx, z, back - CUT_OVERRUN, CUT_OVERRUN))
             cuts.append(
-                y_hex(p.nut_across_flats + p.nut_across_flats_clearance, cx, z, back - 1, p.clamp_nut_floor)
+                y_hex(
+                    p.nut_across_flats + p.nut_across_flats_clearance,
+                    cx,
+                    z,
+                    back - CUT_OVERRUN,
+                    p.clamp_nut_floor,
+                )
             )
     # Adapter screws: counterbored from the front, clearance through to the back.
     for ax, az in p.adapter_screw_xz():
-        cuts.append(y_cylinder(p.screw_clearance, ax, az, back - 1, 1))
+        cuts.append(y_cylinder(p.screw_clearance, ax, az, back - CUT_OVERRUN, CUT_OVERRUN))
         cuts.append(
             y_cylinder(
                 p.screw_head_diameter + p.counterbore_clearance, ax, az, p.adapter_counterbore_floor, 1
@@ -643,9 +658,11 @@ def build_spigot_adapter(p=None):
     ring_face = p.adapter_back - p.ring_gap
     plate += y_cylinder(p.spigot_shoulder_diameter, 0, 0, ring_face, p.adapter_back + 0.5)
     plate += y_cylinder(p.spigot_diameter, 0, 0, spigot_back, ring_face + 0.5)
-    plate -= y_cylinder(p.spigot_bore, 0, 0, spigot_back - 1, p.adapter_front + 1)
+    plate -= y_cylinder(p.spigot_bore, 0, 0, spigot_back - CUT_OVERRUN, p.adapter_front + CUT_OVERRUN)
     for x, z in points:
-        plate -= y_cylinder(p.screw_clearance, x, z, p.adapter_back - 1, p.adapter_front + 1)
+        plate -= y_cylinder(
+            p.screw_clearance, x, z, p.adapter_back - CUT_OVERRUN, p.adapter_front + CUT_OVERRUN
+        )
         plate -= y_hex(
             p.nut_across_flats + p.nut_across_flats_clearance,
             x,
@@ -667,7 +684,9 @@ def build_clamp_bar(p=None):
     )
     bar = fillet(bar.edges().filter_by(Axis.Y), 1.0)
     for x in (-p.clamp_screw_x, p.clamp_screw_x):
-        bar -= y_cylinder(p.screw_clearance, x, p.clamp_bar_z, y0 - 1, p.clamp_bar_front + 1)
+        bar -= y_cylinder(
+            p.screw_clearance, x, p.clamp_bar_z, y0 - CUT_OVERRUN, p.clamp_bar_front + CUT_OVERRUN
+        )
     return bar
 
 
@@ -713,7 +732,9 @@ def build_slit_head_assembly(p=None, rotation=0.0, include_support=True):
     ]
     for i, (x, z) in enumerate(p.adapter_screw_xz(), 1):
         stack = y_cylinder(p.washer_outer_diameter, x, z, p.adapter_front, -p.body_thickness)
-        stack -= y_cylinder(p.screw_clearance, x, z, p.adapter_front - 1, -p.body_thickness + 1)
+        stack -= y_cylinder(
+            p.screw_clearance, x, z, p.adapter_front - CUT_OVERRUN, -p.body_thickness + CUT_OVERRUN
+        )
         children.append(labeled(stack, f"Spacer washers {i}", metal, loc))
     bar = build_clamp_bar(p)
     for sign, name in ((1, "Width"), (-1, "Datum")):

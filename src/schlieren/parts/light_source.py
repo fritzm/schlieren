@@ -29,6 +29,7 @@ from schlieren.cad import assembly, centered_box, floor_box, labeled, z_cylinder
 from schlieren.palette import BLACK_ANODIZED, GLASS, LED_YELLOW, METAL, SOLDER_MASK_WHITE
 from schlieren.parts.rail_shoe import post_stack
 from schlieren.standards import DATUM_DISC_THICKNESS, INCH, OPTICAL_HEIGHT, POST_DIAMETER, POST_LENGTH
+from schlieren.validation import require_positive_dimensions
 from schlieren.vendor_cad import (
     alpha_cn40_40b,
     thorlabs_acl2520u_a,
@@ -131,8 +132,7 @@ class LightSourceParameters:
     sleeve_to_board_clearance: float = 0.3  # Axial, SM1V05 sleeve end to star top face.
 
     def validate(self):
-        if any(not isfinite(v) or v <= 0 for v in vars(self).values()):
-            raise ValueError("Dimensions and allowances must be finite and positive")
+        require_positive_dimensions(self)
         if self.cap_thread_length >= self.smr1_thickness:
             raise ValueError("Cap thread must leave SMR1/M thread for the SM1V05")
         if self.lens_to_slit <= self.lens_efl:

@@ -19,10 +19,11 @@ from math import atan, cos, degrees, pi, sin
 
 from build123d import Compound, Location, Part, Pos, Rot
 
-from schlieren.cad import assembly, box_between, floor_box, labeled, place, z_cylinder
+from schlieren.cad import CUT_OVERRUN, assembly, box_between, floor_box, labeled, place, z_cylinder
 from schlieren.palette import BLACK_ANODIZED, BLACK_OXIDE, METAL, PLYWOOD, RUBBER, SORBOTHANE, STEEL_GRAY
 from schlieren.parts.rail import RailProfile, build_rail
 from schlieren.standards import INCH
+from schlieren.validation import require_positive_dimensions
 from schlieren.vendor_cad import (
     MCMASTER_8215K2_DIAMETER,
     MCMASTER_8215K2_HEIGHT,
@@ -218,8 +219,7 @@ class FrameParameters:
         return holes
 
     def validate(self) -> None:
-        if any(value < 0 for value in vars(self).values()):
-            raise ValueError("Dimensions must not be negative")
+        require_positive_dimensions(self, allow_zero=True)
         if self.pivot_spacer_length != self.rail_size:
             raise ValueError("The pivot spacer must hold the lug at the rail top")
         if self.rail_front_setback <= self.pivot_spacer_outer_diameter / 2:
@@ -246,8 +246,7 @@ class FrameParameters:
 
 def _bore(diameter: float, length: float, x: float = 0.0, y: float = 0.0, z: float = 0.0) -> Part:
     """Through-hole cutter along +z from z, overrunning both ends."""
-    overrun = 1.0
-    return z_cylinder(diameter, x, y, z - overrun, z + length + overrun)
+    return z_cylinder(diameter, x, y, z - CUT_OVERRUN, z + length + CUT_OVERRUN)
 
 
 def build_pivot_plate(p: FrameParameters | None = None) -> Part:

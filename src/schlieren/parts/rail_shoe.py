@@ -22,6 +22,7 @@ from build123d import (
 )
 
 from schlieren.cad import (
+    CUT_OVERRUN,
     assembly,
     box_between,
     floor_box,
@@ -42,6 +43,7 @@ from schlieren.standards import (
     POST_DIAMETER,
     POST_LENGTH,
 )
+from schlieren.validation import require_positive_dimensions
 from schlieren.vendor_cad import (
     MCMASTER_93475A240_THICKNESS,
     SM1RC_M_THICKNESS,
@@ -154,8 +156,7 @@ class RailShoeParameters:
         return self.clamp_nut_thickness + self.nut_axial_clearance
 
     def validate(self) -> None:
-        if any(value <= 0 for value in vars(self).values()):
-            raise ValueError("Dimensions and fabrication allowances must be positive")
+        require_positive_dimensions(self)
         if not self.datum_disc_thickness < self.datum_counterbore_depth < self.bridge_thickness:
             raise ValueError("Counterbore must clear the disc and leave a bridge roof")
         if self.datum_counterbore_diameter >= min(self.length, self.width):
@@ -197,17 +198,19 @@ def build_rail_shoe(p: RailShoeParameters | None = None) -> Part:
     """Return one printable solid in assembly coordinates, without hardware."""
     p = p or RailShoeParameters()
     p.validate()
-    overrun = 1.0
 
     shoe = floor_box(p.width, p.length, p.skirt_depth + p.bridge_top, z=-p.skirt_depth)
     shoe = fillet(shoe.edges().filter_by(Axis.Z), p.outside_corner_radius)
 
     rail_void = floor_box(
-        p.rail_opening, p.length + 2 * overrun, p.skirt_depth + overrun, z=-p.skirt_depth - overrun
+        p.rail_opening,
+        p.length + 2 * CUT_OVERRUN,
+        p.skirt_depth + CUT_OVERRUN,
+        z=-p.skirt_depth - CUT_OVERRUN,
     )
     shoe -= rail_void
 
-    counterbore = z_cylinder(p.datum_counterbore_diameter, 0, 0, -overrun, p.datum_counterbore_depth)
+    counterbore = z_cylinder(p.datum_counterbore_diameter, 0, 0, -CUT_OVERRUN, p.datum_counterbore_depth)
     shoe -= counterbore
 
     collar = z_cylinder(2 * p.collar_outer_radius, 0, 0, p.collar_bottom, p.collar_bottom + p.collar_height)
@@ -259,22 +262,22 @@ def build_rail_shoe(p: RailShoeParameters | None = None) -> Part:
         raise ValueError("Expected two outer ear-to-collar root edges")
     shoe = fillet(outer_root_edges, p.ear_root_fillet)
 
-    bore = z_cylinder(p.post_bore, 0, 0, -overrun, p.collar_top + overrun)
+    bore = z_cylinder(p.post_bore, 0, 0, -CUT_OVERRUN, p.collar_top + CUT_OVERRUN)
     shoe -= bore
 
     # Radial split toward +x, centered on y=0. The rectangle ends at
     # the relief center; the circular bore extends another radius below it.
     # Include the bridge/skirt if the requested relief depth reaches them.
-    split_length = max(ear_x_end, p.width / 2) + overrun
+    split_length = max(ear_x_end, p.width / 2) + CUT_OVERRUN
     split = box_between(
-        0, split_length, -p.split_gap / 2, p.split_gap / 2, p.split_relief_z, p.collar_top + overrun
+        0, split_length, -p.split_gap / 2, p.split_gap / 2, p.split_relief_z, p.collar_top + CUT_OVERRUN
     )
     relief = x_cylinder(2 * p.split_relief_radius, 0, p.split_relief_z, 0, split_length)
     shoe -= split
     shoe -= relief
 
     side_holes = x_cylinder(
-        p.m5_clearance_diameter, 0, -p.rail_height / 2, -p.width / 2 - overrun, p.width / 2 + overrun
+        p.m5_clearance_diameter, 0, -p.rail_height / 2, -p.width / 2 - CUT_OVERRUN, p.width / 2 + CUT_OVERRUN
     )
     shoe -= side_holes
 
@@ -283,7 +286,7 @@ def build_rail_shoe(p: RailShoeParameters | None = None) -> Part:
     clamp_x, clamp_z = p.clamp_axis_x, p.clamp_axis_z
     screw_outer_y, nut_outer_y = p.clamp_screw_outer_y, p.clamp_nut_outer_y
     clamp_hole = y_cylinder(
-        p.m3_clearance_diameter, clamp_x, clamp_z, screw_outer_y - overrun, nut_outer_y + overrun
+        p.m3_clearance_diameter, clamp_x, clamp_z, screw_outer_y - CUT_OVERRUN, nut_outer_y + CUT_OVERRUN
     )
     # Nut inserts from +y; the inner wall carries its axial clamp load.
     # Hex vertices lie along x, with horizontal flats in z.
@@ -292,7 +295,7 @@ def build_rail_shoe(p: RailShoeParameters | None = None) -> Part:
         clamp_x,
         clamp_z,
         nut_outer_y - p.nut_pocket_depth,
-        nut_outer_y + overrun,
+        nut_outer_y + CUT_OVERRUN,
     )
     shoe -= clamp_hole
     shoe -= nut

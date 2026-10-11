@@ -7,7 +7,7 @@ two removable clamp bars and hardware references are available as an assembly.
 """
 
 from dataclasses import dataclass
-from math import cos, isfinite, pi, radians, tan
+from math import cos, pi, radians, tan
 
 from build123d import (
     Axis,
@@ -25,6 +25,7 @@ from schlieren.cad import assembly, floor_box, labeled, z_cone, z_cylinder
 from schlieren.hardware import M3_NUT_ACROSS_FLATS, M3_NUT_THICKNESS
 from schlieren.palette import HARDWARE_GRAY, PRINTED_AZURE, PRINTED_ORANGE, RUBBER
 from schlieren.standards import INCH
+from schlieren.validation import require_positive_dimensions
 
 
 @dataclass(frozen=True)
@@ -69,8 +70,7 @@ class CassetteParameters:
         return self.bevel_depth / tan(radians(self.bevel_angle))
 
     def validate(self):
-        if any(not isfinite(v) or v <= 0 for v in vars(self).values()):
-            raise ValueError("Cassette dimensions must be finite and positive")
+        require_positive_dimensions(self)
         if not 0 < self.bevel_angle < 90:
             raise ValueError("Bevel angle must lie between 0 and 90 degrees")
         if self.bevel_depth >= self.thickness:

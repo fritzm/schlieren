@@ -46,6 +46,7 @@ from build123d import (
 )
 
 from schlieren.cad import (
+    CUT_OVERRUN,
     along_y,
     assembly,
     box_between,
@@ -291,16 +292,36 @@ class MirrorCellParameters:
         return self.adjuster_radius * cos(angle), self.mirror_center_z + self.adjuster_radius * sin(angle)
 
     def validate(self) -> None:
-        assert self.moving_plate_front_y > 0, "moving plate must be aft of the base front edge"
-        assert self.fixed_plate_rear_y < self.base_depth
-        assert self.qr_plate_length <= self.base_depth
-        assert self.mirror_center_z + self.hex_circumradius < self.fixed_plate_height
-        assert self.aperture_diameter > self.mirror_diameter
-        assert self.mirror_edge_thickness <= self.moving_plate_thickness
-        assert self.seat_counterbore_depth < self.seat_washer_thickness
-        assert self.seat_washer_id > self.bushing_bore
-        assert self.socket_depth < self.fixed_plate_thickness - self.seat_counterbore_depth
-        assert KOZAK_TB250_LENGTH <= self.moving_plate_thickness
+        checks = (
+            (self.moving_plate_front_y > 0, "The moving plate must be aft of the base front edge"),
+            (self.fixed_plate_rear_y < self.base_depth, "The fixed plate must end inside the base"),
+            (self.qr_plate_length <= self.base_depth, "The quick-release plate must fit under the base"),
+            (
+                self.mirror_center_z + self.hex_circumradius < self.fixed_plate_height,
+                "The moving plate must stay below the top of the fixed plate",
+            ),
+            (self.aperture_diameter > self.mirror_diameter, "The aperture must be larger than the mirror"),
+            (
+                self.mirror_edge_thickness <= self.moving_plate_thickness,
+                "The mirror's edge must not be thicker than the moving plate",
+            ),
+            (
+                self.seat_counterbore_depth < self.seat_washer_thickness,
+                "The spring-seat washer must stand proud of its counterbore",
+            ),
+            (self.seat_washer_id > self.bushing_bore, "The seat washer must clear the bushing bore"),
+            (
+                self.socket_depth < self.fixed_plate_thickness - self.seat_counterbore_depth,
+                "The washer socket must leave the fixed plate a floor",
+            ),
+            (
+                KOZAK_TB250_LENGTH <= self.moving_plate_thickness,
+                "The bushing must fit within the moving plate's thickness",
+            ),
+        )
+        for ok, message in checks:
+            if not ok:
+                raise ValueError(message)
 
 
 def moving_plate_outline(p: MirrorCellParameters) -> list[tuple[float, float]]:
@@ -384,7 +405,9 @@ def build_fixed_plate(p: MirrorCellParameters | None = None) -> Part:
             p.fixed_plate_front_y - 1,
             p.fixed_plate_front_y + p.seat_counterbore_depth,
         )
-        plate -= y_cylinder(p.socket_diameter, x, z, p.washer_back_y, p.washer_back_y + p.socket_depth + 1)
+        plate -= y_cylinder(
+            p.socket_diameter, x, z, p.washer_back_y, p.washer_back_y + p.socket_depth + CUT_OVERRUN
+        )
     for side in BRACKETS.values():
         for z in p.upright_hole_z():
             plate -= y_cylinder(
@@ -404,14 +427,18 @@ def build_base_plate(p: MirrorCellParameters | None = None) -> Part:
     for side in BRACKETS.values():
         for y in p.base_hole_y():
             plate -= z_cylinder(
-                p.bracket_hole_diameter, p.bracket_center_x(side), y, -p.base_thickness - 1, 1
+                p.bracket_hole_diameter,
+                p.bracket_center_x(side),
+                y,
+                -p.base_thickness - CUT_OVERRUN,
+                CUT_OVERRUN,
             )
     hole_radius, top_radius = p.qr_clearance_hole / 2, p.qr_countersink_diameter / 2
     depth = top_radius - hole_radius  # Of the 90° countersink.
     for x, y in p.qr_screw_positions().values():
-        plate -= z_cylinder(2 * hole_radius, x, y, -p.base_thickness - 1, 1)
+        plate -= z_cylinder(2 * hole_radius, x, y, -p.base_thickness - CUT_OVERRUN, CUT_OVERRUN)
         # A 90° cone, carried 1 mm above the surface so the cut is clean.
-        plate -= z_cone(2 * hole_radius, 2 * top_radius + 2, x, y, -depth, 1)
+        plate -= z_cone(2 * hole_radius, 2 * top_radius + 2 * CUT_OVERRUN, x, y, -depth, CUT_OVERRUN)
     return plate
 
 
@@ -442,21 +469,23 @@ def build_quick_release_plate(p: MirrorCellParameters | None = None) -> Part:
     plate = _plate(quick_release_outline(p), p.qr_plate_length, p.qr_plate_length)
     slot = centered_box(p.qr_slot_width, p.qr_slot_length, thickness + 2)
     for end in (-1, 1):
-        slot += centered_cylinder(p.qr_slot_width, thickness + 2, y=end * p.qr_slot_length / 2)
+        slot += centered_cylinder(p.qr_slot_width, thickness + 2 * CUT_OVERRUN, y=end * p.qr_slot_length / 2)
     plate -= Pos(0, p.qr_plate_length / 2, center_z) * slot
     half = p.qr_notch_width / 2
     notch = Polygon(
-        (-half, p.qr_plate_length + 1),
-        (half, p.qr_plate_length + 1),
+        (-half, p.qr_plate_length + CUT_OVERRUN),
+        (half, p.qr_plate_length + CUT_OVERRUN),
         (0, p.qr_plate_length - p.qr_notch_depth),
         align=None,
     ).face()
     if notch.normal_at().Z < 0:
         notch = -notch
-    plate -= Pos(0, 0, center_z - thickness / 2 - 1) * extrude(notch, amount=thickness + 2)
+    plate -= Pos(0, 0, center_z - thickness / 2 - CUT_OVERRUN) * extrude(
+        notch, amount=thickness + 2 * CUT_OVERRUN
+    )
     top = -p.base_thickness
     for x, y in p.qr_screw_positions().values():  # Tapped holes, drawn at the nominal thread diameter.
-        plate -= z_cylinder(p.qr_screw_diameter, x, y, top - p.qr_tapped_hole_depth, top + 1)
+        plate -= z_cylinder(p.qr_screw_diameter, x, y, top - p.qr_tapped_hole_depth, top + CUT_OVERRUN)
     return plate
 
 
@@ -477,7 +506,9 @@ def build_rtv_pad(p: MirrorCellParameters, index: int) -> Part:
     # Built about the z axis, then stood on the y axis. The pad is the part of the gap annulus within reach of a
     # block of the pad's length, so its ends follow the mirror edge and the aperture wall.
     depth = p.rtv_pad_depth
-    annulus = centered_cylinder(p.aperture_diameter, depth) - centered_cylinder(p.mirror_diameter, depth + 2)
+    annulus = centered_cylinder(p.aperture_diameter, depth) - centered_cylinder(
+        p.mirror_diameter, depth + 2 * CUT_OVERRUN
+    )
     reach = Rot(Z=360.0 / p.rtv_pad_count * index) * centered_box(
         p.rtv_gap + 2, p.rtv_pad_length, depth, x=mid_radius
     )
@@ -498,7 +529,9 @@ def build_spring(p: MirrorCellParameters, x: float, y0: float, z: float) -> Part
 
 
 def _tube(x: float, y0: float, z: float, outer: float, inner: float, length: float) -> Part:
-    return y_cylinder(outer, x, z, y0, y0 + length) - y_cylinder(inner, x, z, y0 - 1, y0 + length + 1)
+    return y_cylinder(outer, x, z, y0, y0 + length) - y_cylinder(
+        inner, x, z, y0 - CUT_OVERRUN, y0 + length + CUT_OVERRUN
+    )
 
 
 def _bracket_fasteners(p: MirrorCellParameters, name: str, side: int) -> list[Part]:
