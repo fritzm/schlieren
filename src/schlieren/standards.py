@@ -21,3 +21,7 @@ PLA_MODULUS = 3000.0  # MPa
 
 # Printed hex-nut pockets: across-flats allowance over the nut, as fit-tested on the common rail shoe.
 NUT_POCKET_ACROSS_FLATS_CLEARANCE = 0.3
+
+# Printed rectangular magnet pockets: allowance over the magnet's length and width, in total across each (half
+# on a side). As fit on the lens-cradle pads; the carriage and slit head take the same value.
+MAGNET_POCKET_CLEARANCE = 0.20

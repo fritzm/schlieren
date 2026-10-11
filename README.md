@@ -6,7 +6,7 @@ is built for a vacation week at Deep Creek and afterward will serve as a bench-t
 An LED lights a source slit. A spherical mirror a few meters away re-images the slit back at the optical head.
 Air density gradients near the mirror bend the returning light past a cutoff (knife edge, wire, or color
 filter), and an iPhone behind a telephoto lens records the resulting contrast. The optical head is a pair of
-2020-extrusion rails attached to a plywood pivot plate, and is desgined to rest on a tabletop or bench.
+2020-extrusion rails attached to a plywood pivot plate, and is designed to rest on a tabletop or bench.
 Thorlabs SM1 optomechanics hold the LEDs, condenser, the slit, and the cutoff, and printed PLA parts handle
 everything that doesn't need metal precision. The mirror sits in its own tripod-mounted cell.
 
@@ -18,7 +18,7 @@ everything that doesn't need metal precision. The mirror sits in its own tripod-
 | [`docs/schlieren-design.pdf`](docs/schlieren-design.pdf) | The whole design document rendered as one PDF, generated from the fragments. |
 | [`bom/bom.csv`](bom/bom.csv) | BOM: one row per allocation, with vendor, SKU, quantity, and procurement or CAD state. |
 | [`bom/schlieren-bom.xlsx`](bom/schlieren-bom.xlsx) | The BOM as a workbook with a summary tab, generated from the CSV. |
-| [`src/schlieren/parts/`](src/schlieren/parts/) | build123d models of custom parts and part assemblies. See the additional [README](src/schlieren/parts/README.md) there for per-part notes. |
+| [`src/schlieren/parts/`](src/schlieren/parts/) | build123d models of custom parts and part assemblies. Each module's docstring gives its frame and scope. |
 | [`src/schlieren/cli/`](src/schlieren/cli/) | Utility scripts for building and viewing parts and generating documents. |
 | [`tests/`](tests/) | Checks on dimensions, clearances, interference, optical calculations, and BOM consistency. |
 | [`cad/vendor/`](cad/vendor/) | Unmodified manufacturer STEP models of purchased parts. |

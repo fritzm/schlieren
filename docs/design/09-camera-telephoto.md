@@ -158,7 +158,8 @@ magnet thickness outside the ring, and the pocket floor is tangent to the ring's
 pocket with a rim round it, so a ball end that wanders reaches a wall instead of the edge of the pad:
 
 - three pads are the 10 × 5 × 2 mm magnets, set with the 10 mm side across the rail, bonded into pockets
-  0.1 mm larger per side;
+  0.2 mm larger across each dimension (0.1 mm per side, the allowance every printed magnet pocket in the
+  design uses);
 - the fourth, at the aft left screw, is a groove between two dowel pins of 3 mm diameter and 10 mm length,
   lying across the rail on the pocket floor. The ball sits between them, free to slide across the rail but not
   along it;

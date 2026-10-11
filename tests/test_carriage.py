@@ -163,7 +163,7 @@ class CarriageTests(unittest.TestCase):
             # Body extension must not lower the ears into their guide floors.
             self.assertFalse(part.is_inside((35, y, p.floor_z)))
             self.assertTrue(part.is_inside((35, y, p.floor_z + p.ear_lower_clearance + 0.1)))
-        pocket_bottom = p.adjuster_axis_z - (p.magnet_width + p.magnet_fit_clearance) / 2
+        pocket_bottom = p.adjuster_axis_z - (p.magnet_width + p.magnet_pocket_clearance) / 2
         self.assertGreaterEqual(pocket_bottom - (p.plate_thickness + p.body_deck_clearance), 0.6)
         roof = self.parts["Keeper plate"].bounding_box().max.Z - (
             p.adjuster_axis_z + p.insert_bore_diameter / 2

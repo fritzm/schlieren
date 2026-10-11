@@ -82,7 +82,7 @@ from schlieren.palette import (
 )
 from schlieren.parts.rail import build_rail
 from schlieren.parts.rail_shoe import RailShoeParameters
-from schlieren.standards import INCH, OPTICAL_HEIGHT
+from schlieren.standards import INCH, MAGNET_POCKET_CLEARANCE, OPTICAL_HEIGHT
 from schlieren.vendor_cad import (
     MCMASTER_92815A202_HEIGHT,
     MCMASTER_93339A252_BALL_DIAMETER,
@@ -159,7 +159,9 @@ class CameraSupportParameters:
     # is 1.2 mm behind the ball apex.
     pad_wall_height: float = 0.8  # Rim above the pad face.
     pad_wall: float = 1.5  # Wall round each pocket.
-    pad_pocket_clearance_per_side: float = 0.10  # Magnet or rod pair in its pocket, bonded.
+    pad_pocket_clearance: float = (
+        MAGNET_POCKET_CLEARANCE  # Total across, magnet or rod pair in its pocket, bonded.
+    )
     pad_edge_margin: float = 1.0  # A ball apex can reach to within this of the pad edge (the rim stops it).
     min_collar_wall: float = 2.5
     # Retaining band (§9.5 hold-down): an endless elastic cord round the bare barrel beside each collar, on
@@ -363,13 +365,13 @@ class CameraSupportParameters:
         The rim is cut back so that the ball stops pad_edge_margin short of the pad edge, not at the edge
         of the sphere's reach against a rim standing at the pad edge.
         """
-        return self.ball_rim_standoff - self.pad_edge_margin - self.pad_pocket_clearance_per_side
+        return self.ball_rim_standoff - self.pad_edge_margin - self.pad_pocket_clearance / 2
 
     @property
     def pad_edge_stop(self) -> tuple[float, float]:
         """How far a ball end can move from the middle of a magnet pad, across and along the rail, before its
         sphere meets the relieved rim."""
-        reach = self.pad_pocket_clearance_per_side + self.pad_wall_relief - self.ball_rim_standoff
+        reach = self.pad_pocket_clearance / 2 + self.pad_wall_relief - self.ball_rim_standoff
         return self.magnet_length / 2 + reach, self.magnet_width / 2 + reach
 
     @property
@@ -496,7 +498,7 @@ def rod_layout(p: CameraSupportParameters) -> tuple[float, float]:
 
 def _pad_pocket(p: CameraSupportParameters, rods: bool) -> tuple[float, float]:
     """Pocket size in a pad frame, across and along the rail: a magnet, or the pair of groove rods."""
-    c = 2 * p.pad_pocket_clearance_per_side
+    c = p.pad_pocket_clearance
     if rods:
         half_spacing, _ = rod_layout(p)
         return p.groove_rod_length + c, 2 * half_spacing + p.groove_rod_diameter + c

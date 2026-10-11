@@ -245,6 +245,8 @@ corresponding spring-length range is approximately:
 
 Loading retraction is a further 6 mm from fiducial (10.5 mm spring length), leaving 4.5 mm between the cups.
 Any additional compression capacity is treated as design margin rather than normal commanded travel.
+**Provisional:** the solid height of the 2006N292 spring is not verified, so the loading retraction is checked
+against the printed cups but not against the spring's own limit.
 
 Retraction for cassette loading uses a thumb tab on the spring plunger's front face at its outboard end:
 

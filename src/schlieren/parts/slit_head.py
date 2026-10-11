@@ -44,6 +44,7 @@ from schlieren.hardware import (
     INSERT_98625A950_FLANGE_THICKNESS,
     INSERT_98625A950_LENGTH,
     INSERT_98625A950_MIN_MATERIAL,
+    M3_CLEARANCE_DIAMETER,
     M3_NUT_ACROSS_FLATS,
     M3_NUT_THICKNESS,
     M3_SOCKET_HEAD_DIAMETER,
@@ -68,6 +69,7 @@ from schlieren.parts.rail_shoe import post_stack
 from schlieren.standards import (
     DATUM_DISC_THICKNESS,
     INCH,
+    MAGNET_POCKET_CLEARANCE,
     NUT_POCKET_ACROSS_FLATS_CLEARANCE,
     OPTICAL_HEIGHT,
     PLA_MODULUS,
@@ -114,7 +116,7 @@ class SlitHeadParameters:
     magnet_length: float = MAGNET_LENGTH
     magnet_width: float = MAGNET_WIDTH
     magnet_thickness: float = MAGNET_THICKNESS
-    magnet_fit_clearance: float = 0.15
+    magnet_pocket_clearance: float = MAGNET_POCKET_CLEARANCE  # Total, across the magnet's length and width.
     # McMaster 2006N292 spring (§§8.4-8.5): free length and rate; 9 mm compression at mid travel.
     spring_free_length: float = SPRING_2006N292_FREE_LENGTH
     spring_mid_length: float = 16.5
@@ -127,7 +129,7 @@ class SlitHeadParameters:
     spring_pocket_clearance: float = 1.0  # Diametral; printed-hole shrink and coil growth under compression.
     # Common M3 hardware: 91292A114 M3 x 12 SHCS, 91828A211 nut.
     screw_length: float = 12.0
-    screw_clearance: float = 3.4  # Not the common M3_CLEARANCE_DIAMETER (3.3); the reason is not recorded.
+    screw_clearance: float = M3_CLEARANCE_DIAMETER
     screw_head_diameter: float = M3_SOCKET_HEAD_DIAMETER
     screw_head_height: float = M3_SOCKET_HEAD_HEIGHT
     counterbore_clearance: float = 0.5  # Diametral.
@@ -472,7 +474,7 @@ class SlitHeadParameters:
         w0, w1 = self.connector_span(self.width_screw_x)
         if w0 < -self.carrier_half_length or w1 >= self.platform_post_inner - 10.0:
             raise ValueError("Width-stage connector must sit on its carrier, left of its blades")
-        if self.connector_width < self.magnet_length + 2 * self.magnet_fit_clearance + 2.0:
+        if self.connector_width < self.magnet_length + self.magnet_pocket_clearance + 2.0:
             raise ValueError("Connectors must hold the magnet pads")
         if self.centering_tip_well + self.magnet_thickness > self.centering_gap + self.bar_thickness - 2.0:
             raise ValueError("Upper platform connector needs a floor under the centering magnet")
@@ -521,8 +523,8 @@ class SlitHeadParameters:
 
 def _magnet_pocket(p, x, z_top, well=0.0):
     """Magnet seat with its top face at z_top - well, plus a well above it for the ball tip."""
-    length = p.magnet_length + 2 * p.magnet_fit_clearance
-    width = p.magnet_width + 2 * p.magnet_fit_clearance
+    length = p.magnet_length + p.magnet_pocket_clearance
+    width = p.magnet_width + p.magnet_pocket_clearance
     seat_top = z_top - well
     pocket = box_between(
         x - length / 2,

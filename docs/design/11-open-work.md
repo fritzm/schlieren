@@ -13,7 +13,7 @@ Design areas marked **Provisional** in the sections above:
   long-gap focus margin.
 - **Cutoff carriage** ([§8](08-cutoff.md#8-cutoff)): spigot fit in the SM1RC/M; guide-stack, recess, and
   pocket dimensions, sliding fits, and datum-pin projection; keeper lift under the ear wedge reactions; bevel
-  angle and seating force; clearance to other equipment near the cutoff station.
+  angle and seating force; the spring's solid height against the loading retraction; clearance to other equipment near the cutoff station.
 - **Cassettes** ([§8.6](08-cutoff.md#86-common-cassette-standard),
   [§8.7](08-cutoff.md#87-cassette-clamp-bars)): filament-cleat geometry.
 - **Lens cradle and phone rest** ([§9](09-camera-telephoto.md#9-camera-and-telephoto-support)): fit

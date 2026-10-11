@@ -1,9 +1,11 @@
-"""Preliminary five-piece slit/cutoff carriage, baseline refreshed 2026-09-22 §8.
+"""Preliminary five-piece cutoff carriage, design §8.
 
 Local XY is the cassette plane, +Y points toward the FAS100, +Z is the
 cassette-loading side, which faces the mirror (§8.1). Z=0 is the plate back, not the rail-height datum.
 The rear shouldered spigot, clamped directly by the SM1RC/M, is integral with the base. Dimensions beyond
 explicit baseline interfaces are provisional first-print targets; no purchased threads are modeled.
+The base and guide frame are one stock body split at the top of the deck; `build_print_layout` gives the
+parts as exported, with the base flipped spigot-up and the two plungers laid out side by side.
 """
 
 from dataclasses import dataclass
@@ -66,6 +68,7 @@ from schlieren.parts.rail_shoe import RailShoeParameters, post_stack
 from schlieren.standards import (
     DATUM_DISC_THICKNESS,
     INCH,
+    MAGNET_POCKET_CLEARANCE,
     NUT_POCKET_ACROSS_FLATS_CLEARANCE,
     OPTICAL_HEIGHT,
     PLA_MODULUS,
@@ -181,7 +184,8 @@ class CarriageParameters:
     magnet_length: float = MAGNET_LENGTH
     magnet_width: float = MAGNET_WIDTH
     magnet_thickness: float = MAGNET_THICKNESS
-    magnet_fit_clearance: float = 0.15
+    magnet_pocket_clearance: float = MAGNET_POCKET_CLEARANCE  # Total, across the magnet's length and width.
+    magnet_face_recess: float = 0.15  # Magnet face below the plunger's outer face: the pocket's extra depth.
     screw_clearance: float = M3_CLEARANCE_DIAMETER
     screw_head_clearance: float = 5.8
     screw_head_recess: float = 0.5
@@ -238,7 +242,7 @@ class CarriageParameters:
 
     @property
     def magnet_contact_y(self):
-        return self.cassette_size / 2 + self.body_length - self.magnet_fit_clearance
+        return self.cassette_size / 2 + self.body_length - self.magnet_face_recess
 
     @property
     def plate_ymin(self):
@@ -741,11 +745,11 @@ def build_plunger(p=None, *, spring=False):
         # Outward-opening, fully backed magnet pocket. A small adhesive tack is
         # needed for retention; the ball bears on the exposed broad XZ face.
         body -= floor_box(
-            p.magnet_length + p.magnet_fit_clearance,
-            p.magnet_thickness + p.magnet_fit_clearance,
-            p.magnet_width + p.magnet_fit_clearance,
-            y=outer_y - (p.magnet_thickness + p.magnet_fit_clearance) / 2,
-            z=p.adjuster_axis_z - (p.magnet_width + p.magnet_fit_clearance) / 2,
+            p.magnet_length + p.magnet_pocket_clearance,
+            p.magnet_thickness + p.magnet_face_recess,
+            p.magnet_width + p.magnet_pocket_clearance,
+            y=outer_y - (p.magnet_thickness + p.magnet_face_recess) / 2,
+            z=p.adjuster_axis_z - (p.magnet_width + p.magnet_pocket_clearance) / 2,
         )
     return body
 
