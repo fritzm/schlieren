@@ -132,6 +132,7 @@ class CameraSupportParameters:
     magnet_thickness: float = MAGNET_THICKNESS
     groove_rod_diameter: float = 3.0
     groove_rod_length: float = 10.0
+    groove_rib_height: float = 1.0  # Locating rib between the groove rods, above the pocket floor.
 
     # Lens cradle.
     aft_station: float = (
@@ -488,6 +489,18 @@ def rod_layout(p: CameraSupportParameters) -> tuple[float, float]:
     return half_spacing, nest - ball_radius
 
 
+def rod_rib(p: CameraSupportParameters) -> tuple[float, float]:
+    """Locating rib between the groove rods: its width, and its height above the pocket floor.
+
+    Both rods lie against the rib's top corners, so the rib sets their spacing and keeps them parallel. Its
+    width is where the rods' flanks meet the corners, with the rods at their nominal spacing."""
+    half_spacing, rod_height = rod_layout(p)
+    rod_radius = p.groove_rod_diameter / 2
+    axis_above_floor = p.magnet_thickness - rod_height
+    reach = sqrt(rod_radius**2 - (axis_above_floor - p.groove_rib_height) ** 2)
+    return 2 * (half_spacing - reach), p.groove_rib_height
+
+
 def _pad_pocket(p: CameraSupportParameters, rods: bool) -> tuple[float, float]:
     """Pocket size in a pad frame, across and along the rail: a magnet, or the pair of groove rods."""
     c = p.pad_pocket_clearance
@@ -668,6 +681,16 @@ def build_collar(
         body -= loc * box_between(
             -across / 2, across / 2, -along_rail / 2, along_rail / 2, 0, p.magnet_thickness
         )
+        if side == rod_side:
+            rib_width, rib_height = rod_rib(p)
+            body += loc * box_between(
+                -across / 2,
+                across / 2,
+                -rib_width / 2,
+                rib_width / 2,
+                p.magnet_thickness - rib_height,
+                p.magnet_thickness + 0.5,  # Into the floor, so the rib joins the collar.
+            )
         relief = p.pad_wall_relief
         body -= loc * box_between(
             -across / 2 - relief,

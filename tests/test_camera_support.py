@@ -19,6 +19,7 @@ from schlieren.parts.camera_support import (
     build_cradle_yoke,
     build_phone_rest,
     build_phone_rest_for_print,
+    rod_rib,
     screw_location,
 )
 from schlieren.standards import OPTICAL_HEIGHT
@@ -224,7 +225,8 @@ class LensCradleTests(unittest.TestCase):
 
                     # Pocket: open above the pad face, floor 2 mm below it, rim 0.8 mm above it.
                     self.assertFalse(collar.is_inside(local(0, 0, -0.5)))
-                    self.assertFalse(collar.is_inside(local(0, 0, p.magnet_thickness - 0.1)))
+                    # Open to the floor, except the groove pad's locating rib along its middle.
+                    self.assertEqual(collar.is_inside(local(0, 0, p.magnet_thickness - 0.1)), rods)
                     self.assertTrue(collar.is_inside(local(0, 0, p.magnet_thickness + 0.2)))
                     for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
                         wall = local(
@@ -240,6 +242,25 @@ class LensCradleTests(unittest.TestCase):
                         self.assertLess((bearing & collar).volume, 0.01)
         for rod in ("Groove rod -1", "Groove rod +1"):
             self.assertLess((self.parts[rod] & self.parts["Aft collar"]).volume, 0.01)
+
+    def test_groove_rib_locates_both_rods_and_clears_the_ball(self):
+        p = self.p
+        collar = self.parts["Aft collar"]
+        loc = screw_location(p, -1, p.aft_station)
+        width, height = rod_rib(p)
+        floor = p.magnet_thickness
+        self.assertAlmostEqual(height, 1.0, places=6)
+        self.assertAlmostEqual(width, 1.683, places=3)  # Calculated: rods at 4.5 mm resting on its corners.
+        inside = loc * Pos(0, 0, floor - height / 2)
+        above = loc * Pos(0, 0, floor - height - 0.2)
+        self.assertTrue(collar.is_inside(inside.position))
+        self.assertFalse(collar.is_inside(above.position))
+        for rod in ("Groove rod -1", "Groove rod +1"):
+            with self.subTest(rod=rod):
+                self.assertLess(self.parts[rod].distance_to(collar), CONTACT)
+                self.assertLess((self.parts[rod] & collar).volume, 0.01)
+        ball = self.parts["Aft left screw"]
+        self.assertGreater(ball.distance_to(collar), p.groove_rib_height / 2)  # The rib stays clear of it.
 
     def test_ball_end_is_stopped_by_the_pocket_rim_before_the_pad_edge(self):
         p = self.p

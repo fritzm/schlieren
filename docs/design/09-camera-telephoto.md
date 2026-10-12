@@ -176,7 +176,9 @@ pocket with a rim round it, so a ball end that wanders reaches a wall instead of
   design uses);
 - the fourth, at the aft left screw, is a groove between two dowel pins of 3 mm diameter and 10 mm length,
   lying across the rail on the pocket floor. The ball sits between them, free to slide across the rail but not
-  along it;
+  along it. A printed rib 1.0 mm high and about 1.7 mm wide runs between the pins along the pocket, and each
+  pin lies against its top corner: the rib sets the pins' spacing (4.5 mm between axes) and keeps them
+  parallel, so bonding them needs no spacer. The ball stays 1.0 mm clear of the rib;
 - the rim stands 0.8 mm above the pad face. The ball-tip screw's end face is 1.2 mm behind the ball apex, so
   the rim stays below it;
 - above the pad face the pocket opens outward by 0.23 mm per side, so that the rim edge stops the ball apex
