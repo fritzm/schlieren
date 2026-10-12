@@ -124,8 +124,8 @@ face and 1.5 mm wider than the pocket on each side, restores a 1.3 mm roof (top 
 outboard end, clear of the clamp bars; it is blended into the plunger top by a 0.4 mm root fillet on its
 sides and inboard end.
 
-**Provisional:** the magnet-pocket roof and crown fillet, and the insert's fit on the flat flange seat, are
-first-print values, to be confirmed on the printed plunger and block.
+The magnet pocket, with its crown roof and fillet, holds the magnet and the FAS100 ball bears on it
+smoothly. The insert's press fit and its flange seat on the flat block face are good.
 
 ### 8.4 Cassette seating
 
@@ -204,8 +204,9 @@ beam estimate, with each keeper side member simply supported between adjacent sc
 0.07 mm of upward keeper deflection at the ears at the maximum-compression load (with a PLA modulus of
 about 3000 MPa assumed). That is within the 0.25 mm free play between the ears and the keeper; with only the
 four end screws it would be about 1.5–2 mm. The keeper
-side members are 3.0 mm thick. **Provisional:** if a print shows too much lift, a keeper with 5.0 mm side
-members fits the same screws: its counterbores are deeper, so the head seat height is unchanged.
+side members are 3.0 mm thick; a printed keeper holds under the ear reactions without spreading. A keeper with
+5.0 mm side members fits the same screws if more stiffness is wanted: its counterbores are deeper, so the head
+seat height is unchanged.
 
 The screw heads sit in an approximately 0.5 mm-deep recess in the keeper, and the captive hex pockets are
 approximately 2.5 mm deep. This leaves approximately 1.5 mm of PLA above each nut pocket and gives nearly
@@ -216,8 +217,8 @@ points.
 The vertical guide stack is: 4.0 mm carriage back plate; 2.0 mm rise from the plate front to the lower
 guide-ear running surface; 3.0 mm plunger guide ears in a 3.4 mm guide channel; and a 3.0 mm keeper frame.
 
-**Provisional:** the guide-stack dimensions, keeper recess and nut-pocket depths, sliding fits, and datum-pin
-projection are first-print values, to be tuned from printed fit.
+The guide stack gives smooth plunger travel over the full range in both directions, and the ears slide freely
+in their channel; the captive nut pockets, keeper screw-head recesses, and datum pins all seat well.
 
 Use a very light film of plastic-safe lubricant on the PLA-on-PLA sliding interfaces, particularly the plunger
 ears/tabs in their guide slots and any other plunger sliding faces. The lubricant is McMaster 1418K51
@@ -236,8 +237,10 @@ cassette plane gives approximately 9.7–12.0 N upward reaction per plunger at f
 15.1–18.7 N per plunger at maximum normal compression. These reactions are carried upward through the plunger
 ears into the keeper frame; about 20 N per plunger is the working-load scale before safety margin.
 
-**Provisional:** the bevel angle and depth, and the seating-force estimate (which neglects sliding friction),
-are pending a cassette insertion, seating, and tilt trial.
+A printed cassette seats flat on the datum pins and is retained firmly by the plungers on the 27.5° bevels.
+**Provisional:** retention has been judged by hand only, with the carriage upright; the seating-force estimate
+(which neglects sliding friction) is pending a trial with the carriage rotated through its range, so that
+gravity acts on the cassette from every direction.
 
 ### 8.5 Spring seating and retraction
 
@@ -279,9 +282,9 @@ corresponding spring-length range is approximately:
 - 11.5 mm at the most-compressed end of normal travel.
 
 Loading retraction is a further 6 mm from fiducial (10.5 mm spring length), leaving 4.5 mm between the cups.
-Any additional compression capacity is treated as design margin rather than normal commanded travel.
-**Provisional:** the solid height of the 2006N292 spring is not verified, so the loading retraction is checked
-against the printed cups but not against the spring's own limit.
+Any additional compression capacity is treated as design margin rather than normal commanded travel. The
+spring plunger's ears reach the end of their track before the spring is compressed solid, so the track end
+stop, not the spring, limits retraction.
 
 Retraction for cassette loading uses a thumb tab on the spring plunger's front face at its outboard end:
 

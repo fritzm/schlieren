@@ -11,10 +11,8 @@ Design areas marked **Provisional** in the sections above:
   against the lead insulation, cap thread root radius, and Convoy star notch geometry
   ([§6.4](06-light-source.md#64-led-board-mounting)); heatsink temperature rise at 700 mA; white-module
   long-gap focus margin.
-- **Cutoff carriage** ([§8](08-cutoff.md#8-cutoff)): guide-stack, recess, and pocket dimensions, sliding fits;
-  magnet-pocket roof and insert seat fit; keeper lift under the ear wedge reactions;
-  bevel angle and seating force; the spring's solid height against the loading retraction; clearance to other
-  equipment near the cutoff station.
+- **Cutoff carriage** ([§8](08-cutoff.md#8-cutoff)): clearance to other equipment near the cutoff
+  station.
 - **Cassettes** ([§8.6](08-cutoff.md#86-common-cassette-standard),
   [§8.7](08-cutoff.md#87-cassette-clamp-bars)): filament-cleat geometry.
 - **Lens cradle and phone rest** ([§9](09-camera-telephoto.md#9-camera-and-telephoto-support)): fit allowances
@@ -36,10 +34,9 @@ Design areas marked **Provisional** in the sections above:
 
 ### 11.2 Next steps
 
-1. Fit-test the rest of the printed cutoff carriage (guide frame, keeper frame, plungers; the base plate is
-   verified) and a cassette blank ([§8](08-cutoff.md#8-cutoff)), including
-   datum-pin seating, bevel seating, and keeper lift. Trial wire mounting on the
-   filament cleats ([§8.6](08-cutoff.md#86-common-cassette-standard)).
+1. Trial wire mounting on the cassette filament cleats
+   ([§8.6](08-cutoff.md#86-common-cassette-standard)), and check the cutoff carriage's clearance to other
+   equipment on the rail once the layout is set ([§8](08-cutoff.md#8-cutoff)).
 2. Fabricate both threaded LED modules: drill and tap the caps and heatsinks, center each board, and set focus
    on the slit blades; measure the cap thread root radius, and check the lead hole size and the Convoy star
    notch geometry against the physical parts ([§6.4](06-light-source.md#64-led-board-mounting)). Confirm that
