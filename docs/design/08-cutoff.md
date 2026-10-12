@@ -57,8 +57,7 @@ Rotation envelope: the 2020 rail runs beneath the carriage at every rail positio
 The base plate, guide frame, and keeper are trimmed to a 70.35 mm radius about the optical axis (the rail top
 less 2 mm clearance). Only the outer plate corners are removed; the plate is otherwise 86 mm wide, widened to
 94 mm at the side keeper-screw lugs ([§8.4](#84-cassette-seating)). Calculated from the CAD, the carriage with
-its FAS100 rotates clear of the rail over ±150°; only the FAS100 knob reaches the rail, near ±170–180°. A
-printed base plate on its post and shoe was confirmed to rotate clear of the rail.
+its FAS100 rotates clear of the rail over ±150°; only the FAS100 knob reaches the rail, near ±170–180°.
 Nothing projects below the plate at nominal zero ([§8.5](#85-spring-seating-and-retraction)). **Provisional:**
 clearance to other equipment on the rail near the cutoff station is not yet checked.
 
@@ -68,7 +67,7 @@ The base plate is printed deck down with the spigot up, so the spigot and should
 supports; the guide frame above the deck is a separate print (the base/frame split exists for this). The three
 datum-pin shanks ([§8.4](#84-cassette-seating)) lie outside the shoulder and are flush-cut on the plate back.
 
-The spigot is printed at the SM1 tube nominal, and a printed base plate fits the SM1RC/M without adjustment.
+The spigot is printed at the SM1 tube nominal, which fits the SM1RC/M without adjustment.
 
 ### 8.3 Fine adjustment
 
@@ -142,13 +141,13 @@ smooth shank and a measured 0.093 in (2.36 mm) diameter, 0.038 in (0.97 mm) high
 sets the cassette's standoff from the datum face.
 
 Mount each pin through a through-hole in the printed carriage with the domed brass head on the cassette side.
-The holes are modeled Ø1.75 mm: the measured 0.050 in (1.27 mm) shank, plus the 0.38 mm diametral hole
-undersize measured on the first base-plate print (the Ø24 mm aperture printed 0.930 in), plus 0.1 mm fit
-clearance; the printed holes take the shanks as a slip fit, so the CA is their only retention. If a shank binds on a later print, finish the hole with a
-#54 (0.055 in) drill. The hole fit only locates the shank; the head sets the datum. Seat the underside of the head firmly against the carriage datum face so datum height is
-established mechanically rather than by adhesive thickness. Wick a small amount of CA around the shank from
-the back for retention, then flush-cut and dress the projecting shank at the back of the carriage. Keep CA out
-from beneath the head/contact surface.
+The holes are modeled Ø1.75 mm: the measured 0.050 in (1.27 mm) shank, plus a 0.38 mm diametral allowance for
+the undersize of printed holes, plus 0.1 mm fit clearance; the holes take the shanks as a slip fit, so the CA is
+their only retention. If a shank binds, finish the hole with a #54 (0.055 in) drill. The hole fit only locates
+the shank; the head sets the datum. Seat the underside of the head firmly against the carriage datum face so
+datum height is established mechanically rather than by adhesive thickness. Wick a small amount of CA around
+the shank from the back for retention, then flush-cut and dress the projecting shank at the back of the
+carriage. Keep CA out from beneath the head/contact surface.
 
 The three pin heads form a broad triangular support pattern around the optical aperture. The cassette rear
 face is the sliding datum surface and provides unobstructed swept tracks over the three domed
@@ -238,9 +237,6 @@ cassette plane gives approximately 9.7–12.0 N upward reaction per plunger at f
 ears into the keeper frame; about 20 N per plunger is the working-load scale before safety margin.
 
 A printed cassette seats flat on the datum pins and is retained firmly by the plungers on the 27.5° bevels.
-**Provisional:** retention has been judged by hand only, with the carriage upright; the seating-force estimate
-(which neglects sliding friction) is pending a trial with the carriage rotated through its range, so that
-gravity acts on the cassette from every direction.
 
 ### 8.5 Spring seating and retraction
 

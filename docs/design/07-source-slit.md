@@ -11,8 +11,7 @@ The slit needs only about ±2 mm of centering travel, one adjustment axis, and d
 does not use the cutoff's carriage, plungers, guide rails, keeper frame, datum pins, or cassettes
 ([§8](08-cutoff.md#8-cutoff)).
 
-The stage-rotation figures below come from a first-order flexure model, not FEA; the printed and assembled head
-confirmed the design ([§7.7](#77-fabrication-and-fit)).
+The stage-rotation figures below come from a first-order flexure model, not FEA.
 
 ### 7.1 Blades and slit widths
 
@@ -176,11 +175,6 @@ Printed parts: the flexure head, the spigot adapter, and two clamp bars.
 Hardware: 2 × FAS100, 2 × 98625A950 inserts, 2 × N52 10 × 5 × 2 mm magnet bearing pads (one under each FAS100
 ball tip, [§8.3](08-cutoff.md#83-fine-adjustment)), 1 × 2006N292 spring, 8 × M3 × 12 mm socket-head screws, 8
 × M3 nuts, 8 × M3 flat washers.
-
-A printed and assembled head (Prusa MINI+, PLA) was evaluated and is fit for purpose: the insert press fit, the
-magnet, spring, and other pockets and bores are as sized, the flexures move essentially parallel along both push
-axes, the clamp bars, width-stage preload, and adapter-plate clearance work, and the printed spigot fits the
-SM1RC/M split ring at the SM1 tube nominal.
 
 **Provisional:** PLA creeps and relaxes under sustained strain, and the width stage is held deflected by its
 preload. Check the preload after the head has stood assembled for a few days, and again after warm storage.

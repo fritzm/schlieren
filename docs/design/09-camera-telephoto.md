@@ -232,8 +232,6 @@ supports:
   with 0.2 mm clearance to the column faces. They locate the yoke along the rail and stop it twisting;
 - the screw ends inside the insert with about 5 mm of engagement.
 
-The collar bore, clamp-ear hardware pocket, and magnet pockets are fit-tested on printed collars, and the
-shoe's rail opening, screw holes, and seat on the rail on a printed shoe.
 **Provisional:** the groove between the rods and the ball-stop rims, and the insert holes and locating walls of
 the yokes, are untested; the magnet and rod adhesive is not chosen; the fitting and removal sequence is
 set by the bands ([§9.8](#98-retaining-bands)).

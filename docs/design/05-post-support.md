@@ -46,7 +46,7 @@ movement while remaining fully seated on the metal datum:
 - free-fitting 12.7 mm post bore before clamping.
 
 The clamp provides rotational and lateral retention; post height is still established solely by the post
-bottoming on the metal datum disc. The model, with its fit-tested PLA allowances, is
+bottoming on the metal datum disc. The model, with its PLA fit allowances, is
 `src/schlieren/parts/rail_shoe.py`.
 
 <p align="center">
