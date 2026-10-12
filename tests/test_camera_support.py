@@ -37,27 +37,18 @@ class LensCradleTests(unittest.TestCase):
         cls.assembly = build_camera_support_assembly(cls.p, include_cutoff=False)
         cls.parts = {part.label: part for part in leaves(cls.assembly)}
 
-    def test_lens_sections_are_the_measured_values(self):
-        p = self.p
-        self.assertAlmostEqual(p.aft_stub_length, 14.351, places=3)
-        self.assertAlmostEqual(p.rear_section_length, 33.02, places=3)
-        self.assertAlmostEqual(p.long_section_length, 57.15, places=3)
-        self.assertAlmostEqual(p.lens_length, 120.523, places=3)
-
     def test_collars_sit_on_the_clampable_barrel_clear_of_the_focus_ring(self):
         p = self.p
-        rear_end = p.aft_stub_length + p.rear_section_length
         aft = self.parts["Aft collar"].bounding_box()
         fore = self.parts["Fore collar"].bounding_box()
-        self.assertGreaterEqual(aft.min.Y, p.aft_stub_length)
-        self.assertLessEqual(aft.max.Y, rear_end)
-        self.assertGreaterEqual(fore.min.Y, rear_end)
+        self.assertGreaterEqual(aft.min.Y, p.barrel_start)
+        self.assertGreater(fore.min.Y, aft.max.Y)
         self.assertGreaterEqual(p.focus_ring_start - fore.max.Y, 1.5)
         self.assertGreater(p.fore_station - p.aft_station, 70.0)
 
     def test_lens_and_main_camera_are_on_the_optical_axis(self):
         p = self.p
-        lens = self.parts["Telephoto envelope"].bounding_box()
+        lens = self.parts["Lens body"].bounding_box()
         self.assertAlmostEqual((lens.min.Z + lens.max.Z) / 2, OPTICAL_HEIGHT, places=4)
         self.assertAlmostEqual((lens.min.X + lens.max.X) / 2, 0.0, places=4)
         phone = self.parts["Case"].bounding_box()
@@ -280,9 +271,7 @@ class LensCradleTests(unittest.TestCase):
         for first, second in pairwise([*path, path[0]]):  # Continuous and closed.
             self.assertAlmostEqual(first[-1][0], second[1][0], places=6)
             self.assertAlmostEqual(first[-1][1], second[1][1], places=6)
-        lens = self.parts["Telephoto envelope"]
-        rear_end = p.aft_stub_length + p.rear_section_length
-        long_end = rear_end + p.long_section_length
+        lens = self.parts["Lens body"]
         for where, station in zip(("Aft", "Fore"), p.stations, strict=True):
             band = self.parts[f"{where} band"]
             yoke, collar = self.parts[f"{where} yoke"], self.parts[f"{where} collar"]
@@ -294,8 +283,8 @@ class LensCradleTests(unittest.TestCase):
                 # Beside the yoke, on the side toward the other collar, on a plain section of the barrel.
                 direction = p.toward_other(station)
                 self.assertGreater((cord.center().Y - station) * direction, p.yoke_thickness / 2 + 3.0)
-                self.assertGreater(cord.min.Y, rear_end if where == "Fore" else p.aft_stub_length)
-                self.assertLess(cord.max.Y, long_end if where == "Fore" else rear_end)
+                self.assertGreater(cord.min.Y, p.barrel_start)
+                self.assertLess(cord.max.Y, p.focus_ring_start)
                 self.assertGreater(collar.distance_to(band), 3.0)
                 # Lying on the barrel, and on the neck of the peg, under its lip.
                 self.assertLess(band.distance_to(lens), 0.01)
@@ -472,7 +461,7 @@ class LensCradleTests(unittest.TestCase):
         parts = {part.label: part for part in leaves(build_camera_support_assembly(self.p))}
         printed = ("Cradle shoe", "Aft yoke", "Fore yoke", "Phone rest", "Aft collar", "Fore collar")
         let_in = (" screw", " magnet", " rod")  # Threaded into, or let into, a printed part.
-        optics = {"Telephoto envelope", "Focus ring"}
+        optics = {"Lens body", "Focus ring"}
         for a, b in near_pairs_among(parts.values()):
             labels = (a.label, b.label)
             if not own.intersection(labels) or "Optical axis" in labels or set(labels) == optics:
@@ -490,7 +479,7 @@ class LensCradleTests(unittest.TestCase):
     def test_rejects_collars_off_the_clampable_barrel(self):
         for bad in (
             {"aft_station": 10.0},
-            {"aft_station": 45.0},
+            {"aft_station": 18.0},  # Rear face on the shoulder, 0.7 mm short of the barrel.
             {"fore_station": 100.0},
             {"yoke_boss_length": 6.0},
         ):

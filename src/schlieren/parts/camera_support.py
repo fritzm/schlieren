@@ -17,11 +17,11 @@ hanging from it. Two separate rail fixtures:
   phone needs only this part redesigned.
 
 The cradle parts are modeled in detail: fillets, pad pockets, clamp ear, insert holes, joint, and pegs. The
-lens and hardware are envelopes, except the McMaster screws, thumb nuts, inserts, dowel pins, and the collar
-clamp screws and nuts, which are vendor models; the rail clamp screws are not drawn. The phone rest has no retainer or
-safety catch yet. The phone is modeled in `parts/phone.py` from the §9.1 measurements and Apple's drawing,
-and the lens section lengths and barrel diameter are measured (§9.2); the focus-ring diameter is
-assumed, and the lens aft end is taken to be at the phone's back.
+hardware is envelopes, except the McMaster screws, thumb nuts, inserts, dowel pins, and the collar clamp
+screws and nuts, which are vendor models; the rail clamp screws are not drawn. The phone rest has no retainer
+or safety catch yet. The phone is modeled in `parts/phone.py` from the §9.1 measurements and Apple's drawing,
+and the lens in `parts/lens.py` from the §9.2 measurements (the focus-ring diameter is assumed). The lens aft
+end, the end of its thread boss, is taken to be at the phone's back.
 
 Coordinates: the §3.4 imaging rail frame, +x right, +y along the rail toward the mirror, z up from the rail
 top. y=0 is the back of the cased phone.
@@ -72,8 +72,6 @@ from schlieren.palette import (
     BLACK_ANODIZED,
     BLACK_OXIDE,
     BRASS,
-    FOCUS_RING_GRAY,
-    LENS_BLACK,
     METAL,
     PRINTED_BLUE,
     PRINTED_GREEN,
@@ -82,10 +80,11 @@ from schlieren.palette import (
     STEEL,
 )
 from schlieren.parts.carriage import CarriageParameters, build_carriage, support_location
+from schlieren.parts.lens import LensParameters, build_lens
 from schlieren.parts.phone import PhoneParameters, build_phone
 from schlieren.parts.rail import build_rail
 from schlieren.parts.rail_shoe import RailShoeParameters, side_clamp_hardware
-from schlieren.standards import INCH, MAGNET_POCKET_CLEARANCE, OPTICAL_HEIGHT
+from schlieren.standards import MAGNET_POCKET_CLEARANCE, OPTICAL_HEIGHT
 from schlieren.vendor_cad import (
     MCMASTER_92815A202_HEIGHT,
     MCMASTER_93339A252_BALL_DIAMETER,
@@ -119,15 +118,8 @@ class CameraSupportParameters:
     # Phone in its case, landscape, screen aft (§9.1), Main camera (the lower aperture in portrait) on the axis.
     phone: PhoneParameters = field(default_factory=PhoneParameters)
 
-    # Lens sections from the aft end, measured (§9.2): aft stub, rear barrel section, long barrel section,
-    # focus ring, front lip. Both barrel sections are 37.0 mm in diameter to within 0.05 mm.
-    lens_diameter: float = 37.0
-    aft_stub_length: float = 0.565 * INCH
-    rear_section_length: float = 1.300 * INCH
-    long_section_length: float = 2.25 * INCH
-    focus_ring_length: float = 0.455 * INCH
-    front_lip_length: float = 0.175 * INCH
-    focus_ring_diameter: float = 39.0  # Assumed, for the picture only.
+    # Telephoto (§9.2): boss, shoulder, barrel, and focus ring, measured from the aft end.
+    lens: LensParameters = field(default_factory=LensParameters)
 
     # Adjusters (§9.7): McMaster 93339A252 ball-tip screw in a 94459A797 heat-set insert, with a 92815A202
     # thumb nut locked mid-screw.
@@ -274,19 +266,23 @@ class CameraSupportParameters:
         return self.optical_height - self.phone.camera_height_above_edge
 
     @property
+    def lens_diameter(self) -> float:
+        """The main barrel, which the collars clamp."""
+        return self.lens.barrel_diameter
+
+    @property
     def lens_length(self) -> float:
-        """Sum of the measured sections; §9.2 also lists an overall length of about 116.8 mm."""
-        return (
-            self.aft_stub_length
-            + self.rear_section_length
-            + self.long_section_length
-            + self.focus_ring_length
-            + self.front_lip_length
-        )
+        """Overall, from the aft end of the thread boss; §9.2 also lists about 116.8 mm."""
+        return self.lens.length
+
+    @property
+    def barrel_start(self) -> float:
+        """From the aft end: where the main barrel begins, past the boss and the shoulder."""
+        return self.lens.barrel_start
 
     @property
     def focus_ring_start(self) -> float:
-        return self.aft_stub_length + self.rear_section_length + self.long_section_length
+        return self.lens.focus_ring_start
 
     @property
     def stations(self) -> tuple[float, float]:
@@ -387,11 +383,10 @@ class CameraSupportParameters:
 
     def validate(self) -> None:
         self.phone.validate()
+        self.lens.validate()
         half = self.collar_width / 2
-        if self.aft_station - half < self.aft_stub_length:
-            raise ValueError("The aft collar must sit on the rear cylindrical section")
-        if self.aft_station + half > self.aft_stub_length + self.rear_section_length:
-            raise ValueError("The aft collar must sit on the rear cylindrical section")
+        if self.aft_station - half < self.barrel_start:
+            raise ValueError("The aft collar must sit on the main barrel")
         if self.fore_station + half >= self.focus_ring_start:
             raise ValueError("The fore collar must stay behind the focus ring")
         r_ = self.rail_shoe
@@ -957,7 +952,7 @@ def build_camera_support_assembly(
     side_screws: bool = False,
     include_cassette: bool = False,
 ) -> Compound:
-    """The support on the imaging rail, with the phone and the lens envelope and, optionally, the cutoff station.
+    """The support on the imaging rail, with the phone and the lens and, optionally, the cutoff station.
 
     side_screws adds the side-slot screws and washers that fix the cradle shoe and the cutoff post's rail shoe
     to the rail; include_cassette seats the cassette in the cutoff carriage."""
@@ -965,9 +960,7 @@ def build_camera_support_assembly(
     p.validate()
     axis_z = p.optical_height
     phone = build_phone(p.phone)
-    lens = y_cylinder(p.lens_diameter, 0, axis_z, 0, p.lens_length)
-    focus_ring_end = p.focus_ring_start + p.focus_ring_length
-    ring = y_cylinder(p.focus_ring_diameter, 0, axis_z, p.focus_ring_start, focus_ring_end)
+    lens = build_lens(p.lens)
     rail_center = p.lens_length + STAND_ALONE_RAIL_PAST_LENS - STAND_ALONE_RAIL_LENGTH / 2
     rail = Pos(0, rail_center, 0) * build_rail(STAND_ALONE_RAIL_LENGTH)
     axis = y_cylinder(
@@ -978,8 +971,7 @@ def build_camera_support_assembly(
         labeled(build_cradle_shoe(p), "Cradle shoe", PRINTED_ORANGE),
         labeled(build_phone_rest(p), "Phone rest", PRINTED_BLUE),
         place(Pos(0, 0, axis_z), phone),
-        labeled(lens, "Telephoto envelope", LENS_BLACK),
-        labeled(ring, "Focus ring", FOCUS_RING_GRAY),
+        place(Pos(0, 0, axis_z), lens),
         labeled(axis, "Optical axis", AXIS_RED),
     ]
     if side_screws:

@@ -84,7 +84,7 @@ class OpticalHeadTests(unittest.TestCase):
         self.assertAlmostEqual(moved.slit_post_station, base.slit_post_station)
 
     def test_lens_front_keeps_the_assumed_gap_to_the_slip_ring(self):
-        (lens,) = by_label(self.imaging, "Telephoto envelope")
+        (lens,) = by_label(self.imaging, "Lens body")
         (ring,) = by_label(self.imaging, "SM1RC M ring")
         gap = ring.bounding_box().min.Y - lens.bounding_box().max.Y
         self.assertAlmostEqual(gap, 10.0, delta=0.05)

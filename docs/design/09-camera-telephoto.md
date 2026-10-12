@@ -51,24 +51,27 @@ Initial recording modes:
 ### 9.2 Telephoto
 
 - iOgrapher proSnap 7×
-- 17 mm mount
-- approximately 37.0 mm diameter
-- approximately 116.8 mm long
+- 17 mm camera-standard mount
+- approximately 37.0 mm barrel diameter
 - measured mass approximately 215 g
 
-Measured barrel sections, from the aft end forward:
+Measured sections, from the aft end forward:
 
-| Section                 | Length              | Outside diameter    |
-|-------------------------|---------------------|---------------------|
-| aft end                 | 0.565 in / 14.4 mm  | not measured        |
-| rear cylindrical barrel | 1.300 in / 33.0 mm  | 1.457 in / 37.01 mm |
-| long cylindrical barrel | 2.25 in / 57.2 mm   | 1.459 in / 37.06 mm |
-| focus ring              | 0.455 in / 11.6 mm  | not measured        |
-| front lip               | 0.175 in / 4.4 mm   | not measured        |
+| Section                    | Length              | Outside diameter    |
+|----------------------------|---------------------|---------------------|
+| threaded boss ring (17 mm) | 0.10 in / 2.5 mm    | 17 mm thread        |
+| shoulder                   | 0.40 in / 10.2 mm   | 1.26 in / 32.0 mm   |
+| main barrel                | 4.285 in / 108.8 mm | about 37.0 mm       |
 
-Both cylindrical sections are suitable for clamping, giving about 90 mm of clampable barrel from 14.4 mm to
-104.5 mm from the aft end. The focus ring must stay clear. The measured sections sum to 4.745 in / 120.5 mm,
-about 3.7 mm more than the overall length listed above; the difference is not resolved.
+The overall length is 4.785 in / 121.5 mm. The boss threads into the lens mount on the phone case, and the
+shoulder seats against the mount; the model takes the aft end of the boss to be at the back plane of the
+cased phone. The main barrel is 1.457 in / 37.01 mm in diameter at its rear end and 1.459 in / 37.06 mm
+further forward. The focus ring, 0.455 in / 11.6 mm long, ends 0.175 in / 4.4 mm behind the front of the
+barrel, so it starts 105.5 mm from the aft end. The barrel is clampable from 12.7 mm to the focus ring, about
+93 mm, and the focus ring must stay clear. The overall length is about 4.7 mm more than the 116.8 mm listed
+for the lens; the difference is not resolved.
+
+The lens is modeled in `src/schlieren/parts/lens.py`, for visualization only.
 
 The lens barrel, rather than the phone shell, is the preferred transverse optical datum because accurate lens
 centering minimizes vignetting.
@@ -114,7 +117,7 @@ mount. Two separate rail fixtures carry them:
   <img src="figures/camera-support.png" width="500" style="max-width: 90%"
        alt="Lens cradle and phone rest on the imaging rail: two collars on the lens barrel, each on a pair of inclined screws in a yoke bolted to the cradle shoe, a retaining band round the barrel beside each yoke, and the phone hanging from the lens with its lower edge on the rest arm">
   <br>
-  <em>Fig. 10. Lens cradle and phone rest on the imaging rail, with the phone and the lens envelope</em>
+  <em>Fig. 10. Lens cradle and phone rest on the imaging rail, with the phone and the lens</em>
 </p>
 
 The body is located by six contacts and no more, so adjusting one station does not strain the lens mount:
@@ -132,8 +135,8 @@ about 1.3 N in shear (calculated), against roughly 170 N·mm of bending if the l
 the phone.
 
 The model is `src/schlieren/parts/camera_support.py`. It holds the printed parts, with their fits, pockets,
-fillets, and wall thicknesses, and checks contacts, clearances, and the lens and cord loads; the lens and
-purchased hardware are envelopes or vendor models. The phone is modeled in
+fillets, and wall thicknesses, and checks contacts, clearances, and the lens and cord loads; purchased
+hardware is envelopes or vendor models. The phone is modeled in
 `src/schlieren/parts/phone.py` ([§9.1](#91-camera)).
 
 ### 9.5 Lens cradle
@@ -145,10 +148,9 @@ adjusting screws; one shoe straddles the rail and carries both yokes.
 
 Each collar is a thin ring on the barrel with a clamp ear on top and a flat pad platform at each screw:
 
-- the aft collar on the rear cylindrical section, centered about 24 mm from the lens aft end, which leaves
-  finger room for its thumb nuts ahead of the phone; the fore collar on the long cylindrical section, centered
-  about 96.5 mm from the aft end, with its front face about 2 mm behind the focus ring; about 72.5 mm between
-  them;
+- the aft collar centered about 24 mm from the lens aft end, which leaves finger room for its thumb nuts ahead
+  of the phone; the fore collar centered about 96.5 mm from the aft end, with its front face about 3 mm behind
+  the focus ring; about 72.5 mm between them;
 - 12 mm wide, with a 3 mm wall round a bore of 37.3 mm, the measured 37.0 mm barrel plus a 0.3 mm diametral
   allowance, so a collar is 43.3 mm across. The wall is thin because the pad platforms carry the local
   thickness; the pad loads are a few newtons, so stiffness is not limiting;
@@ -325,8 +327,8 @@ crossbar face. The peg has a 4 mm stem and a 6 mm lip; the ring lies on the stem
   pair receives the hold-down of 5 N in total from the two bands (calculated), about 4.2 N from its own band
   and about 0.8 N from the other. That raises the tap threshold at the fore end to roughly 13–14 N.
 - The legs clear the thumb nuts by more than 5 mm, so the cord stays out of the way of the fingers.
-- To fit, slide the rings over the focus ring onto the bare barrel before clamping the collars on; refitting
-  one afterwards means stretching it round the other collar and its ear. A band stays on the lens when the
+- To fit, slide the rings over the front of the lens onto the bare barrel before clamping the collars on;
+  refitting one afterwards means stretching it round the other collar and its ear. A band stays on the lens when the
   lens is lifted out with the peg end unhooked.
 
 **Provisional:** the contact loads rest on the assumed balance point above, and the ring size
