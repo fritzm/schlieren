@@ -13,11 +13,14 @@ from schlieren.parts.light_source import (
     WHITE,
     WHOLE_IN_SECTION,
     LightSourceParameters,
+    build_drilled_cap,
+    build_drilled_heatsink,
     build_led_package,
     build_light_source_assembly,
     build_star_board,
     light_source_section,
 )
+from schlieren.parts.light_source_holes import HoleLayoutParameters
 from schlieren.testing import near_pairs_among, slow
 from schlieren.vendor_cad import (
     alpha_cn40_40b,
@@ -276,6 +279,54 @@ class LightSourceTests(unittest.TestCase):
             self.assertLess(lever.max.Y, iris.max.Y)
             self.assertGreater(lever.max.Z, iris.max.Z)
 
+    def test_cap_and_heatsink_are_drilled_through(self):
+        """Each part loses exactly its §6.4 through holes: the cap seven, the heatsink base five."""
+        p, h = self.p, HoleLayoutParameters()
+        kinds = [hole.kind for hole in h.holes()]
+
+        def removed(diameter_of, depth):
+            diameters = [d for d in map(diameter_of, kinds) if d is not None]
+            return len(diameters), sum(math.pi / 4 * d**2 * depth for d in diameters)
+
+        cap_count, cap_volume = removed(h.cap_hole_diameter, p.cap_overall)
+        base_count, base_volume = removed(h.heatsink_hole_diameter, p.heatsink_base)
+        self.assertEqual((cap_count, base_count), (7, 5))
+        cap, heatsink = build_drilled_cap(p, h), build_drilled_heatsink(p, h)
+        self.assertTrue(cap.is_valid and heatsink.is_valid)
+        self.assertEqual((len(cap.solids()), len(heatsink.solids())), (1, 1))
+        # The cap's chamfers and center-drill mark shorten its holes slightly.
+        self.assertAlmostEqual(thorlabs_sm1cp2m().volume - cap.volume, cap_volume, delta=0.1)
+        self.assertAlmostEqual(alpha_cn40_40b().volume - heatsink.volume, base_volume, delta=0.01)
+
+    def test_module_screws_seat_and_stop_inside_the_cap(self):
+        p, h = self.p, HoleLayoutParameters()
+        for board in MODULES:
+            placed = parts_by_label(build_light_source_assembly(p, board))
+            m3 = [placed[f"M3 heatsink screw {i}"].bounding_box() for i in (1, 2, 3)]
+            m2 = [placed[f"M2 board screw {i}"].bounding_box() for i in (1, 2)]
+            base_back = p.heatsink_front - p.heatsink_base
+            for box in m3:  # Head on the pin side of the base, tip inside the cap.
+                self.assertAlmostEqual(box.min.Y, base_back - p.heatsink_screw_head_height, delta=MODEL_MATCH)
+                self.assertAlmostEqual(box.max.Y, base_back + p.heatsink_screw_length, delta=MODEL_MATCH)
+                self.assertGreater(box.max.Y, p.heatsink_front + 2.5)  # At least five threads in the cap.
+                self.assertLess(box.max.Y, p.cap_face)
+            board_top = p.cap_face + board.thickness
+            washer_top = board_top + p.board_washer_thickness
+            for i in (1, 2):  # Washer on the board, under the head.
+                washer = placed[f"M2 board washer {i}"].bounding_box()
+                self.assertAlmostEqual(washer.min.Y, board_top, delta=MODEL_MATCH)
+                self.assertAlmostEqual(washer.max.Y, washer_top, delta=MODEL_MATCH)
+                self.assertAlmostEqual(washer.center().X, m2[i - 1].center().X, delta=MODEL_MATCH)
+            for box in m2:  # Head on the washer, tip short of the heatsink face, at least five threads in.
+                self.assertAlmostEqual(box.max.Y, washer_top + p.board_screw_head_height, delta=MODEL_MATCH)
+                self.assertAlmostEqual(box.min.Y, washer_top - p.board_screw_length, delta=MODEL_MATCH)
+                self.assertGreater(box.min.Y, p.heatsink_front)
+                self.assertGreater(p.cap_face - box.min.Y, 2.0)
+            # Layout +x is the assembly's -x, +y its +z.
+            centers = {(round(-b.center().X, 3), round(b.center().Z - p.optical_height, 3)) for b in m3 + m2}
+            layout = {(round(k.x, 3), round(k.y, 3)) for k in h.holes() if k.kind != "lead"}
+            self.assertEqual(centers, layout)
+
     @slow
     def test_assembly_parts_do_not_interfere(self):
         # The LED module and the SM1V05 group each hold their own relative placement whatever the board or the
@@ -291,6 +342,13 @@ class LightSourceTests(unittest.TestCase):
             "SM1D12 iris lever",
         }
         checked = set()
+        # A screw overlaps the cap only by its thread in the tap-drilled hole: the ring between the tap drill
+        # and the thread major diameter, at most the cap thickness long.
+        h = HoleLayoutParameters()
+        thread_ring = {
+            "M3 heatsink screw": h.m3_thread_major**2 - h.m3_tap_drill**2,
+            "M2 board screw": h.m2_thread_major**2 - h.m2_tap_drill**2,
+        }
 
         def scope(a, b, board, engagement):
             labels = {a, b}
@@ -316,6 +374,11 @@ class LightSourceTests(unittest.TestCase):
                         continue
                     if {a, b} == {"SM1D12 iris", "SM1D12 iris lever"}:
                         continue  # One vendor model: the lever is drawn seated in its actuating ring.
+                    screw = next((k for k in thread_ring if k in a or k in b), None)
+                    if screw and "SM1CP2M cap" in (a, b):
+                        limit = math.pi / 4 * thread_ring[screw] * self.p.cap_overall
+                        self.assertLess(overlap.volume, limit, (board.name, e, a, b))
+                        continue
                     # Only the inch-rounded TR50/M model may overlap its seat, by that rounding.
                     self.assertIn("TR50 M post", (a, b), (board.name, e, a, b))
                     bb = overlap.bounding_box()

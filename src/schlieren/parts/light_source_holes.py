@@ -17,10 +17,15 @@ from itertools import combinations
 from math import hypot
 
 from schlieren.hardware import M3_CLEARANCE_DIAMETER, M3_SOCKET_HEAD_DIAMETER
-from schlieren.parts.light_source import STAR_NOTCH_CENTER_RADIUS, STAR_NOTCH_WIDTH
 from schlieren.standards import INCH
 
 Point = tuple[float, float]
+
+# Star-board outline, NewEnergy LST1-01F06 drawing: a hexagon with a U-notch at each corner. Used as a
+# representative outline for both boards; transfer hole geometry from the physical boards, not from this.
+STAR_NOTCH_COUNT = 6
+STAR_NOTCH_WIDTH = 0.125 * INCH
+STAR_NOTCH_CENTER_RADIUS = 0.375 * INCH
 
 
 @dataclass(frozen=True)

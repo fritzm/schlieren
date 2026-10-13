@@ -16,22 +16,40 @@ SMR1/M, SM1CP2M, SM1V05, ACL2520U-A, SM1L03, SM1D12; Alpha CN40-40B) or, for the
 star board and LED package, representative solids built from the outline
 drawings, for viewing and clearance checks. The
 SM1L03's own retaining ring is not modeled: the iris thread occupies its place
-at the tube's open end. Dimension sources are noted per field: catalog values
+at the tube's open end. The cap and the heatsink base carry the §6.4 holes
+(`light_source_holes`), with the McMaster heatsink screws, board screws, and
+insulating washers as vendor models; the leads are not modeled.
+Dimension sources are noted per field: catalog values
 are from the drawings in docs/reference/.
 """
 
 from dataclasses import dataclass
+from functools import cache
 from math import isfinite
 
 from build123d import Circle, Compound, Pos, Rectangle, RegularPolygon, Rot, Sphere, extrude
 
-from schlieren.cad import assembly, centered_box, floor_box, labeled, z_cylinder
-from schlieren.palette import BLACK_ANODIZED, GLASS, LED_YELLOW, METAL, SOLDER_MASK_WHITE
+from schlieren.cad import CUT_OVERRUN, assembly, centered_box, floor_box, labeled, y_cylinder, z_cylinder
+from schlieren.palette import BLACK_ANODIZED, GLASS, LED_YELLOW, METAL, NYLON, SOLDER_MASK_WHITE
+from schlieren.parts.light_source_holes import (
+    STAR_NOTCH_CENTER_RADIUS,
+    STAR_NOTCH_COUNT,
+    STAR_NOTCH_WIDTH,
+    HoleLayoutParameters,
+)
 from schlieren.parts.rail_shoe import post_stack
 from schlieren.standards import DATUM_DISC_THICKNESS, INCH, OPTICAL_HEIGHT, POST_DIAMETER, POST_LENGTH
 from schlieren.validation import require_positive_dimensions
 from schlieren.vendor_cad import (
+    MCMASTER_91292A111_HEAD_HEIGHT,
+    MCMASTER_91292A111_LENGTH,
+    MCMASTER_91545A410_THICKNESS,
+    MCMASTER_92095A452_HEAD_HEIGHT,
+    MCMASTER_92095A452_LENGTH,
     alpha_cn40_40b,
+    mcmaster_91292a111,
+    mcmaster_91545a410,
+    mcmaster_92095a452,
     thorlabs_acl2520u_a,
     thorlabs_sm1cp2m,
     thorlabs_sm1d12,
@@ -41,20 +59,20 @@ from schlieren.vendor_cad import (
 )
 
 REFERENCE_HARDWARE_LABEL = "Reference hardware"
+HEATSINK_SCREW_LABEL = "M3 heatsink screw"  # Numbered 1-3, in the order of the layout's M3 holes.
+BOARD_SCREW_LABEL = "M2 board screw"  # Numbered 1-2, in the order of the layout's M2 holes.
+BOARD_WASHER_LABEL = "M2 board washer"  # One under each board screw head, numbered with it.
 WHOLE_IN_SECTION = (  # The LED module and condenser, shown entire in light_source_section.
     "CN40-40B heatsink",
     "SM1CP2M cap",
     "LED star board",
     "LED package",
     "ACL2520U-A condenser",
+    *(f"{HEATSINK_SCREW_LABEL} {i}" for i in (1, 2, 3)),
+    *(f"{BOARD_SCREW_LABEL} {i}" for i in (1, 2)),
+    *(f"{BOARD_WASHER_LABEL} {i}" for i in (1, 2)),
 )
 SECTION_BOX_SIZE = 1000.0  # Cutting box for light_source_section; larger than the module.
-
-# Star-board outline, NewEnergy LST1-01F06 drawing: a hexagon with a U-notch at each corner. Used as a
-# representative outline for both boards; transfer hole geometry from the physical boards, not from this.
-STAR_NOTCH_COUNT = 6
-STAR_NOTCH_WIDTH = 0.125 * INCH
-STAR_NOTCH_CENTER_RADIUS = 0.375 * INCH
 
 
 @dataclass(frozen=True)
@@ -127,6 +145,13 @@ class LightSourceParameters:
     heatsink_diameter: float = 40.0
     heatsink_height: float = 40.0
     heatsink_base: float = 3.0
+    # McMaster 91292A111 M3 × 6 mm socket-head heatsink screws; **provisional** length (§6.2).
+    heatsink_screw_length: float = MCMASTER_91292A111_LENGTH
+    heatsink_screw_head_height: float = MCMASTER_91292A111_HEAD_HEIGHT
+    # McMaster 92095A452 M2 × 5 mm button-head board screws, each on a 91545A410 nylon washer (§6.4).
+    board_screw_length: float = MCMASTER_92095A452_LENGTH
+    board_screw_head_height: float = MCMASTER_92095A452_HEAD_HEIGHT
+    board_washer_thickness: float = MCMASTER_91545A410_THICKNESS
     # Estimates and allowances.
     solder_thickness: float = 0.07  # Estimated LED-to-star solder layer.
     sleeve_to_board_clearance: float = 0.3  # Axial, SM1V05 sleeve end to star top face.
@@ -237,7 +262,31 @@ def build_led_package(board):
     return package + Pos(0, 0, dome_center) * hemisphere
 
 
-def build_light_source_assembly(p=None, board=GREEN, engagement=None, side_screws=False):
+def _drilled(part, holes, diameter_of, y0, y1):
+    """A vendor part (axis +Y) with the layout's holes cut through it between y0 and y1.
+
+    The layout is a plan view from the LED side, so its +x is the assembly's -x and its +y the assembly's +z.
+    """
+    for hole in holes.holes():
+        diameter = diameter_of(hole.kind)
+        if diameter is not None:
+            part -= y_cylinder(diameter, -hole.x, hole.y, y0 - CUT_OVERRUN, y1 + CUT_OVERRUN)
+    return part
+
+
+@cache
+def build_drilled_cap(p, holes):
+    """SM1CP2M cap in its vendor frame, drilled through: M3 and M2 tap drills (threads not cut), lead holes."""
+    return _drilled(thorlabs_sm1cp2m(), holes, holes.cap_hole_diameter, p.heatsink_front, p.cap_face)
+
+
+@cache
+def build_drilled_heatsink(p, holes):
+    """CN40-40B in its vendor frame, its base drilled through: M3 clearance and lead holes."""
+    return _drilled(alpha_cn40_40b(), holes, holes.heatsink_hole_diameter, -p.heatsink_base, 0)
+
+
+def build_light_source_assembly(p=None, board=GREEN, engagement=None, side_screws=False, holes=None):
     """Purchased parts in rail-top coordinates; the post is centered at the SMR1/M midplane.
 
     The post, the printed rail shoe under it, and the shoe's vendor hardware are grouped as REFERENCE_HARDWARE_LABEL;
@@ -245,6 +294,8 @@ def build_light_source_assembly(p=None, board=GREEN, engagement=None, side_screw
     """
     p = p or LightSourceParameters()
     p.validate()
+    holes = holes or HoleLayoutParameters()
+    holes.validate()
     engagement = p.focus_engagement(board) if engagement is None else engagement
     p.gap(board, engagement)  # Range check.
     z = p.optical_height
@@ -261,8 +312,8 @@ def build_light_source_assembly(p=None, board=GREEN, engagement=None, side_screw
     # bears on that face; the lens sits on the SM1V05 seat under its retaining ring; the SM1L03 seats on the
     # SM1V05 open end and the iris on the SM1L03 open end.
     vendor_parts = {
-        "CN40-40B heatsink": (alpha_cn40_40b(), p.heatsink_front),
-        "SM1CP2M cap": (thorlabs_sm1cp2m(), 0),
+        "CN40-40B heatsink": (build_drilled_heatsink(p, holes), p.heatsink_front),
+        "SM1CP2M cap": (build_drilled_cap(p, holes), 0),
         "SMR1 M ring": (thorlabs_smr1_m(), 0),
         "SM1V05 body": (sm1v05_body, p.sleeve_end_u(engagement)),
         "SM1NT lock ring": (lock_ring, p.smr1_thickness),
@@ -286,6 +337,34 @@ def build_light_source_assembly(p=None, board=GREEN, engagement=None, side_screw
     children.append(
         labeled(build_led_package(board), "LED package", LED_YELLOW, Pos(0, led_face, z) * toward_lens)
     )
+    # The M3 screws enter from the pin side of the heatsink base, into the cap; the M2 screws, each on a nylon
+    # washer on the board top, pass through its notches into the cap.
+    board_top = p.cap_face + board.thickness
+    toward_cap = Rot(X=90)  # Hardware-local +z to -y.
+    washer_top = board_top + p.board_washer_thickness
+    # By hole kind: (model, label, color, u of the model's z=0 face, facing), outermost part last.
+    hardware = {
+        "m3": [
+            (
+                mcmaster_91292a111(),
+                HEATSINK_SCREW_LABEL,
+                METAL,
+                p.heatsink_front - p.heatsink_base,
+                toward_lens,
+            )
+        ],
+        "m2": [
+            (mcmaster_91545a410(), BOARD_WASHER_LABEL, NYLON, washer_top, toward_cap),
+            (mcmaster_92095a452(), BOARD_SCREW_LABEL, METAL, washer_top, toward_cap),
+        ],
+    }
+    counts = dict.fromkeys(hardware, 0)
+    for hole in holes.holes():
+        if hole.kind in hardware:
+            counts[hole.kind] += 1
+            for part, label, color, u, facing in hardware[hole.kind]:
+                loc = Pos(-hole.x, u, z + hole.y) * facing  # Layout +x is the assembly's -x (see _drilled).
+                children.append(labeled(part, f"{label} {counts[hole.kind]}", color, loc))
     return assembly("Light source", children)
 
 

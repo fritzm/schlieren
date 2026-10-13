@@ -30,6 +30,7 @@ CHROME_CANDIDATES = (
     "google-chrome",
     "chromium",
     "chromium-browser",
+    "/mnt/c/Program Files/Google/Chrome/Application/chrome.exe",  # Windows Chrome, from WSL.
 )
 CHROME_LOAD_BUDGET_MS = 15000  # Virtual time allowed for the page (KaTeX from the CDN) before printing.
 KATEX_CDN = "https://cdn.jsdelivr.net/npm/katex@0.16.11/dist"
@@ -117,17 +118,29 @@ def find_chrome() -> str:
     raise SystemExit("--pdf needs Google Chrome or Chromium installed to print the document")
 
 
+def windows_path(path: Path) -> str:
+    """A WSL path as the Windows path a Windows program needs."""
+    return subprocess.run(
+        ["wslpath", "-w", str(path)], check=True, capture_output=True, text=True
+    ).stdout.strip()
+
+
 def print_pdf(html: Path, pdf: Path) -> None:
+    chrome = find_chrome()
+    # A Windows Chrome run from WSL takes Windows paths, not WSL paths or file:// URLs of them.
+    windows = chrome.endswith(".exe")
+    target = windows_path(pdf.resolve()) if windows else pdf.resolve()
+    source = windows_path(html.resolve()) if windows else html.resolve().as_uri()
     subprocess.run(
         [
-            find_chrome(),
+            chrome,
             "--headless",
             "--disable-gpu",
             "--no-pdf-header-footer",
             "--generate-pdf-document-outline",
             f"--virtual-time-budget={CHROME_LOAD_BUDGET_MS}",
-            f"--print-to-pdf={pdf.resolve()}",
-            html.resolve().as_uri(),
+            f"--print-to-pdf={target}",
+            source,
         ],
         check=True,
         capture_output=True,

@@ -101,6 +101,19 @@ MCMASTER_93475A240_DIAMETER = 10.0
 # (12 mm under the head plus the head), Ø5.5 mm head of 3 mm at +Z, Ø3 mm plain shank to -Z.
 MCMASTER_91292A114_LENGTH = 12.0  # Nominal: under the head.
 MCMASTER_91292A114_HEAD_HEIGHT = 3.0
+# McMaster 91292A111 model (M3 × 6, no threads): the 91292A114 layout, centered on its 9 mm overall length.
+MCMASTER_91292A111_LENGTH = 6.0  # Nominal: under the head.
+MCMASTER_91292A111_HEAD_HEIGHT = 3.0
+MCMASTER_91292A111_HEAD_DIAMETER = 5.5
+# McMaster 92095A452 model (M2 × 5 button head, no threads): axis +Z through the origin, Ø2 mm plain shank from
+# z=-2.5 mm to the head's bearing face at z=2.5 mm, Ø3.5 mm button head of 1.3 mm above it.
+MCMASTER_92095A452_LENGTH = 5.0  # Nominal: under the head.
+MCMASTER_92095A452_HEAD_HEIGHT = 1.3
+MCMASTER_92095A452_HEAD_DIAMETER = 3.5
+# McMaster 91545A410 model (M2 nylon washer): axis +Z through the origin, centered on its 0.4 mm thickness;
+# Ø5.0 mm OD, Ø2.2 mm ID.
+MCMASTER_91545A410_THICKNESS = 0.4
+MCMASTER_91545A410_DIAMETER = 5.0
 # McMaster 91585A351 (Ø3 × 10 mm) and 91585A457 (Ø4 × 20 mm) dowel pins: axis +X through the origin, centered on
 # the length; chamfered ends.
 MCMASTER_91585A351_DIAMETER = 3.0
@@ -378,6 +391,31 @@ def mcmaster_91292a114() -> Compound:
     """
     shift = (MCMASTER_91292A114_LENGTH - MCMASTER_91292A114_HEAD_HEIGHT) / 2
     return _moved("McMaster-91292A114.step", Pos(0, 0, shift) * Rot(X=180))
+
+
+@cache
+def mcmaster_91292a111() -> Compound:
+    """McMaster 91292A111 M3 × 0.5 × 6 mm 18-8 stainless socket head screw (unthreaded model).
+
+    Axis +Z through the origin, the head's bearing face at z=0 with the head toward -Z and the shank toward +Z.
+    """
+    shift = (MCMASTER_91292A111_LENGTH - MCMASTER_91292A111_HEAD_HEIGHT) / 2
+    return _moved("McMaster-91292A111.step", Pos(0, 0, shift) * Rot(X=180))
+
+
+@cache
+def mcmaster_92095a452() -> Compound:
+    """McMaster 92095A452 M2 × 0.4 × 5 mm 18-8 stainless button head screw (unthreaded model).
+
+    Axis +Z through the origin, the head's bearing face at z=0 with the head toward -Z and the shank toward +Z.
+    """
+    return _moved("McMaster-92095A452.step", Pos(0, 0, MCMASTER_92095A452_LENGTH / 2) * Rot(X=180))
+
+
+@cache
+def mcmaster_91545a410() -> Compound:
+    """McMaster 91545A410 M2 nylon washer; axis +Z through the origin, one face at z=0, the other at +thickness."""
+    return _moved("McMaster-91545A410.step", Pos(0, 0, MCMASTER_91545A410_THICKNESS / 2))
 
 
 @cache

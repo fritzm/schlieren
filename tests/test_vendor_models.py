@@ -53,6 +53,26 @@ MODELS = {
         "McMaster-91116A350.step",
         (v.MCMASTER_91116A350_DIAMETER, v.MCMASTER_91116A350_DIAMETER, v.MCMASTER_91116A350_THICKNESS),
     ),
+    "McMaster 91292A111 socket-head screw": (
+        "McMaster-91292A111.step",
+        (
+            v.MCMASTER_91292A111_HEAD_DIAMETER,
+            v.MCMASTER_91292A111_HEAD_DIAMETER,
+            v.MCMASTER_91292A111_LENGTH + v.MCMASTER_91292A111_HEAD_HEIGHT,
+        ),
+    ),
+    "McMaster 92095A452 button-head screw": (
+        "McMaster-92095A452.step",
+        (
+            v.MCMASTER_92095A452_HEAD_DIAMETER,
+            v.MCMASTER_92095A452_HEAD_DIAMETER,
+            v.MCMASTER_92095A452_LENGTH + v.MCMASTER_92095A452_HEAD_HEIGHT,
+        ),
+    ),
+    "McMaster 91545A410 nylon washer": (
+        "McMaster-91545A410.step",
+        (v.MCMASTER_91545A410_DIAMETER, v.MCMASTER_91545A410_DIAMETER, v.MCMASTER_91545A410_THICKNESS),
+    ),
     "McMaster 93475A240 washer": (
         "McMaster-93475A240.step",
         (v.MCMASTER_93475A240_DIAMETER, v.MCMASTER_93475A240_DIAMETER, v.MCMASTER_93475A240_THICKNESS),
