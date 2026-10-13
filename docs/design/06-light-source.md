@@ -1,46 +1,39 @@
 ## 6. Light source
 
-The light source is a single assembly on one TR50/M post and common rail shoe
-([§5](05-post-support.md#5-common-rail-mounted-post-support)): a Thorlabs SMR1/M holder that carries one of
-two interchangeable threaded LED modules on its rear face and a condensing lens and iris on its forward face.
-The condenser images the LED emitter onto the source slit ([§7](07-source-slit.md#7-source-slit)), and the
-iris sets the angular size of the illumination cone ([§3.2](01-context-and-layout.md#32-source-cone)).
+The light source is a single assembly on one post and common rail shoe
+([§5](05-post-support.md#5-common-rail-mounted-post-support)). A threaded holder carries one of two
+interchangeable threaded LED modules on its rear face, and a condensing lens and iris on its forward face. The
+condenser images the LED emitter onto the source slit ([§7](07-source-slit.md#7-source-slit)), and the iris
+sets the angular size of the illumination cone ([§3.2](01-context-and-layout.md#32-source-cone)).
+
+`src/schlieren/parts/light_source.py` models the stack-up; `uv run light-source` prints the focus ranges.
 
 ### 6.1 Assembly and stack order
 
-Parts:
-
-- threaded LED module, green or white ([§6.2](#62-led-modules))
-- Thorlabs SMR1/M fixed threaded holder
-- Thorlabs SM1V05 adjustable lens cell
-- Thorlabs ACL2520U-A condenser
-- Thorlabs SM1L03 tube
-- Thorlabs SM1D12 adjustable iris
-- Thorlabs SM1CP1 internally threaded protective cap
-- Thorlabs SM1EC2 protective cap
-- TR50/M post + common rail shoe
-
 From the LED to the slit:
 
-1. threaded LED module, its SM1CP2M cap threaded into the LED-side face of the SMR1/M;
-2. SMR1/M on the TR50/M (0.400 in / 10.16 mm thick, SM1 thread through, no lip; 0.870 in / 22.10 mm
-   post-top-to-axis offset);
-3. SM1V05, its externally threaded sleeve entering the slit-side face of the SMR1/M and locked with the
-   included SM1NT. The ACL2520U-A sits in the SM1V05 body with its plano face on the internal seat (toward
-   the LED) and its convex face toward the open end;
-4. SM1L03, threaded into the SM1V05 open end;
-5. SM1D12, threaded into the SM1L03.
+1. threaded LED module ([§6.2](#62-led-modules)), with Thorlabs SM1CP2M cap threaded into the LED-side face of
+   the SMR1/M;
+2. Thorlabs SMR1/M mount (accepts the post);
+3. Thorlabs SM1V05, with its externally threaded sleeve entering the slit-side face of the SMR1/M and locked
+   with the included SM1NT locking ring. A Thorlabs ACL2520U-A condensing lens sits in the SM1V05 body with
+   its plano face on the internal seat (toward the LED) and its convex face toward the open end;
+4. Thorlabs SM1L03 spacer ring, threaded into the SM1V05 open end;
+5. Thorlabs SM1D12 adjustable iris, threaded into the SM1L03.
 
 <p align="center">
   <img src="figures/light-source.png" width="360" style="max-width: 80%"
-       alt="Light source on its TR50/M post and rail shoe: pin-fin heatsink and LED cap behind the SMR1/M, with the SM1V05, SM1L03, and iris ahead of it">
+       alt="Light source on its TR50/M post and rail shoe: pin-fin heatsink and LED cap behind the SMR1/M,
+       with the SM1V05, SM1L03, and iris ahead of it">
   <br>
-  <em>Fig. 4. Light source on its post and rail shoe: heatsink and LED module, SMR1/M, SM1V05, SM1L03, and iris</em>
+  <em>Fig. 4. Light source on its post and rail shoe: heatsink and LED module, SMR1/M, SM1V05, SM1L03, and
+  iris</em>
 </p>
 
 <p align="center">
   <img src="figures/light-source-section.png" width="500" style="max-width: 95%"
-       alt="Light source with the SMR1/M, SM1V05, SM1L03, and iris cut along the optical axis, and the heatsink, cap, star board with LED, and condenser lens shown whole">
+       alt="Light source with the SMR1/M, SM1V05, SM1L03, and iris cut along the optical axis, and the
+       heatsink, cap, star board with LED, and condenser lens shown whole">
   <br>
   <em>Fig. 5. Light source cutaway, showing internal position of LED module and condensing lens</em>
 </p>
@@ -49,28 +42,22 @@ The ACL2520U-A convex vertex sits about 0.7 mm inside the SM1V05 open end, so th
 ahead of the iris; the SM1D12 interferes with the lens if threaded directly into the SM1V05.
 
 The cap and the SM1V05 sleeve share the SMR1/M thread. The cap threads in until its knurled flange seats on
-the SMR1/M face, so the LED position is fixed and the SM1V05 engagement is the focus adjustment
+the SMR1/M face, so the LED position is fixed, and the SM1V05 engagement is the focus adjustment
 ([§6.7](#67-focus-and-module-interchange)). Engagement runs from the Thorlabs minimum of 0.110 in / 2.79 mm to
 about 5.7–5.8 mm, where the sleeve end comes within 0.3 mm of the LED board. Turning the SM1V05 moves the
-lens, SM1L03, and iris together relative to the LED; the resulting few-millimeter iris shift is negligible
+lens and iris together relative to the LED; the resulting few-millimeter iris shift is negligible
 against the 150 mm iris-to-slit spacing.
-
-Thorlabs SM1 part dimensions in this stack-up (SMR1/M, SM1CP2M, SM1V05) are the exact inch-primary values from
-the vendor STEP models in `cad/vendor/`, not the rounded millimeter values on the drawings. The TR50/M is
-metric-primary and keeps its 50 mm / Ø12.7 mm nominals (its STEP model is rounded to inches).
-`src/schlieren/parts/light_source.py` encodes the stack-up; `uv run light-source` prints the focus ranges.
 
 ### 6.2 LED modules
 
-There are two interchangeable LED modules, each a self-contained threaded assembly. Each LED board mounts on
-an identical threaded SM1 carrier so that the SM1 thread and cap flange, rather than the individual MCPCB
-pattern, are the interchange standard.
+There are two interchangeable LED modules, each a self-contained threaded assembly.  The LEDs chosen are on
+industry standard 20mm "star" MCPCB carriers.  Each carrier is mounted on an identical threaded SM1 threaded
+cap, so the SM1 thread and cap flange are the interchange standard.
 
-| | Green module | White module |
-|---|---|---|
-| Emitter | OSRAM OSLON SSL 120, 530 nm nominal | Nichia 519A R9080, 5000 K |
-| Board | NewEnergy star board, LST1-01F06-GRN1-00 | Convoy 20 mm star/DTP carrier |
-| Initial operating current | approximately 350 mA | approximately 500–700 mA |
+| Module | Emitter                             | Board                                    | Initial operating current (mA) |
+|--------|-------------------------------------|------------------------------------------|--------------------------------|
+| Green  | OSRAM OSLON SSL 120, 530 nm nominal | NewEnergy star board, LST1-01F06-GRN1-00 | ~350                           |
+| White  | Nichia 519A R9080, 5000 K           | Convoy 20 mm star/DTP carrier            | ~500–700                       |
 
 Module stack, from the rear toward the condenser:
 
@@ -121,7 +108,8 @@ threading.
 
 Measured star-board thicknesses (calipers):
 
-- green NewEnergy star: 0.0625 in / 1.59 mm (the datasheet lists 0.047 or 0.067 in; the measured value governs)
+- green NewEnergy star: 0.0625 in / 1.59 mm (the datasheet lists 0.047 or 0.067 in; the measured value
+  governs)
 - white Convoy 20 mm star: 0.0590 in / 1.50 mm
 
 Both boards are about 20 mm across (NewEnergy 0.783 in / 19.9 mm, catalog).
@@ -174,10 +162,10 @@ the frame of the pin lattice; the cap and the heatsink are drilled to the same c
 
 - M3 holes: each is the center of a cell of the pin lattice, 4.88 mm from each of four pins, so the Ø5.5 mm
   socket head lands between the pins with 0.73 mm to spare and the key reaches it. Three screws hold the
-  heatsink without a rocking axis; the fourth cell is free but unused. Roughly 70% of each hole's area lies under the star, a small loss of its
-  thermal contact.
-- M2 holes: in the two opposite corner notches of the star on the x axis (the 0.375 in notch center radius). They are covered by the solid heatsink base, so they do not meet the
-  pins.
+  heatsink without a rocking axis; the fourth cell is free but unused. Roughly 70% of each hole's area lies
+  under the star, a small loss of its thermal contact.
+- M2 holes: in the two opposite corner notches of the star on the x axis (the 0.375 in notch center radius).
+  They are covered by the solid heatsink base, so they do not meet the pins.
 - Lead holes: on the axis through the midpoints of two opposite flat edges of the star, tangent to each edge
   at 11.0 mm radius. Each is 1.1 mm from the nearest pins, in the 4.1 mm channel between pin columns.
 - The smallest wall between holes in the cap, measured to the thread major radius, is 4.9 mm. The lead holes'

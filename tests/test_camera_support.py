@@ -401,6 +401,21 @@ class LensCradleTests(unittest.TestCase):
         for part in (cradle, rest):
             self.assertFalse(part.is_inside((0, part.center().Y, -10)))
 
+    def test_side_screws_are_optional_and_cross_the_rest_at_its_clamp_station(self):
+        p = self.p
+        plain = {part.label for part in leaves(self.assembly)}
+        self.assertFalse(any(label.startswith("Phone rest side screw") for label in plain))
+        fitted = build_camera_support_assembly(p, include_cutoff=False, side_screws=True)
+        parts = {part.label: part for part in leaves(fitted)}
+        for side in ("left", "right"):
+            screw = parts[f"Phone rest side screw {side}"].bounding_box()
+            with self.subTest(side=side):
+                self.assertAlmostEqual((screw.min.Y + screw.max.Y) / 2, p.rest_center, places=2)
+                self.assertAlmostEqual(
+                    (screw.min.Z + screw.max.Z) / 2, -p.rail_shoe.rail_height / 2, places=2
+                )
+                self.assertIn(f"Phone rest side screw washer {side}", parts)
+
     def test_yokes_bolt_to_the_shoe_through_a_countersunk_hole_into_an_insert(self):
         p = self.p
         shoe = self.parts["Cradle shoe"]

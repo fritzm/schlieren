@@ -18,9 +18,9 @@ hanging from it. Two separate rail fixtures:
 
 The cradle parts are modeled in detail: fillets, pad pockets, clamp ear, insert holes, joint, and pegs. The
 hardware is envelopes, except the McMaster screws, thumb nuts, inserts, dowel pins, and the collar clamp
-screws and nuts, which are vendor models; the rail clamp screws are not drawn. The phone rest has no retainer
-or safety catch yet. The phone is modeled in `parts/phone.py` from the §9.1 measurements and Apple's drawing,
-and the lens in `parts/lens.py` from the §9.2 measurements (the focus-ring diameter is assumed). The lens aft
+screws and nuts, which are vendor models. The side-slot rail screws of the cradle shoe and the phone rest are
+drawn only when asked for (`side_screws`). The phone rest has no retainer or safety catch yet. The phone is
+modeled in `parts/phone.py` from the §9.1 measurements and Apple's drawing, and the lens in `parts/lens.py` from the §9.2 measurements (the focus-ring diameter is assumed). The lens aft
 end, the end of its thread boss, is taken to be at the phone's back.
 
 Coordinates: the §3.4 imaging rail frame, +x right, +y along the rail toward the mirror, z up from the rail
@@ -977,8 +977,8 @@ def build_camera_support_assembly(
 ) -> Compound:
     """The support on the imaging rail, with the phone and the lens and, optionally, the cutoff station.
 
-    side_screws adds the side-slot screws and washers that fix the cradle shoe and the cutoff post's rail shoe
-    to the rail; include_cassette seats the cassette in the cutoff carriage."""
+    side_screws adds the side-slot screws and washers that fix the cradle shoe, the phone rest, and the cutoff
+    post's rail shoe to the rail; include_cassette seats the cassette in the cutoff carriage."""
     p = p or CameraSupportParameters()
     p.validate()
     axis_z = p.optical_height
@@ -1003,6 +1003,10 @@ def build_camera_support_assembly(
                 labeled(part, f"Cradle shoe {where} {part.label.lower()}", METAL)
                 for part in side_clamp_hardware(p.rail_shoe, y)
             )
+        children.extend(
+            labeled(part, f"Phone rest {part.label.lower()}", METAL)
+            for part in side_clamp_hardware(p.rail_shoe, p.rest_center)
+        )
     # Pads lie with their 10 mm length across the rail: each pad slides that way by the travel of the other
     # screw of its pair, and only slightly along the rail.
     pad = floor_box(p.magnet_length, p.magnet_width, p.magnet_thickness)
