@@ -28,7 +28,8 @@ The common shoe is a printed PLA U-shaped saddle that:
 
 - straddles the 2020 extrusion;
 - locks through the rail side channels with M5 screws into the measured slot geometry
-  ([§4.1](04-frame.md#41-rails)), using the 20-series slot-6 T-nut hardware;
+  ([§4.1](04-frame.md#41-rails)), using the 20-series slot-6 T-nut hardware, with a flat washer under each
+  screw head; the screws and washers are from the general M5 assortment;
 - leaves the rail top available as the datum surface;
 - carries a vertical 12.7 mm through-bore for the TR50/M post.
 

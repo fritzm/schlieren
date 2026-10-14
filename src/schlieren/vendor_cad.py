@@ -115,6 +115,7 @@ MCMASTER_91116A350_DIAMETER = 15.0
 # at +Y; 8 mm across flats (along x), 9.11 mm across corners (along z); two solids (nut, insert).
 MCMASTER_93625A225_HEIGHT = 5.0
 # McMaster 93475A240 model: axis +Z through the origin, centered on its 1 mm thickness; Ø10 mm OD, Ø5.3 mm ID.
+# A stand-in for ordinary M5 flat washers: the part itself is not in the BOM.
 MCMASTER_93475A240_THICKNESS = 1.0
 MCMASTER_93475A240_DIAMETER = 10.0
 # McMaster 91292A114 model (M3 × 12, no threads): axis +Z through the origin, centered on its 15 mm overall length

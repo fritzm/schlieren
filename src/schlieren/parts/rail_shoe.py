@@ -328,7 +328,8 @@ def side_clamp_hardware(p: RailShoeParameters | None = None, y: float = 0.0) -> 
     """The M5 × 12 side-slot screws with flat washers, one on each skirt, entering toward the rail at y.
 
     Each washer bears on its skirt's outer face and the screw on the washer; the screw axes are the side-hole
-    axis, at mid rail height. Each is a labeled vendor model.
+    axis, at mid rail height. Each is a labeled vendor model. The washers are from the general M5 assortment
+    (§5.3); the 93475A240 model stands in for them.
     """
     p = p or RailShoeParameters()
     parts = []

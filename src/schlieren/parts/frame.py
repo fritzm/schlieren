@@ -47,6 +47,8 @@ SIDES = {"Left": -1, "Right": 1}
 # Nominal M5 hardware envelopes (ISO 4762 socket head, ISO 7089 washer, nyloc), for the viewer and stack checks.
 M5_SHANK_DIAMETER = 5.0
 M5_WASHER_DIAMETER = 10.0
+# The foot-block washers are from the general M5 assortment (§4.4), not a purchased McMaster part; the 93475A240
+# model stands in for them, and its 1.0 mm is the nominal thickness, not a measurement.
 M5_WASHER_THICKNESS = MCMASTER_93475A240_THICKNESS
 M5_NYLOC_HEIGHT = MCMASTER_93625A225_HEIGHT
 

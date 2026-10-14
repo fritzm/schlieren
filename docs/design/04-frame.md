@@ -152,8 +152,9 @@ rail and the 20 mm rail is centered across the 50 mm block width.
 
 Each block attaches to the rail bottom slot with two M5 socket-head screws, two flat washers under each head,
 and roll-in/drop-in M5 T-nuts. The two screw holes lie on the rail centerline and are 50 mm apart, symmetrically placed about the
-block center; with the 75 mm block length, each screw center is 12.5 mm from its nearest end. The screws are
-M5 from the general M5 assortment, 20 mm long, through approximately 5.5 mm clearance holes in the plywood.
+block center; with the 75 mm block length, each screw center is 12.5 mm from its nearest end. The screws and
+washers are M5 from the general M5 assortment; the screws are 20 mm long, through approximately 5.5 mm
+clearance holes in the plywood.
 
 The two washers set the screw's depth in the slot. With two nominal 1.0 mm washers and the 12.7 mm block, a
 20 mm screw enters the rail slot by about 5.3 mm, about 1.15 mm short of the 6.45 mm slot floor. A single

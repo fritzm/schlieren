@@ -5,11 +5,11 @@ FRM-003,Tabletop frame,2,"3-hole straight flat joining plates, aluminum",Rail pi
 FRM-004,Tabletop frame,2,"M5 x 50 mm socket head screw, 316 SS",Rail pivots,McMaster,92290A265,10,pack,In hand,§4.3,
 FRM-005,Tabletop frame,2,"M5 x 20 mm unthreaded spacer, SS",Rail pivots,McMaster,92871A091,3,each,In hand,§4.3,
 FRM-006,Tabletop frame,2,"M5 nyloc nuts, 18-8 SS black oxide",Rail pivot nuts,McMaster,93625A225,10,pack,In hand,§4.3,
-FRM-007,Tabletop frame,4,"Oversize M5 washers, 15 mm OD",Rail pivot washers,McMaster,91116A350,10,pack,In hand,§4.3,
+FRM-007,Tabletop frame,4,"Oversize M5 washers, 15 mm OD",Rail pivot washers,McMaster,91116A350,10,pack,In hand,§4.3,"Shared stock with FRM-011: two 10-packs in hand, 12 allocated (4 here, 8 on the yaw clamps); 8 spare."
 FRM-008,Tabletop frame,4,"M5 x 50 mm socket head screw, 316 SS",Yaw clamp screws,McMaster,92290A265,10,pack,In hand,§4.3,
 FRM-009,Tabletop frame,2,"3-hole straight flat joining plates, aluminum",Yaw clamp straps,Amazon,B0G8DCS7VP,10,pack,In hand,§4.3,
 FRM-010,Tabletop frame,4,"M5 thumb nuts, low profile black oxide",Yaw clamp tighteners,McMaster,92815A202,10,pack,In hand,§4.3,
-FRM-011,Tabletop frame,8,"Oversize M5 washers, 15 mm OD",Yaw clamp washers,McMaster,91116A350,10,pack,In hand,§4.3,
+FRM-011,Tabletop frame,8,"Oversize M5 washers, 15 mm OD",Yaw clamp washers,McMaster,91116A350,10,pack,In hand,§4.3,"Shared stock with FRM-007: two 10-packs in hand, 12 allocated (8 here, 4 on the rail pivots); 8 spare."
 FRM-012,Tabletop frame,3,"Adhesive-back Sorbothane bumper, 1-1/4"" OD, 4 lbs. Max",Soft isolation feet,McMaster,8215K2,3,each,In hand,§4.4,
 FRM-013,Tabletop frame,3,"Adhesive-back Sorbothane bumper, 1-1/4"" OD, 10 Lbs. Max",Backup stiffer isolation feet,McMaster,8215K6,3,each,In hand,§4.4,
 FRM-014,Tabletop frame,1,"50 pcs 2020 M5 T nut, roll-in, spring loaded",,Amazon,B0DP6JBX4Y,1,each,In hand,§4.1,
