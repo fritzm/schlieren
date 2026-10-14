@@ -129,8 +129,8 @@ hole geometry from the physical board rather than assuming it from the other mod
 holes permit final centering of the emitter on the cap axis: a 0.3 mm emitter offset moves the slit image
 about 2 mm, so center each board by watching its image on the slit blades before final tightening.
 
-Add thin insulating washers beneath screw heads where necessary to keep the metal screw heads away from
-exposed board contacts:
+A thin insulating washer goes under each screw head, keeping the metal head off exposed board contacts and
+spreading its clamp over the board beside the notch:
 
 - McMaster 91545A410
 - M2 lubricant-filled nylon flat washer
@@ -255,3 +255,6 @@ Module interchange:
 2. unscrew the module (cap and heatsink together) from the SMR1/M, about four turns;
 3. screw in the alternate module until its flange seats;
 4. touch up focus on the closed slit blades if needed.
+
+In transport, the condenser/iris assembly is protected from dust and scratches by a Thorlabs SM1CP1
+internally threaded end cap and an SM1EC2 snap-on dust cap.

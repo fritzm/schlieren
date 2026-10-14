@@ -285,7 +285,8 @@ Front safety retention is intentionally non-stressing:
 
 - loose retainers/fingers prevent escape of the mirror;
 - they apply no deliberate optical preload;
-- any surface that could touch glass should be soft/non-marring.
+- any surface that could touch glass should be soft/non-marring; adhesive-backed F1 felt (McMaster 8334K15) is
+  the provisional facing.
 
 #### Transport sandwich
 
