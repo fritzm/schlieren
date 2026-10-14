@@ -9,6 +9,7 @@ parts as exported, with the base flipped spigot-up and the two plungers laid out
 """
 
 from dataclasses import dataclass
+from functools import cache
 from itertools import pairwise
 from math import cos, pi, radians, tan
 
@@ -32,6 +33,7 @@ from schlieren.cad import (
     compression_spring,
     floor_box,
     labeled,
+    moved,
     place,
     x_cylinder,
     y_cone,
@@ -544,6 +546,9 @@ def _build_fixed_body(p=None):
     return _add_spigot(base - _insert_entry(p), p) & _rotation_envelope(p)
 
 
+# The printed parts depend only on the parameters, not on the pose, so each is built once per parameter set;
+# the cached solids are shared and must not be modified.
+@cache
 def _split_fixed_body(p):
     stock = _build_fixed_body(p)
     width = 2 * (p.side_fastener_x + p.side_lug_radius) + 2  # Includes the side lugs.
@@ -689,6 +694,7 @@ def _insert_entry(p):
     )
 
 
+@cache
 def build_keeper_frame(p=None):
     p = p or CarriageParameters()
     p.validate()
@@ -771,6 +777,7 @@ def _plunger_ear(p, sign, center_y, root_x, bottom):
     return mirror(ear, Plane.YZ) if sign < 0 else ear
 
 
+@cache
 def build_plunger(p=None, *, spring=False):
     """Return plunger at fiducial; spring body mirrored across XZ."""
     p = p or CarriageParameters()
@@ -871,9 +878,9 @@ def build_print_layout(p=None, plunger_gap=5.0):
     for spring in (False, True):
         solid = build_plunger(p, spring=spring)
         if spring:
-            solid = Rot(Z=180) * solid
+            solid = moved(solid, Rot(Z=180))
         box = solid.bounding_box()
-        plungers.append(Pos(-(box.min.X + box.max.X) / 2, next_y - box.min.Y, -box.min.Z) * solid)
+        plungers.append(moved(solid, Pos(-(box.min.X + box.max.X) / 2, next_y - box.min.Y, -box.min.Z)))
         next_y += box.size.Y + plunger_gap
     return {
         "base_plate": labeled(base, "Base plate", loc=Pos(0, 0, p.plate_thickness) * Rot(X=180)),
@@ -963,7 +970,7 @@ def _stack_hardware(p):
 def _datum_pins(p):
     """The three datum brads, head up on the datum face, with the shank trimmed flush with the plate back."""
     # The model's head is toward -z; turned about x it points up with the shank running down.
-    upright = Rot(X=180) * mcmaster_97936a109()
+    upright = moved(mcmaster_97936a109(), Rot(X=180))
     # In the head-underside frame the plate back is at z = -plate_thickness.
     keep = box_between(-2.0, 2.0, -2.0, 2.0, -p.plate_thickness, 2 * p.datum_projection + CUT_OVERRUN)
     trimmed = upright & keep

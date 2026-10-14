@@ -1,4 +1,5 @@
-"""Helpers for the unit tests: a switch for the slow geometry checks, and a cheap overlap prefilter.
+"""Helpers for the unit tests: a switch for the slow geometry checks, models shared by a test class, and a
+cheap overlap prefilter.
 
 The default test run is the fast one, for iterating. Set SCHLIEREN_TESTS=full to include the tests marked
 `slow`, the exhaustive interference, sweep, and clearance checks; run the full set before presenting work.
@@ -23,6 +24,33 @@ def full_run() -> bool:
 def slow(test):
     """Mark a test that takes more than a few seconds; it is skipped unless SCHLIEREN_TESTS=full."""
     return unittest.skipUnless(full_run(), f"slow: set {FULL_ENV}=full or use run-tests --full")(test)
+
+
+class shared:  # noqa: N801 (used as a decorator, like `slow`)
+    """A model built once per test class, on first use, and then shared by that class's tests.
+
+    Decorate a method that takes the class and returns the model; tests read it as an attribute:
+
+        @shared
+        def hardware(cls):
+            return children_by_label(build_carriage(cls.p, include_hardware=True))
+
+    Use it for every model at its default parameters and pose that a test would otherwise build itself, so a
+    module builds each such model once however many tests come to use it. It is built on first use, so a model
+    only the slow tests need costs the default run nothing. The model is shared: tests must not modify it.
+    """
+
+    def __init__(self, build):
+        self.build = build
+        self.__doc__ = build.__doc__
+
+    def __set_name__(self, owner, name):
+        self.name = name
+
+    def __get__(self, instance, owner):
+        value = self.build(owner)
+        setattr(owner, self.name, value)  # Replaces this descriptor, so the build runs once per class.
+        return value
 
 
 def exact_box(shape: Shape) -> BoundBox:

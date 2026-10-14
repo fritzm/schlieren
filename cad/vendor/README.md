@@ -4,6 +4,10 @@ Manufacturer-supplied 3D models of purchased parts, loaded by `schlieren.vendor_
 and clearance checks. Like `docs/reference/`, these are manufacturer specifications, not measured values or
 committed project dimensions.
 
+`schlieren.vendor_cad` keeps a copy of each model's geometry in `.cache/vendor/` (not versioned), because reading
+that back is far faster than parsing the STEP file in every process. An entry is rebuilt when its STEP file
+changes; the directory can be deleted at any time.
+
 Name files `<Brand>-<part>.step` following the `docs/reference/` convention (`/` in part numbers becomes
 `-`). Keep the vendor file unmodified; place it in project coordinates in code, not by re-exporting.
 

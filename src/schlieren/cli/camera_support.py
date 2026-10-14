@@ -5,7 +5,7 @@ from pathlib import Path
 
 from build123d import Pos
 
-from schlieren.cad import assembly, labeled
+from schlieren.cad import assembly, labeled, moved
 from schlieren.cli._common import (
     add_figure_option,
     add_output_option,
@@ -97,7 +97,7 @@ def main() -> None:
             collars = []
             for i, (name, label) in enumerate(named.items()):
                 box = printed[name].bounding_box()
-                shifted = Pos((i - 0.5) * (box.size.X + gap), 0, 0) * printed[name]
+                shifted = moved(printed[name], Pos((i - 0.5) * (box.size.X + gap), 0, 0))
                 collars.append(assembly(label, [labeled(shifted, label)]))
             printed = {"lens_collars": assembly("Lens Collars", collars)}
         show(*printed.values()) if printed else show(

@@ -31,6 +31,7 @@ local +y is rail -y and the spigot, ring, and post are on the mirror side of the
 """
 
 from dataclasses import dataclass
+from functools import cache
 from math import isfinite
 
 from build123d import Axis, Pos, Rot, fillet
@@ -556,6 +557,8 @@ def _magnet_pocket(p, x, z_top, well=0.0):
     return pocket
 
 
+# Built once per parameter set and shared (see parts/carriage.py); the cached solids must not be modified.
+@cache
 def build_slit_head(p=None):
     """The one-piece flexure head, printed back face down."""
     p = p or SlitHeadParameters()
@@ -641,6 +644,7 @@ def build_slit_head(p=None):
     return head
 
 
+@cache
 def build_spigot_adapter(p=None):
     """Flat plate bolted to the head's frame over washer spacers, with the hollow spigot the SM1RC/M clamps.
 

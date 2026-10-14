@@ -14,7 +14,7 @@ from schlieren.parts.frame import (
     build_pivot_plate,
 )
 from schlieren.parts.frame_drawing import pivot_plate_drawing_svg
-from schlieren.testing import near_pairs_among, slow
+from schlieren.testing import near_pairs_among, shared, slow
 from schlieren.vendor_cad import (
     MCMASTER_8215K2_DIAMETER,
     MCMASTER_8215K2_HEIGHT,
@@ -30,6 +30,20 @@ INTERFERENCE_TOLERANCE = 1e-3
 
 
 class FrameTests(unittest.TestCase):
+    @shared
+    def pivot_plate(cls):
+        return build_pivot_plate(cls.p)
+
+    @shared
+    def foot_block(cls):
+        return build_foot_block(cls.p)
+
+    @shared
+    def yawed(cls):
+        """The frame by yaw of both rails: nominal and the two ends of the range."""
+        ends = {yaw: build_frame_assembly(cls.p, left_yaw=yaw, right_yaw=yaw) for yaw in (-MAX_YAW, MAX_YAW)}
+        return {0.0: cls.frame, **ends}
+
     @classmethod
     def setUpClass(cls):
         cls.p = FrameParameters()
@@ -66,7 +80,7 @@ class FrameTests(unittest.TestCase):
 
     def test_pivot_plate_envelope_and_six_holes(self):
         p = self.p
-        plate = build_pivot_plate(p)
+        plate = self.pivot_plate
         self.assertEqual(len(plate.solids()), 1)
         box = plate.bounding_box()
         for actual, expected in (
@@ -89,7 +103,7 @@ class FrameTests(unittest.TestCase):
 
     def test_foot_block_envelope_and_screw_holes(self):
         p = self.p
-        block = build_foot_block(p)
+        block = self.foot_block
         box = block.bounding_box()
         self.assertAlmostEqual(box.size.X, 50.0, places=5)
         self.assertAlmostEqual(box.size.Y, 75.0, places=5)
@@ -186,7 +200,7 @@ class FrameTests(unittest.TestCase):
     def test_pivot_lug_end_hole_is_on_the_pivot_axis_at_any_yaw(self):
         p = self.p
         for yaw in (-MAX_YAW, 0.0, MAX_YAW):
-            frame = build_frame_assembly(p, left_yaw=yaw, right_yaw=yaw)
+            frame = self.yawed[yaw]
             for name, side in SIDES.items():
                 with self.subTest(yaw=yaw, rail=name):
                     lug = self.rail_parts(frame, name)["Pivot lug"]
@@ -197,7 +211,6 @@ class FrameTests(unittest.TestCase):
                     self.assertAlmostEqual(lug.bounding_box().min.Z, 0.0, places=5)
 
     def test_yaw_bolt_clearance_to_rail(self):
-        p = self.p
         nominal = min(
             self.rail_parts(self.frame, name)["Rail"].distance_to(self.fixed[f"{name} {where} yaw screw"])
             for name in SIDES
@@ -205,7 +218,7 @@ class FrameTests(unittest.TestCase):
         )
         self.assertAlmostEqual(nominal, 7.5, delta=0.01)
         for yaw in (-MAX_YAW, MAX_YAW):
-            frame = build_frame_assembly(p, left_yaw=yaw, right_yaw=yaw)
+            frame = self.yawed[yaw]
             closest = min(
                 self.rail_parts(frame, name)["Rail"].distance_to(self.fixed[f"{name} {where} yaw screw"])
                 for name in SIDES
@@ -217,7 +230,7 @@ class FrameTests(unittest.TestCase):
     @slow
     def test_no_part_interference_across_the_yaw_range(self):
         for yaw in (-MAX_YAW, 0.0, MAX_YAW):
-            parts = leaves(build_frame_assembly(self.p, left_yaw=yaw, right_yaw=yaw))
+            parts = leaves(self.yawed[yaw])
             for a, b in near_pairs_among(parts):
                 # A screw passes through its unthreaded nut model; catalog hardware is trusted to fit.
                 if a.label.endswith(" screw") and b.label.endswith(" nut"):

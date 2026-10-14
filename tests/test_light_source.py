@@ -6,7 +6,7 @@ from dataclasses import replace
 
 from build123d import Box, Pos
 
-from schlieren.cad import FROM_CORNER, children_by_label
+from schlieren.cad import FROM_CORNER, children_by_label, moved
 from schlieren.parts.light_source import (
     GREEN,
     MODULES,
@@ -21,7 +21,7 @@ from schlieren.parts.light_source import (
     light_source_section,
 )
 from schlieren.parts.light_source_holes import HoleLayoutParameters
-from schlieren.testing import near_pairs_among, slow
+from schlieren.testing import near_pairs_among, shared, slow
 from schlieren.vendor_cad import (
     alpha_cn40_40b,
     thorlabs_acl2520u_a,
@@ -53,6 +53,11 @@ def parts_by_label(assembly):
 
 
 class LightSourceTests(unittest.TestCase):
+    @shared
+    def modules(cls):
+        """The assembly at focus, by board."""
+        return {board: build_light_source_assembly(cls.p, board) for board in MODULES}
+
     @classmethod
     def setUpClass(cls):
         cls.p = LightSourceParameters()
@@ -123,7 +128,7 @@ class LightSourceTests(unittest.TestCase):
     def test_led_board_placement(self):
         p = self.p
         for board in MODULES:
-            placed = parts_by_label(build_light_source_assembly(p, board)).__getitem__
+            placed = parts_by_label(self.modules[board]).__getitem__
             star = placed("LED star board").bounding_box()
             self.assertAlmostEqual(star.min.Y, p.cap_face, delta=MODEL_MATCH, msg=board.name)
             self.assertAlmostEqual(
@@ -179,8 +184,8 @@ class LightSourceTests(unittest.TestCase):
         self.assertLess(lens.center().Y, p.lens_center_thickness / 2)
         # The retaining ring rests on the convex surface: clear at the seat height, interfering just below it.
         seat = p.lens_retaining_ring_seat
-        self.assertIsNone(lens & (Pos(0, seat, 0) * retaining_ring))  # An empty intersection is None.
-        self.assertGreater((lens & (Pos(0, seat - 0.05, 0) * retaining_ring)).volume, 1e-6)
+        self.assertIsNone(lens & moved(retaining_ring, Pos(0, seat, 0)))  # An empty intersection is None.
+        self.assertGreater((lens & moved(retaining_ring, Pos(0, seat - 0.05, 0))).volume, 1e-6)
         tube = thorlabs_sm1l03().bounding_box()
         self.assertAlmostEqual(tube.min.Y, -p.sm1l03_thread_length, delta=MODEL_MATCH)
         self.assertAlmostEqual(tube.max.Y, p.sm1l03_length, delta=MODEL_MATCH)
@@ -207,7 +212,7 @@ class LightSourceTests(unittest.TestCase):
         self.assertLess(section_area(-p.heatsink_base - 0.1), 0.2 * section_area(-0.5))
 
     def test_section_view(self):
-        module = build_light_source_assembly(self.p)
+        module = self.modules[GREEN]
         section = light_source_section(module)
         labels = {child.label for child in section.children}
         self.assertNotIn("Reference hardware", labels)
@@ -226,7 +231,7 @@ class LightSourceTests(unittest.TestCase):
 
     def test_vendor_model_placement(self):
         p = self.p
-        placed = parts_by_label(build_light_source_assembly(p)).__getitem__
+        placed = parts_by_label(self.modules[GREEN]).__getitem__
 
         post = max(placed("TR50 M post").solids(), key=lambda s: s.volume).bounding_box()
         self.assertAlmostEqual(post.min.Z, p.datum_thickness, delta=0.01)
@@ -301,7 +306,7 @@ class LightSourceTests(unittest.TestCase):
     def test_module_screws_seat_and_stop_inside_the_cap(self):
         p, h = self.p, HoleLayoutParameters()
         for board in MODULES:
-            placed = parts_by_label(build_light_source_assembly(p, board))
+            placed = parts_by_label(self.modules[board])
             m3 = [placed[f"M3 heatsink screw {i}"].bounding_box() for i in (1, 2, 3)]
             m2 = [placed[f"M2 board screw {i}"].bounding_box() for i in (1, 2)]
             base_back = p.heatsink_front - p.heatsink_base
@@ -360,9 +365,10 @@ class LightSourceTests(unittest.TestCase):
 
         p = self.p
         for board in MODULES:
-            for e in p.engagement_range(board):
+            for step, e in enumerate(p.engagement_range(board)):
                 parts = parts_by_label(build_light_source_assembly(p, board, e))
-                self.assertTrue(all(s.is_valid for s in parts.values()))
+                if step == 0:  # The engagement only moves the solids, so check them once per board.
+                    self.assertTrue(all(s.is_valid for s in parts.values()))
                 for first, second in near_pairs_among(parts.values()):
                     a, b = first.label, second.label
                     key = (frozenset((a, b)), scope(a, b, board, e))

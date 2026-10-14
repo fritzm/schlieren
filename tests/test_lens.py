@@ -14,11 +14,24 @@ from schlieren.parts.lens import (
     build_lens_body,
 )
 from schlieren.standards import INCH
+from schlieren.testing import shared
 
 TOL = 1e-3  # mm
 
 
 class LensTests(unittest.TestCase):
+    @shared
+    def front_glass(cls):
+        return build_front_glass(cls.p)
+
+    @shared
+    def lens(cls):
+        return build_lens(cls.p)
+
+    @shared
+    def glass(cls):
+        return build_glass(cls.p)
+
     @classmethod
     def setUpClass(cls):
         cls.p = LensParameters()
@@ -151,7 +164,7 @@ class LensTests(unittest.TestCase):
                     top = floor + p.front_step_depth
                     shelf = solid_in(outer - 0.02, top - 0.5, top) - solid_in(diameter + 0.02, top - 0.5, top)
                     self.assertGreater(shelf, 0.5)
-        glass = build_front_glass(p)
+        glass = self.front_glass
         box = glass.bounding_box()
         self.assertAlmostEqual(box.size.X, p.front_glass_diameter, delta=TOL)
         # Below the bottom step: the glass's front face is the step's floor, and it lies behind it.
@@ -182,11 +195,11 @@ class LensTests(unittest.TestCase):
         self.assertLess(p.focus_ridge_width, pitch - p.focus_ridge_width)
 
     def test_assembly_has_body_and_focus_ring(self):
-        labels = sorted(child.label for child in build_lens(self.p).children)
+        labels = sorted(child.label for child in self.lens.children)
         self.assertEqual(labels, ["Focus ring", "Front glass", "Lens body", "Lens glass"])
 
     def test_boss_is_a_ring_with_the_glass_inset_from_its_end(self):
-        p, glass = self.p, build_glass(self.p).bounding_box()
+        p, glass = self.p, self.glass.bounding_box()
         self.assertAlmostEqual(glass.min.Y, 0.05 * INCH, delta=TOL)  # Measured, §9.2.
         self.assertAlmostEqual(glass.size.X, p.thread_diameter - 2 * 0.10 * INCH, delta=TOL)  # Ring width.
         self.assertAlmostEqual(glass.size.X, p.boss_bore_diameter, delta=TOL)
@@ -199,7 +212,7 @@ class LensTests(unittest.TestCase):
             -p.boss_bore_diameter / 2 + 0.1, p.boss_bore_diameter / 2 - 0.1, 0.0, p.glass_inset, -1, 1
         )
         self.assertLess((self.body & hollow).volume, 1e-6)  # Open in front of the glass.
-        self.assertLess((self.body & build_glass(p)).volume, 1e-6)  # The glass sits in the bore.
+        self.assertLess((self.body & self.glass).volume, 1e-6)  # The glass sits in the bore.
 
 
 if __name__ == "__main__":

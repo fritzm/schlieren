@@ -21,6 +21,7 @@ and the ring and lip lengths, which are measured from the front end of the barre
 """
 
 from dataclasses import dataclass
+from functools import cache
 from math import pi
 
 from build123d import Part, Rot, chamfer, fillet
@@ -149,6 +150,8 @@ class LensParameters:
         return self.length - self.front_lip_length - self.focus_ring_length
 
 
+# Built once per parameter set and shared (see parts/carriage.py); the cached solids must not be modified.
+@cache
 def build_lens_body(p: LensParameters | None = None) -> Part:
     """Boss, shoulder, and main barrel with its root fillet, one solid on the y axis."""
     p = p or LensParameters()
@@ -196,6 +199,7 @@ def _shoulder_edges(body: Part, p: LensParameters, y: float) -> list:
     return _circular_edges(body, y, p.shoulder_diameter)
 
 
+@cache
 def build_focus_ring(p: LensParameters | None = None) -> Part:
     """The focus ring: a sleeve in the barrel's channel, flush with the barrel, with the grip ridges standing
     on it, one solid."""
@@ -218,6 +222,7 @@ def build_focus_ring(p: LensParameters | None = None) -> Part:
     return ring
 
 
+@cache
 def build_glass(p: LensParameters | None = None) -> Part:
     """The glass optic filling the boss ring's bore, its aft face inset from the end of the ring."""
     p = p or LensParameters()
@@ -225,6 +230,7 @@ def build_glass(p: LensParameters | None = None) -> Part:
     return y_cylinder(p.boss_bore_diameter, 0, 0, p.glass_inset, p.bore_depth)
 
 
+@cache
 def build_front_glass(p: LensParameters | None = None) -> Part:
     """The front glass element, below the bottom step: its front face is the step's floor."""
     p = p or LensParameters()

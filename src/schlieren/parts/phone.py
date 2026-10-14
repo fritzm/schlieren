@@ -20,6 +20,7 @@ camera glass under the lip, which fixes where the bare phone sits in the case.
 """
 
 from dataclasses import dataclass
+from functools import cache
 
 from build123d import Axis, Edge, Face, Part, Plane, Pos, SlotOverall, Vector, Wire, extrude, fillet
 
@@ -223,6 +224,8 @@ def _button(p: PhoneParameters, spec: ButtonSpec) -> Part:
     return fillet(box.edges().filter_by(Axis.Z), spec.width / 2 - 0.05)
 
 
+# Built once per parameter set and shared (see parts/carriage.py); the cached solids must not be modified.
+@cache
 def build_bare_phone(p: PhoneParameters | None = None) -> Part:
     """Housing with glass edges, camera plateau, and the protruding buttons, one solid."""
     p = p or PhoneParameters()
@@ -236,6 +239,7 @@ def build_bare_phone(p: PhoneParameters | None = None) -> Part:
     return body
 
 
+@cache
 def build_camera_glass(p: PhoneParameters | None = None) -> Part:
     """The two camera glass rings, on top of the plateau."""
     p = p or PhoneParameters()
@@ -245,6 +249,7 @@ def build_camera_glass(p: PhoneParameters | None = None) -> Part:
     return rings[0] + rings[1]
 
 
+@cache
 def build_case(p: PhoneParameters | None = None) -> Part:
     """The case: a shell round the bare phone with the front window, camera cutout, and flash hole."""
     p = p or PhoneParameters()

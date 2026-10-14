@@ -15,10 +15,22 @@ from schlieren.parts.cassette import (
     build_cassette_assembly,
     build_clamp_bar,
 )
-from schlieren.testing import overlap_volume, slow
+from schlieren.testing import overlap_volume, shared, slow
 
 
 class CassetteTests(unittest.TestCase):
+    @shared
+    def carriage(cls):
+        return children_by_label(build_carriage(CarriageParameters()))
+
+    @shared
+    def clamp_bar(cls):
+        return build_clamp_bar(CassetteParameters(), ClampBarParameters())
+
+    @shared
+    def assembly(cls):
+        return build_cassette_assembly(CassetteParameters(), ClampBarParameters())
+
     @classmethod
     def setUpClass(cls):
         cls.blank = build_cassette()
@@ -39,7 +51,7 @@ class CassetteTests(unittest.TestCase):
         z = p.thickness - p.bevel_depth / 2
         edge = p.size / 2 - (p.bevel_depth / 2) / tan(radians(p.bevel_angle))
         for rotation in (0, 90, 180, 270):
-            s = Rot(Z=rotation) * self.blank
+            s = moved(self.blank, Rot(Z=rotation))
             self.assertTrue(s.is_inside((edge - 0.01, 0, z)))
             self.assertFalse(s.is_inside((edge + 0.01, 0, z)))
 
@@ -54,13 +66,13 @@ class CassetteTests(unittest.TestCase):
             (c.bevel_angle, p.bevel_angle),
         ):
             self.assertEqual(a, b)
-        parts = children_by_label(build_carriage(p))
+        parts = self.carriage
         for rotation in (0, 90, 180, 270):
-            blank = Rot(Z=rotation) * self.blank
+            blank = moved(self.blank, Rot(Z=rotation))
             for travel in (-5, 0, 5):
-                seated = Pos(0, travel, p.plate_thickness + p.datum_projection) * blank
+                seated = moved(blank, Pos(0, travel, p.plate_thickness + p.datum_projection))
                 for name, part in parts.items():
-                    placed = Pos(0, travel, 0) * part if "plunger" in name else part
+                    placed = moved(part, Pos(0, travel, 0)) if "plunger" in name else part
                     self.assertLess((seated & placed).volume, 1e-6, (rotation, travel, name))
                 for x, y in p.datum_points:
                     self.assertTrue(blank.is_inside((x, y - travel, 0.01)))
@@ -91,7 +103,7 @@ class CassetteTests(unittest.TestCase):
     @slow
     def test_clamp_bars_and_hardware_clearance(self):
         p, b, c = CassetteParameters(), ClampBarParameters(), CarriageParameters()
-        bar = build_clamp_bar(p, b)
+        bar = self.clamp_bar
         self.assertTrue(bar.is_valid)
         self.assertEqual(len(bar.solids()), 1)
         self.assertAlmostEqual(bar.bounding_box().size.Z, 4)
@@ -107,10 +119,10 @@ class CassetteTests(unittest.TestCase):
         nut_top = b.bar_bottom(p) + b.thickness + b.washer_thickness + b.nut_height
         self.assertGreater(b.screw_length + b.head_recess - nut_top, 0.5)
         beam = Cylinder(12, 20, align=ON_FLOOR)
-        assembly = Compound([s for leaf in leaves(build_cassette_assembly(p, b)) for s in leaf.solids()])
+        assembly = Compound([s for leaf in leaves(self.assembly) for s in leaf.solids()])
         self.assertLess((assembly & beam).volume, 1e-6)
         # Include all screws, nuts, washers and pads in the carriage interference test.
-        parts = children_by_label(build_carriage(c))
+        parts = self.carriage
         for rotation in (0, 90, 180, 270):
             for travel in (-5, 0, 5):
                 seated = moved(

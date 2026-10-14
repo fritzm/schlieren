@@ -7,7 +7,7 @@ from math import radians, sin, sqrt
 
 from build123d import Cylinder, Pos, Vector
 
-from schlieren.cad import along_x, leaves
+from schlieren.cad import along_x, leaves, moved
 from schlieren.parts.camera_support import (
     CameraSupportParameters,
     _arm_point,
@@ -23,15 +23,56 @@ from schlieren.parts.camera_support import (
     screw_location,
 )
 from schlieren.standards import OPTICAL_HEIGHT
-from schlieren.testing import bounded_distance, near_pairs_among, slow
-from schlieren.vendor_cad import MCMASTER_94459A797_FLANGE_DIAMETER, MCMASTER_94459A797_LENGTH, vendor_step
+from schlieren.testing import bounded_distance, near_pairs_among, shared, slow
+from schlieren.vendor_cad import (
+    MCMASTER_92815A202_HEIGHT,
+    MCMASTER_94459A797_FLANGE_DIAMETER,
+    MCMASTER_94459A797_LENGTH,
+    mcmaster_92815a202_envelope,
+    vendor_step,
+)
 
 CONTACT = 1e-3  # mm
 ADJUSTERS = tuple(f"{where} {side}" for where in ("Aft", "Fore") for side in ("left", "right"))
+NUT_CHAMFER = 0.5  # mm, on the thumb nut's knurled head; its plain envelope has square corners.
 MAGNET_PADS = ("Fore left", "Fore right", "Aft right")  # The aft left screw sits in the rod groove.
 
 
 class LensCradleTests(unittest.TestCase):
+    @shared
+    def nut_envelopes(cls):
+        """Each thumb nut's envelope, placed as the nut is: the knurled model is slow in a distance query, and
+        a clearance to the envelope that contains it is never larger than the true one."""
+        p = cls.p
+        seat = Pos(0, 0, -p.nut_below_tip - MCMASTER_92815A202_HEIGHT)
+        stations = {"Aft": p.aft_station, "Fore": p.fore_station}
+        sides = {"left": -1, "right": 1}
+        return {
+            name: moved(mcmaster_92815a202_envelope(), screw_location(p, sides[side], stations[where]) * seat)
+            for name in ADJUSTERS
+            for where, side in [name.split()]
+        }
+
+    @shared
+    def rest(cls):
+        return build_phone_rest(cls.p)
+
+    @shared
+    def rest_for_print(cls):
+        return build_phone_rest_for_print(cls.p)
+
+    @shared
+    def cradle_shoe(cls):
+        return build_cradle_shoe(cls.p)
+
+    @shared
+    def yokes(cls):
+        return [build_cradle_yoke(cls.p, station) for station in cls.p.stations]
+
+    @shared
+    def parts_with_cutoff(cls):
+        return {part.label: part for part in leaves(build_camera_support_assembly(cls.p))}
+
     @classmethod
     def setUpClass(cls):
         cls.p = CameraSupportParameters()
@@ -276,7 +317,7 @@ class LensCradleTests(unittest.TestCase):
 
                 def shifted(extra, loc=loc, sign=sign, axis=axis, stop=stop):
                     move = Pos(sign * axis[0] * (stop + extra), sign * axis[1] * (stop + extra), 0)
-                    return (loc * move * loc.inverse()) * screw
+                    return moved(screw, loc * move * loc.inverse())
 
                 with self.subTest(axis=axis, sign=sign):
                     self.assertLess((shifted(-0.05) & collar).volume, 1e-3)  # Free, the end face clear too.
@@ -345,7 +386,7 @@ class LensCradleTests(unittest.TestCase):
         for where in ("Aft", "Fore"):
             band = self.parts[f"{where} band"]
             for side in ("left", "right"):
-                nut = self.parts[f"{where} {side} thumb nut"]
+                nut = self.nut_envelopes[f"{where} {side}"]
                 with self.subTest(nut=(where, side)):
                     self.assertGreater(bounded_distance(band, nut, 5.0), 5.0)
 
@@ -363,7 +404,7 @@ class LensCradleTests(unittest.TestCase):
 
     def test_rest_arm_prints_on_its_side_without_a_bridge(self):
         p = self.p
-        rest = build_phone_rest(p)
+        rest = self.rest
         box = rest.bounding_box()
         # The arm spans the whole shoe along the rail, so every layer of a side print is the same profile.
         for y in (box.min.Y + 0.1, p.rest_center, box.max.Y - 0.1):
@@ -383,7 +424,7 @@ class LensCradleTests(unittest.TestCase):
 
     def test_rest_print_orientation_lies_on_its_side_on_the_bed(self):
         p = self.p
-        rest, printed = build_phone_rest(p), build_phone_rest_for_print(p)
+        rest, printed = self.rest, self.rest_for_print
         box, model = printed.bounding_box(), rest.bounding_box()
         self.assertAlmostEqual(box.min.Z, 0.0, places=4)
         self.assertAlmostEqual(box.size.Z, p.rest_shoe_length, places=4)  # Stacked along the rail.
@@ -392,8 +433,7 @@ class LensCradleTests(unittest.TestCase):
         self.assertAlmostEqual(printed.volume, rest.volume, places=3)
 
     def test_cradle_and_rest_are_separate_single_parts(self):
-        cradle, rest = build_cradle_shoe(self.p), build_phone_rest(self.p)
-        yokes = [build_cradle_yoke(self.p, station) for station in self.p.stations]
+        cradle, rest, yokes = self.cradle_shoe, self.rest, self.yokes
         for part in (cradle, rest, *yokes):
             self.assertEqual(len(part.solids()), 1)
         self.assertGreater(cradle.distance_to(rest), 1.0)
@@ -455,7 +495,7 @@ class LensCradleTests(unittest.TestCase):
     def test_saddles_match_the_common_rail_shoe_and_have_clamp_holes(self):
 
         p, r = self.p, self.p.rail_shoe
-        cradle, rest = build_cradle_shoe(p), build_phone_rest(p)
+        cradle, rest = self.cradle_shoe, self.rest
         self.assertNotIn("Cradle clamp screw 1 -1", self.parts)
         self.assertFalse([label for label in self.parts if label.startswith(("Cradle clamp", "Rest clamp"))])
         for part, ys in ((cradle, p.cradle_clamp_ys), (rest, (p.rest_center,))):
@@ -485,16 +525,29 @@ class LensCradleTests(unittest.TestCase):
         self.assertFalse(cradle.is_inside(corner))
 
     @slow
+    def test_thumb_nut_envelopes_stand_where_the_nuts_do(self):
+        """Each envelope's box holds its nut's, and is larger only by the chamfers the envelope squares off."""
+        for name in ADJUSTERS:
+            nut = self.parts[f"{name} thumb nut"].bounding_box()
+            envelope = self.nut_envelopes[name].bounding_box()
+            with self.subTest(adjuster=name):
+                for axis in "XYZ":
+                    below = getattr(nut.min, axis) - getattr(envelope.min, axis)
+                    above = getattr(envelope.max, axis) - getattr(nut.max, axis)
+                    for excess in (below, above):
+                        self.assertGreater(excess, -0.01)
+                        self.assertLess(excess, NUT_CHAMFER)
+
     def test_thumb_nuts_clear_their_yokes(self):
         for name in ADJUSTERS:
-            nut, yoke = self.parts[f"{name} thumb nut"], self.parts[f"{name.split()[0]} yoke"]
+            nut, yoke = self.nut_envelopes[name], self.parts[f"{name.split()[0]} yoke"]
             with self.subTest(adjuster=name):
                 self.assertGreater(bounded_distance(nut, yoke, 4.0), 4.0)
 
     @slow
     def test_parts_clear_each_other_and_the_cutoff_station(self):
         own = set(self.parts)
-        parts = {part.label: part for part in leaves(build_camera_support_assembly(self.p))}
+        parts = self.parts_with_cutoff
         printed = ("Cradle shoe", "Aft yoke", "Fore yoke", "Phone rest", "Aft collar", "Fore collar")
         let_in = (" screw", " magnet", " rod")  # Threaded into, or let into, a printed part.
         optics = {"Lens body", "Focus ring"}

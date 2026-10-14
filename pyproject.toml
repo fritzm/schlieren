@@ -68,6 +68,10 @@ ignore = [
     "PLR",      # Complexity and magic-value rules do not fit parametric CAD code.
 ]
 
+[tool.ruff.lint.pep8-naming]
+# `shared` builds a model once per test class; its method takes the class.
+classmethod-decorators = ["schlieren.testing.shared"]
+
 [tool.ruff.lint.per-file-ignores]
 # The commands print their results and defer heavy imports (the renderer, the viewer) to the step that needs them.
 "src/schlieren/cli/*" = ["T201", "PLC0415"]

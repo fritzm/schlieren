@@ -8,6 +8,7 @@ No PLA lies between the post bottom and the metal datum disc.
 """
 
 from dataclasses import dataclass
+from functools import cache
 from math import cos, pi, sqrt
 
 from build123d import (
@@ -27,6 +28,7 @@ from schlieren.cad import (
     box_between,
     floor_box,
     labeled,
+    moved,
     x_cylinder,
     y_cylinder,
     y_hex,
@@ -194,6 +196,8 @@ class RailShoeParameters:
 VIEWER_RAIL_OVERHANG = 15.0  # Rail shown beyond each end of the shoe.
 
 
+# Built once per parameter set and shared (see parts/carriage.py); the cached solids must not be modified.
+@cache
 def build_rail_shoe(p: RailShoeParameters | None = None) -> Part:
     """Return one printable solid in assembly coordinates, without hardware."""
     p = p or RailShoeParameters()
@@ -340,7 +344,7 @@ def split_clamp_hardware(p: RailShoeParameters | None = None) -> list[Part]:
     """The M3 × 12 collar clamp screw and its hex nut: head on the screw ear, nut seated in its pocket."""
     p = p or RailShoeParameters()
     along_axis = Pos(p.clamp_axis_x, 0, p.clamp_axis_z) * Rot(X=-90)  # Local +z along +y.
-    screw = Pos(0, 0, p.clamp_screw_outer_y) * mcmaster_91292a114()
+    screw = moved(mcmaster_91292a114(), Pos(0, 0, p.clamp_screw_outer_y))
     nut_seat = p.clamp_nut_outer_y - p.nut_pocket_depth  # The pocket bottom, which carries the clamp load.
     nut = Pos(0, 0, nut_seat) * Rot(Z=90) * mcmaster_91828a211()  # Corners along x, as pocketed.
     return [

@@ -181,7 +181,7 @@ src/schlieren/
     cad.py         # primitive solids, axis planes, assembly helpers
     vendor_cad.py  # vendor STEP models placed in documented mounting frames
     render.py      # offscreen figure rendering
-    testing.py     # test helpers: @slow, bounding-box prefilters
+    testing.py     # test helpers: @slow, @shared, bounding-box prefilters
     parts/         # one module per mechanical subsystem
     cli/           # command-line entry points, registered in pyproject.toml [project.scripts]
         _common.py # shared options and export/drawing/figure/viewer steps
@@ -209,6 +209,14 @@ Iterate with `uv run run-tests` and run the tests relevant to a change after mod
 code. Tests that take more than a few seconds, typically exhaustive pairwise interference or rotation-sweep
 checks, are marked `@slow` (`schlieren.testing`) and skipped by default; the skip count is reported. Run
 `uv run run-tests --full` before presenting completed work.
+
+Build each model once per test class. Parameters and the model most tests use go in `setUpClass`; every other
+model at its default parameters and pose is a `@shared` attribute (`schlieren.testing`), built on first use so
+that a model only slow tests need costs the default run nothing. A test builds a model itself only for a
+variant (changed parameters or pose) or where the build is what is under test. Shared models must not be
+modified. Where every pose of an assembly rebuilds the same pose-independent parts, cache those builders in
+the part module (`functools.cache` on the frozen parameter class, as `parts/carriage.py` does) rather than
+working around the cost in the tests.
 
 For new pairwise checks, use the bounding-box prefilters in `schlieren.testing` (`near_pairs`,
 `near_pairs_among`, `boxes_overlap`, `overlap_volume`, `bounded_distance`) before exact boolean or distance

@@ -5,14 +5,31 @@ docs/design/ and the part parameter classes remain authoritative. Each part help
 from the vendor's frame into a documented mounting frame, so callers place it with a translation.
 """
 
+import os
+import tempfile
 from functools import cache
 from pathlib import Path
 
-from build123d import Box, Compound, Location, Pos, Rot, import_step
+from build123d import (
+    Align,
+    Box,
+    Compound,
+    Cylinder,
+    Location,
+    Pos,
+    Rot,
+    export_brep,
+    import_brep,
+    import_step,
+)
 
 from schlieren.standards import INCH
 
 VENDOR_CAD_DIR = Path(__file__).resolve().parents[2] / "cad" / "vendor"
+# Each STEP file's geometry, saved in OpenCascade's own format the first time it is read: reading that back
+# is some thirty times faster than parsing the STEP file, and every process (each test module is one) would
+# otherwise parse every model it uses. Not versioned; safe to delete.
+VENDOR_CACHE_DIR = Path(__file__).resolve().parents[2] / ".cache" / "vendor"
 
 # Vendor-frame features used for placement (Thorlabs drawings are inch-primary).
 SM1CP2M_SEAT_Y = 0.110 * INCH  # Flange seat face (thread shoulder) above the knurled back face.
@@ -31,6 +48,9 @@ FAS100_TIP_X = 22.013
 # McMaster 92815A202 model: axis +Z through the origin, centered on its height, collar at +Z.
 MCMASTER_92815A202_DIAMETER = 20.0
 MCMASTER_92815A202_HEIGHT = 5.0
+# Its bearing collar, from the model: the first 1.0 mm of the height, Ø11.6 mm; the knurled head is the rest.
+MCMASTER_92815A202_COLLAR_DIAMETER = 11.6
+MCMASTER_92815A202_COLLAR_HEIGHT = 1.0
 # McMaster 8215K2 model: hemisphere on axis +Y through the origin, adhesive face at y=-height/2, apex toward +Y.
 MCMASTER_8215K2_DIAMETER = 1.25 * INCH
 # McMaster 93339A252 model: axis +Z through the origin, hex-socket end at z=11.99 mm, ball apex at z=-13.01 mm;
@@ -141,9 +161,30 @@ def vendor_step(filename: str) -> Compound:
     """Import a single-part vendor STEP file (millimeters), in the vendor's own coordinate frame.
 
     Callers place the result with a Location (`loc * model`, which returns a moved copy); the cached object
-    must not be modified.
+    must not be modified. The geometry comes from VENDOR_CACHE_DIR when the STEP file is unchanged since it
+    was cached; only the solids and surfaces are kept, not the STEP file's names, colors, or structure.
     """
-    return import_step(VENDOR_CAD_DIR / filename)
+    source = VENDOR_CAD_DIR / filename
+    stat = source.stat()
+    cached = VENDOR_CACHE_DIR / f"{source.stem}.{stat.st_mtime_ns}.{stat.st_size}.brep"
+    if cached.is_file():
+        try:
+            return import_brep(cached)
+        except Exception:
+            pass  # An unreadable cache entry is rebuilt from the STEP file.
+    model = import_step(source)
+    try:
+        VENDOR_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        for stale in VENDOR_CACHE_DIR.glob(f"{source.stem}.*.brep"):
+            stale.unlink(missing_ok=True)
+        # Written beside its final name and renamed, so a process reading in parallel never sees half a file.
+        handle, partial = tempfile.mkstemp(dir=VENDOR_CACHE_DIR, suffix=".partial")
+        os.close(handle)
+        export_brep(model, partial)
+        os.replace(partial, cached)
+        return import_brep(cached)  # The same geometry a later read gets, so a first run is no different.
+    except OSError:
+        return model  # The cache is an optimization; a read-only checkout still works.
 
 
 def _moved(filename: str, loc: Location) -> Compound:
@@ -251,6 +292,23 @@ def mcmaster_92815a202() -> Compound:
     The collar face is at z=0, bearing downward, with the knurled head toward +Z.
     """
     return _moved("McMaster-92815A202.step", Pos(0, 0, MCMASTER_92815A202_HEIGHT / 2) * Rot(X=180))
+
+
+@cache
+def mcmaster_92815a202_envelope() -> Compound:
+    """Two plain cylinders that contain the 92815A202 thumb nut, in the frame of `mcmaster_92815a202`.
+
+    For clearance checks: an exact distance to the knurled model costs over a second, and to this a few
+    milliseconds. The envelope contains the model, so a clearance measured to it is never larger than the
+    true one.
+    """
+    on_floor = (Align.CENTER, Align.CENTER, Align.MIN)
+    collar = Cylinder(
+        MCMASTER_92815A202_COLLAR_DIAMETER / 2, MCMASTER_92815A202_COLLAR_HEIGHT, align=on_floor
+    )
+    head_height = MCMASTER_92815A202_HEIGHT - MCMASTER_92815A202_COLLAR_HEIGHT
+    head = Cylinder(MCMASTER_92815A202_DIAMETER / 2, head_height, align=on_floor)
+    return collar + Pos(0, 0, MCMASTER_92815A202_COLLAR_HEIGHT) * head
 
 
 @cache

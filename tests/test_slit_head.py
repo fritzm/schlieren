@@ -15,7 +15,7 @@ from schlieren.parts.slit_head import (
     build_spigot_adapter,
     head_location,
 )
-from schlieren.testing import bounded_distance, overlap_volume, slow
+from schlieren.testing import bounded_distance, overlap_volume, shared, slow
 from schlieren.vendor_cad import SM1RC_M_THICKNESS, thorlabs_fas100, thorlabs_sm1rc_m, thorlabs_tr50_m
 
 MODEL_MATCH = 0.001
@@ -29,6 +29,14 @@ def _overlap(a, b):
 
 
 class SlitHeadTests(unittest.TestCase):
+    @shared
+    def clamp_bar(cls):
+        return build_clamp_bar(cls.p)
+
+    @shared
+    def shoe(cls):
+        return build_rail_shoe()
+
     @classmethod
     def setUpClass(cls):
         cls.p = SlitHeadParameters()
@@ -36,7 +44,7 @@ class SlitHeadTests(unittest.TestCase):
         cls.head = build_slit_head(cls.p)
         cls.adapter = build_spigot_adapter(cls.p)
         cls.fas = [
-            (Pos(x, cls.p.axis_y, z) * thorlabs_fas100())
+            moved(thorlabs_fas100(), Pos(x, cls.p.axis_y, z))
             for x, z in (
                 (cls.p.centering_screw_x, cls.p.centering_tip_z),
                 (cls.p.width_screw_x, cls.p.width_tip_z),
@@ -44,7 +52,7 @@ class SlitHeadTests(unittest.TestCase):
         ]
 
     def test_printed_parts_are_single_valid_solids(self):
-        for part in (self.head, self.adapter, build_clamp_bar(self.p)):
+        for part in (self.head, self.adapter, self.clamp_bar):
             self.assertEqual(len(part.solids()), 1)
             self.assertTrue(part.is_valid)
 
@@ -124,9 +132,9 @@ class SlitHeadTests(unittest.TestCase):
     def test_working_rotations_clear_post_ring_and_shoe(self):
         p = self.p
         support = [
-            (Pos(0, 0, p.datum_thickness) * thorlabs_tr50_m()),
-            (Pos(0, -SM1RC_M_THICKNESS / 2, p.optical_height) * thorlabs_sm1rc_m()),
-            build_rail_shoe(),
+            moved(thorlabs_tr50_m(), Pos(0, 0, p.datum_thickness)),
+            moved(thorlabs_sm1rc_m(), Pos(0, -SM1RC_M_THICKNESS / 2, p.optical_height)),
+            self.shoe,
         ]
         for rotation in WORKING_ROTATIONS:
             loc = head_location(p, rotation)
@@ -148,7 +156,7 @@ class SlitHeadTests(unittest.TestCase):
         post_top = p.datum_thickness + p.post_length
         body = z_cylinder(p.post_diameter, 0, 0, p.datum_thickness, post_top)
         stud = z_cylinder(4.0, 0, 0, post_top, post_top + TR50_STUD_MAX)
-        shoe = build_rail_shoe()
+        shoe = self.shoe
         for rotation in ROTATION_SWEEP:
             loc = head_location(p, rotation)
             moving = [moved(self.head, loc), moved(self.adapter, loc)] + [moved(f, loc) for f in self.fas]
@@ -170,8 +178,8 @@ class SlitHeadTests(unittest.TestCase):
         p = self.p
         bb = self.adapter.bounding_box()
         self.assertAlmostEqual(bb.min.Y, p.adapter_back - p.ring_gap - p.ring_thickness, places=6)
-        ring = (
-            head_location(p).inverse() * Pos(0, -SM1RC_M_THICKNESS / 2, p.optical_height) * thorlabs_sm1rc_m()
+        ring = moved(
+            thorlabs_sm1rc_m(), head_location(p).inverse() * Pos(0, -SM1RC_M_THICKNESS / 2, p.optical_height)
         )
         self.assertAlmostEqual(ring.bounding_box().max.Y, p.adapter_back - p.ring_gap, places=6)
         self.assertAlmostEqual(self.adapter.distance_to(ring), 0, places=3)  # Seated on the shoulder.

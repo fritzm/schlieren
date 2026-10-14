@@ -21,7 +21,7 @@ from build123d import (
     fillet,
 )
 
-from schlieren.cad import assembly, floor_box, labeled, z_cone, z_cylinder
+from schlieren.cad import assembly, floor_box, labeled, moved, z_cone, z_cylinder
 from schlieren.hardware import M3_NUT_ACROSS_FLATS, M3_NUT_THICKNESS
 from schlieren.palette import HARDWARE_GRAY, PRINTED_AZURE, PRINTED_ORANGE, RUBBER
 from schlieren.standards import INCH
@@ -187,7 +187,7 @@ def build_cassette_assembly(p=None, b=None):
     p = p or CassetteParameters()
     b = b or ClampBarParameters()
     bottom = b.bar_bottom(p)
-    bar = Pos(0, 0, bottom) * build_clamp_bar(p, b)
+    bar = moved(build_clamp_bar(p, b), Pos(0, 0, bottom))
     pad = floor_box(
         2 * b.bridge_half_length,
         b.outer_edge_y - b.inner_edge_y,

@@ -14,6 +14,8 @@ from schlieren import vendor_cad as v
 from schlieren.vendor_cad import (
     kozak_tb250_80_625,
     mcmaster_91131a028,
+    mcmaster_92815a202,
+    mcmaster_92815a202_envelope,
     vendor_step,
 )
 
@@ -151,6 +153,13 @@ class VendorModelTests(unittest.TestCase):
             with self.subTest(model=name):
                 for found, wanted in zip(extents(vendor_step(filename)), sorted(expected), strict=True):
                     self.assertAlmostEqual(found, wanted, delta=MODEL_ROUNDING)
+
+    def test_thumb_nut_envelope_contains_the_model(self):
+        nut, envelope = mcmaster_92815a202(), mcmaster_92815a202_envelope()
+        self.assertLess((nut - envelope).volume, 1e-6)
+        # Not a loose one: the same height, and the head's diameter.
+        for found, wanted in zip(extents(envelope), extents(nut), strict=True):
+            self.assertAlmostEqual(found, wanted, delta=MODEL_ROUNDING)
 
     def test_spherical_washer_halves(self):
         female, male = mcmaster_91131a028()

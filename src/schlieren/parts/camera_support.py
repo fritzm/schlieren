@@ -28,6 +28,7 @@ top. y=0 is the back of the cased phone.
 """
 
 from dataclasses import dataclass, field
+from functools import cache
 from math import asin, atan2, cos, degrees, hypot, pi, radians, sin, sqrt, tan
 
 from build123d import (
@@ -60,6 +61,7 @@ from schlieren.cad import (
     centered_cylinder,
     floor_box,
     labeled,
+    moved,
     place,
     x_cylinder,
     y_cylinder,
@@ -470,9 +472,9 @@ def screw_location(p: CameraSupportParameters, side: int, station: float) -> Loc
 
 def _adjuster(p: CameraSupportParameters, name: str, loc: Location) -> list[Part]:
     """Screw, thumb-nut handwheel, and heat-set insert of one adjuster, placed by its screw frame."""
-    nut = Pos(0, 0, -p.nut_below_tip - MCMASTER_92815A202_HEIGHT) * mcmaster_92815a202()
+    nut = moved(mcmaster_92815a202(), Pos(0, 0, -p.nut_below_tip - MCMASTER_92815A202_HEIGHT))
     # Flange on the lens-side face of the boss, so the screw's reaction presses the insert into its hole.
-    insert = Pos(0, 0, -p.boss_top_below_tip) * mcmaster_94459a797()
+    insert = moved(mcmaster_94459a797(), Pos(0, 0, -p.boss_top_below_tip))
     return [
         labeled(mcmaster_93339a252(), f"{name} screw", STEEL, loc),
         labeled(nut, f"{name} thumb nut", BLACK_OXIDE, loc),
@@ -591,6 +593,8 @@ def _edges_along_rail(body: Part, points: list[tuple[float, float]]) -> list:
     return found
 
 
+# Built once per parameter set and shared (see parts/carriage.py); the cached solids must not be modified.
+@cache
 def build_collar(
     p: CameraSupportParameters | None = None, station: float = 0.0, rod_side: int | None = None
 ) -> Part:
@@ -711,9 +715,9 @@ def build_collar_for_print(p: CameraSupportParameters | None = None, aft: bool =
     The layers then lie in the plane of the clamp and pad loads. The aft collar carries the groove rods.
     """
     p = p or CameraSupportParameters()
-    collar = Rot(X=90) * build_collar(p, 0.0, -1 if aft else None)
+    collar = moved(build_collar(p, 0.0, -1 if aft else None), Rot(X=90))
     box = collar.bounding_box()
-    return Pos(-(box.min.X + box.max.X) / 2, -(box.min.Y + box.max.Y) / 2, -box.min.Z) * collar
+    return moved(collar, Pos(-(box.min.X + box.max.X) / 2, -(box.min.Y + box.max.Y) / 2, -box.min.Z))
 
 
 def _arm_point(p: CameraSupportParameters, side: int, along: float, across: float) -> tuple[float, float]:
@@ -863,6 +867,7 @@ def _straddle(
     return shoe
 
 
+@cache
 def build_cradle_shoe(p: CameraSupportParameters | None = None) -> Part:
     """Lens-cradle saddle, printed deck-down, symmetric about the middle of the two stations."""
     p = p or CameraSupportParameters()
@@ -882,9 +887,10 @@ def build_cradle_shoe_for_print(p: CameraSupportParameters | None = None) -> Par
     """The cradle shoe as printed, skirts on the bed and deck up, centered on the origin, bed at z = 0."""
     shoe = build_cradle_shoe(p)
     box = shoe.bounding_box()
-    return Pos(-(box.min.X + box.max.X) / 2, -(box.min.Y + box.max.Y) / 2, -box.min.Z) * shoe
+    return moved(shoe, Pos(-(box.min.X + box.max.X) / 2, -(box.min.Y + box.max.Y) / 2, -box.min.Z))
 
 
+@cache
 def build_cradle_yoke(p: CameraSupportParameters | None = None, station: float = 0.0) -> Part:
     """Yoke for the collar at a station, printed on its side and bolted to the cradle shoe."""
     p = p or CameraSupportParameters()
@@ -894,9 +900,9 @@ def build_cradle_yoke(p: CameraSupportParameters | None = None, station: float =
 
 def build_cradle_yoke_for_print(p: CameraSupportParameters | None = None) -> Part:
     """A yoke laid on its side as printed: profile plane on the bed, centered on the origin, bed at z = 0."""
-    yoke = Rot(X=90) * build_cradle_yoke(p)
+    yoke = moved(build_cradle_yoke(p), Rot(X=90))
     box = yoke.bounding_box()
-    return Pos(-(box.min.X + box.max.X) / 2, -(box.min.Y + box.max.Y) / 2, -box.min.Z) * yoke
+    return moved(yoke, Pos(-(box.min.X + box.max.X) / 2, -(box.min.Y + box.max.Y) / 2, -box.min.Z))
 
 
 def _joint_hardware(p: CameraSupportParameters, where: str, station: float) -> list[Part]:
@@ -925,6 +931,7 @@ def _collar_clamp_hardware(p: CameraSupportParameters, where: str, station: floa
     ]
 
 
+@cache
 def build_phone_rest(p: CameraSupportParameters | None = None) -> Part:
     """Phone-specific printed shoe with the arm that carries the rest rod, printed on its side.
 
@@ -958,9 +965,9 @@ def build_phone_rest(p: CameraSupportParameters | None = None) -> Part:
 
 def build_phone_rest_for_print(p: CameraSupportParameters | None = None) -> Part:
     """The phone rest laid on its side as printed: profile plane on the bed, centered on the origin, bed at z = 0."""
-    rest = Rot(X=90) * build_phone_rest(p)
+    rest = moved(build_phone_rest(p), Rot(X=90))
     box = rest.bounding_box()
-    return Pos(-(box.min.X + box.max.X) / 2, -(box.min.Y + box.max.Y) / 2, -box.min.Z) * rest
+    return moved(rest, Pos(-(box.min.X + box.max.X) / 2, -(box.min.Y + box.max.Y) / 2, -box.min.Z))
 
 
 def cutoff_post_station(p: CameraSupportParameters, c) -> float:
@@ -985,7 +992,7 @@ def build_camera_support_assembly(
     phone = build_phone(p.phone)
     lens = build_lens(p.lens)
     rail_center = p.lens_length + STAND_ALONE_RAIL_PAST_LENS - STAND_ALONE_RAIL_LENGTH / 2
-    rail = Pos(0, rail_center, 0) * build_rail(STAND_ALONE_RAIL_LENGTH)
+    rail = moved(build_rail(STAND_ALONE_RAIL_LENGTH), Pos(0, rail_center, 0))
     axis = y_cylinder(
         AXIS_MARKER_DIAMETER, 0, axis_z, -AXIS_MARKER_BEHIND_PHONE, p.lens_length + AXIS_MARKER_PAST_LENS
     )
@@ -1028,7 +1035,9 @@ def build_camera_support_assembly(
     groove = screw_location(p, -1, p.aft_station)
     half_spacing, rod_height = rod_layout(p)
     for offset in (-1, 1):
-        rod = Rot(Y=90) * mcmaster_91585a351()  # Axis along x (across the rail), as the Ø3 × 10 mm dowel pin.
+        rod = moved(
+            mcmaster_91585a351(), Rot(Y=90)
+        )  # Axis along x (across the rail), as the Ø3 × 10 mm dowel pin.
         loc = groove * Pos(0, offset * half_spacing, rod_height)
         children.append(labeled(rod, f"Groove rod {offset:+d}", STEEL, loc))
     # Roll: the phone's lower edge on a rod lying along the rail.

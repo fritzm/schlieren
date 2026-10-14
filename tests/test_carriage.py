@@ -13,7 +13,7 @@ from schlieren.parts.carriage import (
     build_print_layout,
     support_location,
 )
-from schlieren.testing import overlap_volume, slow
+from schlieren.testing import near_pairs, overlap_volume, shared, slow
 
 
 def y_cylinder(radius, length, y, z):
@@ -22,6 +22,14 @@ def y_cylinder(radius, length, y, z):
 
 
 class CarriageTests(unittest.TestCase):
+    @shared
+    def hardware(cls):
+        return children_by_label(build_carriage(cls.p, include_hardware=True))
+
+    @shared
+    def support(cls):
+        return children_by_label(build_carriage(cls.p, include_support=True))
+
     @classmethod
     def setUpClass(cls):
         cls.p = CarriageParameters()
@@ -41,13 +49,13 @@ class CarriageTests(unittest.TestCase):
     def test_travel_and_loading_clearance(self):
         for travel, retract in ((-5, 0), (0, 0), (5, 0), (0, 6)):
             parts = dict(self.parts)
-            parts["Driven plunger"] = Pos(0, travel, 0) * parts["Driven plunger"]
-            parts["Spring plunger"] = Pos(0, travel - retract, 0) * parts["Spring plunger"]
+            parts["Driven plunger"] = moved(parts["Driven plunger"], Pos(0, travel, 0))
+            parts["Spring plunger"] = moved(parts["Spring plunger"], Pos(0, travel - retract, 0))
             for (na, a), (nb, b) in combinations(parts.items(), 2):
                 self.assertLess((a & b).volume, 1e-6, (travel, retract, na, nb))
             # Keeper has actual bearing overlap above both swept guide ears.
             for name in ("Driven plunger", "Spring plunger"):
-                raised = Pos(0, 0, 0.5) * parts[name]
+                raised = moved(parts[name], Pos(0, 0, 0.5))
                 self.assertGreater((raised & parts["Keeper frame"]).volume, 1)
 
     def test_optical_aperture_and_datum_tracks(self):
@@ -59,7 +67,7 @@ class CarriageTests(unittest.TestCase):
         for travel in (-5, 0, 5):
             beam = Cylinder(p.aperture_diameter / 2, 15, align=ON_FLOOR)
             for name, part in self.parts.items():
-                placed = Pos(0, travel, 0) * part if "plunger" in name else part
+                placed = moved(part, Pos(0, travel, 0)) if "plunger" in name else part
                 self.assertLess((placed & beam).volume, 1e-6)
             for x, y in p.datum_points:
                 self.assertLess(abs(x) + p.datum_head_diameter / 2, 32)
@@ -84,11 +92,11 @@ class CarriageTests(unittest.TestCase):
             (-32, front - p.bevel_depth),
         ]
         blank = extrude(Plane.YZ.offset(-32) * Polygon(*profile, align=None), amount=64)
-        cassette = blank & (Rot(Z=90) * blank)
+        cassette = blank & moved(blank, Rot(Z=90))
         for travel in (-5, 0, 5):
-            shifted = Pos(0, travel, 0) * cassette
+            shifted = moved(cassette, Pos(0, travel, 0))
             for name, part in self.parts.items():
-                placed = Pos(0, travel, 0) * part if "plunger" in name else part
+                placed = moved(part, Pos(0, travel, 0)) if "plunger" in name else part
                 self.assertLess((placed & shifted).volume, 1e-6, (travel, name))
 
     def test_hardware_stack(self):
@@ -119,7 +127,7 @@ class CarriageTests(unittest.TestCase):
         base = self.fixed
         for name in ("Driven plunger", "Spring plunger"):
             for lift in (0, 2, 6, 15):
-                self.assertLess((base & (Pos(0, 0, lift) * self.parts[name])).volume, 1e-6)
+                self.assertLess((base & moved(self.parts[name], Pos(0, 0, lift))).volume, 1e-6)
 
     def test_supports_reach_plate_edges_and_keeper_lifts_off(self):
         p = self.p
@@ -130,7 +138,7 @@ class CarriageTests(unittest.TestCase):
             for x in (-edge, -20, 20, edge):
                 self.assertTrue(base.is_inside((x, y, p.floor_z + 1)))
         for lift in (0, 1, 3, 6):
-            self.assertLess((base & (Pos(0, 0, lift) * self.parts["Keeper frame"])).volume, 1e-6)
+            self.assertLess((base & moved(self.parts["Keeper frame"], Pos(0, 0, lift))).volume, 1e-6)
         start, end = p.support_spans[0]
         bore = y_cylinder(p.insert_bore_diameter / 2, end - start, start, p.adjuster_axis_z)
         for name in ("Base plate", "Guide frame", "Keeper frame"):
@@ -413,14 +421,14 @@ class CarriageTests(unittest.TestCase):
         for z in (-p.spigot_length + 0.1, -p.ring_gap, p.plate_thickness - 0.1):
             self.assertTrue(base.is_inside((p.aperture_diameter / 2 + 0.1, 0, z)))
             self.assertFalse(base.is_inside((p.aperture_diameter / 2 - 0.1, 0, z)))
-        support = children_by_label(build_carriage(include_support=True))
+        support = self.support
         ring = support["SM1RC M ring"]
         rb = ring.bounding_box()
         self.assertAlmostEqual(rb.max.Z, -p.ring_gap, places=4)
         self.assertAlmostEqual(rb.min.Z, -p.spigot_length, places=4)
         self.assertLess((base & ring).volume, 1e-6)
         # The ring face touches the shoulder annulus.
-        self.assertGreater((base & (Pos(0, 0, 0.1) * ring)).volume, 1)
+        self.assertGreater((base & moved(ring, Pos(0, 0, 0.1))).volume, 1)
         for x, y in p.datum_points:
             pin = Pos(x, y, -1) * Cylinder(p.datum_pin_shank / 2, p.plate_thickness + 1, align=ON_FLOOR)
             self.assertLess((base & pin).volume, 1e-6)
@@ -430,7 +438,7 @@ class CarriageTests(unittest.TestCase):
         p = self.p
         # At nominal zero the plate reaches below the shoe top, so the shoe end sets the ring gap.
         self.assertGreater(-p.plate_ymin, p.optical_height - 20.0)
-        support = children_by_label(build_carriage(include_support=True))
+        support = self.support
         fixed = list(self.parts.values())
         for rotation in (-120, -90, -45, 0, 45, 90, 120):
             for name in ("TR50 M post", "Rail shoe", "Shoe clamp screw", "Shoe clamp nut"):
@@ -447,9 +455,9 @@ class CarriageTests(unittest.TestCase):
         self.assertAlmostEqual(base.bounding_box().max.Z, p.plate_thickness, places=6)
         self.assertAlmostEqual(frame.bounding_box().min.Z, p.plate_thickness, places=6)
         self.assertLess((base & frame).volume, 1e-6)
-        self.assertGreater((base & (Pos(0, 0, -0.1) * frame)).volume, 1)
+        self.assertGreater((base & moved(frame, Pos(0, 0, -0.1))).volume, 1)
         for lift in (0.2, 1, 5):
-            self.assertLess((base & (Pos(0, 0, lift) * frame)).volume, 1e-6)
+            self.assertLess((base & moved(frame, Pos(0, 0, lift))).volume, 1e-6)
 
     def test_insert_manufacturing_dimensions_and_adjuster_reach(self):
         p = self.p
@@ -514,7 +522,7 @@ class CarriageTests(unittest.TestCase):
     def test_stack_retaining_hardware(self):
         # One M3 x 12 screw and one captive nut at each of the eight keeper fastener positions.
         p = self.p
-        parts = children_by_label(build_carriage(p, include_hardware=True))
+        parts = self.hardware
         self.assertEqual(len(p.fasteners), 8)
         for i, (x, y) in enumerate(p.fasteners, start=1):
             screw = parts[f"Keeper screw {i}"].bounding_box()
@@ -532,12 +540,12 @@ class CarriageTests(unittest.TestCase):
             self.assertLess(screw.min.Z, nut.min.Z)
             self.assertLess(nut.min.Z - screw.min.Z, 1.0)
         self.assertNotIn("Keeper screw 9", parts)
-        self.assertNotIn("Keeper screw 1", children_by_label(build_carriage(p)))
+        self.assertNotIn("Keeper screw 1", self.parts)
 
     def test_datum_pins_trimmed_flush_with_plate_back(self):
         # Three brads, head up on the datum face, with the shank flush-cut at the plate back.
         p = self.p
-        parts = children_by_label(build_carriage(p, include_hardware=True))
+        parts = self.hardware
         self.assertEqual(len(p.datum_points), 3)
         for i, (x, y) in enumerate(p.datum_points, start=1):
             box = parts[f"Datum pin {i}"].bounding_box()
@@ -547,7 +555,7 @@ class CarriageTests(unittest.TestCase):
             # The head stands on the datum face and its dome stays below the cassette rear face.
             self.assertGreater(box.max.Z, p.plate_thickness)
             self.assertLess(box.max.Z, p.plate_thickness + p.datum_projection + 1e-6)
-        self.assertNotIn("Datum pin 1", children_by_label(build_carriage(p)))
+        self.assertNotIn("Datum pin 1", self.parts)
 
     def test_keeper_side_members_resist_ear_lift(self):
         p = self.p
@@ -608,12 +616,12 @@ class CarriageTests(unittest.TestCase):
                 self.assertLessEqual((x * x + y * y) ** 0.5, p.rotation_envelope_radius + 1e-6, name)
         self.assertAlmostEqual(p.optical_height - p.rotation_envelope_radius, p.post_clearance)
         # Sweep the assembled carriage, with its adjuster, against the 2020 rail (20 mm wide below the post).
-        parts = children_by_label(build_carriage(include_hardware=True))
         rail = Pos(0, 0, -20) * Box(20, 400, 20, align=ON_FLOOR)
         for rotation in range(-150, 151, 5):
-            moved = support_location(p, rotation) * rail
-            for name, part in parts.items():
-                self.assertLess((part & moved).volume, 1e-6, (rotation, name))
+            swept = support_location(p, rotation) * rail
+            # Parts whose bounding boxes are apart from the rail's cannot overlap it.
+            for part, _ in near_pairs(self.hardware.values(), [swept]):
+                self.assertLess((part & swept).volume, 1e-6, (rotation, part.label))
 
     def test_track_end_stops_and_keeper_screws(self):
         p = self.p
@@ -628,10 +636,11 @@ class CarriageTests(unittest.TestCase):
             ("Spring plunger", -p.loading_retraction),
             ("Driven plunger", p.working_half_travel),
         ):
-            moved = Pos(0, shift, 0) * self.parts[name]
-            self.assertLess((moved & self.fixed).volume, 1e-6)
+            shifted = moved(self.parts[name], Pos(0, shift, 0))
+            self.assertLess((shifted & self.fixed).volume, 1e-6)
             sign = 1 if shift > 0 else -1
-            self.assertGreater(((Pos(0, sign * (p.ear_stop_gap + 0.1), 0) * moved) & self.fixed).volume, 0.1)
+            past = moved(shifted, Pos(0, sign * (p.ear_stop_gap + 0.1), 0))
+            self.assertGreater((past & self.fixed).volume, 0.1)
         for _fx, fy in p.fasteners:
             self.assertLess(abs(fy), abs(spring_stop) + p.fastener_stop_margin + 1e-6)
 

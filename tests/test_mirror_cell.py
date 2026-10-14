@@ -19,7 +19,7 @@ from schlieren.parts.mirror_cell import (
     moving_plate_outline,
 )
 from schlieren.parts.mirror_cell_drawing import base_plate_drawing_svg, base_plate_holes
-from schlieren.testing import boxes_overlap, near_pairs_among, slow
+from schlieren.testing import boxes_overlap, near_pairs_among, shared, slow
 from schlieren.vendor_cad import (
     KOZAK_TB250_FLANGE_THICKNESS,
     KOZAK_TB250_LENGTH,
@@ -34,6 +34,22 @@ INTERFERENCE_VOLUME = 0.5  # mm³; below this a boolean overlap is coincident-su
 
 
 class MirrorCellTests(unittest.TestCase):
+    @shared
+    def quick_release_plate(cls):
+        return build_quick_release_plate(cls.p)
+
+    @shared
+    def base_plate(cls):
+        return build_base_plate(cls.p)
+
+    @shared
+    def fixed_plate(cls):
+        return build_fixed_plate(cls.p)
+
+    @shared
+    def moving_plate(cls):
+        return build_moving_plate(cls.p)
+
     @classmethod
     def setUpClass(cls):
         cls.p = MirrorCellParameters()
@@ -77,7 +93,7 @@ class MirrorCellTests(unittest.TestCase):
 
     def test_quick_release_plate_section_is_a_neck_flaring_to_full_width(self):
         p = self.p
-        plate = build_quick_release_plate(p)
+        plate = self.quick_release_plate
         z_top = -p.base_thickness
 
         def width_at(depth):
@@ -93,7 +109,7 @@ class MirrorCellTests(unittest.TestCase):
 
     def test_quick_release_plate_has_a_through_slot_and_a_rear_notch(self):
         p = self.p
-        plate = build_quick_release_plate(p)
+        plate = self.quick_release_plate
         z = -p.base_thickness - p.qr_plate_thickness / 2
         mid_y = p.qr_plate_length / 2
         slot_probe = Pos(0, mid_y, z) * Box(p.qr_slot_width - 0.1, p.qr_slot_length, p.qr_plate_thickness)
@@ -132,7 +148,7 @@ class MirrorCellTests(unittest.TestCase):
 
     def test_base_plate_has_open_clearance_holes_and_90_degree_countersinks(self):
         p = self.p
-        plate = build_base_plate(p)
+        plate = self.base_plate
         for x, y in p.qr_screw_positions().values():
             through = Pos(x, y, -p.base_thickness / 2) * Cylinder(
                 p.qr_clearance_hole / 2 - 0.01, p.base_thickness
@@ -285,7 +301,7 @@ class MirrorCellTests(unittest.TestCase):
 
     def test_fixed_plate_holes_and_counterbores(self):
         p = self.p
-        plate = build_fixed_plate(p)
+        plate = self.fixed_plate
 
         def void(x, z, y0, diameter, length, margin):
             """Volume of plate inside a cylinder along +y, `margin` smaller than the diameter and length."""
@@ -313,7 +329,7 @@ class MirrorCellTests(unittest.TestCase):
 
     def test_moving_plate_has_three_bores_and_the_aperture(self):
         p = self.p
-        plate = build_moving_plate(p)
+        plate = self.moving_plate
         bores = [f for f in plate.faces() if f.geom_type.name == "CYLINDER"]
         radii = sorted(round(f.radius, 3) for f in bores)
         self.assertEqual(radii.count(round(p.bushing_bore / 2, 3)), 3)
@@ -395,7 +411,7 @@ class MirrorCellTests(unittest.TestCase):
 
     def test_plywood_has_the_bracket_holes(self):
         p = self.p
-        base, fixed = build_base_plate(p), build_fixed_plate(p)
+        base, fixed = self.base_plate, self.fixed_plate
         radius = p.bracket_hole_diameter / 2 - 0.01
         for side in (-1, 1):
             x = p.bracket_center_x(side)

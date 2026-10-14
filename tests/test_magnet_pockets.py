@@ -7,11 +7,16 @@ from schlieren.parts.camera_support import CameraSupportParameters, _pad_pocket
 from schlieren.parts.carriage import CarriageParameters, build_plunger
 from schlieren.parts.slit_head import SlitHeadParameters, _magnet_pocket
 from schlieren.standards import MAGNET_POCKET_CLEARANCE
+from schlieren.testing import shared
 
 TOLERANCE = 1e-6
 
 
 class MagnetPocketTests(unittest.TestCase):
+    @shared
+    def plunger(cls):
+        return build_plunger(CarriageParameters())
+
     def test_every_model_takes_the_shared_total_allowance(self):
         self.assertAlmostEqual(MAGNET_POCKET_CLEARANCE, 0.20)
         self.assertEqual(CameraSupportParameters().pad_pocket_clearance, MAGNET_POCKET_CLEARANCE)
@@ -28,7 +33,7 @@ class MagnetPocketTests(unittest.TestCase):
 
     def test_carriage_pocket_walls_and_recess(self):
         p = CarriageParameters()
-        plunger = build_plunger(p)
+        plunger = self.plunger
         outer_y = p.cassette_size / 2 + p.body_length
         z = p.adjuster_axis_z
         half_length = (MAGNET_LENGTH + MAGNET_POCKET_CLEARANCE) / 2
