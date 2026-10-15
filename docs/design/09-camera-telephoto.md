@@ -33,14 +33,20 @@ phone, so the measured 60.6 mm implies a case wall of about 2.8 mm at that edge;
 34.3 mm imply about 3.0 mm at the short edge (both calculated).
 
 Phone model, from Apple's drawing and the measurements above: the bare body with the drawing's corner
-profile and glass edge, the camera plateau (1.78 mm above the back glass) with the two camera glass rings
-(3.45 mm), and the side, action, and volume buttons (0.45 mm proud). The Camera Control and SIM tray are flush
+profile and glass edge, the camera plateau (1.78 mm above the back glass; its top face is blended into the
+glass by a concave fillet 2.62 mm wide, whose foot is 1.18 mm and 1.34 mm from the long and short edges) with
+the two Ø16.00 camera glass rings (3.45 mm; the rings are 17.72 mm apart and do not touch), and the side,
+action, and volume buttons (0.45 mm proud). The Camera Control and SIM tray are flush
 with the edge and have no geometry. The case is an OtterBox Commuter, whose outside is the measured size:
 155.5 × 77.0 mm, with walls of 2.96 mm at the short edges and 2.77 mm at the long edges calculated from the
 measured camera position, and 12.95 mm thick. **Provisional:** OtterBox publishes no drawing, so the inside of
-the case is assumed: the bare phone sits with its camera glass 1.0 mm under the camera lip, whose top is the
-back plane where the lens seats, which leaves a 0.55 mm front rim over the screen; the camera opening clears
-the plateau by 1.0 mm, and the flash hole by 0.5 mm. The model does not show the case's port openings.
+the case is assumed apart from the front rim, which is measured to stand 0.050 in. (1.27 mm) proud of the
+screen. That puts the bare phone's camera glass 0.28 mm under the camera lip, whose top is the back plane
+where the lens seats, and leaves the rest of the 12.95 mm to the back plate's inside; the opening's corner
+radius (12 mm) and the 1.2 mm round on the front rim's inner edge, which the rim height
+limits, are assumed. The camera opening is measured: 1.585 × 1.35 in. (40.26 × 34.29 mm), centered on the
+plateau along the length, with its long edge 0.180 in. (4.57 mm) from the case's camera-side edge; it clears the
+plateau and the flash. The model does not show the case's port openings.
 
 Initial recording modes:
 
