@@ -59,5 +59,4 @@ Every part command takes `--help`. The part commands write their STEP/STL files 
 re-renders the part's design-document figure in `docs/design/figures/`.
 
 Once a design element is accepted, it is propagated to the CAD source and tests, the relevant `docs/design/`
-fragment, and `bom/bom.csv`. All of these must agree. In Claude Code, the `/finalize-decision` skill does
-this.
+fragment, and `bom/bom.csv`. All of these must agree.

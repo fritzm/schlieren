@@ -263,8 +263,7 @@ rule in the `Makefile`; the shared modules (`cad.py`, `standards.py`, `palette.p
 targets current without rebuilding them.
 
 A `.claude/` PostToolUse hook auto-formats edited `.py` files with ruff, and a PreToolUse hook blocks direct
-edits to `exports/`. Project skills: `/finalize-decision` (propagate an accepted decision) and
-`/reconcile-bom` (review and apply edits made in a copy of the BOM workbook).
+edits to `exports/`. Project skill: `/reconcile-bom` (review and apply edits made in a copy of the BOM workbook).
 
 ## Working with the BOM
 
