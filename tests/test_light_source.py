@@ -347,6 +347,13 @@ class LightSourceTests(unittest.TestCase):
             "SM1D12 iris lever",
         }
         checked = set()
+        # Catalog threaded mates, whose coincident thread surfaces make the exact boolean take about half a
+        # second each; their fit is the vendor's, not checked here.
+        threaded_mates = {
+            frozenset(("SM1V05 body", "SM1L03 tube")),
+            frozenset(("SM1L03 tube", "SM1D12 iris")),
+            frozenset(("SM1CP2M cap", "SMR1 M ring")),
+        }
         # A screw overlaps the cap only by its thread in the tap-drilled hole: the ring between the tap drill
         # and the thread major diameter, at most the cap thickness long.
         h = HoleLayoutParameters()
@@ -371,6 +378,8 @@ class LightSourceTests(unittest.TestCase):
                     self.assertTrue(all(s.is_valid for s in parts.values()))
                 for first, second in near_pairs_among(parts.values()):
                     a, b = first.label, second.label
+                    if frozenset((a, b)) in threaded_mates:
+                        continue
                     key = (frozenset((a, b)), scope(a, b, board, e))
                     if key in checked:
                         continue

@@ -15,9 +15,12 @@ from build123d import (
     Box,
     Compound,
     Cylinder,
+    Face,
     Location,
     Pos,
     Rot,
+    Solid,
+    Vector,
     export_brep,
     import_brep,
     import_step,
@@ -33,6 +36,10 @@ VENDOR_CACHE_DIR = Path(__file__).resolve().parents[2] / ".cache" / "vendor"
 
 # Vendor-frame features used for placement (Thorlabs drawings are inch-primary).
 SM1CP2M_SEAT_Y = 0.110 * INCH  # Flange seat face (thread shoulder) above the knurled back face.
+# Thorlabs engraves text a few thousandths of a millimetre into the flat face of some parts; ENGRAVING_DEPTH
+# bounds that depth, and a text pocket is under ENGRAVING_MAX_EXTENT across (the bore of a ring is not).
+ENGRAVING_DEPTH = 0.001 * INCH
+ENGRAVING_MAX_EXTENT = 12.0
 SM1RC_M_THICKNESS = 0.400 * INCH
 # SM1V05 model: axis +X through (y, z) = SM1V05_AXIS_YZ, sleeve end at x=0; the SM1NT lock ring and the lens
 # retaining ring are separate solids, each with its sleeve-end-side face at the x given here.
@@ -200,14 +207,43 @@ def thorlabs_tr50_m() -> Compound:
 
 @cache
 def thorlabs_smr1_m() -> Compound:
-    """Thorlabs SMR1/M ring; optical axis +Y through the origin, faces at y=0 and y=thickness, post seat -Z."""
-    return _moved("Thorlabs-SMR1-M.step", Rot(X=90))
+    """Thorlabs SMR1/M ring; optical axis +Y through the origin, faces at y=0 and y=thickness, post seat -Z.
+
+    The text engraved in the y=0 face is filled.
+    """
+    return _fill_engraving(_moved("Thorlabs-SMR1-M.step", Rot(X=90)))
+
+
+def _fill_engraving(model: Compound) -> Compound:
+    """model with the text pockets in its largest flat -Y face filled flush, dropping the faces of the text.
+
+    A pocket is an inner wire of that face less than ENGRAVING_MAX_EXTENT across; each is extruded to twice
+    ENGRAVING_DEPTH, so the fill overlaps the material under the pocket floor, and fused in.
+    """
+    face_y = model.bounding_box().min.Y
+    flat = [
+        face
+        for face in model.faces()
+        if face.geom_type.name == "PLANE"
+        and abs(face.bounding_box().min.Y - face_y) < 1e-4
+        and abs(face.bounding_box().max.Y - face_y) < 1e-4
+    ]
+    pockets = [
+        wire
+        for wire in max(flat, key=lambda f: f.area).inner_wires()
+        if max(wire.bounding_box().size.X, wire.bounding_box().size.Z) < ENGRAVING_MAX_EXTENT
+    ]
+    fills = [Solid.extrude(Face(wire), Vector(0, 2 * ENGRAVING_DEPTH, 0)) for wire in pockets]
+    return Compound(model.fuse(*fills).clean().solids())
 
 
 @cache
 def thorlabs_sm1cp2m() -> Compound:
-    """Thorlabs SM1CP2M end cap; axis +Y through the origin, flange seat face at y=0, thread toward +Y."""
-    return _moved("Thorlabs-SM1CP2M.step", Pos(0, -SM1CP2M_SEAT_Y, 0))
+    """Thorlabs SM1CP2M end cap; axis +Y through the origin, flange seat face at y=0, thread toward +Y.
+
+    The text engraved in the flat back face is filled, which drops its several hundred small faces.
+    """
+    return _fill_engraving(_moved("Thorlabs-SM1CP2M.step", Pos(0, -SM1CP2M_SEAT_Y, 0)))
 
 
 @cache
@@ -250,8 +286,11 @@ def thorlabs_sm1d12() -> tuple[Compound, Compound]:
     """Thorlabs SM1D12 iris as (housing with leaves, actuating lever), sharing one frame.
 
     Axis +Y through the origin, external-thread shoulder at y=0, thread toward -Y, lever at +Z.
+
+    The text on the housing's outer surface is not cut into it: the model splits that cylinder along the
+    letters' outlines. Unifying faces of the same surface merges those splits away.
     """
-    iris = _moved("Thorlabs-SM1D12.step", Rot(Y=180) * Rot(X=-90) * Pos(0, 0, -SM1D12_SHOULDER_Z))
+    iris = _moved("Thorlabs-SM1D12.step", Rot(Y=180) * Rot(X=-90) * Pos(0, 0, -SM1D12_SHOULDER_Z)).clean()
     *rest, lever = sorted(iris.solids(), key=lambda s: s.bounding_box().max.Z)
     return Compound(rest), Compound([lever])
 
@@ -260,9 +299,9 @@ def thorlabs_sm1d12() -> tuple[Compound, Compound]:
 def thorlabs_sm1rc_m() -> Compound:
     """Thorlabs SM1RC/M slip ring; axis +Y through the origin, faces at y=0 and y=thickness, post seat -Z.
 
-    The M4 locking screw across the clamp split is at +Z.
+    The M4 locking screw across the clamp split is at +Z. The text engraved in the y=0 face is filled.
     """
-    return _moved("Thorlabs-SM1RC-M.step", Pos(0, SM1RC_M_THICKNESS, 0) * Rot(X=90))
+    return _fill_engraving(_moved("Thorlabs-SM1RC-M.step", Pos(0, SM1RC_M_THICKNESS, 0) * Rot(X=90)))
 
 
 @cache

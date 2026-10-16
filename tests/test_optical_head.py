@@ -1,21 +1,26 @@
 """Engineering invariants for the assembled tabletop optical head (design §§2, 3)."""
 
 import unittest
+from math import pi
 
-from schlieren.cad import children_by_label, leaves
+from schlieren.cad import box_between, children_by_label, leaves, moved
 from schlieren.parts.optical_head import (
+    IMAGING_SIDE,
     OpticalHeadParameters,
     build_imaging_fixtures,
     build_optical_head,
     build_source_fixtures,
 )
 from schlieren.standards import DATUM_DISC_THICKNESS, POST_LENGTH
-from schlieren.testing import near_pairs, slow
+from schlieren.testing import loose_box, near_pairs, slow
 
 POST_TOP = DATUM_DISC_THICKNESS + POST_LENGTH  # Datum disc plus TR50/M, above the rail top (§3.4).
 TR50_MODEL_ROUNDING = 0.03  # The TR50/M STEP model is rounded to inches.
 INTERFERENCE_TOLERANCE = 1e-3  # mm^3.
 MIN_CLEARANCE = 1.0  # mm, between any source-side and imaging-side part.
+# Vendor fasteners whose exact distance queries are slow (about a second each); their clearance is checked
+# against a nominal envelope instead (see `nominal_envelope`).
+ENVELOPED_FASTENERS = ("Keeper nut", "Keeper screw")
 # (left rail yaw, right rail yaw, slit rotation, cutoff stagger): degrees outward from nominal, degrees, mm.
 # The frame's yaw range is +-3 degrees (§4.2), the slit turns through its working range, and the stagger
 # starting point is 30-40 mm (§3.3).
@@ -26,6 +31,16 @@ EXTREME_POSES = (
     (-3.0, 3.0, 90.0, 0.0),
     (3.0, -3.0, 90.0, 35.0),
 )
+
+
+def nominal_envelope(leaf, rail_loc):
+    """A box in the rail frame (the rail's Location in the pivot frame) enclosing the vendor fastener leaf.
+
+    It stands in for the fastener in distance queries, which are slow on the vendor B-rep. The box contains
+    the fastener, so a clearance that holds to the box holds to the fastener.
+    """
+    box = loose_box(moved(leaf, rail_loc.inverse()))
+    return moved(box_between(box.min.X, box.max.X, box.min.Y, box.max.Y, box.min.Z, box.max.Z), rail_loc)
 
 
 def by_label(node, label):
@@ -128,15 +143,17 @@ class OpticalHeadTests(unittest.TestCase):
                     OpticalHeadParameters(cutoff_stagger=stagger), yaw_left, yaw_right, slit_rotation
                 )
                 groups = children_by_label(head)
-                self.assert_fixtures_clear_each_other(groups)
+                self.assert_fixtures_clear_each_other(groups, yaw_right)
                 self.assert_fixtures_clear_the_frame(groups)
 
-    def assert_fixtures_clear_each_other(self, groups):
+    def assert_fixtures_clear_each_other(self, groups, yaw_right=0.0):
         source = leaves(groups["Source rail fixtures"])
         imaging = leaves(groups["Imaging rail fixtures"])
+        imaging_loc = self.h.frame.rail_location(IMAGING_SIDE, yaw_right * pi / 180)
         for s, i in near_pairs(source, imaging, MIN_CLEARANCE):
+            other = nominal_envelope(i, imaging_loc) if i.label.startswith(ENVELOPED_FASTENERS) else i
             self.assertGreaterEqual(
-                s.distance_to(i),
+                s.distance_to(other),
                 MIN_CLEARANCE,
                 f"{s.label} and {i.label} are closer than {MIN_CLEARANCE} mm",
             )

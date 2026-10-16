@@ -16,6 +16,10 @@ from schlieren.vendor_cad import (
     mcmaster_91131a028,
     mcmaster_92815a202,
     mcmaster_92815a202_envelope,
+    thorlabs_sm1cp2m,
+    thorlabs_sm1d12,
+    thorlabs_sm1rc_m,
+    thorlabs_smr1_m,
     vendor_step,
 )
 
@@ -185,6 +189,28 @@ class VendorModelTests(unittest.TestCase):
             v.KOZAK_TB250_BARREL_DIAMETER,
             delta=MODEL_ROUNDING,
         )
+
+
+class EngravingFilledTests(unittest.TestCase):
+    def test_engraved_text_is_filled_from_the_flat_face(self):
+        """No face of the text, which is a few small faces in a band at the flat face, remains."""
+        for name, model in (
+            ("SM1CP2M cap", thorlabs_sm1cp2m()),
+            ("SMR1/M ring", thorlabs_smr1_m()),
+            ("SM1RC/M ring", thorlabs_sm1rc_m()),
+        ):
+            with self.subTest(name):
+                band_top = model.bounding_box().min.Y + v.ENGRAVING_DEPTH + 1e-4
+                small = [f for f in model.faces() if band_top > f.bounding_box().max.Y and f.area < 1.0]
+                self.assertEqual(small, [])
+                self.assertTrue(model.is_valid)
+
+    def test_iris_housing_text_is_merged_into_its_outer_surface(self):
+        """The text on the SM1D12 housing is split lines in its outer cylinder, not cut pockets."""
+        iris, _ = thorlabs_sm1d12()
+        housing = max(iris.solids(), key=lambda s: s.volume)
+        self.assertEqual([f for f in housing.faces() if f.area < 1.0], [])
+        self.assertTrue(housing.is_valid)
 
 
 if __name__ == "__main__":
