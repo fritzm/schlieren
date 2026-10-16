@@ -1,10 +1,9 @@
 """Common rail shoe; design §§3–5 (§5.3).
 
-Coordinates: a §3.4 rail frame, +x across the rail (right, seen from above with the mirror ahead), +y along
-it toward the mirror, z up; rail top is z=0.
-The post is at x=y=0. Both ears point toward +x: nut at +y, screw at -y.
-Envelope, hole layout, and fabrication allowances are fit-tested on printed shoes.
-No PLA lies between the post bottom and the metal datum disc.
+Coordinates: a §3.4 rail frame, +x across the rail (right, seen from above with the mirror ahead), +y along it
+toward the mirror, z up; rail top is z=0. The post is at x=y=0. Both ears point toward +x: nut at +y, screw at
+-y. Envelope, hole layout, and fabrication allowances are fit-tested on printed shoes. No PLA lies between the
+post bottom and the metal datum disc.
 """
 
 from dataclasses import dataclass
@@ -136,7 +135,8 @@ class RailShoeParameters:
 
     @property
     def clamp_axis_x(self) -> float:
-        """Split-clamp screw and nut axis x (the axis runs along y), centered on the exposed inner ear faces."""
+        """Split-clamp screw and nut axis x (the axis runs along y), centered on the exposed inner ear
+        faces."""
         return sqrt(self.collar_outer_radius**2 - (self.split_gap / 2) ** 2) + self.ear_width / 2
 
     @property
@@ -370,12 +370,13 @@ def post_stack(
 
     Every fixture on a rail stands on this stack (§5): the TR50/M post on its datum disc and the printed rail
     shoe clamping the post foot, with the shoe's M3 split-clamp screw and nut. The side-slot M5 screws and
-    washers that fix the shoe to the rail are added by side_screws, for the assemblies that show them. The slit head and cutoff carriage also hold their spigot in an SM1RC/M slip ring on the post top,
-    centered on the post axis at optical_height (ring); the light source's own SMR1/M plays that part.
+    washers that fix the shoe to the rail are added by side_screws, for the assemblies that show them. The
+    slit head and cutoff carriage also hold their spigot in an SM1RC/M slip ring on the post top, centered on
+    the post axis at optical_height (ring); the light source's own SMR1/M plays that part.
 
     Returns labeled children in the frame of loc (the §3.4 rail frame when loc is omitted). The hardware is
-    labeled "Shoe ...", clear of any screws the fixture itself has. shoe is built when not given, and p
-    gives the shoe's parameters.
+    labeled "Shoe ...", clear of any screws the fixture itself has. shoe is built when not given, and p gives
+    the shoe's parameters.
     """
     on_rail = Location() if loc is None else loc
     at_post = on_rail * Pos(0, y, 0)

@@ -441,12 +441,12 @@ class LensCradleTests(unittest.TestCase):
         for part in (cradle, rest):
             self.assertFalse(part.is_inside((0, part.center().Y, -10)))
 
-    def test_side_screws_are_optional_and_cross_the_rest_at_its_clamp_station(self):
+    def test_side_screws_are_default_and_cross_the_rest_at_its_clamp_station(self):
         p = self.p
-        plain = {part.label for part in leaves(self.assembly)}
-        self.assertFalse(any(label.startswith("Phone rest side screw") for label in plain))
-        fitted = build_camera_support_assembly(p, include_cutoff=False, side_screws=True)
-        parts = {part.label: part for part in leaves(fitted)}
+        plain = build_camera_support_assembly(p, include_cutoff=False, side_screws=False)
+        labels = {part.label for part in leaves(plain)}
+        self.assertFalse(any(label.startswith("Phone rest side screw") for label in labels))
+        parts = {part.label: part for part in leaves(self.assembly)}
         for side in ("left", "right"):
             screw = parts[f"Phone rest side screw {side}"].bounding_box()
             with self.subTest(side=side):

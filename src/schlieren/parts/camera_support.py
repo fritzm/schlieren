@@ -8,20 +8,21 @@ hanging from it. Two separate rail fixtures:
   collar rests on a pair of ball-tip screws at ±45° in a yoke; each pair sets x and z of the lens axis at its
   station, so together they set position, pitch, and yaw. The yokes are printed separately and bolted to one
   shoe straddling the rail. Three screw tips bear on magnet pads; the aft left one sits between two short
-  dowel pins on its collar pad, which fixes the lens fore/aft. An endless elastic ring round the barrel beside each yoke,
-  hooked on a peg on the yoke, holds each pad pair down;
+  dowel pins on its collar pad, which fixes the lens fore/aft. An endless elastic ring round the barrel beside
+  each yoke, hooked on a peg on the yoke, holds each pad pair down;
 - the phone rest, specific to the phone. The phone is carried by its lens mount and is not gripped, but it
   hangs well to one side of the lens axis, so its weight would turn the lens in its collars. Its lower edge
-  rests on one dowel pin lying along the rail, on the arm of a small shoe of its own. The rest is
-  fixed: roll changes slightly as the aft collar is raised or lowered, which does not matter. A different
-  phone needs only this part redesigned.
+  rests on one dowel pin lying along the rail, on the arm of a small shoe of its own. The rest is fixed: roll
+  changes slightly as the aft collar is raised or lowered, which does not matter. A different phone needs only
+  this part redesigned.
 
 The cradle parts are modeled in detail: fillets, pad pockets, clamp ear, insert holes, joint, and pegs. The
 hardware is envelopes, except the McMaster screws, thumb nuts, inserts, dowel pins, and the collar clamp
 screws and nuts, which are vendor models. The side-slot rail screws of the cradle shoe and the phone rest are
-drawn only when asked for (`side_screws`). The phone rest has no retainer or safety catch yet. The phone is
-modeled in `parts/phone.py` from the §9.1 measurements and Apple's drawing, and the lens in `parts/lens.py` from the §9.2 measurements (the focus-ring diameter is assumed). The lens aft
-end, the end of its thread boss, is taken to be at the phone's back.
+drawn by default (`side_screws`). The phone rest has no retainer or safety catch yet. The phone is modeled in
+`parts/phone.py` from the §9.1 measurements and Apple's drawing, and the lens in `parts/lens.py` from the §9.2
+measurements (the focus-ring diameter is assumed). The lens aft end, the end of its thread boss, is taken to
+be at the phone's back.
 
 Coordinates: the §3.4 imaging rail frame, +x right, +y along the rail toward the mirror, z up from the rail
 top. y=0 is the back of the cased phone.
@@ -979,7 +980,7 @@ def cutoff_post_station(p: CameraSupportParameters, c) -> float:
 def build_camera_support_assembly(
     p: CameraSupportParameters | None = None,
     include_cutoff: bool = True,
-    side_screws: bool = False,
+    side_screws: bool = True,
     include_cassette: bool = False,
 ) -> Compound:
     """The support on the imaging rail, with the phone and the lens and, optionally, the cutoff station.
