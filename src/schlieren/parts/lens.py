@@ -27,7 +27,7 @@ from math import pi
 from build123d import Part, Rot, chamfer, fillet
 
 from schlieren.cad import CUT_OVERRUN, assembly, box_between, labeled, y_cylinder
-from schlieren.palette import FOCUS_RING_GRAY, GLASS, LENS_BLACK
+from schlieren.palette import FOCUS_RING_GRAY, GLASS, TELEPHOTO_BARREL
 from schlieren.standards import INCH
 from schlieren.validation import require_positive_dimensions
 
@@ -245,7 +245,7 @@ def build_lens(p: LensParameters | None = None):
     return assembly(
         "Telephoto lens",
         [
-            labeled(build_lens_body(p), "Lens body", LENS_BLACK),
+            labeled(build_lens_body(p), "Lens body", TELEPHOTO_BARREL),
             labeled(build_focus_ring(p), "Focus ring", FOCUS_RING_GRAY),
             labeled(build_glass(p), "Lens glass", GLASS),
             labeled(build_front_glass(p), "Front glass", GLASS),
