@@ -10,6 +10,7 @@ requires-python = ">=3.12"
 dependencies = [
     "build123d>=0.12.0",
     "markdown>=3.11",  # build-design-doc
+    "numpy>=2.0",  # render
     "ocp-vscode>=4.1.0",
     "openpyxl>=3.1.5",  # build-bom-xlsx, reconcile-bom
     "vtk>=9.7.1",

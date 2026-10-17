@@ -9,8 +9,11 @@ the local OpenGL driver, so regenerating it on another machine may differ in the
 from math import atan, degrees, sqrt
 from pathlib import Path
 
+import numpy as np
 import vtk
 from build123d import Shape, Vector
+from OCP.TopLoc import TopLoc_Location
+from vtkmodules.util.numpy_support import numpy_to_vtk, numpy_to_vtkIdTypeArray, vtk_to_numpy
 
 from schlieren.cad import leaves
 
@@ -19,8 +22,8 @@ FIGURE_PIXEL_RATIO = (
     2  # Rendered pixels per on-page pixel, so the figure stays sharp on high-density displays.
 )
 FIGURE_MARGIN_FRACTION = 0.03  # Of the figure width, on every side.
-MESH_TOLERANCE = 0.02  # Tessellation deviation, mm.
-MESH_ANGULAR_TOLERANCE = 0.1  # rad
+MESH_TOLERANCE = 0.05  # Tessellation deviation, mm.
+MESH_ANGULAR_TOLERANCE = 0.2  # rad
 FEATURE_ANGLE = (
     30.0  # deg; mesh edges sharper than this are outlined, and shading is not smoothed across them.
 )
@@ -38,17 +41,51 @@ PERSPECTIVE_DISTANCE = (
 PERSPECTIVE_CENTERING_PASSES = 8
 
 
-def _mesh(shape: Shape) -> vtk.vtkPolyData:
+class _MeshCache:
+    """The triangulation of each distinct solid geometry, in the solid's own frame, made once per figure.
+
+    Parts that share geometry (the screws and nuts of a fastener set, the two rails) differ only in their
+    locations, so each is meshed and converted once and placed by its location's matrix.
+    """
+
+    def __init__(self):
+        # Keyed by the TShape's hash, which is its identity; the TShape is kept so that it stays alive.
+        self._meshes: dict[int, tuple] = {}
+
+    def local(self, solid: Shape) -> tuple[np.ndarray, np.ndarray]:
+        tshape = solid.wrapped.TShape()
+        key = hash(tshape)
+        if key not in self._meshes:
+            unlocated = Shape.cast(solid.wrapped.Located(TopLoc_Location()))
+            vertices, triangles = unlocated.tessellate(MESH_TOLERANCE, MESH_ANGULAR_TOLERANCE)
+            points = np.array([(v.X, v.Y, v.Z) for v in vertices], dtype=float).reshape(-1, 3)
+            self._meshes[key] = (tshape, points, np.array(triangles, dtype=np.int64).reshape(-1, 3))
+        _, points, triangles = self._meshes[key]
+        return points, triangles
+
+
+def _mesh(shape: Shape, cache: _MeshCache) -> vtk.vtkPolyData:
     """Triangle mesh of shape, with the vertices that build123d repeats per face merged."""
-    vertices, triangles = shape.tessellate(MESH_TOLERANCE, MESH_ANGULAR_TOLERANCE)
-    points = vtk.vtkPoints()
-    for v in vertices:
-        points.InsertNextPoint(v.X, v.Y, v.Z)
+    all_points, all_triangles, offset = [], [], 0
+    for solid in shape.solids():
+        points, triangles = cache.local(solid)
+        trsf = solid.wrapped.Location().Transformation()
+        matrix = np.array([[trsf.Value(row, col) for col in range(1, 5)] for row in range(1, 4)])
+        # Element by element, not a matrix product, so that equal points stay exactly equal: the cleaner below
+        # merges only points that are exactly equal.
+        x, y, z = points[:, 0:1], points[:, 1:2], points[:, 2:3]
+        all_points.append(x * matrix[:, 0] + y * matrix[:, 1] + z * matrix[:, 2] + matrix[:, 3])
+        all_triangles.append(triangles + offset)
+        offset += len(points)
+    points = np.concatenate(all_points)
+    triangles = np.concatenate(all_triangles)
+    vtk_points = vtk.vtkPoints()
+    vtk_points.SetData(numpy_to_vtk(points.astype(np.float32), deep=True))  # VTK's default point precision.
     cells = vtk.vtkCellArray()
-    for triangle in triangles:
-        cells.InsertNextCell(3, triangle)
+    connectivity = np.column_stack([np.full(len(triangles), 3, dtype=np.int64), triangles]).ravel()
+    cells.SetCells(len(triangles), numpy_to_vtkIdTypeArray(connectivity, deep=True))
     raw = vtk.vtkPolyData()
-    raw.SetPoints(points)
+    raw.SetPoints(vtk_points)
     raw.SetPolys(cells)
     clean = vtk.vtkCleanPolyData()
     clean.SetInputData(raw)
@@ -93,12 +130,20 @@ def render_figure(
     camera = renderer.GetActiveCamera()
     camera.SetParallelProjection(not perspective)
 
-    extents = []  # Mesh vertices in the viewport frame: (page x, page y, depth toward viewer).
+    view_axes = np.array([tuple(page_x), tuple(page_y), tuple(toward_viewer)])
+    cache = _MeshCache()
+    projected = []  # Mesh vertices in the viewport frame: (page x, page y, depth toward viewer).
     for part in leaves(assembly):
-        mesh = _mesh(part)
-        for i in range(mesh.GetNumberOfPoints()):
-            v = Vector(*mesh.GetPoint(i))
-            extents.append((v.dot(page_x), v.dot(page_y), v.dot(toward_viewer)))
+        mesh = _mesh(part, cache)
+        points = vtk_to_numpy(mesh.GetPoints().GetData()).astype(float)
+        projected.append(
+            np.column_stack(
+                [
+                    points[:, 0] * axis[0] + points[:, 1] * axis[1] + points[:, 2] * axis[2]
+                    for axis in view_axes
+                ]
+            )
+        )
 
         normals = vtk.vtkPolyDataNormals()
         normals.SetInputData(mesh)
@@ -124,21 +169,19 @@ def render_figure(
         silhouette.SetEnableFeatureAngle(False)
         renderer.AddActor(_outline_actor(silhouette))
 
-    low = [min(e[axis] for e in extents) for axis in range(3)]
-    high = [max(e[axis] for e in extents) for axis in range(3)]
+    extents = np.concatenate(projected)
+    low = list(extents.min(axis=0))
+    high = list(extents.max(axis=0))
     middle = [(a + b) / 2 for a, b in zip(low, high, strict=True)]
     if perspective:
         # Frame in tangent space: each vertex's page offset from the view axis over its distance from the
         # camera. Slide the view axis until the vertices are centered about it, then open the lens to fit.
         distance = PERSPECTIVE_DISTANCE * sqrt(sum((b - a) ** 2 for a, b in zip(low, high, strict=True)))
         for _ in range(PERSPECTIVE_CENTERING_PASSES):
-            tangents = [
-                ((x - middle[0]) / depth, (y - middle[1]) / depth)
-                for x, y, z in extents
-                for depth in (distance - (z - middle[2]),)
-            ]
-            low = [min(t[axis] for t in tangents) for axis in range(2)]
-            high = [max(t[axis] for t in tangents) for axis in range(2)]
+            depth = distance - (extents[:, 2] - middle[2])
+            tangents = (extents[:, :2] - middle[:2]) / depth[:, None]
+            low = list(tangents.min(axis=0))
+            high = list(tangents.max(axis=0))
             middle[0] += distance * (low[0] + high[0]) / 2
             middle[1] += distance * (low[1] + high[1]) / 2
     else:
