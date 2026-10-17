@@ -171,10 +171,9 @@ def write_summary_sheet(ws, header: list[str]) -> None:
 def build_workbook(bom_csv: Path = BOM_CSV) -> Workbook:
     header, rows = read_bom(bom_csv)
     wb = Workbook()
-    summary = wb.active
-    summary.title = "Summary"
-    write_summary_sheet(summary, header)
-    write_bom_sheet(wb.create_sheet(BOM_SHEET), header, rows)
+    write_bom_sheet(wb.active, header, rows)
+    wb.active.title = BOM_SHEET
+    write_summary_sheet(wb.create_sheet("Summary"), header)
     for ws in wb.worksheets:
         ws.sheet_view.zoomScale = ZOOM_PERCENT
     return wb

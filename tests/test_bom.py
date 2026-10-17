@@ -67,7 +67,7 @@ class BomWorkbookTests(unittest.TestCase):
         cls.wb = build_bom_xlsx.build_workbook()
 
     def test_sheets(self):
-        self.assertEqual(self.wb.sheetnames, ["Summary", "BOM"])
+        self.assertEqual(self.wb.sheetnames, ["BOM", "Summary"])
 
     def test_bom_tab_is_pure_data(self):
         for row in self.wb["BOM"].iter_rows():

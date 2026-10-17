@@ -289,7 +289,7 @@ Hardware:
   the yoke joints ([§9.5](#95-lens-cradle))
 - McMaster 92815A202, M5 thumb nuts used as threadlocked mid-screw handwheels
 - Loctite 271, McMaster 91458A160
-- heat-set installation tip 92160A327;
+- McMaster 8915N111 heat-set insert installation tip set (M5 tip), on a Hakko iron;
 - Amazon B0DMCY4FN1, N52 Bar Magnet - 10 mm L × 5 mm W × 2 mm H, as hard plated bearing pads, one at each of
   three screws;
 - McMaster 91585A351, Ø3 × 10 mm 18-8 stainless dowel pins (ISO 2338 m6, chamfered ends), two for the groove
