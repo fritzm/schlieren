@@ -212,8 +212,7 @@ friction and stick-slip as the mirror plate tilts during fine adjustment.
 
 Keep the outside diameter and lower/load-transfer surfaces dry so the lower washer half continues to bear
 directly against the close-fit CA-hardened plywood counterbore. Keep grease away from plywood,
-adhesive-bonding areas, and RTV bonding surfaces. The grease is Lucas Oil Products NLGI #2 white lithium
-grease from shop stock.
+adhesive-bonding areas, and RTV bonding surfaces. The grease is Dynatex NLGI #2 white lithium grease.
 
 ### 10.5 Mirror mounting
 
