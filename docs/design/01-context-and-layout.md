@@ -40,8 +40,8 @@ established by metal posts, optical hardware, shim stock, mechanical stops, or a
 than relying solely on as-printed PLA dimensions.
 
 PLA softens at about 55–60 °C and creeps under sustained load, so printed parts must not see direct sun or a
-closed vehicle, and sustained loads on them are kept low: clamp screws are tightened to a light snug, and the
-preloaded flexures of the slit head are checked for relaxation ([§7.7](07-source-slit.md#77-fabrication-and-fit)).
+closed vehicle, and sustained loads on them are kept low: clamp screws are tightened to a light snug. The preloaded
+flexures of the slit head showed no relaxation over a week ([§7.7](07-source-slit.md#77-fabrication-and-fit)).
 The LED heatsinks rise only about 14 °C above ambient ([§6.3](06-light-source.md#63-common-heatsink)).
 
 The following are out of scope:

@@ -36,6 +36,7 @@ SUBSYSTEMS = (
     "Imager",
     "Mirror cell",
     "Shop supplies",
+    "Unused",
 )
 
 

@@ -82,7 +82,7 @@ class BomWorkbookTests(unittest.TestCase):
             for c in row
             if isinstance(c.value, str) and c.value.startswith("=")
         ]
-        self.assertEqual(len(formulas), 1 + 6 + 9)
+        self.assertEqual(len(formulas), 1 + len(STATES) + len(SUBSYSTEMS))
         self.assertTrue(all("BOM!" in f for f in formulas))
         self.assertEqual(ws["B8"].value, "=COUNTA(BOM!A:A)-1")
 
@@ -91,8 +91,9 @@ class BomWorkbookTests(unittest.TestCase):
         ranges = {str(r.sqref) for r in cf}
         with (REPO_ROOT / "bom" / "bom.csv").open(newline="", encoding="utf-8") as f:
             n_rows = sum(1 for _ in csv.reader(f)) - 1
-        self.assertEqual(ranges, {f"J2:J{n_rows + 1}"})
-        self.assertEqual(sum(len(r.rules) for r in cf), 5)
+        # Procurement-state fills on the state column, and subsystem separators across the whole row.
+        self.assertEqual(ranges, {f"J2:J{n_rows + 1}", f"A2:L{n_rows + 1}"})
+        self.assertEqual(sum(len(r.rules) for r in cf), 6)
 
     def test_save_is_reproducible(self):
         with tempfile.TemporaryDirectory() as tmp:

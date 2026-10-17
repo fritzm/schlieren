@@ -175,6 +175,3 @@ Printed parts: the flexure head, the spigot adapter, and two clamp bars.
 Hardware: 2 × FAS100, 2 × 98625A950 inserts, 2 × N52 10 × 5 × 2 mm magnet bearing pads (one under each FAS100
 ball tip, [§8.3](08-cutoff.md#83-fine-adjustment)), 1 × 2006N292 spring, 8 × M3 × 12 mm socket-head screws, 8
 × M3 nuts, 8 × M3 flat washers.
-
-**Provisional:** PLA creeps and relaxes under sustained strain, and the width stage is held deflected by its
-preload. Check the preload after the head has stood assembled for a few days, and again after warm storage.

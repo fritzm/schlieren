@@ -2,9 +2,7 @@
 
 The camera and lens are chosen ([§9.1](#91-camera)–[9.2](#92-telephoto)). Their support is a lens cradle and
 a phone rest ([§9.4](#94-support)–[9.8](#98-retaining-bands)), with an alignment procedure
-([§9.9](#99-lens-alignment)). **Provisional:** the phone rest's retainer and safety catch, the fit allowances
-of the printed yokes and of the rod groove, which are still to be tested, the inside of the phone case, and
-the alignment procedure
+([§9.9](#99-lens-alignment)). **Provisional:** the inside of the phone case and the alignment procedure
 ([§11](11-open-work.md#11-provisional-areas-and-next-steps)).
 
 ### 9.1 Camera
@@ -177,7 +175,7 @@ Each screw tip bears on a flat pad on the collar, tangent to the ring at the scr
 magnet thickness outside the ring, and the pocket floor is tangent to the ring's outside. Each pad sits in a
 pocket with a rim round it, so a ball end that wanders reaches a wall instead of the edge of the pad:
 
-- three pads are the 10 × 5 × 2 mm magnets, set with the 10 mm side across the rail, bonded into pockets
+- three pads are the 10 × 5 × 2 mm magnets, set with the 10 mm side across the rail, bonded with low-viscosity cyanoacrylate wicked in, into pockets
   0.2 mm larger across each dimension (0.1 mm per side, the allowance every printed magnet pocket in the
   design uses);
 - the fourth, at the aft left screw, is a groove between two dowel pins of 3 mm diameter and 10 mm length,
@@ -240,9 +238,7 @@ supports:
   with 0.2 mm clearance to the column faces. They locate the yoke along the rail and stop it twisting;
 - the screw ends inside the insert with about 5 mm of engagement.
 
-**Provisional:** the groove between the rods and the ball-stop rims, and the insert holes and locating walls of
-the yokes, are untested; the magnet and rod adhesive is not chosen; the fitting and removal sequence is
-set by the bands ([§9.8](#98-retaining-bands)).
+The fitting and removal sequence is set by the bands ([§9.8](#98-retaining-bands)).
 
 ### 9.6 Phone rest
 
@@ -255,7 +251,7 @@ single pair of M5 clearance holes for the side-slot screw.
 
 - The shoe is 22 mm long and centered under the rod. The arm runs across the rail from the shoe's outboard
   wall to 8 mm beyond the rod, 10 mm deep and as long as the shoe. The rod lies half sunk in a half-round seat
-  in its top, with 0.1 mm radial clearance, and is bonded.
+  in its top, with 0.1 mm radial clearance, and is bonded with low-viscosity cyanoacrylate wicked in.
 - The part is printed on its side, like the yokes: it is one profile in the plane of the load, extruded along
   the rail, so every layer is that profile and the arm needs no bridge or support. Only the side-slot screw
   bores are horizontal. The shoe's vertical corners on the arm side are left sharp, where the arm joins the
@@ -273,9 +269,6 @@ single pair of M5 clearance holes for the side-slot screw.
   does not matter; the phone is not gripped and slides on the rod.
 - The rest holds no optical alignment, so its dimensions are not critical.
 - Because the rod lies along the rail, the rest needs to be only roughly under the phone.
-
-**Provisional:** a light retainer to keep the phone on the rod, and a loose safety catch against a knock, are
-not yet designed.
 
 ### 9.7 Adjuster hardware
 

@@ -19,10 +19,9 @@ hanging from it. Two separate rail fixtures:
 The cradle parts are modeled in detail: fillets, pad pockets, clamp ear, insert holes, joint, and pegs. The
 hardware is envelopes, except the McMaster screws, thumb nuts, inserts, dowel pins, and the collar clamp
 screws and nuts, which are vendor models. The side-slot rail screws of the cradle shoe and the phone rest are
-drawn by default (`side_screws`). The phone rest has no retainer or safety catch yet. The phone is modeled in
-`parts/phone.py` from the §9.1 measurements and Apple's drawing, and the lens in `parts/lens.py` from the §9.2
-measurements (the focus-ring diameter is assumed). The lens aft end, the end of its thread boss, is taken to
-be at the phone's back.
+drawn by default (`side_screws`). The phone is modeled in `parts/phone.py` from the §9.1 measurements and
+Apple's drawing, and the lens in `parts/lens.py` from the §9.2 measurements (the focus-ring diameter is
+assumed). The lens aft end, the end of its thread boss, is taken to be at the phone's back.
 
 Coordinates: the §3.4 imaging rail frame, +x right, +y along the rail toward the mirror, z up from the rail
 top. y=0 is the back of the cased phone.

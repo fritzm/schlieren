@@ -17,8 +17,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from openpyxl import Workbook
-from openpyxl.formatting.rule import CellIsRule
-from openpyxl.styles import Font, PatternFill
+from openpyxl.formatting.rule import CellIsRule, FormulaRule
+from openpyxl.styles import Border, Font, PatternFill, Side
 from openpyxl.worksheet.datavalidation import DataValidation
 
 from schlieren.bom import NUMERIC_COLUMNS, STATE_COLUMN, SUBSYSTEM_COLUMN, SUBSYSTEMS
@@ -34,6 +34,7 @@ ZIP_TIMESTAMP = (1980, 1, 1, 0, 0, 0)
 CORE_PROPERTIES = "docProps/core.xml"
 
 ZOOM_PERCENT = 135
+SUBSYSTEM_SEPARATOR = Side(style="medium", color="FF808080")
 
 # Procurement state -> ARGB fill, in Summary display order.
 STATE_FILLS = {
@@ -117,6 +118,16 @@ def write_bom_sheet(ws, header: list[str], rows: list[list[str]]) -> None:
             ws.conditional_formatting.add(
                 state_range, CellIsRule(operator="equal", formula=[f'"{state}"'], fill=fill)
             )
+
+    # A rule rather than fixed borders, so the separators follow the data when the sheet is sorted or filtered.
+    subsystem_col = chr(ord("A") + header.index(SUBSYSTEM_COLUMN))
+    last_col = chr(ord("A") + len(header) - 1)
+    ws.conditional_formatting.add(
+        f"A2:{last_col}{len(rows) + 1}",
+        FormulaRule(
+            formula=[f"${subsystem_col}2<>${subsystem_col}1"], border=Border(top=SUBSYSTEM_SEPARATOR)
+        ),
+    )
 
     picker = DataValidation(
         type="list", formula1='"' + ",".join(STATE_FILLS) + '"', allow_blank=True, showErrorMessage=True

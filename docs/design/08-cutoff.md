@@ -58,8 +58,7 @@ The base plate, guide frame, and keeper are trimmed to a 70.35 mm radius about t
 less 2 mm clearance). Only the outer plate corners are removed; the plate is otherwise 86 mm wide, widened to
 94 mm at the side keeper-screw lugs ([§8.4](#84-cassette-seating)). Calculated from the CAD, the carriage with
 its FAS100 rotates clear of the rail over ±150°; only the FAS100 knob reaches the rail, near ±170–180°.
-Nothing projects below the plate at nominal zero ([§8.5](#85-spring-seating-and-retraction)). **Provisional:**
-clearance to other equipment on the rail near the cutoff station is not yet checked.
+Nothing projects below the plate at nominal zero ([§8.5](#85-spring-seating-and-retraction)).
 
 ### 8.2 Spigot print and fit
 
@@ -333,8 +332,6 @@ approximately through the aperture centerline. Small angular error from finite c
 acceptable because the SM1RC/M rotates the complete tube/cassette assembly. This makes the same universal
 cassette blank usable for blade, filter, Photofoil, wire, and thread experiments while keeping the rear datum
 face unobstructed.
-
-**Provisional:** cleat geometry is pending a wire-mounting trial.
 
 ### 8.7 Cassette clamp bars
 
