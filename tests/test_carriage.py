@@ -28,7 +28,10 @@ class CarriageTests(unittest.TestCase):
 
     @shared
     def support(cls):
-        return children_by_label(build_carriage(cls.p, include_support=True))
+        """The post stack's parts, from the carriage's "Reference hardware" group."""
+        return children_by_label(
+            children_by_label(build_carriage(cls.p, include_support=True))["Reference hardware"]
+        )
 
     @classmethod
     def setUpClass(cls):

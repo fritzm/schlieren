@@ -157,7 +157,7 @@ def build_optical_head(
         (build_source_fixtures(h, slit_rotation), SOURCE_SIDE),
         (build_imaging_fixtures(h), IMAGING_SIDE),
     ]
-    children = list(frame.children)
+    children = [frame]
     for group, side in fixtures:
         children.append(place(h.frame.rail_location(side, yaw[side] * pi / 180), group))
     head = assembly("Tabletop optical head", children)

@@ -7,7 +7,7 @@ from math import radians, sin, sqrt
 
 from build123d import Cylinder, Pos, Vector
 
-from schlieren.cad import along_x, leaves, moved
+from schlieren.cad import along_x, children_by_label, leaves, moved
 from schlieren.parts.camera_support import (
     CameraSupportParameters,
     _arm_point,
@@ -36,6 +36,57 @@ CONTACT = 1e-3  # mm
 ADJUSTERS = tuple(f"{where} {side}" for where in ("Aft", "Fore") for side in ("left", "right"))
 NUT_CHAMFER = 0.5  # mm, on the thumb nut's knurled head; its plain envelope has square corners.
 MAGNET_PADS = ("Fore left", "Fore right", "Aft right")  # The aft left screw sits in the rod groove.
+
+
+def _other_side(where, side):
+    """A yoke's or collar's left and right are as seen looking toward the other collar; the fore one's are
+    the rig's right and left."""
+    return side if where == "Aft" else {"left": "right", "right": "left"}[side]
+
+
+def parts_by_name(assembly):
+    """Every part of the assembly by one flat name, with the cradle's parts named "Aft collar", "Fore left
+    screw", "Aft yoke insert", and so on, left and right being the rig's."""
+    named = {}
+
+    def walk(node, path):
+        if node.children:
+            for child in node.children:
+                walk(child, [*path, node.label])
+            return
+        group = path[-1]
+        where = group.split()[0]
+        label = node.label
+        if group == "Lens cradle":
+            name = f"Cradle shoe {label.lower()}" if label.endswith(("left", "right")) else label
+        elif group == "Phone rest":
+            name = {"Rest body": "Phone rest", "Rest rod": "Rest rod"}.get(
+                label, f"Phone rest {label.lower()}"
+            )
+        elif group.endswith(" yoke assembly"):
+            name = {"Yoke": f"{where} yoke", "Joint insert": f"{where} yoke insert"}.get(
+                label, f"{where} yoke screw"
+            )
+        elif group.endswith(" adjuster"):
+            where = path[-2].split()[0]
+            side = _other_side(where, group.split()[0].lower())
+            name = f"{where} {side} {label.lower()}"
+        elif group.endswith(" collar"):
+            if label == "Collar":
+                name = group
+            elif label.startswith("Clamp"):
+                name = f"{group} clamp {label.split()[1]}"
+            elif label.endswith("magnet"):
+                name = f"{where} {_other_side(where, label.split()[0].lower())} magnet"
+            else:
+                name = label
+        else:
+            name = label
+        assert name not in named, name
+        named[name] = node
+
+    walk(assembly, [])
+    return named
 
 
 class LensCradleTests(unittest.TestCase):
@@ -71,13 +122,13 @@ class LensCradleTests(unittest.TestCase):
 
     @shared
     def parts_with_cutoff(cls):
-        return {part.label: part for part in leaves(build_camera_support_assembly(cls.p))}
+        return parts_by_name(build_camera_support_assembly(cls.p))
 
     @classmethod
     def setUpClass(cls):
         cls.p = CameraSupportParameters()
         cls.assembly = build_camera_support_assembly(cls.p, include_cutoff=False)
-        cls.parts = {part.label: part for part in leaves(cls.assembly)}
+        cls.parts = parts_by_name(cls.assembly)
 
     def test_collars_sit_on_the_clampable_barrel_clear_of_the_focus_ring(self):
         p = self.p
@@ -441,12 +492,56 @@ class LensCradleTests(unittest.TestCase):
         for part in (cradle, rest):
             self.assertFalse(part.is_inside((0, part.center().Y, -10)))
 
+    def test_cradle_groups_its_parts_and_shares_one_yoke_assembly(self):
+        top = children_by_label(self.assembly)
+        self.assertLessEqual({"Lens cradle", "Phone rest", "Phone", "Telephoto lens"}, set(top))
+        cradle = children_by_label(top["Lens cradle"])
+        self.assertEqual(
+            set(cradle),
+            {
+                "Cradle shoe",
+                "Aft yoke assembly",
+                "Fore yoke assembly",
+                "Aft collar",
+                "Fore collar",
+                "Aft band",
+                "Fore band",
+            }
+            | {
+                f"{where} side screw{washer} {side}"
+                for where in ("Aft", "Fore")
+                for washer in ("", " washer")
+                for side in ("left", "right")
+            },
+        )
+        self.assertEqual(
+            set(children_by_label(top["Phone rest"])),
+            {
+                "Rest body",
+                "Rest rod",
+                "Side screw left",
+                "Side screw right",
+                "Side screw washer left",
+                "Side screw washer right",
+            },
+        )
+        aft, fore = (children_by_label(cradle[f"{where} yoke assembly"]) for where in ("Aft", "Fore"))
+        self.assertEqual(set(aft), {"Yoke", "Joint insert", "Joint screw", "Left adjuster", "Right adjuster"})
+        self.assertEqual(set(aft), set(fore))
+        # The fore yoke assembly is the aft one's geometry turned half a turn, so its left adjuster is on the
+        # rig's right.
+        for label in ("Yoke", "Joint screw"):
+            self.assertTrue(aft[label].solids()[0].wrapped.IsPartner(fore[label].solids()[0].wrapped))
+        left = {w: children_by_label(a["Left adjuster"])["Screw"] for w, a in (("Aft", aft), ("Fore", fore))}
+        self.assertLess(left["Aft"].center().X, 0)
+        self.assertGreater(left["Fore"].center().X, 0)
+
     def test_side_screws_are_default_and_cross_the_rest_at_its_clamp_station(self):
         p = self.p
         plain = build_camera_support_assembly(p, include_cutoff=False, side_screws=False)
         labels = {part.label for part in leaves(plain)}
         self.assertFalse(any(label.startswith("Phone rest side screw") for label in labels))
-        parts = {part.label: part for part in leaves(self.assembly)}
+        parts = self.parts
         for side in ("left", "right"):
             screw = parts[f"Phone rest side screw {side}"].bounding_box()
             with self.subTest(side=side):

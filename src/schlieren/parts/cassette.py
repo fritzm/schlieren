@@ -223,4 +223,4 @@ def build_cassette_assembly(p=None, b=None):
             *(labeled(part, name, HARDWARE_GRAY, loc) for name, part in hardware),
         ]
         children.append(assembly(label, clamp))
-    return assembly("Cassette assembly (preliminary)", children)
+    return assembly("Cassette assembly", children)

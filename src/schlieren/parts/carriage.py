@@ -72,7 +72,7 @@ from schlieren.palette import (
 )
 from schlieren.parts.adjuster import bearing_magnet, fas100_children, insert_98625a950
 from schlieren.parts.cassette import build_cassette_assembly
-from schlieren.parts.rail_shoe import RailShoeParameters, post_stack
+from schlieren.parts.rail_shoe import REFERENCE_HARDWARE_LABEL, RailShoeParameters, post_stack
 from schlieren.standards import (
     DATUM_DISC_THICKNESS,
     INCH,
@@ -925,13 +925,14 @@ def build_carriage(
         labeled(build_plunger(p, spring=True), "Spring plunger", PRINTED_GREEN, Pos(0, travel - retract, 0)),
     ]
     if include_support:
-        children += post_stack(
+        reference = post_stack(
             support_location(p),
             ring=True,
             optical_height=p.optical_height,
             datum_thickness=p.datum_thickness,
             side_screws=side_screws,
         )
+        children.append(assembly(REFERENCE_HARDWARE_LABEL, reference))
     if include_hardware:
         children += _adjuster_hardware(p, travel)
         children += _stack_hardware(p)
@@ -945,7 +946,7 @@ def build_carriage(
     if include_cassette:
         seat = Pos(0, travel, p.plate_thickness + p.datum_projection)
         children.append(place(seat, build_cassette_assembly()))
-    return assembly("Carriage (preliminary)", children)
+    return assembly("Carriage", children)
 
 
 def _stack_hardware(p):

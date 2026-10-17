@@ -471,16 +471,19 @@ def screw_location(p: CameraSupportParameters, side: int, station: float) -> Loc
     return Pos(*tip) * Rot(Y=-side * p.screw_angle)
 
 
-def _adjuster(p: CameraSupportParameters, name: str, loc: Location) -> list[Part]:
+def _adjuster(p: CameraSupportParameters, label: str, loc: Location) -> Compound:
     """Screw, thumb-nut handwheel, and heat-set insert of one adjuster, placed by its screw frame."""
     nut = moved(mcmaster_92815a202(), Pos(0, 0, -p.nut_below_tip - MCMASTER_92815A202_HEIGHT))
     # Flange on the lens-side face of the boss, so the screw's reaction presses the insert into its hole.
     insert = moved(mcmaster_94459a797(), Pos(0, 0, -p.boss_top_below_tip))
-    return [
-        labeled(mcmaster_93339a252(), f"{name} screw", STEEL, loc),
-        labeled(nut, f"{name} thumb nut", BLACK_OXIDE, loc),
-        labeled(insert, f"{name} insert", BRASS, loc),
-    ]
+    return assembly(
+        label,
+        [
+            labeled(mcmaster_93339a252(), "Screw", STEEL, loc),
+            labeled(nut, "Thumb nut", BLACK_OXIDE, loc),
+            labeled(insert, "Insert", BRASS, loc),
+        ],
+    )
 
 
 def rod_layout(p: CameraSupportParameters) -> tuple[float, float]:
@@ -906,7 +909,7 @@ def build_cradle_yoke_for_print(p: CameraSupportParameters | None = None) -> Par
     return moved(yoke, Pos(-(box.min.X + box.max.X) / 2, -(box.min.Y + box.max.Y) / 2, -box.min.Z))
 
 
-def _joint_hardware(p: CameraSupportParameters, where: str, station: float) -> list[Part]:
+def _joint_hardware(p: CameraSupportParameters, station: float) -> list[Part]:
     """Insert and countersunk M5 screw of a yoke's joint."""
     head_depth = (p.joint_screw_head_diameter - 5.0) / 2
     head = z_cone(p.joint_screw_head_diameter, 5.0, 0, 0, 0, head_depth)
@@ -914,12 +917,12 @@ def _joint_hardware(p: CameraSupportParameters, where: str, station: float) -> l
     screw = head + shank
     insert_at = Pos(0, station, p.joint_z) * Rot(X=180)
     return [
-        labeled(mcmaster_94459a797(), f"{where} yoke insert", BRASS, insert_at),
-        labeled(screw, f"{where} yoke screw", STEEL, Pos(0, station, 0)),
+        labeled(mcmaster_94459a797(), "Joint insert", BRASS, insert_at),
+        labeled(screw, "Joint screw", STEEL, Pos(0, station, 0)),
     ]
 
 
-def _collar_clamp_hardware(p: CameraSupportParameters, where: str, station: float) -> list[Part]:
+def _collar_clamp_hardware(p: CameraSupportParameters, station: float) -> list[Part]:
     """The collar's M3 × 12 clamp screw and hex nut: head on the outer face of the screw ear, nut seated on
     the floor of its pocket in the other ear with its flats up and down."""
     screw_z = p.optical_height + p.collar_radius + p.clamp_screw_above_ring
@@ -927,9 +930,27 @@ def _collar_clamp_hardware(p: CameraSupportParameters, where: str, station: floa
     nut_seat = p.ear_nut_side - p.rail_shoe.nut_pocket_depth
     nut_loc = Location(along_x((nut_seat, station, screw_z))) * Rot(Z=90)  # Corners along the lens axis.
     return [
-        labeled(mcmaster_91292a114(), f"{where} collar clamp screw", METAL, screw_loc),
-        labeled(mcmaster_91828a211(), f"{where} collar clamp nut", METAL, nut_loc),
+        labeled(mcmaster_91292a114(), "Clamp screw", METAL, screw_loc),
+        labeled(mcmaster_91828a211(), "Clamp nut", METAL, nut_loc),
     ]
+
+
+@cache
+def build_yoke_assembly(p: CameraSupportParameters | None = None) -> Compound:
+    """A yoke with its joint insert and screw and its two adjusters, in the yoke's own frame.
+
+    The frame's origin is on the lens axis at the yoke's station, with +y toward the other collar. Left and
+    right are as seen looking that way, so a yoke placed turned half a turn about the vertical axis (the fore
+    one) has its left on the rig's right. The fore yoke is the aft yoke turned half a turn, with its hardware, so
+    one assembly stands for both; it must not be modified.
+    """
+    p = p or CameraSupportParameters()
+    p.validate()
+    station = p.aft_station  # The aft yoke faces toward the other collar along +y.
+    children = [labeled(build_cradle_yoke(p, station), "Yoke", PRINTED_ORANGE), *_joint_hardware(p, station)]
+    for side, label in ((-1, "Left adjuster"), (1, "Right adjuster")):
+        children.append(_adjuster(p, label, screw_location(p, side, station)))
+    return place(Pos(0, -station, 0), assembly("Yoke assembly", children))
 
 
 @cache
@@ -977,6 +998,71 @@ def cutoff_post_station(p: CameraSupportParameters, c) -> float:
     return p.lens_length + LENS_TO_SLIP_RING + c.ring_thickness / 2
 
 
+def _collar_assembly(p: CameraSupportParameters, where: str, station: float) -> Compound:
+    """A collar with its clamp screw and nut and its pad magnets; the aft one also carries the groove rods.
+
+    Left and right are as seen from the collar looking toward the other one (see `build_yoke_assembly`), so
+    each pad has the label of the adjuster that bears on it.
+    """
+    rod_side = -1 if where == "Aft" else None  # The aft left pad carries the groove rods.
+    children = [
+        labeled(build_collar(p, station, rod_side), "Collar", PRINTED_GREEN),
+        *_collar_clamp_hardware(p, station),
+    ]
+    # Pads lie with their 10 mm length across the rail: each pad slides that way by the travel of the other
+    # screw of its pair, and only slightly along the rail.
+    pad = floor_box(p.magnet_length, p.magnet_width, p.magnet_thickness)
+    for label, side in (("Left", -p.toward_other(station)), ("Right", p.toward_other(station))):
+        if (where, side) == ("Aft", -1):
+            continue  # This screw sits in the rod groove below, not on a magnet.
+        children.append(labeled(pad, f"{label} magnet", STEEL, screw_location(p, side, station)))
+    if where == "Aft":
+        # Fore/aft stop: in place of a magnet, the aft left collar pad carries two rods lying across the rail,
+        # and the screw's ball nests in the groove between them. The ball can still slide along the rods.
+        groove = screw_location(p, -1, station)
+        half_spacing, rod_height = rod_layout(p)
+        for offset in (-1, 1):
+            rod = moved(
+                mcmaster_91585a351(), Rot(Y=90)
+            )  # Axis along x (across the rail), as the Ø3 × 10 mm dowel pin.
+            loc = groove * Pos(0, offset * half_spacing, rod_height)
+            children.append(labeled(rod, f"Groove rod {offset:+d}", STEEL, loc))
+    return assembly(f"{where} collar", children)
+
+
+def _phone_rest(p: CameraSupportParameters, side_screws: bool) -> Compound:
+    """The phone rest, its roll rod, and, with side_screws, the side-slot screws and washers that fix it."""
+    # Roll: the phone's lower edge on a rod lying along the rail.
+    rod = along_y((p.rest_x, p.rest_y, p.rest_arm_top)) * mcmaster_91585a457()
+    children = [labeled(build_phone_rest(p), "Rest body", PRINTED_BLUE), labeled(rod, "Rest rod", STEEL)]
+    if side_screws:
+        children.extend(
+            labeled(part, part.label, METAL) for part in side_clamp_hardware(p.rail_shoe, p.rest_center)
+        )
+    return assembly("Phone rest", children)
+
+
+def _lens_cradle(p: CameraSupportParameters, side_screws: bool) -> Compound:
+    """The cradle shoe, with side_screws its side-slot screws and washers, the aft and fore yoke assemblies,
+    collars, and retention bands."""
+    yoke = build_yoke_assembly(p)
+    yokes, collars, bands = [], [], []
+    for where, station in zip(("Aft", "Fore"), p.stations, strict=True):
+        turn = Rot(Z=0 if where == "Aft" else 180)  # The fore yoke is the aft one turned half a turn.
+        loc = Pos(0, station, 0) * turn
+        yokes.append(assembly(f"{where} yoke assembly", (place(loc, part) for part in yoke.children)))
+        collars.append(_collar_assembly(p, where, station))
+        bands.append(labeled(build_band(p, station), f"{where} band", RUBBER))
+    shoe = [labeled(build_cradle_shoe(p), "Cradle shoe", PRINTED_ORANGE)]
+    if side_screws:
+        for where, y in zip(("Aft", "Fore"), p.cradle_clamp_ys, strict=True):
+            shoe.extend(
+                labeled(part, f"{where} {part.label.lower()}", METAL)
+                for part in side_clamp_hardware(p.rail_shoe, y)
+            )
+    return assembly("Lens cradle", [*shoe, *yokes, *collars, *bands])
+
+
 def build_camera_support_assembly(
     p: CameraSupportParameters | None = None,
     include_cutoff: bool = True,
@@ -999,51 +1085,12 @@ def build_camera_support_assembly(
     )
     children = [
         labeled(rail, "Rail", BLACK_ANODIZED),
-        labeled(build_cradle_shoe(p), "Cradle shoe", PRINTED_ORANGE),
-        labeled(build_phone_rest(p), "Phone rest", PRINTED_BLUE),
+        _lens_cradle(p, side_screws),
+        _phone_rest(p, side_screws),
         place(Pos(0, 0, axis_z), phone),
         place(Pos(0, 0, axis_z), lens),
         labeled(axis, "Optical axis", AXIS_RED),
     ]
-    if side_screws:
-        for where, y in zip(("aft", "fore"), p.cradle_clamp_ys, strict=True):
-            children.extend(
-                labeled(part, f"Cradle shoe {where} {part.label.lower()}", METAL)
-                for part in side_clamp_hardware(p.rail_shoe, y)
-            )
-        children.extend(
-            labeled(part, f"Phone rest {part.label.lower()}", METAL)
-            for part in side_clamp_hardware(p.rail_shoe, p.rest_center)
-        )
-    # Pads lie with their 10 mm length across the rail: each pad slides that way by the travel of the other
-    # screw of its pair, and only slightly along the rail.
-    pad = floor_box(p.magnet_length, p.magnet_width, p.magnet_thickness)
-    for where, station in zip(("Aft", "Fore"), p.stations, strict=True):
-        rod_side = -1 if where == "Aft" else None  # The aft left pad carries the groove rods.
-        children.append(labeled(build_collar(p, station, rod_side), f"{where} collar", PRINTED_GREEN))
-        children.append(labeled(build_cradle_yoke(p, station), f"{where} yoke", PRINTED_ORANGE))
-        children.append(labeled(build_band(p, station), f"{where} band", RUBBER))
-        children += _joint_hardware(p, where, station)
-        children += _collar_clamp_hardware(p, where, station)
-        for name, side in (("left", -1), ("right", 1)):
-            loc = screw_location(p, side, station)
-            children += _adjuster(p, f"{where} {name}", loc)
-            if (where, side) == ("Aft", -1):
-                continue  # This screw sits in the rod groove below, not on a magnet.
-            children.append(labeled(pad, f"{where} {name} magnet", STEEL, loc))
-    # Fore/aft stop: in place of a magnet, the aft left collar pad carries two rods lying across the rail, and
-    # the screw's ball nests in the groove between them. The ball can still slide along the rods.
-    groove = screw_location(p, -1, p.aft_station)
-    half_spacing, rod_height = rod_layout(p)
-    for offset in (-1, 1):
-        rod = moved(
-            mcmaster_91585a351(), Rot(Y=90)
-        )  # Axis along x (across the rail), as the Ø3 × 10 mm dowel pin.
-        loc = groove * Pos(0, offset * half_spacing, rod_height)
-        children.append(labeled(rod, f"Groove rod {offset:+d}", STEEL, loc))
-    # Roll: the phone's lower edge on a rod lying along the rail.
-    rest = along_y((p.rest_x, p.rest_y, p.rest_arm_top)) * mcmaster_91585a457()
-    children.append(labeled(rest, "Rest rod", STEEL))
     support = assembly("Lens cradle and phone rest", children)
     if not include_cutoff:
         return support

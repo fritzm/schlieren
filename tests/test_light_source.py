@@ -6,7 +6,7 @@ from dataclasses import replace
 
 from build123d import Box, Pos
 
-from schlieren.cad import FROM_CORNER, children_by_label, moved
+from schlieren.cad import FROM_CORNER, children_by_label, leaves, moved
 from schlieren.parts.light_source import (
     GREEN,
     MODULES,
@@ -46,10 +46,12 @@ TR50_MODEL_ROUNDING = 0.03
 
 
 def parts_by_label(assembly):
-    """Parts by label, with the "Reference hardware" group's parts alongside the others."""
+    """Parts by label, with the "Reference hardware" and "LED module" groups' parts alongside the others."""
     parts = children_by_label(assembly)
-    group = parts.pop("Reference hardware")
-    return {**parts, **children_by_label(group)}
+    for group in ("Reference hardware", "LED module"):
+        members = children_by_label(parts.pop(group))
+        parts = {**parts, **members}
+    return parts
 
 
 class LightSourceTests(unittest.TestCase):
@@ -217,12 +219,13 @@ class LightSourceTests(unittest.TestCase):
         labels = {child.label for child in section.children}
         self.assertNotIn("Reference hardware", labels)
         self.assertNotIn("TR50 M post", labels)
-        self.assertTrue({"SMR1 M ring", "ACL2520U-A condenser", "LED package", "SM1D12 iris"} <= labels)
+        self.assertTrue({"SMR1 M ring", "ACL2520U-A condenser", "LED module", "SM1D12 iris"} <= labels)
         # The LED module and condenser stay whole; the rest are cut on the axis plane to the -x half.
         full = children_by_label(module)
         for child in section.children:
             if child.label in WHOLE_IN_SECTION:
-                self.assertAlmostEqual(child.volume, full[child.label].volume, delta=1e-6)
+                whole = sum(part.volume for part in leaves(full[child.label]))
+                self.assertAlmostEqual(sum(part.volume for part in leaves(child)), whole, delta=1e-6)
             else:
                 self.assertAlmostEqual(child.bounding_box().max.X, 0, delta=0.01)
         self.assertAlmostEqual(

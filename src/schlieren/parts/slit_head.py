@@ -75,7 +75,7 @@ from schlieren.palette import (
     STEEL,
 )
 from schlieren.parts.adjuster import bearing_magnet, fas100_children, insert_98625a950
-from schlieren.parts.rail_shoe import post_stack
+from schlieren.parts.rail_shoe import REFERENCE_HARDWARE_LABEL, post_stack
 from schlieren.standards import (
     DATUM_DISC_THICKNESS,
     INCH,
@@ -799,10 +799,11 @@ def build_slit_head_assembly(p=None, rotation=0.0, include_support=True, side_sc
     )
     children.append(labeled(spring, "2006N292 spring", METAL, loc * Pos(sx, p.axis_y, s0)))
     if include_support:
-        children += post_stack(
+        reference = post_stack(
             ring=True,
             optical_height=p.optical_height,
             datum_thickness=p.datum_thickness,
             side_screws=side_screws,
         )
-    return assembly("Flexure slit head (exploratory)", children)
+        children.append(assembly(REFERENCE_HARDWARE_LABEL, reference))
+    return assembly("Flexure slit head", children)

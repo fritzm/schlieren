@@ -111,13 +111,11 @@ class OpticalHeadTests(unittest.TestCase):
     def test_head_has_frame_and_both_fixture_groups(self):
         self.assertEqual(
             set(self.groups),
-            {
-                "Pivot plate assembly",
-                "Left rail assembly",
-                "Right rail assembly",
-                "Source rail fixtures",
-                "Imaging rail fixtures",
-            },
+            {"Tabletop frame", "Source rail fixtures", "Imaging rail fixtures"},
+        )
+        self.assertEqual(
+            set(children_by_label(self.groups["Tabletop frame"])),
+            {"Pivot plate assembly", "Left rail assembly", "Right rail assembly"},
         )
 
     @slow
@@ -161,11 +159,7 @@ class OpticalHeadTests(unittest.TestCase):
     def assert_fixtures_clear_the_frame(self, groups):
         """No part of a fixture touches the frame hardware; the shoes straddle the rails, so only an overlap
         with a rail counts there."""
-        frame = [
-            leaf
-            for name in ("Pivot plate assembly", "Left rail assembly", "Right rail assembly")
-            for leaf in leaves(groups[name])
-        ]
+        frame = leaves(groups["Tabletop frame"])
         for group in ("Source rail fixtures", "Imaging rail fixtures"):
             for s, f in near_pairs(leaves(groups[group]), frame, MIN_CLEARANCE):
                 if f.label == "Rail":

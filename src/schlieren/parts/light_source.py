@@ -37,7 +37,7 @@ from schlieren.parts.light_source_holes import (
     STAR_NOTCH_WIDTH,
     HoleLayoutParameters,
 )
-from schlieren.parts.rail_shoe import post_stack
+from schlieren.parts.rail_shoe import REFERENCE_HARDWARE_LABEL, post_stack
 from schlieren.standards import DATUM_DISC_THICKNESS, INCH, OPTICAL_HEIGHT, POST_DIAMETER, POST_LENGTH
 from schlieren.validation import require_positive_dimensions
 from schlieren.vendor_cad import (
@@ -58,20 +58,11 @@ from schlieren.vendor_cad import (
     thorlabs_smr1_m,
 )
 
-REFERENCE_HARDWARE_LABEL = "Reference hardware"
 HEATSINK_SCREW_LABEL = "M3 heatsink screw"  # Numbered 1-3, in the order of the layout's M3 holes.
 BOARD_SCREW_LABEL = "M2 board screw"  # Numbered 1-2, in the order of the layout's M2 holes.
 BOARD_WASHER_LABEL = "M2 board washer"  # One under each board screw head, numbered with it.
-WHOLE_IN_SECTION = (  # The LED module and condenser, shown entire in light_source_section.
-    "CN40-40B heatsink",
-    "SM1CP2M cap",
-    "LED star board",
-    "LED package",
-    "ACL2520U-A condenser",
-    *(f"{HEATSINK_SCREW_LABEL} {i}" for i in (1, 2, 3)),
-    *(f"{BOARD_SCREW_LABEL} {i}" for i in (1, 2)),
-    *(f"{BOARD_WASHER_LABEL} {i}" for i in (1, 2)),
-)
+LED_MODULE_LABEL = "LED module"  # The heatsink, cap, star board, LED package, and their fasteners.
+WHOLE_IN_SECTION = (LED_MODULE_LABEL, "ACL2520U-A condenser")  # Shown entire in light_source_section.
 SECTION_BOX_SIZE = 1000.0  # Cutting box for light_source_section; larger than the module.
 
 
@@ -311,9 +302,13 @@ def build_light_source_assembly(p=None, board=GREEN, engagement=None, side_screw
     # cap's rear face. The SM1V05 sleeve enters the slit-side face by the focus engagement and its lock ring
     # bears on that face; the lens sits on the SM1V05 seat under its retaining ring; the SM1L03 seats on the
     # SM1V05 open end and the iris on the SM1L03 open end.
+    module = [
+        labeled(
+            build_drilled_heatsink(p, holes), "CN40-40B heatsink", BLACK_ANODIZED, Pos(0, p.heatsink_front, z)
+        ),
+        labeled(build_drilled_cap(p, holes), "SM1CP2M cap", BLACK_ANODIZED, Pos(0, 0, z)),
+    ]
     vendor_parts = {
-        "CN40-40B heatsink": (build_drilled_heatsink(p, holes), p.heatsink_front),
-        "SM1CP2M cap": (build_drilled_cap(p, holes), 0),
         "SMR1 M ring": (thorlabs_smr1_m(), 0),
         "SM1V05 body": (sm1v05_body, p.sleeve_end_u(engagement)),
         "SM1NT lock ring": (lock_ring, p.smr1_thickness),
@@ -329,12 +324,12 @@ def build_light_source_assembly(p=None, board=GREEN, engagement=None, side_screw
     children.append(labeled(iris_lever, "SM1D12 iris lever", METAL, Pos(0, iris_seat, z)))
     children.append(labeled(thorlabs_acl2520u_a(), "ACL2520U-A condenser", GLASS, Pos(0, plano, z)))
     # Labels are viewer tree paths, so they must not contain "/".
-    children.append(
+    module.append(
         labeled(
             build_star_board(board), "LED star board", SOLDER_MASK_WHITE, Pos(0, p.cap_face, z) * toward_lens
         )
     )
-    children.append(
+    module.append(
         labeled(build_led_package(board), "LED package", LED_YELLOW, Pos(0, led_face, z) * toward_lens)
     )
     # The M3 screws enter from the pin side of the heatsink base, into the cap; the M2 screws, each on a nylon
@@ -364,8 +359,9 @@ def build_light_source_assembly(p=None, board=GREEN, engagement=None, side_screw
             counts[hole.kind] += 1
             for part, label, color, u, facing in hardware[hole.kind]:
                 loc = Pos(-hole.x, u, z + hole.y) * facing  # Layout +x is the assembly's -x (see _drilled).
-                children.append(labeled(part, f"{label} {counts[hole.kind]}", color, loc))
-    return assembly("Light source", children)
+                module.append(labeled(part, f"{label} {counts[hole.kind]}", color, loc))
+    reference_group, *rest = children
+    return assembly("Light source", [reference_group, assembly(LED_MODULE_LABEL, module), *rest])
 
 
 def light_source_section(module: Compound) -> Compound:
@@ -379,6 +375,11 @@ def light_source_section(module: Compound) -> Compound:
     kept = []
     for child in module.children:
         if child.label == REFERENCE_HARDWARE_LABEL:
+            continue
+        if child.label == LED_MODULE_LABEL:
+            kept.append(
+                assembly(child.label, (labeled(part, part.label, part.color) for part in child.children))
+            )
             continue
         piece = child if child.label in WHOLE_IN_SECTION else child & half_space
         if piece.solids():

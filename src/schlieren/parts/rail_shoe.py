@@ -354,6 +354,10 @@ def split_clamp_hardware(p: RailShoeParameters | None = None) -> list[Part]:
     ]
 
 
+# Assemblies group the output of `post_stack` under this label, the same in every fixture on a rail.
+REFERENCE_HARDWARE_LABEL = "Reference hardware"
+
+
 def post_stack(
     loc: Location | None = None,
     *,

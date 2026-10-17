@@ -15,6 +15,7 @@ without threads or sockets, and the T-nuts are not modeled.
 """
 
 from dataclasses import dataclass
+from functools import cache
 from math import atan, cos, degrees, pi, sin
 
 from build123d import Compound, Location, Part, Pos, Rot
@@ -292,8 +293,12 @@ def _ring(outer_diameter: float, inner_diameter: float, height: float) -> Part:
     return z_cylinder(outer_diameter, 0, 0, 0, height) - _bore(inner_diameter, height)
 
 
-def _rail_assembly(p: FrameParameters, name: str) -> Compound:
-    """A rail and everything that yaws with it, in the rail frame (see FrameParameters.rail_location)."""
+@cache
+def _rail_assembly(p: FrameParameters) -> Compound:
+    """A rail and everything that yaws with it, in the rail frame (see FrameParameters.rail_location).
+
+    Both rails are this one assembly, placed by `build_frame_assembly`; it must not be modified.
+    """
     # Everything on the rail lies aft of the pivot, at negative y.
     lug_center = -p.joining_plate_hole_pitch
     block_y = -p.foot_block_center
@@ -332,7 +337,7 @@ def _rail_assembly(p: FrameParameters, name: str) -> Compound:
                 Pos(0, y, under_head),
             )
         )
-    return assembly(f"{name} rail assembly", parts)
+    return assembly("Rail assembly", parts)
 
 
 def _plate_assembly(p: FrameParameters) -> Compound:
@@ -391,6 +396,8 @@ def build_frame_assembly(
     p = p or FrameParameters()
     p.validate()
     children = [_plate_assembly(p)]
+    rail = _rail_assembly(p)
     for (name, side), yaw in zip(SIDES.items(), (left_yaw, right_yaw), strict=True):
-        children.append(place(p.rail_location(side, yaw * pi / 180), _rail_assembly(p, name)))
+        loc = p.rail_location(side, yaw * pi / 180)
+        children.append(assembly(f"{name} rail assembly", (place(loc, part) for part in rail.children)))
     return assembly("Tabletop frame", children)
