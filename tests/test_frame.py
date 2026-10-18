@@ -5,7 +5,7 @@ import xml.etree.ElementTree as ET
 from dataclasses import replace
 from math import degrees, pi
 
-from schlieren.cad import children_by_label, leaves
+from schlieren.cad import children_by_label, intersect, leaves
 from schlieren.parts.frame import (
     SIDES,
     FrameParameters,
@@ -14,7 +14,7 @@ from schlieren.parts.frame import (
     build_pivot_plate,
 )
 from schlieren.parts.frame_drawing import pivot_plate_drawing_svg
-from schlieren.testing import near_pairs_among, shared, slow
+from schlieren.testing import near_pairs_among, shared, slow, svg_attr
 from schlieren.vendor_cad import (
     MCMASTER_8215K2_DIAMETER,
     MCMASTER_8215K2_HEIGHT,
@@ -25,7 +25,8 @@ from schlieren.vendor_cad import (
 )
 
 MAX_YAW = 3.0  # deg from nominal; the adjustment range §4.2 sizes the fixed yaw holes for.
-# mm^3. The foot-screw tips graze the slot-floor taper of the rail model, whose taper is nominal, not measured.
+# mm^3. The foot-screw tips graze the slot-floor taper of the rail model, whose taper is nominal, not
+# measured.
 INTERFERENCE_TOLERANCE = 1e-3
 
 
@@ -236,7 +237,7 @@ class FrameTests(unittest.TestCase):
                 if a.label.endswith(" screw") and b.label.endswith(" nut"):
                     continue
                 with self.subTest(yaw=yaw, pair=(a.label, b.label)):
-                    self.assertLess((a & b).volume, INTERFERENCE_TOLERANCE)
+                    self.assertLess(intersect(a, b).volume, INTERFERENCE_TOLERANCE)
 
     def test_thumb_nuts_are_vendor_models_seated_on_the_strap_washers(self):
         p = self.p
@@ -271,22 +272,24 @@ class FrameTests(unittest.TestCase):
         p = self.p
         svg = ET.fromstring(pivot_plate_drawing_svg(p))
         ns = "{http://www.w3.org/2000/svg}"
-        _, _, width, height = (float(v) for v in svg.get("viewBox").split())
+        _, _, width, height = (float(v) for v in svg_attr(svg, "viewBox").split())
         self.assertEqual(svg.get("width"), f"{width}mm")  # One user unit is 1 mm.
         self.assertEqual(svg.get("height"), f"{height}mm")
         outline = next(e for e in svg.iter(f"{ns}rect") if e.get("class") == "outline")
-        self.assertEqual((float(outline.get("width")), float(outline.get("height"))), (180.0, 150.0))
-        left, top = float(outline.get("x")), float(outline.get("y"))
+        self.assertEqual(
+            (float(svg_attr(outline, "width")), float(svg_attr(outline, "height"))), (180.0, 150.0)
+        )
+        left, top = float(svg_attr(outline, "x")), float(svg_attr(outline, "y"))
         circles = {e.get("data-hole"): e for e in svg.iter(f"{ns}circle") if e.get("data-hole")}
         self.assertEqual(set(circles), set(p.plate_holes()))
         for name, (x, y) in p.plate_holes().items():
             with self.subTest(hole=name):
                 circle = circles[name]
                 # Seen from above with the mirror ahead: +x to the right, +y up the sheet.
-                self.assertAlmostEqual(float(circle.get("cx")) - left, x + 90.0, places=3)
-                self.assertAlmostEqual(top + 150.0 - float(circle.get("cy")), y, places=3)
-                self.assertAlmostEqual(float(circle.get("r")), 2.75, places=3)
-        figures = [e.text for e in svg.iter(f"{ns}text")]
+                self.assertAlmostEqual(float(svg_attr(circle, "cx")) - left, x + 90.0, places=3)
+                self.assertAlmostEqual(top + 150.0 - float(svg_attr(circle, "cy")), y, places=3)
+                self.assertAlmostEqual(float(svg_attr(circle, "r")), 2.75, places=3)
+        figures = [e.text or "" for e in svg.iter(f"{ns}text")]
         # x from the plate centerline, y from the aft edge, as in §4.2.
         x_figures = ("-90.0", "-68.8", "-47.5", "-28.8", "0 CL", "+28.8", "+47.5", "+68.8", "+90.0")
         for expected in (*x_figures, "0.0", "35.3", "125.0", "150.0"):

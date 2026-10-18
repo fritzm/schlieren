@@ -1,12 +1,12 @@
 """Concatenate docs/design/NN-*.md fragments (filename order) into one consolidated design document.
 
-The output is a generated artifact; edit the fragments, never the output. The fragments' figures are copied
-to figures/ beside it, so their relative image links resolve there too.
+The output is a generated artifact; edit the fragments, never the output. The fragments' figures are copied to
+figures/ beside it, so their relative image links resolve there too.
 
---pdf also writes a print-styled HTML page beside the Markdown and prints it to docs/schlieren-design.pdf,
-the rendered copy versioned in the repository for reading and sharing. The PDF has a linked contents list,
-working section links, and a heading outline (bookmarks). It is printed by a locally installed headless Chrome
-or Chromium, and its formulas are typeset by KaTeX loaded from a CDN, so that step needs network access.
+--pdf also writes a print-styled HTML page beside the Markdown and prints it to docs/schlieren-design.pdf, the
+rendered copy versioned in the repository for reading and sharing. The PDF has a linked contents list, working
+section links, and a heading outline (bookmarks). It is printed by a locally installed headless Chrome or
+Chromium, and its formulas are typeset by KaTeX loaded from a CDN, so that step needs network access.
 
     uv run build-design-doc [--pdf [PATH]] [-o exports/docs/schlieren-design.md]
 """
@@ -104,7 +104,8 @@ def build_print_html(design_doc: str, title: str) -> str:
     body = converter.convert(design_doc)
     # Linked contents list after the title; the toc extension also gives every heading the id that the
     # in-document section links point at.
-    contents = f'<nav><p class="contents-title">Contents</p>{converter.toc}</nav>'
+    toc = converter.toc  # ty: ignore[unresolved-attribute]
+    contents = f'<nav><p class="contents-title">Contents</p>{toc}</nav>'
     body = body.replace("</h1>", f"</h1>\n{contents}", 1)
     head = f'<meta charset="utf-8"><title>{title}</title><style>{PDF_STYLE}</style>{KATEX_HEAD}'
     return f"<!doctype html>\n<html><head>{head}</head>\n<body>\n{body}\n</body></html>\n"

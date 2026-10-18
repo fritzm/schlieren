@@ -1,12 +1,13 @@
 """Shared build123d helpers: alignments, axis planes, primitive solids, and labeled viewer assemblies.
 
 Assemblies are `Compound`s whose children are labeled, colored, and already placed in the assembly frame.
-build123d shapes can have only one parent and keep a stale parent reference when copied or moved, so
-children are always fresh wrappers made by `labeled`; never re-parent a shape taken from another assembly,
-and detach a child with `labeled` before exporting it (STEP export of an attached child fails).
+build123d shapes can have only one parent and keep a stale parent reference when copied or moved, so children
+are always fresh wrappers made by `labeled`; never re-parent a shape taken from another assembly, and detach a
+child with `labeled` before exporting it (STEP export of an attached child fails).
 """
 
 from math import cos, pi
+from typing import cast
 
 from build123d import (
     Align,
@@ -85,12 +86,14 @@ def z_cylinder(diameter: float, x: float, y: float, z0: float, z1: float) -> Par
 
 
 def y_cone(diameter0: float, diameter1: float, x: float, z: float, y0: float, y1: float) -> Part:
-    """Cone (or frustum) along +y from y0 to y1, its axis through (x, z), tapering from diameter0 to diameter1."""
+    """Cone (or frustum) along +y from y0 to y1, its axis through (x, z), tapering from diameter0 to
+    diameter1."""
     return along_y((x, y0, z)) * Cone(diameter0 / 2, diameter1 / 2, y1 - y0, align=ON_FLOOR)
 
 
 def z_cone(diameter0: float, diameter1: float, x: float, y: float, z0: float, z1: float) -> Part:
-    """Cone (or frustum) along +z from z0 to z1, its axis through (x, y), tapering from diameter0 to diameter1."""
+    """Cone (or frustum) along +z from z0 to z1, its axis through (x, y), tapering from diameter0 to
+    diameter1."""
     return Pos(x, y, z0) * Cone(diameter0 / 2, diameter1 / 2, z1 - z0, align=ON_FLOOR)
 
 
@@ -122,15 +125,26 @@ def compression_spring(outer_diameter: float, wire_diameter: float, length: floa
     return Pos(0, 0, wire_diameter / 2) * coil
 
 
-def moved(shape: Shape, loc: Location | None) -> Shape:
+def intersect(a: Shape, b: Shape) -> Compound:
+    """a & b, as an empty Compound (volume 0, no solids) where build123d's `&` returns None for no overlap."""
+    common = a & b
+    return Compound() if common is None else cast(Compound, common)
+
+
+def fused(a: Shape, b: Shape) -> Compound:
+    """a + b. build123d types the result as a Compound or a Wire; for solids it is a Compound."""
+    return cast(Compound, a + b)
+
+
+def moved[ShapeT: Shape](shape: ShapeT, loc: Location | None) -> ShapeT:
     """shape moved by loc, sharing its geometry; use it in place of `loc * shape` for large models.
 
-    `loc * shape` deep-copies the whole B-rep and then discards the copy, which dominates the cost of
-    placing vendor models in a large assembly. Moving the underlying OCCT shape only composes locations.
+    `loc * shape` deep-copies the whole B-rep and then discards the copy, which dominates the cost of placing
+    vendor models in a large assembly. Moving the underlying OCCT shape only composes locations.
     """
     if loc is None:
         return shape
-    return Shape.cast(downcast(shape.wrapped.Moved(loc.wrapped)))
+    return cast("ShapeT", Shape.cast(downcast(shape.wrapped.Moved(loc.wrapped))))
 
 
 def labeled(
@@ -150,7 +164,8 @@ def assembly(label: str, children) -> Compound:
 
 
 def place(loc: Location, node: Shape) -> Shape:
-    """Copy of an assembly (or a single labeled child) moved by loc; moving a Compound leaves its children behind."""
+    """Copy of an assembly (or a single labeled child) moved by loc; moving a Compound leaves its children
+    behind."""
     if node.children:
         return assembly(node.label, (place(loc, child) for child in node.children))
     return labeled(node, node.label, node.color, loc)
@@ -159,8 +174,8 @@ def place(loc: Location, node: Shape) -> Shape:
 def recolored(node: Shape, replacements: dict[tuple, tuple]) -> Shape:
     """Copy of an assembly with each leaf whose color is a key of replacements given that entry's color.
 
-    Colors are compared as palette tuples (r, g, b[, a]); leaves of other colors keep theirs. The parts'
-    own colors are untouched, so a model reads the same alone and in the assembly that recolors it.
+    Colors are compared as palette tuples (r, g, b[, a]); leaves of other colors keep theirs. The parts' own
+    colors are untouched, so a model reads the same alone and in the assembly that recolors it.
     """
     wanted = {tuple(round(v, 4) for v in Color(*key)): value for key, value in replacements.items()}
     return _recolored(node, wanted)
@@ -173,18 +188,21 @@ def _recolored(node: Shape, wanted: dict[tuple, tuple]) -> Shape:
     return labeled(node, node.label, wanted.get(key, node.color))
 
 
-def children_by_label(node: Compound) -> dict[str, Shape]:
-    """Direct children of an assembly, keyed by label; raises if two children share one."""
-    by_label = {}
+def children_by_label(node: Shape) -> dict[str, Compound]:
+    """Direct children of an assembly, keyed by label; raises if two children share one.
+
+    The children are the `Part`s that `labeled` makes and the sub-assemblies `assembly` makes, all Compounds.
+    """
+    by_label: dict[str, Compound] = {}
     for child in node.children:
         if child.label in by_label:
             raise ValueError(f"{node.label!r} has more than one child labeled {child.label!r}")
-        by_label[child.label] = child
+        by_label[child.label] = cast(Compound, child)
     return by_label
 
 
-def leaves(node: Shape) -> list[Shape]:
+def leaves(node: Shape) -> list[Compound]:
     """Every part in an assembly, through any nested sub-assemblies."""
     if not node.children:
-        return [node]
+        return [cast(Compound, node)]
     return [leaf for child in node.children for leaf in leaves(child)]

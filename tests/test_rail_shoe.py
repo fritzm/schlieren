@@ -6,7 +6,7 @@ from math import cos, pi, sqrt
 
 from build123d import Cylinder, GeomType, Plane, RegularPolygon, extrude, section
 
-from schlieren.cad import ON_FLOOR, along_y
+from schlieren.cad import ON_FLOOR, along_y, intersect
 from schlieren.parts.rail import RailProfile
 from schlieren.parts.rail_shoe import RailShoeParameters, build_rail_shoe, reference_parts, viewer_assembly
 from schlieren.vendor_cad import MCMASTER_91292A114_HEAD_HEIGHT, MCMASTER_92290A_HEAD_HEIGHT
@@ -55,7 +55,7 @@ class RailShoeTests(unittest.TestCase):
     def test_post_disc_and_rail_do_not_intersect_abs(self):
         for name, reference in reference_parts(self.p).items():
             with self.subTest(name=name):
-                self.assertLess((self.shoe & reference).volume, 1e-7)
+                self.assertLess(intersect(self.shoe, reference).volume, 1e-7)
 
     def test_post_bore_diameter(self):
         # Face.radius is None for trimmed cylindrical surfaces (a fillet face here).
@@ -80,13 +80,13 @@ class RailShoeTests(unittest.TestCase):
         screw_outer_y = -p.split_gap / 2 - p.screw_ear_thickness
         nut_outer_y = p.split_gap / 2 + p.nut_ear_thickness
         screw = along_y((x, screw_outer_y, z)) * Cylinder(1.5, p.clamp_screw_length, align=ON_FLOOR)
-        self.assertLess((self.shoe & screw).volume, 1e-7)
+        self.assertLess(intersect(self.shoe, screw).volume, 1e-7)
         nut = extrude(
             along_y((x, nut_outer_y - p.nut_pocket_depth, z))
             * RegularPolygon(p.clamp_nut_across_flats / cos(pi / 6) / 2, 6),
             amount=p.clamp_nut_thickness,
         )
-        self.assertLess((self.shoe & nut).volume, 1e-7)
+        self.assertLess(intersect(self.shoe, nut).volume, 1e-7)
 
     def test_fabrication_clearance_can_be_changed(self):
         variant = build_rail_shoe(
@@ -99,7 +99,7 @@ class RailShoeTests(unittest.TestCase):
             build_rail_shoe(replace(self.p, datum_counterbore_depth=0.1))
 
     def test_bridge_length_and_rail_top_seating(self):
-        cut = section(self.shoe, Plane.XY.offset(2)).bounding_box()
+        cut = section(self.shoe, Plane.XY.offset(2)).bounding_box()  # ty: ignore[invalid-argument-type]
         self.assertAlmostEqual(cut.size.Y, 30.0, places=5)
         for y in (-13, 13):
             for x in (-7, 7):
@@ -109,7 +109,7 @@ class RailShoeTests(unittest.TestCase):
     def test_counterbore_clearance_and_roof(self):
         p = self.p
         cavity = Cylinder(p.datum_counterbore_diameter / 2, p.datum_counterbore_depth, align=ON_FLOOR)
-        self.assertLess((self.shoe & cavity).volume, 1e-7)
+        self.assertLess(intersect(self.shoe, cavity).volume, 1e-7)
         self.assertTrue(self.shoe.is_inside((0, 9, p.datum_counterbore_depth + 0.01)))
         self.assertAlmostEqual(p.datum_counterbore_diameter, 20.05)
         self.assertLess(p.datum_counterbore_diameter, p.rail_opening)
@@ -147,7 +147,8 @@ class RailShoeTests(unittest.TestCase):
                 )
                 self.assertAlmostEqual(screw.center().Z, -p.rail_height / 2, places=4)
                 self.assertAlmostEqual(screw.center().Y, 0.0, places=4)
-                # Head against the washer's outer face; the tip passes the slot lip and stops short of the floor.
+                # Head against the washer's outer face; the tip passes the slot lip and stops short of the
+                # floor.
                 head_end = screw.min.X if side < 0 else screw.max.X
                 bearing = head_end - side * MCMASTER_92290A_HEAD_HEIGHT
                 self.assertAlmostEqual(bearing, washer.min.X if side < 0 else washer.max.X, places=4)
@@ -158,7 +159,7 @@ class RailShoeTests(unittest.TestCase):
                 )  # Through the thickness of a roll-in T-nut.
                 self.assertLess(entry, rail.slot_depth - 0.5)
                 for part in (parts[f"Shoe side screw washer {name}"], parts[f"Shoe side screw {name}"]):
-                    self.assertLess((self.shoe & part).volume, 1e-6)
+                    self.assertLess(intersect(self.shoe, part).volume, 1e-6)
 
     def test_split_clamp_screw_and_nut_sit_in_their_ears(self):
         p = self.p
@@ -173,7 +174,7 @@ class RailShoeTests(unittest.TestCase):
         self.assertAlmostEqual(nut.min.Y, p.clamp_nut_outer_y - p.nut_pocket_depth, places=4)
         self.assertGreater(screw.max.Y, nut.max.Y)
         for label in ("Shoe clamp screw", "Shoe clamp nut"):
-            self.assertLess((self.shoe & parts[label]).volume, 1e-6)
+            self.assertLess(intersect(self.shoe, parts[label]).volume, 1e-6)
 
     def test_viewer_post_is_vendor_model_seated_on_datum_disc(self):
         p = self.p

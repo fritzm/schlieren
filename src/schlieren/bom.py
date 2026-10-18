@@ -1,7 +1,7 @@
 """The BOM's schema and row checks, shared by the workbook builder, the reconciler, and the tests.
 
-bom/bom.csv is authoritative. These are the invariants any set of BOM rows must meet before it may replace
-it; the reconciler runs them on an edited workbook before writing anything.
+bom/bom.csv is authoritative. These are the invariants any set of BOM rows must meet before it may replace it;
+the reconciler runs them on an edited workbook before writing anything.
 """
 
 HEADER = [

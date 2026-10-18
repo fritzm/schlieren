@@ -7,7 +7,7 @@ from math import radians, sin, sqrt
 
 from build123d import Cylinder, Pos, Vector
 
-from schlieren.cad import along_x, children_by_label, leaves, moved
+from schlieren.cad import along_x, children_by_label, intersect, leaves, moved
 from schlieren.parts.camera_support import (
     CameraSupportParameters,
     _arm_point,
@@ -39,8 +39,8 @@ MAGNET_PADS = ("Fore left", "Fore right", "Aft right")  # The aft left screw sit
 
 
 def _other_side(where, side):
-    """A yoke's or collar's left and right are as seen looking toward the other collar; the fore one's are
-    the rig's right and left."""
+    """A yoke's or collar's left and right are as seen looking toward the other collar; the fore one's are the
+    rig's right and left."""
     return side if where == "Aft" else {"left": "right", "right": "left"}[side]
 
 
@@ -156,13 +156,13 @@ class LensCradleTests(unittest.TestCase):
             screw, pad = self.parts[f"{station} screw"], self.parts[f"{station} magnet"]
             with self.subTest(pad=station):
                 self.assertLess(screw.distance_to(pad), CONTACT)
-                self.assertLess((screw & pad).volume, CONTACT)
+                self.assertLess(intersect(screw, pad).volume, CONTACT)
         self.assertNotIn("Aft left magnet", self.parts)
         screw = self.parts["Aft left screw"]
         for rod in ("Groove rod -1", "Groove rod +1"):
             with self.subTest(rod=rod):
                 self.assertLess(screw.distance_to(self.parts[rod]), CONTACT)
-                self.assertLess((screw & self.parts[rod]).volume, CONTACT)
+                self.assertLess(intersect(screw, self.parts[rod]).volume, CONTACT)
 
     def test_screws_are_at_right_angles_through_the_lens_axis(self):
         p = self.p
@@ -205,7 +205,7 @@ class LensCradleTests(unittest.TestCase):
                 behind = center - toward_axis * (MCMASTER_94459A797_LENGTH / 2 + 2.5)
                 self.assertFalse(cradle.is_inside(behind))
                 self.assertTrue(cradle.is_inside(behind + Vector(0, 3.4, 0)))
-                self.assertLess((screw & cradle).volume, 0.01)
+                self.assertLess(intersect(screw, cradle).volume, 0.01)
         for kind in ("insert", "thumb nut", "screw"):
             self.assertEqual(sum(label == f"{name} {kind}" for name in ADJUSTERS for label in self.parts), 4)
 
@@ -331,9 +331,9 @@ class LensCradleTests(unittest.TestCase):
                         self.assertFalse(collar.is_inside(above))
                     bearing = self.parts[f"{where} {name} magnet"] if not rods else None
                     if bearing is not None:
-                        self.assertLess((bearing & collar).volume, 0.01)
+                        self.assertLess(intersect(bearing, collar).volume, 0.01)
         for rod in ("Groove rod -1", "Groove rod +1"):
-            self.assertLess((self.parts[rod] & self.parts["Aft collar"]).volume, 0.01)
+            self.assertLess(intersect(self.parts[rod], self.parts["Aft collar"]).volume, 0.01)
 
     def test_groove_rib_locates_both_rods_and_clears_the_ball(self):
         p = self.p
@@ -350,7 +350,7 @@ class LensCradleTests(unittest.TestCase):
         for rod in ("Groove rod -1", "Groove rod +1"):
             with self.subTest(rod=rod):
                 self.assertLess(self.parts[rod].distance_to(collar), CONTACT)
-                self.assertLess((self.parts[rod] & collar).volume, 0.01)
+                self.assertLess(intersect(self.parts[rod], collar).volume, 0.01)
         ball = self.parts["Aft left screw"]
         self.assertGreater(ball.distance_to(collar), p.groove_rib_height / 2)  # The rib stays clear of it.
 
@@ -371,8 +371,12 @@ class LensCradleTests(unittest.TestCase):
                     return moved(screw, loc * move * loc.inverse())
 
                 with self.subTest(axis=axis, sign=sign):
-                    self.assertLess((shifted(-0.05) & collar).volume, 1e-3)  # Free, the end face clear too.
-                    self.assertGreater((shifted(0.3) & collar).volume, 1e-3)  # Past the rim edge: it stops.
+                    self.assertLess(
+                        intersect(shifted(-0.05), collar).volume, 1e-3
+                    )  # Free, the end face clear too.
+                    self.assertGreater(
+                        intersect(shifted(0.3), collar).volume, 1e-3
+                    )  # Past the rim edge: it stops.
 
     def test_retaining_bands_are_endless_loops_on_the_barrel_and_a_peg(self):
         p = self.p
@@ -401,9 +405,9 @@ class LensCradleTests(unittest.TestCase):
                 self.assertGreater(collar.distance_to(band), 3.0)
                 # Lying on the barrel, and on the neck of the peg, under its lip.
                 self.assertLess(band.distance_to(lens), 0.01)
-                self.assertLess((band & lens).volume, 0.01)
+                self.assertLess(intersect(band, lens).volume, 0.01)
                 self.assertLess(band.distance_to(yoke), 0.01)
-                self.assertLess((band & yoke).volume, 0.01)
+                self.assertLess(intersect(band, yoke).volume, 0.01)
                 base = p.horn_base(station)
                 lip_start = base[1] + direction * p.horn_stem_length
                 self.assertLess((cord.max.Y - lip_start) * direction, 0.0)
@@ -561,7 +565,7 @@ class LensCradleTests(unittest.TestCase):
             with self.subTest(yoke=where):
                 # The column sits flat on the deck between two walls, across the rail, with the allowance.
                 self.assertAlmostEqual(yoke.bounding_box().min.Z, p.deck_top, places=4)
-                self.assertLess((yoke & shoe).volume, 0.01)
+                self.assertLess(intersect(yoke, shoe).volume, 0.01)
                 self.assertAlmostEqual(yoke.distance_to(shoe), 0.0, places=3)
                 z = p.deck_top + p.locating_wall_height / 2
                 face = p.yoke_thickness / 2
@@ -581,7 +585,7 @@ class LensCradleTests(unittest.TestCase):
                 self.assertAlmostEqual(screw.max.Z, p.joint_screw_length, places=4)
                 self.assertAlmostEqual(insert.min.Z, p.joint_z, places=3)
                 self.assertGreater(insert.max.Z, screw.max.Z)
-                self.assertLess((screw_part & shoe).volume, 0.01)
+                self.assertLess(intersect(screw_part, shoe).volume, 0.01)
                 self.assertFalse(yoke.is_inside(insert.center()))  # The insert sits in a drilled hole.
                 # The countersunk head clears the skirts.
                 self.assertLess(p.joint_screw_head_diameter / 2, p.rail_shoe.rail_opening / 2)
@@ -601,7 +605,9 @@ class LensCradleTests(unittest.TestCase):
                     probe = along_x((-p.shoe_outer - 1, y, -r.rail_height / 2)) * Cylinder(
                         r.m5_clearance_diameter / 2 - 0.01, 2 * p.shoe_outer + 2
                     )
-                    self.assertLess((part & probe).volume, CONTACT)  # The bore is open through both cheeks.
+                    self.assertLess(
+                        intersect(part, probe).volume, CONTACT
+                    )  # The bore is open through both cheeks.
                     for side in (-1, 1):  # And the cheek is solid just beyond the hole.
                         wall = (r.rail_opening / 2 + r.side_wall / 2) * side
                         edge = (wall, y, -r.rail_height / 2 + r.m5_clearance_diameter)
@@ -621,7 +627,8 @@ class LensCradleTests(unittest.TestCase):
 
     @slow
     def test_thumb_nut_envelopes_stand_where_the_nuts_do(self):
-        """Each envelope's box holds its nut's, and is larger only by the chamfers the envelope squares off."""
+        """Each envelope's box holds its nut's, and is larger only by the chamfers the envelope squares
+        off."""
         for name in ADJUSTERS:
             nut = self.parts[f"{name} thumb nut"].bounding_box()
             envelope = self.nut_envelopes[name].bounding_box()
@@ -651,12 +658,13 @@ class LensCradleTests(unittest.TestCase):
             if not own.intersection(labels) or "Optical axis" in labels or set(labels) == optics:
                 continue  # The cutoff station's own fits are covered by its tests.
             if any(label.endswith(" insert") for label in labels):
-                continue  # Inserts are checked in their bosses above; their knurled model is slow to intersect.
+                # Inserts are checked in their bosses above; their knurled model is slow to intersect.
+                continue
             fitted = any(word in label for label in labels for word in let_in)
             if fitted and any(label in printed for label in labels):
                 continue
             with self.subTest(pair=labels):
-                self.assertLess((a & b).volume, 0.01)
+                self.assertLess(intersect(a, b).volume, 0.01)
         gap = parts["Rail shoe"].bounding_box().min.Y - parts["Cradle shoe"].bounding_box().max.Y
         self.assertGreater(gap, 5.0)
 

@@ -6,7 +6,7 @@ from math import atan2, degrees, hypot
 
 from build123d import Box, Cylinder, Pos
 
-from schlieren.cad import ON_FLOOR, along_y, leaves
+from schlieren.cad import ON_FLOOR, along_y, intersect, leaves
 from schlieren.parts.mirror_cell import (
     INCH,
     STATIONS,
@@ -19,7 +19,7 @@ from schlieren.parts.mirror_cell import (
     moving_plate_outline,
 )
 from schlieren.parts.mirror_cell_drawing import base_plate_drawing_svg, base_plate_holes
-from schlieren.testing import boxes_overlap, near_pairs_among, shared, slow
+from schlieren.testing import boxes_overlap, near_pairs_among, shared, slow, svg_attr
 from schlieren.vendor_cad import (
     KOZAK_TB250_FLANGE_THICKNESS,
     KOZAK_TB250_LENGTH,
@@ -97,7 +97,8 @@ class MirrorCellTests(unittest.TestCase):
         z_top = -p.base_thickness
 
         def width_at(depth):
-            # Extent in x of a thin slice at the given depth below the underside, away from the slot and notch.
+            # Extent in x of a thin slice at the given depth below the underside, away from the slot and
+            # notch.
             slab = Pos(0, 40.0, z_top - depth) * Box(100.0, 20.0, 0.02)
             box = (slab & plate).bounding_box()
             return box.size.X
@@ -113,13 +114,15 @@ class MirrorCellTests(unittest.TestCase):
         z = -p.base_thickness - p.qr_plate_thickness / 2
         mid_y = p.qr_plate_length / 2
         slot_probe = Pos(0, mid_y, z) * Box(p.qr_slot_width - 0.1, p.qr_slot_length, p.qr_plate_thickness)
-        self.assertLess((slot_probe & plate).volume, TOLERANCE)  # The slot is open the whole way through.
+        self.assertLess(
+            intersect(slot_probe, plate).volume, TOLERANCE
+        )  # The slot is open the whole way through.
         notch_probe = Pos(0, p.qr_plate_length - p.qr_notch_depth / 2, z) * Box(
             0.2, p.qr_notch_depth - 0.2, 10.0
         )  # Just inside the V, which narrows to a point.
-        self.assertLess((notch_probe & plate).volume, TOLERANCE)
+        self.assertLess(intersect(notch_probe, plate).volume, TOLERANCE)
         front_probe = Pos(0, 1.0, z) * Box(1.0, 1.0, 10.0)
-        self.assertGreater((front_probe & plate).volume, 5.0)  # The front end has no notch.
+        self.assertGreater(intersect(front_probe, plate).volume, 5.0)  # The front end has no notch.
 
     def test_quick_release_screws_are_in_the_section_9_pattern(self):
         p = self.p
@@ -153,21 +156,23 @@ class MirrorCellTests(unittest.TestCase):
             through = Pos(x, y, -p.base_thickness / 2) * Cylinder(
                 p.qr_clearance_hole / 2 - 0.01, p.base_thickness
             )
-            self.assertLess((through & plate).volume, TOLERANCE)
+            self.assertLess(intersect(through, plate).volume, TOLERANCE)
             # 0.1 mm down a 90° countersink is 0.1 mm smaller in radius than at the surface.
             top = Pos(x, y, -0.05) * Cylinder(p.qr_countersink_diameter / 2 - 0.1 - 0.01, 0.1)
-            self.assertLess((top & plate).volume, TOLERANCE)
+            self.assertLess(intersect(top, plate).volume, TOLERANCE)
             below = Pos(x, y, -3.0) * Cylinder(
                 p.qr_countersink_diameter / 2 - 0.1 - 0.01, 0.1
             )  # Past the cone.
-            self.assertGreater((below & plate).volume, 1.0)
+            self.assertGreater(intersect(below, plate).volume, 1.0)
 
     def test_quick_release_screws_clear_the_base_and_sit_in_the_tapped_holes(self):
         for name in self.parts:
             if name.startswith("Quick-release screw"):
-                self.assertLess((self.parts[name] & self.parts["Base plate"]).volume, INTERFERENCE_VOLUME)
                 self.assertLess(
-                    (self.parts[name] & self.parts["Quick-release plate"]).volume, INTERFERENCE_VOLUME
+                    intersect(self.parts[name], self.parts["Base plate"]).volume, INTERFERENCE_VOLUME
+                )
+                self.assertLess(
+                    intersect(self.parts[name], self.parts["Quick-release plate"]).volume, INTERFERENCE_VOLUME
                 )
 
     def test_quick_release_screws_are_clear_of_the_slot_and_the_plate_edges(self):
@@ -179,23 +184,26 @@ class MirrorCellTests(unittest.TestCase):
         p = self.p
         svg = ET.fromstring(base_plate_drawing_svg(p))
         ns = "{http://www.w3.org/2000/svg}"
-        _, _, width, height = (float(v) for v in svg.get("viewBox").split())
+        _, _, width, height = (float(v) for v in svg_attr(svg, "viewBox").split())
         self.assertEqual(svg.get("width"), f"{width:.1f}mm")  # One user unit is 1 mm.
         self.assertAlmostEqual(width, 17.0 * INCH, delta=0.1)
         self.assertAlmostEqual(height, 11.0 * INCH, delta=0.1)
         outline = next(e for e in svg.iter(f"{ns}rect") if e.get("class") == "outline")
-        self.assertAlmostEqual(float(outline.get("width")), p.plate_width, delta=0.01)
-        self.assertAlmostEqual(float(outline.get("height")), p.base_depth, delta=0.01)
-        left, bottom = float(outline.get("x")), float(outline.get("y")) + float(outline.get("height"))
+        self.assertAlmostEqual(float(svg_attr(outline, "width")), p.plate_width, delta=0.01)
+        self.assertAlmostEqual(float(svg_attr(outline, "height")), p.base_depth, delta=0.01)
+        left, bottom = (
+            float(svg_attr(outline, "x")),
+            float(svg_attr(outline, "y")) + float(svg_attr(outline, "height")),
+        )
         circles = {e.get("data-hole"): e for e in svg.iter(f"{ns}circle") if e.get("data-hole")}
         holes = base_plate_holes(p)
         self.assertEqual(len(holes), 8)
         self.assertEqual(set(circles), set(holes))
         for name, (x, y, diameter) in holes.items():
             circle = circles[name]
-            self.assertAlmostEqual(float(circle.get("cx")) - left - p.plate_width / 2, x, delta=0.01)
-            self.assertAlmostEqual(bottom - float(circle.get("cy")), y, delta=0.01)
-            self.assertAlmostEqual(float(circle.get("r")) * 2, diameter, delta=0.01)
+            self.assertAlmostEqual(float(svg_attr(circle, "cx")) - left - p.plate_width / 2, x, delta=0.01)
+            self.assertAlmostEqual(bottom - float(svg_attr(circle, "cy")), y, delta=0.01)
+            self.assertAlmostEqual(float(svg_attr(circle, "r")) * 2, diameter, delta=0.01)
         figures = [e.text for e in svg.iter(f"{ns}text")]
         for value in ("47.625", "130.175", "+12.7", "-12.7", "69.85", "31.75"):
             self.assertIn(value, figures)
@@ -308,7 +316,7 @@ class MirrorCellTests(unittest.TestCase):
             cutter = along_y((x, y0 + margin, z)) * Cylinder(
                 diameter / 2 - margin, length - 2 * margin, align=ON_FLOOR
             )
-            return (cutter & plate).volume
+            return intersect(cutter, plate).volume
 
         for name in STATIONS:
             x, z = p.station_center(name)
@@ -417,19 +425,19 @@ class MirrorCellTests(unittest.TestCase):
             x = p.bracket_center_x(side)
             for y in p.base_hole_y():
                 probe = Pos(x, y, -p.base_thickness / 2) * Cylinder(radius, p.base_thickness)
-                self.assertLess((probe & base).volume, TOLERANCE)
+                self.assertLess(intersect(probe, base).volume, TOLERANCE)
             for z in p.upright_hole_z():
                 probe = along_y((x, p.fixed_plate_front_y, z)) * Cylinder(
                     radius, p.fixed_plate_thickness, align=ON_FLOOR
                 )
-                self.assertLess((probe & fixed).volume, TOLERANCE)
+                self.assertLess(intersect(probe, fixed).volume, TOLERANCE)
 
     @slow
     def test_no_assembly_parts_interfere(self):
-        # Purchased hardware is trusted to fit together from its catalog match (the vendor models are not accurate
-        # enough to check that), so only pairs involving the plywood, the brackets, the mirror, the springs, the
-        # pads, or the quick-release plate are checked: the holes, bores, counterbores, and sockets the hardware
-        # passes through or sits in.
+        # Purchased hardware is trusted to fit together from its catalog match (the vendor models are not
+        # accurate enough to check that), so only pairs involving the plywood, the brackets, the mirror, the
+        # springs, the pads, or the quick-release plate are checked: the holes, bores, counterbores, and
+        # sockets the hardware passes through or sits in.
         hardware = (
             "Bracket screw",
             "Bracket washer",
@@ -450,13 +458,13 @@ class MirrorCellTests(unittest.TestCase):
         for a, b in near_pairs_among(leaves(self.assembly)):
             if is_hardware(a) and is_hardware(b):
                 continue
-            # A bracket screw head grazes the bracket's inside-corner fillet at the hole 0.5 in from the corner
-            # (about 0.8 mm³); the screw still seats on the flat leg, so it is accepted.
+            # A bracket screw head grazes the bracket's inside-corner fillet at the hole 0.5 in from the
+            # corner (about 0.8 mm³); the screw still seats on the flat leg, so it is accepted.
             if {a.label.split()[0], b.label.split()[0]} == {"Bracket"} and any(
                 part.label in ("Bracket left", "Bracket right") for part in (a, b)
             ):
                 continue
-            volume = (a & b).volume
+            volume = intersect(a, b).volume
             if volume > INTERFERENCE_VOLUME:
                 found.append((a.label, b.label, round(volume, 2)))
         self.assertEqual(found, [])

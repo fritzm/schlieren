@@ -1,7 +1,7 @@
 """Flexure source-slit head; canonical design §7 (selected baseline; first test print fits confirmed).
 
-It replaces the §8 carriage and slit cassette for the source slit; the cutoff keeps the §8 carriage.
-One flat-printed PLA flexure head carries both Stanley blades:
+It replaces the §8 carriage and slit cassette for the source slit; the cutoff keeps the §8 carriage. One
+flat-printed PLA flexure head carries both Stanley blades:
 
 - frame -> platform: a parallelogram flexure for slit centering perpendicular to the slit, driven by
   FAS100 #1 (insert in the frame) against the coaxial 2006N292 spring, which supplies the preload;
@@ -10,20 +10,20 @@ One flat-printed PLA flexure head carries both Stanley blades:
 
 Both parallelograms put their parasitic motion along the slit, where it is harmless. Stage rotation in the
 slit plane (which would skew the slit, or open it in a taper) is controlled by keeping the drive forces off
-the flexures: FAS100 #1 and the spring are coaxial and push on the platform's flexure connectors, so only
-the small centering-flexure force is left unbalanced; the centering blades are spread to the top and bottom
-of the platform; FAS100 #2 pushes on the width-stage connector. Rotation is estimated from a first-order
-model (see `stage_rotation`), not FEA.
+the flexures: FAS100 #1 and the spring are coaxial and push on the platform's flexure connectors, so only the
+small centering-flexure force is left unbalanced; the centering blades are spread to the top and bottom of the
+platform; FAS100 #2 pushes on the width-stage connector. Rotation is estimated from a first-order model (see
+`stage_rotation`), not FEA.
 
-A separate flat printed adapter, spaced off the frame by M3 washers, carries a hollow SM1-tube-diameter
-spigot that the SM1RC/M split ring clamps, so the head rotates continuously about the optical axis
-(vertical, horizontal, and parallelism trim). Two identical printed clamp bars with EPDM faces pinch the
-blades; no holes go through the blades.
+A separate flat printed adapter, spaced off the frame by M3 washers, carries a hollow SM1-tube-diameter spigot
+that the SM1RC/M split ring clamps, so the head rotates continuously about the optical axis (vertical,
+horizontal, and parallelism trim). Two identical printed clamp bars with EPDM faces pinch the blades; no holes
+go through the blades.
 
 Local frame, shown at rotation 0 (slit horizontal, knobs up): x along the slit, z the adjustment axis (+z
 toward the knobs), y the optical axis, +y out of the head's front, the blade-seat side. The origin is the slit
-center on the blade-seat plane (the carrier front faces). The head is modeled as printed: the platform at
-mid travel and the width stage at zero flexure deflection.
+center on the blade-seat plane (the carrier front faces). The head is modeled as printed: the platform at mid
+travel and the width stage at zero flexure deflection.
 
 Assembly frame is the §3.4 source rail frame, as light_source: x transverse, +y along the rail toward the
 mirror, z=0 at the rail top, with the slit post at x=y=0. The head's front faces the light source (§7.2), so
@@ -34,7 +34,7 @@ from dataclasses import dataclass
 from functools import cache
 from math import isfinite
 
-from build123d import Axis, Pos, Rot, fillet
+from build123d import Axis, Pos, Rot, Shape, fillet
 
 from schlieren.cad import (
     CUT_OVERRUN,
@@ -428,10 +428,10 @@ class SlitHeadParameters:
         """In-plane stage rotation per mm of adjuster travel (rad/mm), first-order model.
 
         A loaded parallelogram bends each blade into an S with its inflection at mid-span, so a force through
-        the blades' mid-span needs no axial couple. Forces elsewhere leave a moment that the blades resist only
-        by opposing axial strain. Per mm of travel, the drive force changes by the flexure rate; a coaxial
-        preload spring changes the drive and spring forces equally, so it adds no moment. Gravity is omitted:
-        it is constant while adjusting.
+        the blades' mid-span needs no axial couple. Forces elsewhere leave a moment that the blades resist
+        only by opposing axial strain. Per mm of travel, the drive force changes by the flexure rate; a
+        coaxial preload spring changes the drive and spring forces equally, so it adds no moment. Gravity is
+        omitted: it is constant while adjusting.
         """
         if stage == "width":
             t, length, blades, x = (
@@ -472,7 +472,8 @@ class SlitHeadParameters:
             raise ValueError("Adapter plate must clear the post")
         if self.centering_gap <= self.centering_half_travel + 1.0:
             raise ValueError("Centering travel needs at least 1 mm of running clearance")
-        # Closing the slit lowers the width stage toward the platform carrier; every other width-stage gap opens.
+        # Closing the slit lowers the width stage toward the platform carrier; every other width-stage gap
+        # opens.
         if 2 * self.carrier_edge - self.width_deflection_range[1] < 1.0:
             raise ValueError("Width stage travel exceeds its clearances")
         for strain in (self.centering_strain, self.width_strain):
@@ -490,8 +491,8 @@ class SlitHeadParameters:
             raise ValueError("Upper platform connector needs a floor under the centering magnet")
         if self.width_tip_well + self.magnet_thickness > self.width_blade_spacing:
             raise ValueError("Width-stage magnet must seat in the connector")
-        # Each FAS100 must keep thread through its whole insert over all travel.
-        # Insert thread top: the flange face for outboard flanges, the body end for FAS100 #1's inboard flange.
+        # Each FAS100 must keep thread through its whole insert over all travel. Insert thread top: the flange
+        # face for outboard flanges, the body end for FAS100 #1's inboard flange.
         reaches = (
             (self.frame_top_bar[0] + self.insert_length, self.centering_tip_z - self.centering_half_travel),
             (
@@ -599,8 +600,8 @@ def build_slit_head(p=None):
         head += part
 
     cuts = []
-    # FAS100 inserts: #1 in the frame top bar, #2 in the platform top bar; FAS100 #1's flange
-    # is inboard (-z, on the bar's inner face) so the spring load seats the insert; #2's is outboard (+z).
+    # FAS100 inserts: #1 in the frame top bar, #2 in the platform top bar; FAS100 #1's flange is inboard (-z,
+    # on the bar's inner face) so the spring load seats the insert; #2's is outboard (+z).
     for x, (z0, z1) in ((p.centering_screw_x, ftb), (p.width_screw_x, ptb)):
         cuts.append(z_cylinder(p.insert_bore, x, p.axis_y, z0 - CUT_OVERRUN, z1 + CUT_OVERRUN))
     cuts.append(_magnet_pocket(p, p.centering_screw_x, upper[1], p.centering_tip_well))
@@ -732,7 +733,7 @@ def build_slit_head_assembly(p=None, rotation=0.0, include_support=True, side_sc
     loc = head_location(p, rotation)
     printed = PRINTED_BLUE
     metal = METAL
-    children = [
+    children: list[Shape] = [
         labeled(build_slit_head(p), "Flexure head", printed, loc),
         labeled(build_spigot_adapter(p), "Spigot adapter", PRINTED_DENIM, loc),
     ]

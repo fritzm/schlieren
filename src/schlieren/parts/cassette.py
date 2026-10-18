@@ -1,9 +1,8 @@
 """Preliminary common cassette blank, design §8.6.
 
-XY is the cassette plane; z=0 is the rear sliding datum.
-The front is +Z. Bevel dimensions match the provisional carriage, not a
-physically qualified fit. Integral cleats and rear countersinks are universal;
-two removable clamp bars and hardware references are available as an assembly.
+XY is the cassette plane; z=0 is the rear sliding datum. The front is +Z. Bevel dimensions match the
+provisional carriage, not a physically qualified fit. Integral cleats and rear countersinks are universal; two
+removable clamp bars and hardware references are available as an assembly.
 """
 
 from dataclasses import dataclass
@@ -61,8 +60,8 @@ class CassetteParameters:
 
     @property
     def countersink_depth(self):
-        # 90-degree included angle; depth to intersection with clearance bore.
-        # The catalog 1.7 mm head height includes more than this conical relief.
+        # 90-degree included angle; depth to intersection with clearance bore. The catalog 1.7 mm head height
+        # includes more than this conical relief.
         return (self.countersink_diameter - self.bore_diameter) / 2
 
     @property
@@ -181,8 +180,8 @@ def build_clamp_bar(p=None, b=None):
 def build_cassette_assembly(p=None, b=None):
     """Base, two identical bars, and toggleable simplified hardware/EPDM references.
 
-    Hardware is unthreaded envelope geometry, not fabrication CAD. Media is
-    omitted: media_lift describes a provisional setup elevation only.
+    Hardware is unthreaded envelope geometry, not fabrication CAD. Media is omitted: media_lift describes a
+    provisional setup elevation only.
     """
     p = p or CassetteParameters()
     b = b or ClampBarParameters()
@@ -199,12 +198,10 @@ def build_cassette_assembly(p=None, b=None):
     for i, x in enumerate((-p.clamp_hole_x, p.clamp_hole_x), 1):
         y = p.clamp_hole_y
         washer_z = bottom + b.thickness
-        washer = extrude(
-            Pos(x, y, washer_z) * (Circle(b.washer_od / 2) - Circle(b.washer_id / 2)),
-            amount=b.washer_thickness,
-        )
+        washer_ring = Pos(x, y, washer_z) * (Circle(b.washer_od / 2) - Circle(b.washer_id / 2))
+        washer = extrude(washer_ring, amount=b.washer_thickness)  # ty: ignore[invalid-argument-type]
         nut = extrude(
-            Pos(x, y, washer_z + b.washer_thickness)
+            Pos(x, y, washer_z + b.washer_thickness)  # ty: ignore[invalid-argument-type]
             * (RegularPolygon(b.nut_af / cos(pi / 6) / 2, 6) - Circle(p.screw_diameter / 2)),
             amount=b.nut_height,
         )

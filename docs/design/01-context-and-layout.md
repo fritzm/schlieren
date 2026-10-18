@@ -35,14 +35,15 @@ troublesome.
 
 ### 1.1 Fabrication envelope
 
-Near-term 3D printing is PLA only. Critical optical heights and precision datums should be
-established by metal posts, optical hardware, shim stock, mechanical stops, or adjustment mechanisms rather
-than relying solely on as-printed PLA dimensions.
+Near-term 3D printing is PLA only. Critical optical heights and precision datums should be established by
+metal posts, optical hardware, shim stock, mechanical stops, or adjustment mechanisms rather than relying
+solely on as-printed PLA dimensions.
 
 PLA softens at about 55–60 °C and creeps under sustained load, so printed parts must not see direct sun or a
-closed vehicle, and sustained loads on them are kept low: clamp screws are tightened to a light snug. The preloaded
-flexures of the slit head showed no relaxation over a week ([§7.7](07-source-slit.md#77-fabrication-and-fit)).
-The LED heatsinks rise only about 14 °C above ambient ([§6.3](06-light-source.md#63-common-heatsink)).
+closed vehicle, and sustained loads on them are kept low: clamp screws are tightened to a light snug. The
+preloaded flexures of the slit head showed no relaxation over a week
+([§7.7](07-source-slit.md#77-fabrication-and-fit)). The LED heatsinks rise only about 14 °C above ambient
+([§6.3](06-light-source.md#63-common-heatsink)).
 
 The following are out of scope:
 
@@ -189,8 +190,8 @@ The frames are right-handed and differ only in where their y axes lie:
 
 The imaging rail is the right rail, at positive x in the pivot frame, and the source rail is the left. The
 phone extends well to the right of its camera axis when sighting along that axis toward the mirror
-([§9.1](09-camera-telephoto.md#91-camera)), so this places its overhang on the outer side of the imaging
-rail, clear of the source rail and its fixtures.
+([§9.1](09-camera-telephoto.md#91-camera)), so this places its overhang on the outer side of the imaging rail,
+clear of the source rail and its fixtures.
 
 Each rail frame yaws with its rail, about 0.85° from the pivot frame at nominal
 ([§4.2](04-frame.md#42-front-pivot-plate)). Its origin is on the rail top at the rail's pivot axis; a fixture
@@ -202,10 +203,10 @@ The common post stack is:
 
 - 0.010 in / 0.254 mm metal datum shim;
 - 50 mm Thorlabs TR50/M post;
-- 22.1 mm post-top-to-optical-axis offset for the SM1 optical holders (Thorlabs SMR1/M: 0.870 in /
-  22.098 mm exact);
+- 22.1 mm post-top-to-optical-axis offset for the SM1 optical holders (Thorlabs SMR1/M: 0.870 in / 22.098 mm
+  exact);
 - total nominal height: 72.35 mm (72.352 mm with the exact SMR1/M offset; the datum is 72.35 mm).
 
-The datum discs are McMaster 2895T62, 3/4 in OD × 0.010 in ±0.0005 in thick, full-hard 18-8 stainless
-steel, minimum Rockwell C40. Three discs are used as post datum shims, one under each common post fixture. The
-discs provide a consistent metal seating surface for the posts across the central slot in the 2020 rail.
+The datum discs are McMaster 2895T62, 3/4 in OD × 0.010 in ±0.0005 in thick, full-hard 18-8 stainless steel,
+minimum Rockwell C40. Three discs are used as post datum shims, one under each common post fixture. The discs
+provide a consistent metal seating surface for the posts across the central slot in the 2020 rail.

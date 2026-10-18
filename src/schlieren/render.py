@@ -12,7 +12,7 @@ from pathlib import Path
 import numpy as np
 import vtk
 from build123d import Shape, Vector
-from OCP.TopLoc import TopLoc_Location
+from OCP.TopLoc import TopLoc_Location  # ty: ignore[unresolved-import]  # missing from the OCP stubs
 from vtkmodules.util.numpy_support import numpy_to_vtk, numpy_to_vtkIdTypeArray, vtk_to_numpy
 
 from schlieren.cad import leaves
@@ -150,6 +150,7 @@ def render_figure(
         normals.SetFeatureAngle(FEATURE_ANGLE)
         normals.SplittingOn()
         surface = _actor(normals)
+        assert part.color is not None, f"Part {part.label!r} has no color"
         surface.GetProperty().SetColor(*tuple(part.color)[:3])
         surface.GetProperty().SetAmbient(SURFACE_AMBIENT)
         renderer.AddActor(surface)

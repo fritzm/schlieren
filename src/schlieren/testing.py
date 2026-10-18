@@ -8,11 +8,14 @@ The default test run is the fast one, for iterating. Set SCHLIEREN_TESTS=full to
 
 import os
 import unittest
+import xml.etree.ElementTree as ET
 from collections.abc import Iterable, Iterator
 from itertools import combinations
 from math import inf
 
 from build123d import BoundBox, Shape
+
+from schlieren.cad import intersect
 
 FULL_ENV = "SCHLIEREN_TESTS"
 
@@ -78,11 +81,11 @@ def _boxes_overlap(box_a: BoundBox, box_b: BoundBox, margin: float) -> bool:
 def boxes_overlap(a: Shape, b: Shape, margin: float = 0.0, loose: bool = False) -> bool:
     """Whether the bounding boxes of two shapes overlap, to within margin.
 
-    Exact boolean and distance queries between real solids are expensive; when the boxes are apart the
-    answer is already known, so check this first. A false result means the shapes are further than margin
-    apart, along at least one axis. Pass loose=True for such a prefilter, which is much cheaper on vendor
-    models; leave it off where the result itself is asserted. For many pairs use `near_pairs`, which boxes
-    each shape once.
+    Exact boolean and distance queries between real solids are expensive; when the boxes are apart the answer
+    is already known, so check this first. A false result means the shapes are further than margin apart,
+    along at least one axis. Pass loose=True for such a prefilter, which is much cheaper on vendor models;
+    leave it off where the result itself is asserted. For many pairs use `near_pairs`, which boxes each shape
+    once.
     """
     box = loose_box if loose else exact_box
     return _boxes_overlap(box(a), box(b), margin)
@@ -93,8 +96,8 @@ def near_pairs(
 ) -> Iterator[tuple[Shape, Shape]]:
     """Pairs (a, b) from the two collections whose bounding boxes overlap to within margin.
 
-    Each shape is boxed once, however many pairs it is in; the pairs not yielded are known to be further
-    than margin apart.
+    Each shape is boxed once, however many pairs it is in; the pairs not yielded are known to be further than
+    margin apart.
     """
     boxed_second = [(shape, loose_box(shape)) for shape in second]
     for a in first:
@@ -112,11 +115,19 @@ def near_pairs_among(shapes: Iterable[Shape], margin: float = 0.0) -> Iterator[t
             yield a, b
 
 
+def svg_attr(element: ET.Element, name: str) -> str:
+    """An attribute that the drawing under test must carry; ElementTree's `get` returns None when absent."""
+    value = element.get(name)
+    if value is None:
+        raise AssertionError(f"<{element.tag}> has no {name!r} attribute")
+    return value
+
+
 def overlap_volume(a: Shape, b: Shape) -> float:
     """Volume of the intersection of a and b, without the boolean when their bounding boxes are apart."""
     if not boxes_overlap(a, b, loose=True):
         return 0.0
-    return (a & b).volume
+    return intersect(a, b).volume
 
 
 def bounded_distance(a: Shape, b: Shape, limit: float) -> float:

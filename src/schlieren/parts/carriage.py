@@ -1,11 +1,11 @@
 """Preliminary five-piece cutoff carriage, design §8.
 
-Local XY is the cassette plane, +Y points toward the FAS100, +Z is the
-cassette-loading side, which faces the mirror (§8.1). Z=0 is the plate back, not the rail-height datum.
-The rear shouldered spigot, clamped directly by the SM1RC/M, is integral with the base. Dimensions beyond
-explicit baseline interfaces are provisional first-print targets; no purchased threads are modeled.
-The base and guide frame are one stock body split at the top of the deck; `build_print_layout` gives the
-parts as exported, with the base flipped spigot-up and the two plungers laid out side by side.
+Local XY is the cassette plane, +Y points toward the FAS100, +Z is the cassette-loading side, which faces the
+mirror (§8.1). Z=0 is the plate back, not the rail-height datum. The rear shouldered spigot, clamped directly
+by the SM1RC/M, is integral with the base. Dimensions beyond explicit baseline interfaces are provisional
+first-print targets; no purchased threads are modeled. The base and guide frame are one stock body split at
+the top of the deck; `build_print_layout` gives the parts as exported, with the base flipped spigot-up and the
+two plungers laid out side by side.
 """
 
 from dataclasses import dataclass
@@ -32,6 +32,7 @@ from schlieren.cad import (
     box_between,
     compression_spring,
     floor_box,
+    intersect,
     labeled,
     moved,
     place,
@@ -106,7 +107,8 @@ class CarriageParameters:
     # Rear spigot, same interface as the slit-head adapter (§7.6); printed at the SM1 tube nominal.
     spigot_diameter: float = 1.20 * INCH
     # Plate back to ring face, set by a shoulder on the spigot that the ring seats against. Longer than the
-    # slit head's: the plate reaches below the rail-shoe top, so it must clear the shoe end, not just the post.
+    # slit head's: the plate reaches below the rail-shoe top, so it must clear the shoe end, not just the
+    # post.
     ring_gap: float = 12.0
     spigot_shoulder_diameter: float = 34.0  # Bears on the SM1RC/M face outside its Ø30.7 mm bore.
     post_clearance: float = (
@@ -126,7 +128,8 @@ class CarriageParameters:
     ear_bottom_chamfer: float = 0.4
     ear_top_fillet: float = 0.5
     ear_corner_fillet: float = 0.6
-    # Stress relief where each ear leaves the body wall, top and underside; clear of the track floor and keeper.
+    # Stress relief where each ear leaves the body wall, top and underside; clear of the track floor and
+    # keeper.
     ear_root_fillet: float = 0.8
     body_deck_clearance: float = 0.3  # Provisional PLA running clearance.
     # Chamfer on the underside perimeter, which runs 0.3 mm above the deck: a lead-in over deck seams and a
@@ -142,7 +145,8 @@ class CarriageParameters:
     keeper_end_member_width: float = 5.0
     fastener_edge_margin: float = 4.5
     # The guide tracks are filled solid beyond the plunger ears' outermost positions, giving an end stop and a
-    # solid seat for the keeper screws, which sit inboard of the plate ends to stay inside the rotation envelope.
+    # solid seat for the keeper screws, which sit inboard of the plate ends to stay inside the rotation
+    # envelope.
     ear_stop_gap: float = 1.0  # Track end stop beyond the outermost ear position.
     fastener_stop_margin: float = (
         4.0  # Screw axis beyond the track end stop; keeps the nut pocket in the fill.
@@ -153,8 +157,8 @@ class CarriageParameters:
     side_lug_radius: float = 5.0  # Leaves ~1.65 mm PLA outside the captive nut.
     pla_modulus: float = PLA_MODULUS
     datum_pin_shank: float = 0.050 * INCH  # Measured (calipers), in-hand brads.
-    # Brad holes only. Measured on the first base-plate print: the Ø24 mm aperture printed Ø23.62 mm (0.930 in);
-    # brad holes with 0.08 mm diametral clearance would not start a shank. Compensate them, where a few
+    # Brad holes only. Measured on the first base-plate print: the Ø24 mm aperture printed Ø23.62 mm (0.930
+    # in); brad holes with 0.08 mm diametral clearance would not start a shank. Compensate them, where a few
     # tenths decide the fit; M3 holes and nut pockets printed snug but usable and are left as they are.
     datum_hole_print_allowance: float = 0.38  # Diametral.
     datum_hole_fit_clearance: float = 0.10  # Diametral, as printed; CA retains the pins.
@@ -529,12 +533,13 @@ def _build_fixed_body(p=None):
                 y=(y0 + y1) / 2,
                 z=p.plate_thickness,
             )
-    # Open-top keeper seating recess: preserves front-side removal and the
-    # original screw stack while the support blocks extend to all plate edges.
+    # Open-top keeper seating recess: preserves front-side removal and the original screw stack while the
+    # support blocks extend to all plate edges.
     base -= _keeper_envelope(p, p.support_top - p.keeper_z)
     start, end = p.support_spans[0]
     base -= y_cylinder(p.insert_bore_diameter, 0, p.adjuster_axis_z, start - CUT_OVERRUN, end + CUT_OVERRUN)
-    # End-wall spring cup; the guide-frame split truncates it at the keeper plane, and the keeper carries its roof.
+    # End-wall spring cup; the guide-frame split truncates it at the keeper plane, and the keeper carries its
+    # roof.
     base += _spring_cup(p, p.spring_seat_y, p.plate_thickness)
     # The spigot and optical axis remain fixed while the cassette translates.
     base -= z_cylinder(p.aperture_diameter, 0, 0, 0, p.plate_thickness)
@@ -577,8 +582,8 @@ def _add_spigot(base, p):
 
 
 def support_location(p=None, rotation=0.0):
-    """Imaging rail frame (§3.4: +x right, +y along the rail toward the mirror, z up from the rail top, post at
-    x=y=0) -> local carriage frame, with the carriage rotated by `rotation` degrees about the optical axis.
+    """Imaging rail frame (§3.4: +x right, +y along the rail toward the mirror, z up from the rail top, post
+    at x=y=0) -> local carriage frame, with the carriage rotated by `rotation` degrees about the optical axis.
 
     The cassette-loading side (+Z) faces the mirror, so rail +y is local +Z and rail +x is local -X; the
     spigot, slip ring, and post are aft of the plate. Rotation 0 is the nominal zero of §8.1: fine adjuster
@@ -607,8 +612,9 @@ def _side_lugs(p, z, height):
 
 
 def _thumb_tab(p, outer_y):
-    """Tab on the spring plunger's front face at its outboard end (+Y, unmirrored), with chamfered exposed edges
-    except those of the spring-facing face, and a grip bead along the inner top edge, where the thumb pushes."""
+    """Tab on the spring plunger's front face at its outboard end (+Y, unmirrored), with chamfered exposed
+    edges except those of the spring-facing face, and a grip bead along the inner top edge, where the thumb
+    pushes."""
     tab = floor_box(
         p.thumb_tab_width,
         p.thumb_tab_thickness,
@@ -632,7 +638,8 @@ def _thumb_tab(p, outer_y):
 
 
 def _rotation_envelope(p):
-    """Cylinder about the optical axis that the fixed body and keeper are trimmed to; clips the plate corners."""
+    """Cylinder about the optical axis that the fixed body and keeper are trimmed to; clips the plate
+    corners."""
     height = 4 * p.spigot_length + p.support_top
     return z_cylinder(2 * p.rotation_envelope_radius, 0, 0, -height / 2, height / 2)
 
@@ -699,8 +706,8 @@ def build_keeper_frame(p=None):
     p = p or CarriageParameters()
     p.validate()
     keeper = _keeper_envelope(p, p.keeper_thickness)
-    # Concentric crown maintains the nominal keeper thickness radially over
-    # the insert bore. Clip at the mating plane to keep the base unchanged.
+    # Concentric crown maintains the nominal keeper thickness radially over the insert bore. Clip at the
+    # mating plane to keep the base unchanged.
     start, end = p.support_spans[0]
     crown_radius = p.insert_bore_diameter / 2 + p.keeper_thickness
     crown = y_cylinder(2 * crown_radius, 0, p.adjuster_axis_z, start, end) & floor_box(
@@ -812,7 +819,8 @@ def build_plunger(p=None, *, spring=False):
     for sign in (-1, 1):
         body += _plunger_ear(p, sign, edge + p.body_length / 2, ear_root, ear_bottom)
     if spring:
-        # Spring cup outboard; thumb tab on the front face, pushed outboard from above the cassette to retract.
+        # Spring cup outboard; thumb tab on the front face, pushed outboard from above the cassette to
+        # retract.
         body += _spring_cup(p, outer_y, bottom)
         # The cup continues the underside, so the chamfer runs round the cup's feet and pocket opening too.
         body = break_underside(body)
@@ -851,8 +859,8 @@ def build_plunger(p=None, *, spring=False):
                 and inboard_y - 1e-6 <= e.center().Y < outer_y - 1e-6
             ]
             body = fillet(roots, p.magnet_crown_root_fillet)
-        # Outward-opening, fully backed magnet pocket. A small adhesive tack is
-        # needed for retention; the ball bears on the exposed broad XZ face.
+        # Outward-opening, fully backed magnet pocket. A small adhesive tack is needed for retention; the ball
+        # bears on the exposed broad XZ face.
         body -= floor_box(
             p.magnet_length + p.magnet_pocket_clearance,
             p.magnet_thickness + p.magnet_face_recess,
@@ -903,12 +911,12 @@ def build_carriage(
     """Five independently selectable printed parts; retraction only at fiducial.
 
     `include_support` adds the SM1RC/M, TR50/M post, and rail shoe as references; `include_hardware` adds the
-    FAS100 (vendor model), its 98625A950 bushing, the magnet bearing pad, and the 2006N292 spring (a display helix); `side_screws` adds the shoe's
-    side-slot screws and washers to the support; `include_cassette` seats the cassette assembly
-    (§8.6) on the datum pins and travels with the driven plunger.
+    FAS100 (vendor model), its 98625A950 bushing, the magnet bearing pad, and the 2006N292 spring (a display
+    helix); `side_screws` adds the shoe's side-slot screws and washers to the support; `include_cassette`
+    seats the cassette assembly (§8.6) on the datum pins and travels with the driven plunger.
 
-    Spring solid height is unverified: the loading pose checks printed geometry,
-    not whether the purchased spring can safely reach that compression.
+    Spring solid height is unverified: the loading pose checks printed geometry, not whether the purchased
+    spring can safely reach that compression.
     """
     p = p or CarriageParameters()
     p.validate()
@@ -950,7 +958,8 @@ def build_carriage(
 
 
 def _stack_hardware(p):
-    """The eight keeper screws and their captive nuts, which clamp the keeper frame, guide frame, and base plate.
+    """The eight keeper screws and their captive nuts, which clamp the keeper frame, guide frame, and base
+    plate.
 
     Each M3 x 12 screw bears on the keeper's head recess and runs down through the stack; its nut sits against
     the roof of its hex pocket, which opens from the plate back.
@@ -974,7 +983,7 @@ def _datum_pins(p):
     upright = moved(mcmaster_97936a109(), Rot(X=180))
     # In the head-underside frame the plate back is at z = -plate_thickness.
     keep = box_between(-2.0, 2.0, -2.0, 2.0, -p.plate_thickness, 2 * p.datum_projection + CUT_OVERRUN)
-    trimmed = upright & keep
+    trimmed = intersect(upright, keep)
     return [
         labeled(trimmed, f"Datum pin {i}", BRASS, Pos(x, y, p.plate_thickness))
         for i, (x, y) in enumerate(p.datum_points, start=1)

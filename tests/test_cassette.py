@@ -6,7 +6,7 @@ from math import radians, tan
 
 from build123d import Circle, Compound, Cylinder, Pos, Rot, extrude
 
-from schlieren.cad import ON_FLOOR, children_by_label, leaves, moved
+from schlieren.cad import ON_FLOOR, children_by_label, intersect, leaves, moved
 from schlieren.parts.carriage import CarriageParameters, build_carriage
 from schlieren.parts.cassette import (
     CassetteParameters,
@@ -73,12 +73,12 @@ class CassetteTests(unittest.TestCase):
                 seated = moved(blank, Pos(0, travel, p.plate_thickness + p.datum_projection))
                 for name, part in parts.items():
                     placed = moved(part, Pos(0, travel, 0)) if "plunger" in name else part
-                    self.assertLess((seated & placed).volume, 1e-6, (rotation, travel, name))
+                    self.assertLess(intersect(seated, placed).volume, 1e-6, (rotation, travel, name))
                 for x, y in p.datum_points:
                     self.assertTrue(blank.is_inside((x, y - travel, 0.01)))
                     # Entire nominal pin-head footprint stays on uninterrupted land.
                     track = Pos(x, y - travel, 0) * Cylinder(p.datum_head_diameter / 2, 0.02, align=ON_FLOOR)
-                    self.assertAlmostEqual((track & blank).volume, track.volume, places=6)
+                    self.assertAlmostEqual(intersect(track, blank).volume, track.volume, places=6)
 
     def test_countersinks_and_cleats(self):
         p = CassetteParameters()
@@ -98,7 +98,7 @@ class CassetteTests(unittest.TestCase):
             self.assertTrue(self.blank.is_inside((x, 2.1, 7)))
             self.assertGreater(abs(x) - p.cleat_top_diameter / 2, 38.99 / 2)
         beam = Cylinder(12, 8, align=ON_FLOOR)
-        self.assertLess((self.blank & beam).volume, 1e-6)
+        self.assertLess(intersect(self.blank, beam).volume, 1e-6)
 
     @slow
     def test_clamp_bars_and_hardware_clearance(self):
@@ -111,16 +111,14 @@ class CassetteTests(unittest.TestCase):
         self.assertAlmostEqual(c.keeper_opening_width / 2 - p.clamp_hole_x - b.washer_od / 2, 2.5)
         # Full 7.2 mm washer-bearing lands on the bar top, excluding screw bore.
         for x in (-p.clamp_hole_x, p.clamp_hole_x):
-            land = extrude(
-                Pos(x, p.clamp_hole_y, b.thickness - 0.02) * (Circle(3.6) - Circle(p.bore_diameter / 2)),
-                amount=0.01,
-            )
-            self.assertAlmostEqual((bar & land).volume, land.volume, places=6)
+            ring = Pos(x, p.clamp_hole_y, b.thickness - 0.02) * (Circle(3.6) - Circle(p.bore_diameter / 2))
+            land = extrude(ring, amount=0.01)  # ty: ignore[invalid-argument-type]
+            self.assertAlmostEqual(intersect(bar, land).volume, land.volume, places=6)
         nut_top = b.bar_bottom(p) + b.thickness + b.washer_thickness + b.nut_height
         self.assertGreater(b.screw_length + b.head_recess - nut_top, 0.5)
         beam = Cylinder(12, 20, align=ON_FLOOR)
         assembly = Compound([s for leaf in leaves(self.assembly) for s in leaf.solids()])
-        self.assertLess((assembly & beam).volume, 1e-6)
+        self.assertLess(intersect(assembly, beam).volume, 1e-6)
         # Include all screws, nuts, washers and pads in the carriage interference test.
         parts = self.carriage
         for rotation in (0, 90, 180, 270):

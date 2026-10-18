@@ -1,0 +1,11 @@
+{
+    "editor.rulers": [110],
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+    // ty replaces Pylance as the language server and type checker.
+    "python.languageServer": "None",
+    "ty.interpreter": ["${workspaceFolder}/.venv/bin/python"],
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": true
+    }
+}

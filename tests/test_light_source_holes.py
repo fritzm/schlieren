@@ -11,6 +11,7 @@ from build123d import GeomType
 from schlieren.parts.light_source import LightSourceParameters
 from schlieren.parts.light_source_drawing import drilling_templates_svg, layout_drawing_svg
 from schlieren.parts.light_source_holes import HoleLayoutParameters
+from schlieren.testing import svg_attr
 from schlieren.vendor_cad import alpha_cn40_40b
 
 NS = "{http://www.w3.org/2000/svg}"
@@ -34,7 +35,7 @@ class HoleLayoutTest(unittest.TestCase):
     def test_pin_lattice_matches_the_vendor_model(self):
         """The 24 pin centers are those of the CN40-40B STEP model (pin faces split in two along its z)."""
         faces = [f for f in alpha_cn40_40b().faces() if f.geom_type == GeomType.CYLINDER]
-        faces = [f for f in faces if abs(f.radius - self.p.pin_radius) < 0.01]
+        faces = [f for f in faces if abs((f.radius or 0.0) - self.p.pin_radius) < 0.01]
         columns: dict[float, list[float]] = {}
         for f in faces:
             c = f.center()
@@ -58,7 +59,8 @@ class HoleLayoutTest(unittest.TestCase):
         self.assertAlmostEqual(leads[0].x, 0.0)
 
     def test_m3_heads_sit_between_four_pins(self):
-        """Each M3 hole is the center of a lattice cell: four pins at 3.45·√2, and no other pin under the head."""
+        """Each M3 hole is the center of a lattice cell: four pins at 3.45·√2, and no other pin under the
+        head."""
         cell_diagonal = self.p.lattice_pitch / math.sqrt(2)
         for hole in (h for h in self.p.holes() if h.kind == "m3"):
             distances = sorted(distance(hole.position, pin) for pin in self.p.pin_positions())
@@ -132,14 +134,15 @@ class HoleDrawingTest(unittest.TestCase):
 
     def test_templates_are_full_scale_letter(self):
         svg, _ = self.holes_in(drilling_templates_svg(self.p))
-        _, _, width, height = (float(v) for v in svg.get("viewBox").split())
+        _, _, width, height = (float(v) for v in svg_attr(svg, "viewBox").split())
         self.assertEqual(svg.get("width"), f"{width}mm")  # One user unit is 1 mm.
         self.assertEqual(svg.get("height"), f"{height}mm")
         self.assertAlmostEqual(width, 215.9)
         self.assertAlmostEqual(height, 279.4)
 
     def test_template_holes_are_those_of_the_layout_in_both_templates(self):
-        """Cap holes (all seven) and heatsink holes (no M2) sit at the layout positions, relative to each center."""
+        """Cap holes (all seven) and heatsink holes (no M2) sit at the layout positions, relative to each
+        center."""
         svg, _ = self.holes_in(drilling_templates_svg(self.p))
         by_name: dict[str, list[ET.Element]] = {}
         for e in svg.iter(f"{NS}circle"):
@@ -148,14 +151,16 @@ class HoleDrawingTest(unittest.TestCase):
         for hole in self.p.holes():
             circles = by_name[hole.name]
             self.assertEqual(len(circles), 2 if hole.kind != "m2" else 1, hole.name)
-            circles.sort(key=lambda e: float(e.get("cx")))  # cap template is the left one
+            circles.sort(key=lambda e: float(svg_attr(e, "cx")))  # cap template is the left one
             expected = [self.p.cap_hole_diameter(hole.kind)]
             if hole.kind != "m2":  # The M2 board screws are in the cap only.
-                expected.append(self.p.heatsink_hole_diameter(hole.kind))
+                heatsink = self.p.heatsink_hole_diameter(hole.kind)
+                assert heatsink is not None
+                expected.append(heatsink)
             for e, diameter in zip(circles, expected, strict=True):
-                self.assertAlmostEqual(float(e.get("r")) * 2, diameter)
+                self.assertAlmostEqual(float(svg_attr(e, "r")) * 2, diameter)
         cap = {n: c[0] for n, c in by_name.items()}
-        centers = {n: (float(c.get("cx")), float(c.get("cy"))) for n, c in cap.items()}
+        centers = {n: (float(svg_attr(c, "cx")), float(svg_attr(c, "cy"))) for n, c in cap.items()}
         origin_x = centers["m3-1"][0] - self.holes_by_name()["m3-1"].x
         origin_y = centers["m3-1"][1] + self.holes_by_name()["m3-1"].y
         for name, (cx, cy) in centers.items():
@@ -175,7 +180,7 @@ class HoleDrawingTest(unittest.TestCase):
         _, holes = self.holes_in(layout_drawing_svg(self.p))
         self.assertEqual(set(holes), set(self.holes_by_name()))
         for name, hole in self.holes_by_name().items():
-            self.assertAlmostEqual(float(holes[name].get("r")) * 2, self.p.cap_hole_diameter(hole.kind))
+            self.assertAlmostEqual(float(svg_attr(holes[name], "r")) * 2, self.p.cap_hole_diameter(hole.kind))
 
 
 if __name__ == "__main__":

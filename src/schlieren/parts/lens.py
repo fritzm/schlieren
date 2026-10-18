@@ -16,15 +16,15 @@ Three sections from the aft end, measured, as one solid:
 The focus ring and the two glass optics are separate solids; the ring is a sleeve in the barrel's channel,
 flush with the barrel, with raised axial grip ridges.
 
-**Provisional**: the front aperture, glass thicknesses, ridges, and channel (assumed from photographs),
-and the ring and lip lengths, which are measured from the front end of the barrel.
+**Provisional**: the front aperture, glass thicknesses, ridges, and channel (assumed from photographs), and
+the ring and lip lengths, which are measured from the front end of the barrel.
 """
 
 from dataclasses import dataclass
 from functools import cache
 from math import pi
 
-from build123d import Part, Rot, chamfer, fillet
+from build123d import Compound, Part, Rot, Shape, chamfer, fillet
 
 from schlieren.cad import CUT_OVERRUN, assembly, box_between, labeled, y_cylinder
 from schlieren.palette import FOCUS_RING_GRAY, GLASS, TELEPHOTO_BARREL
@@ -152,7 +152,7 @@ class LensParameters:
 
 # Built once per parameter set and shared (see parts/carriage.py); the cached solids must not be modified.
 @cache
-def build_lens_body(p: LensParameters | None = None) -> Part:
+def build_lens_body(p: LensParameters | None = None) -> Compound:
     """Boss, shoulder, and main barrel with its root fillet, one solid on the y axis."""
     p = p or LensParameters()
     p.validate()
@@ -185,7 +185,7 @@ def build_lens_body(p: LensParameters | None = None) -> Part:
     return body - y_cylinder(p.front_glass_diameter, 0, 0, face - p.front_glass_thickness, face)
 
 
-def _circular_edges(body: Part, y: float, diameter: float) -> list:
+def _circular_edges(body: Shape, y: float, diameter: float) -> list:
     """The circular edges of the given diameter lying in the plane y."""
     return [
         edge
@@ -194,13 +194,13 @@ def _circular_edges(body: Part, y: float, diameter: float) -> list:
     ]
 
 
-def _shoulder_edges(body: Part, p: LensParameters, y: float) -> list:
+def _shoulder_edges(body: Shape, p: LensParameters, y: float) -> list:
     """The circular edges of the shoulder's diameter lying in the plane y."""
     return _circular_edges(body, y, p.shoulder_diameter)
 
 
 @cache
-def build_focus_ring(p: LensParameters | None = None) -> Part:
+def build_focus_ring(p: LensParameters | None = None) -> Shape:
     """The focus ring: a sleeve in the barrel's channel, flush with the barrel, with the grip ridges standing
     on it, one solid."""
     p = p or LensParameters()

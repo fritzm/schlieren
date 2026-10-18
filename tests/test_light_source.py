@@ -6,7 +6,7 @@ from dataclasses import replace
 
 from build123d import Box, Pos
 
-from schlieren.cad import FROM_CORNER, children_by_label, leaves, moved
+from schlieren.cad import FROM_CORNER, children_by_label, intersect, leaves, moved
 from schlieren.parts.light_source import (
     GREEN,
     MODULES,
@@ -37,8 +37,8 @@ from schlieren.vendor_cad import (
 USEFUL_GAP = (13.0, 17.0)  # §6.7: useful emitter-to-plano range
 # Required gap travel either side of the optimum. Relaxed from 1.0 mm: with exact Thorlabs dimensions the
 # white module has 0.93 mm on the long-gap side. Accepted pending the build; if the white module cannot reach
-# focus, space its cap flange off the SMR1/M face with a thin shim (moving the emitter away from the lens;
-# a shim under the star board would shorten the gap and make this worse).
+# focus, space its cap flange off the SMR1/M face with a thin shim (moving the emitter away from the lens; a
+# shim under the star board would shorten the gap and make this worse).
 FOCUS_MARGIN = 0.9
 MODEL_MATCH = 0.001  # Parameters taken from vendor STEP models
 # The TR50/M STEP model is rounded to inches (1.969 in long, 0.499 in diameter); the metric nominal is exact.
@@ -187,7 +187,7 @@ class LightSourceTests(unittest.TestCase):
         # The retaining ring rests on the convex surface: clear at the seat height, interfering just below it.
         seat = p.lens_retaining_ring_seat
         self.assertIsNone(lens & moved(retaining_ring, Pos(0, seat, 0)))  # An empty intersection is None.
-        self.assertGreater((lens & moved(retaining_ring, Pos(0, seat - 0.05, 0))).volume, 1e-6)
+        self.assertGreater(intersect(lens, moved(retaining_ring, Pos(0, seat - 0.05, 0))).volume, 1e-6)
         tube = thorlabs_sm1l03().bounding_box()
         self.assertAlmostEqual(tube.min.Y, -p.sm1l03_thread_length, delta=MODEL_MATCH)
         self.assertAlmostEqual(tube.max.Y, p.sm1l03_length, delta=MODEL_MATCH)
@@ -207,7 +207,10 @@ class LightSourceTests(unittest.TestCase):
 
         def section_area(y):
             r = p.heatsink_diameter
-            return (heatsink & (Pos(-r, y, -r) * Box(2 * r, 0.01, 2 * r, align=FROM_CORNER))).volume / 0.01
+            return (
+                intersect(heatsink, (Pos(-r, y, -r) * Box(2 * r, 0.01, 2 * r, align=FROM_CORNER))).volume
+                / 0.01
+            )
 
         # Full disc through the base, open pin field just behind it.
         self.assertAlmostEqual(section_area(-0.5), math.pi * p.heatsink_diameter**2 / 4, delta=1.0)
@@ -339,7 +342,8 @@ class LightSourceTests(unittest.TestCase):
     def test_assembly_parts_do_not_interfere(self):
         # The LED module and the SM1V05 group each hold their own relative placement whatever the board or the
         # engagement, so a pair inside one group is checked once; a pair across the groups depends on the
-        # engagement (the SM1V05 enters the ring) or the board (the star's thickness), so it is checked for each.
+        # engagement (the SM1V05 enters the ring) or the board (the star's thickness), so it is checked for
+        # each.
         board_parts = {"LED star board", "LED package"}
         moving = {
             "SM1V05 body",
@@ -387,7 +391,7 @@ class LightSourceTests(unittest.TestCase):
                     if key in checked:
                         continue
                     checked.add(key)
-                    overlap = first & second
+                    overlap = intersect(first, second)
                     if overlap.volume < 1e-6:
                         continue
                     if {a, b} == {"SM1D12 iris", "SM1D12 iris lever"}:

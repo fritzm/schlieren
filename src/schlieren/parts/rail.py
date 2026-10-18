@@ -1,10 +1,10 @@
 """Generic 2020 T-slot rail for viewer assemblies and figures; design §4.1.
 
-Visualization only: the slot is a nominal slot-6 profile, not the measured geometry of the project's
-extrusion (§4.1), so do not take fits or clearances from it.
+Visualization only: the slot is a nominal slot-6 profile, not the measured geometry of the project's extrusion
+(§4.1), so do not take fits or clearances from it.
 
-Rail-assembly frame, as the rail shoe (a §3.4 rail frame): +x across the rail, +y along it toward the
-mirror, z up; the rail top is z=0 and the rail is centered on x=y=0.
+Rail-assembly frame, as the rail shoe (a §3.4 rail frame): +x across the rail, +y along it toward the mirror,
+z up; the rail top is z=0 and the rail is centered on x=y=0.
 """
 
 from dataclasses import dataclass
@@ -40,7 +40,8 @@ def build_rail(length: float, profile: RailProfile | None = None) -> Part:
 
     section = Rectangle(f.size, f.size)
     section = fillet(section.vertices(), f.corner_radius)
-    # One slot, opening toward +y of the section; mirrored about its centerline and repeated on all four faces.
+    # One slot, opening toward +y of the section; mirrored about its centerline and repeated on all four
+    # faces.
     half_slot = [
         (f.slot_mouth_width / 2, face + CUT_OVERRUN),
         (f.slot_mouth_width / 2, face - f.lip_thickness),
@@ -53,5 +54,5 @@ def build_rail(length: float, profile: RailProfile | None = None) -> Part:
         section -= Rot(Z=90 * quarter_turn) * slot
     section -= Circle(f.center_bore_diameter / 2)
 
-    rail = extrude(section, amount=length / 2, both=True)
+    rail = extrude(section, amount=length / 2, both=True)  # ty: ignore[invalid-argument-type]
     return Pos(0, 0, -face) * Rot(X=90) * rail

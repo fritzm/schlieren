@@ -1,12 +1,12 @@
 """Drilling layout drawing of the mirror-cell base plate; design §10.7 and §10.9.
 
-A plan view from above as a full-scale SVG (one user unit is 1 mm), for laying out and drilling the plywood. The
-sheet is 11 × 17 in (tabloid), landscape. Hole positions are dimensioned as ordinates in the cell frame: x from the
-plate centerline and y from the front edge.
+A plan view from above as a full-scale SVG (one user unit is 1 mm), for laying out and drilling the plywood.
+The sheet is 11 × 17 in (tabloid), landscape. Hole positions are dimensioned as ordinates in the cell frame: x
+from the plate centerline and y from the front edge.
 
-The sheet is drawn with the front edge at the bottom, so +y runs up the sheet toward the rear and +x to the right,
-as seen from above. The footprints of the sliding plate, the cell-adjuster plate, and the brackets are drawn
-dashed as an aid to checking the layout.
+The sheet is drawn with the front edge at the bottom, so +y runs up the sheet toward the rear and +x to the
+right, as seen from above. The footprints of the sliding plate, the cell-adjuster plate, and the brackets are
+drawn dashed as an aid to checking the layout.
 """
 
 from xml.sax.saxutils import escape
@@ -30,7 +30,8 @@ PLATE_TOP = 38.0  # Sheet y of the plate's rear edge.
 
 
 def figure(value: float, signed: bool = False) -> str:
-    """A dimension to the micron, without trailing zeros: the inch-derived values (69.85, 130.175) show exactly."""
+    """A dimension to the micron, without trailing zeros: the inch-derived values (69.85, 130.175) show
+    exactly."""
     text = f"{value:+.3f}" if signed else f"{value:.3f}"
     return text.rstrip("0").rstrip(".") if "." in text else text
 

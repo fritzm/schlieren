@@ -1,4 +1,5 @@
-"""Print the optical head's fixture stations and interference check; optionally show or render the assembly."""
+"""Print the optical head's fixture stations and interference check; optionally show or render the
+assembly."""
 
 import argparse
 from pathlib import Path

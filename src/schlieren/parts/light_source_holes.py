@@ -1,15 +1,15 @@
 """Hole layout of the LED module's SM1CP2M cap and CN40-40B heatsink base; canonical design §6.4.
 
 Plan view from the LED side with the origin on the optical axis, +x to the right and +y up, in the frame of
-the heatsink's pin lattice. The cap, the star board, and the heatsink are all described in this one frame,
-so the same coordinates drill the cap and the heatsink and the two line up when bolted together.
+the heatsink's pin lattice. The cap, the star board, and the heatsink are all described in this one frame, so
+the same coordinates drill the cap and the heatsink and the two line up when bolted together.
 
-Every hole is a through hole: the cap is only 0.210 in thick, and the screws are all shorter than it, so
-none of them can reach the far face. Through holes also let plain plug taps finish a full thread.
+Every hole is a through hole: the cap is only 0.210 in thick, and the screws are all shorter than it, so none
+of them can reach the far face. Through holes also let plain plug taps finish a full thread.
 
-The M3 screws bolt the heatsink to the cap, with their socket heads between four pins each. The M2 screws
-hold the star board in two opposite notches. The two lead holes sit just outside the board's flat edges,
-between pin columns, and pass the LED leads through the cap and the heatsink base.
+The M3 screws bolt the heatsink to the cap, with their socket heads between four pins each. The M2 screws hold
+the star board in two opposite notches. The two lead holes sit just outside the board's flat edges, between
+pin columns, and pass the LED leads through the cap and the heatsink base.
 """
 
 from dataclasses import dataclass

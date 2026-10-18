@@ -2,7 +2,7 @@
 
 import unittest
 
-from schlieren.cad import box_between, y_cylinder
+from schlieren.cad import box_between, intersect, y_cylinder
 from schlieren.parts.phone import (
     BUTTONS,
     PhoneParameters,
@@ -56,13 +56,16 @@ class PhoneTests(unittest.TestCase):
         x_lo, x_hi = p.x_of(p.plateau_foot_v[0]), p.x_of(p.plateau_foot_v[1])
         z_lo, z_hi = p.z_of(p.plateau_foot_u[1]), p.z_of(p.plateau_foot_u[0])
         window = box_between(x_lo - 5, x_hi + 5, y, y + p.plateau_height + 1, z_lo - 5, z_hi + 5)
-        top = self.bare & window & box_between(x_lo - 5, x_hi + 5, y + 1.77, y + 2.0, z_lo - 5, z_hi + 5)
+        top = intersect(
+            intersect(self.bare, window),
+            box_between(x_lo - 5, x_hi + 5, y + 1.77, y + 2.0, z_lo - 5, z_hi + 5),
+        )
         box = top.bounding_box()
         self.assertAlmostEqual(box.min.X, p.x_of(3.97), delta=0.02)
         self.assertAlmostEqual(box.max.X, p.x_of(40.99), delta=0.02)
         self.assertAlmostEqual(box.min.Z, p.z_of(23.45), delta=0.02)
         self.assertAlmostEqual(box.max.Z, p.z_of(3.79), delta=0.02)
-        foot = self.bare & box_between(x_lo - 5, x_hi + 5, y + 0.0, y + 0.02, z_lo - 5, z_hi + 5)
+        foot = intersect(self.bare, box_between(x_lo - 5, x_hi + 5, y + 0.0, y + 0.02, z_lo - 5, z_hi + 5))
         box = foot.bounding_box()
         self.assertAlmostEqual(box.min.X, p.x_of(1.34), delta=0.02)
         self.assertAlmostEqual(box.max.X, p.x_of(43.62), delta=0.02)
@@ -77,7 +80,7 @@ class PhoneTests(unittest.TestCase):
         zm = (z_hi + z_lo) / 2
 
         def case_in(x0, x1, z0, z1):
-            return (box_between(x0, x1, p.back_glass_y + 1.0, 0.0, z0, z1) & self.case).volume
+            return intersect(box_between(x0, x1, p.back_glass_y + 1.0, 0.0, z0, z1), self.case).volume
 
         inside = 0.05
         self.assertLess(case_in(xc - half + inside, xc + half - inside, zm - 1, zm + 1), TOL)
@@ -103,9 +106,9 @@ class PhoneTests(unittest.TestCase):
         )
 
     def test_bare_phone_sits_in_the_case_without_interference(self):
-        self.assertLess((self.bare & self.case).volume, TOL)
-        self.assertLess((self.glass & self.case).volume, TOL)
-        self.assertLess((self.glass & self.bare).volume, TOL)
+        self.assertLess(intersect(self.bare, self.case).volume, TOL)
+        self.assertLess(intersect(self.glass, self.case).volume, TOL)
+        self.assertLess(intersect(self.glass, self.bare).volume, TOL)
 
     def test_case_back_is_open_over_the_camera_plateau_and_flash(self):
         p = self.p
@@ -113,12 +116,12 @@ class PhoneTests(unittest.TestCase):
         z0, z1 = p.z_of(p.plateau_u[1]), p.z_of(p.plateau_u[0])
         end = (z1 - z0) / 2  # The plateau's round ends.
         over_plateau = box_between(x0 + end, x1 - end, p.back_glass_y, 0.0, z0, z1)
-        self.assertLess((over_plateau & self.case).volume, TOL)
+        self.assertLess(intersect(over_plateau, self.case).volume, TOL)
         flash = y_cylinder(p.flash_diameter, p.x_of(p.flash_v), p.z_of(p.flash_u), p.back_glass_y, 0.0)
-        self.assertLess((flash & self.case).volume, TOL)
+        self.assertLess(intersect(flash, self.case).volume, TOL)
         # The camera lip stands round the plateau, and the back plate is there beyond the opening.
         lip = box_between(x0 - 3, x1 + 3, p.back_glass_y, 0.0, z0 - 3, z1 + 3)
-        self.assertGreater((lip & self.case).volume, 100.0)
+        self.assertGreater(intersect(lip, self.case).volume, 100.0)
 
 
 if __name__ == "__main__":

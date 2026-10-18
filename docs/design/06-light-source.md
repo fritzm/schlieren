@@ -44,14 +44,14 @@ ahead of the iris; the SM1D12 interferes with the lens if threaded directly into
 The cap and the SM1V05 sleeve share the SMR1/M thread. The cap threads in until its knurled flange seats on
 the SMR1/M face, so the LED position is fixed, and the SM1V05 engagement is the focus adjustment
 ([§6.7](#67-focus-and-module-interchange)). Engagement runs from the Thorlabs minimum of 0.110 in / 2.79 mm to
-about 5.7–5.8 mm, where the sleeve end comes within 0.3 mm of the LED board. Turning the SM1V05 moves the
-lens and iris together relative to the LED; the resulting few-millimeter iris shift is negligible
-against the 150 mm iris-to-slit spacing.
+about 5.7–5.8 mm, where the sleeve end comes within 0.3 mm of the LED board. Turning the SM1V05 moves the lens
+and iris together relative to the LED; the resulting few-millimeter iris shift is negligible against the 150
+mm iris-to-slit spacing.
 
 ### 6.2 LED modules
 
-There are two interchangeable LED modules, each a self-contained threaded assembly.  The LEDs chosen are on
-industry standard 20mm "star" MCPCB carriers.  Each carrier is mounted on an identical threaded SM1 threaded
+There are two interchangeable LED modules, each a self-contained threaded assembly. The LEDs chosen are on
+industry standard 20mm "star" MCPCB carriers. Each carrier is mounted on an identical threaded SM1 threaded
 cap, so the SM1 thread and cap flange are the interchange standard.
 
 | Module | Emitter                             | Board                                    | Initial operating current (mA) |
@@ -69,8 +69,8 @@ Module stack, from the rear toward the condenser:
 
 Interfaces:
 
-- The cap flange is the repeatable axial stop on the SMR1/M face; the module's rotational position at the
-  stop does not matter.
+- The cap flange is the repeatable axial stop on the SMR1/M face; the module's rotational position at the stop
+  does not matter.
 - The SM1 thread centers the emitter on the condenser axis; no vertical calibration is required.
 - Heatsink fastening: three M3 × 6 mm socket-head screws (**provisional** length) through the CN40 base, their
   heads in open cells between four pins, into M3 holes tapped through the cap. Positions are in
@@ -97,8 +97,7 @@ Clearances:
 
 At about 2 W (white module at 700 mA) the expected rise is roughly 14 °C above ambient; the green module
 dissipates about 1.1 W. The rating is the manufacturer's pins-up test; the module runs with pins horizontal,
-which pin fins tolerate well. **Provisional:** bench-test the temperature rise at 700 mA before relying on
-it.
+which pin fins tolerate well. **Provisional:** bench-test the temperature rise at 700 mA before relying on it.
 
 The heatsink is round so that it clears the post at every rotation while the module is threaded in
 ([§6.2](#62-led-modules)); a larger or non-round heatsink would sweep its corners below the post top during
@@ -146,9 +145,11 @@ heatsink base.
 
 <p align="center">
   <img src="figures/light-source-holes.svg" width="640" style="max-width: 95%"
-       alt="Plan view from the LED side of the cap, the 20 mm star board, and the heatsink pins, with the M3, M2, and lead holes and their positions">
+       alt="Plan view from the LED side of the cap, the 20 mm star board, and the heatsink pins, with the M3,
+       M2, and lead holes and their positions">
   <br>
-  <em>Fig. 6. Cap and heatsink hole layout, seen from the LED side, in the frame of the heatsink pin lattice</em>
+  <em>Fig. 6. Cap and heatsink hole layout, seen from the LED side, in the frame of the heatsink pin
+    lattice</em>
 </p>
 
 Coordinates are in millimeters from the optical axis, +x to the right and +y up as seen from the LED side, in
@@ -208,12 +209,12 @@ The condenser images the LED emitter onto the source slit (about 6.6× magnifica
 sees the iris uniformly filled at the LED radiance, which gives a uniformly illuminated mirror. The LED image
 should cover the illuminated slit length; the domes enlarge the apparent emitters by about 1.4–1.5×.
 
-Defocus in either direction underfills the ±1.8° cone: iris-edge rays then trace back beyond the emitter
-edge, darkening the mirror edge and shortening the uniformly lit slit length. With the LED at the condenser
-focus (12 mm, collimated) the emitter cannot fill the cone even at the slit center.
+Defocus in either direction underfills the ±1.8° cone: iris-edge rays then trace back beyond the emitter edge,
+darkening the mirror edge and shortening the uniformly lit slit length. With the LED at the condenser focus
+(12 mm, collimated) the emitter cannot fill the cone even at the slit center.
 
-Using ACL2520U-A catalog values (EFL 20.1 mm, BFL 12.0 mm; object-side principal plane about 8.1 mm inside
-the plano face) and about 153 mm from the convex vertex to the slit, the optimum emitter-to-plano-face gap is
+Using ACL2520U-A catalog values (EFL 20.1 mm, BFL 12.0 mm; object-side principal plane about 8.1 mm inside the
+plano face) and about 153 mm from the convex vertex to the slit, the optimum emitter-to-plano-face gap is
 about 15 mm. The optimum moves only about ±0.7 mm for ±30 mm of slit position.
 
 ### 6.7 Focus and module interchange
@@ -238,14 +239,14 @@ range:
 | Green | about 2.1 mm | about 13.2–16.2 mm | about 3.9 mm |
 | White | about 2.3 mm | about 12.9–16.0 mm | about 3.7 mm |
 
-The two modules focus about 0.2 mm apart in engagement, about one-third of a turn of the SM1 thread. An
-index mark per module on the SM1V05 is optional.
+The two modules focus about 0.2 mm apart in engagement, about one-third of a turn of the SM1 thread. An index
+mark per module on the SM1V05 is optional.
 
 Focus margin about the 15.04 mm optimum gap is about 1.1 mm (long-gap side) and 1.8 mm (short-gap side) for
 the green module, and only about 0.93 mm and 2.1 mm for the white module. The white module's long-gap travel
 is limited by the SM1V05 minimum engagement. **Provisional:** the white module's reduced margin is to be
-confirmed on the build. If it cannot reach a sharp slit image, space its cap flange off the SMR1/M face with
-a thin shim (about 0.1 mm restores 1.0 mm of margin). The shim moves the whole module away from the lens and
+confirmed on the build. If it cannot reach a sharp slit image, space its cap flange off the SMR1/M face with a
+thin shim (about 0.1 mm restores 1.0 mm of margin). The shim moves the whole module away from the lens and
 keeps the flange as the axial stop; a shim under the star board would instead shorten the gap and make the
 shortfall worse.
 
@@ -256,5 +257,5 @@ Module interchange:
 3. screw in the alternate module until its flange seats;
 4. touch up focus on the closed slit blades if needed.
 
-In transport, the condenser/iris assembly is protected from dust and scratches by a Thorlabs SM1CP1
-internally threaded end cap and an SM1EC2 snap-on dust cap.
+In transport, the condenser/iris assembly is protected from dust and scratches by a Thorlabs SM1CP1 internally
+threaded end cap and an SM1EC2 snap-on dust cap.

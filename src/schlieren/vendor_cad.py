@@ -9,6 +9,7 @@ import os
 import tempfile
 from functools import cache
 from pathlib import Path
+from typing import cast
 
 from build123d import (
     Align,
@@ -29,8 +30,8 @@ from build123d import (
 from schlieren.standards import INCH
 
 VENDOR_CAD_DIR = Path(__file__).resolve().parents[2] / "cad" / "vendor"
-# Each STEP file's geometry, saved in OpenCascade's own format the first time it is read: reading that back
-# is some thirty times faster than parsing the STEP file, and every process (each test module is one) would
+# Each STEP file's geometry, saved in OpenCascade's own format the first time it is read: reading that back is
+# some thirty times faster than parsing the STEP file, and every process (each test module is one) would
 # otherwise parse every model it uses. Not versioned; safe to delete.
 VENDOR_CACHE_DIR = Path(__file__).resolve().parents[2] / ".cache" / "vendor"
 
@@ -58,10 +59,11 @@ MCMASTER_92815A202_HEIGHT = 5.0
 # Its bearing collar, from the model: the first 1.0 mm of the height, Ø11.6 mm; the knurled head is the rest.
 MCMASTER_92815A202_COLLAR_DIAMETER = 11.6
 MCMASTER_92815A202_COLLAR_HEIGHT = 1.0
-# McMaster 8215K2 model: hemisphere on axis +Y through the origin, adhesive face at y=-height/2, apex toward +Y.
+# McMaster 8215K2 model: hemisphere on axis +Y through the origin, adhesive face at y=-height/2, apex toward
+# +Y.
 MCMASTER_8215K2_DIAMETER = 1.25 * INCH
-# McMaster 93339A252 model: axis +Z through the origin, hex-socket end at z=11.99 mm, ball apex at z=-13.01 mm;
-# the Ø3 mm ball is a separate solid centered 1.5 mm inside its apex.
+# McMaster 93339A252 model: axis +Z through the origin, hex-socket end at z=11.99 mm, ball apex at z=-13.01
+# mm; the Ø3 mm ball is a separate solid centered 1.5 mm inside its apex.
 MCMASTER_93339A252_LENGTH = 25.0  # Overall, socket end to ball apex.
 MCMASTER_93339A252_DIAMETER = 5.0
 MCMASTER_93339A252_BALL_DIAMETER = 3.0
@@ -73,13 +75,15 @@ MCMASTER_94459A797_FLANGE_DIAMETER = 0.312 * INCH
 MCMASTER_94459A797_FLANGE_Y = 0.1525 * INCH
 MCMASTER_8215K2_HEIGHT = 0.625 * INCH
 # Kozak TS250-80-2500 model: axis +X through the origin, ball center at x=0 (Ø3.969 mm ball, so the tip is at
-# x=-KOZAK_TS250_BALL_RADIUS), plain Ø6.35 mm body to the end at x=61.516 mm, which has a hex-drive socket 2.286 mm deep.
+# x=-KOZAK_TS250_BALL_RADIUS), plain Ø6.35 mm body to the end at x=61.516 mm, which has a hex-drive socket
+# 2.286 mm deep.
 KOZAK_TS250_BALL_RADIUS = 1.984
 KOZAK_TS250_LENGTH = 2.5 * INCH
 KOZAK_TS250_DIAMETER = 0.25 * INCH
 KOZAK_TS250_END_X = 61.516
-# Kozak KB250-80 model: axis +X through the origin, knurled Ø12.7 mm body from x=-1.538 to 9.892 mm. The open end
-# (x=9.892) takes the screw end: a Ø6.35 bore to x=4.304, then a Ø3.94 pocket (over the hex socket) to x=-1.03.
+# Kozak KB250-80 model: axis +X through the origin, knurled Ø12.7 mm body from x=-1.538 to 9.892 mm. The open
+# end (x=9.892) takes the screw end: a Ø6.35 bore to x=4.304, then a Ø3.94 pocket (over the hex socket) to
+# x=-1.03.
 KOZAK_KB250_OPEN_X = 9.892
 KOZAK_KB250_BORE_BOTTOM_X = 4.304
 KOZAK_KB250_LENGTH = 11.43
@@ -91,11 +95,13 @@ KOZAK_TB250_LENGTH = 0.625 * INCH
 KOZAK_TB250_FLANGE_DIAMETER = 8.941
 KOZAK_TB250_BARREL_DIAMETER = 7.938
 KOZAK_TB250_FLANGE_THICKNESS = 0.254
-# McMaster 8681N11 model: extrusion axis +X centered on the origin, outer corner at y=z=-3 in / 2, legs toward +y and +z.
+# McMaster 8681N11 model: extrusion axis +X centered on the origin, outer corner at y=z=-3 in / 2, legs toward
+# +y and +z.
 MCMASTER_8681N11_LEG = 3.0 * INCH
 MCMASTER_8681N11_THICKNESS = 0.25 * INCH
 MCMASTER_8681N11_WIDTH = 33.274
-# McMaster 8681N11 holes: Ø8.332 mm, centered across the leg, 0.75 and 2.25 in from the outer corner on each leg.
+# McMaster 8681N11 holes: Ø8.332 mm, centered across the leg, 0.75 and 2.25 in from the outer corner on each
+# leg.
 MCMASTER_8681N11_HOLE_DIAMETER = 8.332
 MCMASTER_8681N11_HOLE_OFFSETS = (0.75 * INCH, 2.25 * INCH)
 # McMaster 98164A527 model: axis +Z through the origin, bearing face at z=17.463 mm, tip at z=-17.463 mm.
@@ -108,8 +114,9 @@ MCMASTER_90099A030_HEIGHT = 7 / 16 * INCH
 # McMaster 96659A134 model: axis +Z through the origin, centered on its 1.664 mm thickness.
 MCMASTER_96659A134_THICKNESS = 1.664
 MCMASTER_96659A134_DIAMETER = 17.476
-# McMaster 92290A228 (M5 × 12) and 92290A242 (M5 × 20) models, no threads: axis +Z through the origin, centered on the
-# overall length (the nominal length plus the head), Ø8.5 mm head of 5 mm at +Z, Ø5 mm plain shank to -Z.
+# McMaster 92290A228 (M5 × 12) and 92290A242 (M5 × 20) models, no threads: axis +Z through the origin,
+# centered on the overall length (the nominal length plus the head), Ø8.5 mm head of 5 mm at +Z, Ø5 mm plain
+# shank to -Z.
 MCMASTER_92290A_HEAD_HEIGHT = 5.0
 MCMASTER_92290A_HEAD_DIAMETER = 8.5
 MCMASTER_92290A228_LENGTH = 12.0  # Nominal: under the head.
@@ -118,23 +125,23 @@ MCMASTER_92290A265_LENGTH = 50.0  # The 92290A265 (M5 × 50) model has the same 
 # McMaster 91116A350 model: axis +Z through the origin, centered on its 1.2 mm thickness; Ø15 mm OD.
 MCMASTER_91116A350_THICKNESS = 1.2
 MCMASTER_91116A350_DIAMETER = 15.0
-# McMaster 93625A225 model (M5 nyloc nut, no threads): axis +Y through the origin, y from -2.5 to 2.5 mm, nylon insert
-# at +Y; 8 mm across flats (along x), 9.11 mm across corners (along z); two solids (nut, insert).
+# McMaster 93625A225 model (M5 nyloc nut, no threads): axis +Y through the origin, y from -2.5 to 2.5 mm,
+# nylon insert at +Y; 8 mm across flats (along x), 9.11 mm across corners (along z); two solids (nut, insert).
 MCMASTER_93625A225_HEIGHT = 5.0
 # McMaster 93475A240 model: axis +Z through the origin, centered on its 1 mm thickness; Ø10 mm OD, Ø5.3 mm ID.
 # A stand-in for ordinary M5 flat washers: the part itself is not in the BOM.
 MCMASTER_93475A240_THICKNESS = 1.0
 MCMASTER_93475A240_DIAMETER = 10.0
-# McMaster 91292A114 model (M3 × 12, no threads): axis +Z through the origin, centered on its 15 mm overall length
-# (12 mm under the head plus the head), Ø5.5 mm head of 3 mm at +Z, Ø3 mm plain shank to -Z.
+# McMaster 91292A114 model (M3 × 12, no threads): axis +Z through the origin, centered on its 15 mm overall
+# length (12 mm under the head plus the head), Ø5.5 mm head of 3 mm at +Z, Ø3 mm plain shank to -Z.
 MCMASTER_91292A114_LENGTH = 12.0  # Nominal: under the head.
 MCMASTER_91292A114_HEAD_HEIGHT = 3.0
 # McMaster 91292A111 model (M3 × 6, no threads): the 91292A114 layout, centered on its 9 mm overall length.
 MCMASTER_91292A111_LENGTH = 6.0  # Nominal: under the head.
 MCMASTER_91292A111_HEAD_HEIGHT = 3.0
 MCMASTER_91292A111_HEAD_DIAMETER = 5.5
-# McMaster 92095A452 model (M2 × 5 button head, no threads): axis +Z through the origin, Ø2 mm plain shank from
-# z=-2.5 mm to the head's bearing face at z=2.5 mm, Ø3.5 mm button head of 1.3 mm above it.
+# McMaster 92095A452 model (M2 × 5 button head, no threads): axis +Z through the origin, Ø2 mm plain shank
+# from z=-2.5 mm to the head's bearing face at z=2.5 mm, Ø3.5 mm button head of 1.3 mm above it.
 MCMASTER_92095A452_LENGTH = 5.0  # Nominal: under the head.
 MCMASTER_92095A452_HEAD_HEIGHT = 1.3
 MCMASTER_92095A452_HEAD_DIAMETER = 3.5
@@ -142,19 +149,19 @@ MCMASTER_92095A452_HEAD_DIAMETER = 3.5
 # Ø5.0 mm OD, Ø2.2 mm ID.
 MCMASTER_91545A410_THICKNESS = 0.4
 MCMASTER_91545A410_DIAMETER = 5.0
-# McMaster 91585A351 (Ø3 × 10 mm) and 91585A457 (Ø4 × 20 mm) dowel pins: axis +X through the origin, centered on
-# the length; chamfered ends.
+# McMaster 91585A351 (Ø3 × 10 mm) and 91585A457 (Ø4 × 20 mm) dowel pins: axis +X through the origin, centered
+# on the length; chamfered ends.
 MCMASTER_91585A351_DIAMETER = 3.0
 MCMASTER_91585A351_LENGTH = 10.0
 MCMASTER_91585A457_DIAMETER = 4.0
 MCMASTER_91585A457_LENGTH = 20.0
-# McMaster 91828A211 model (M3 nut, no threads): axis +Z through the origin, centered on its 2.4 mm height; 5.5 mm
-# across flats (along x), 6.326 mm across corners (along y).
+# McMaster 91828A211 model (M3 nut, no threads): axis +Z through the origin, centered on its 2.4 mm height;
+# 5.5 mm across flats (along x), 6.326 mm across corners (along y).
 MCMASTER_91828A211_HEIGHT = 2.4
-# McMaster 97936A109 model (brad): axis +Z through the origin; the domed Ø2.54 mm head is at -Z, apex at -4.7625 mm,
-# its underside at -3.8625 mm (head about 0.9 mm high, measured from the model; calipers on the in-hand brads give
-# a Ø2.36 mm × 0.97 mm head, so the model is slightly large in diameter and low); Ø1.219 mm plain shank to a point
-# at +4.7625 mm, 9.525 mm (3/8 in) overall.
+# McMaster 97936A109 model (brad): axis +Z through the origin; the domed Ø2.54 mm head is at -Z, apex at
+# -4.7625 mm, its underside at -3.8625 mm (head about 0.9 mm high, measured from the model; calipers on the
+# in-hand brads give a Ø2.36 mm × 0.97 mm head, so the model is slightly large in diameter and low); Ø1.219 mm
+# plain shank to a point at +4.7625 mm, 9.525 mm (3/8 in) overall.
 MCMASTER_97936A109_LENGTH = 9.525
 MCMASTER_97936A109_HEAD_HEIGHT = 0.9
 # McMaster 91131A028 model: axis +Y through the origin; the female half's flat back is at y=-3.378 mm.
@@ -177,7 +184,7 @@ def vendor_step(filename: str) -> Compound:
     cached = VENDOR_CACHE_DIR / f"{source.stem}.{stat.st_mtime_ns}.{stat.st_size}.brep"
     if cached.is_file():
         try:
-            return import_brep(cached)
+            return cast(Compound, import_brep(cached))
         except Exception:
             pass  # An unreadable cache entry is rebuilt from the STEP file.
     model = import_step(source)
@@ -190,7 +197,9 @@ def vendor_step(filename: str) -> Compound:
         os.close(handle)
         export_brep(model, partial)
         os.replace(partial, cached)
-        return import_brep(cached)  # The same geometry a later read gets, so a first run is no different.
+        return cast(
+            Compound, import_brep(cached)
+        )  # The same geometry a later read gets, so a first run is no different.
     except OSError:
         return model  # The cache is an optimization; a read-only checkout still works.
 
@@ -267,7 +276,8 @@ def thorlabs_sm1v05() -> tuple[Compound, Compound, Compound]:
 
 @cache
 def thorlabs_acl2520u_a() -> Compound:
-    """Thorlabs ACL2520U-A condenser; axis +Y through the origin, plano face at y=0, convex vertex toward +Y."""
+    """Thorlabs ACL2520U-A condenser; axis +Y through the origin, plano face at y=0, convex vertex toward
+    +Y."""
     return _moved("Thorlabs-ACL2520U-A.step", Pos(0, ACL2520U_A_PLANO_Y, 0) * Rot(Z=180))
 
 
@@ -321,7 +331,8 @@ def thorlabs_fas100_parts() -> tuple[Compound, Compound, Compound]:
 
 @cache
 def alpha_cn40_40b() -> Compound:
-    """Alpha CN40-40B pin-fin heatsink; axis +Y through the origin, base mounting face at y=0, pins toward -Y."""
+    """Alpha CN40-40B pin-fin heatsink; axis +Y through the origin, base mounting face at y=0, pins toward
+    -Y."""
     return _moved("Alpha-CN40-40B.step", Rot(Z=180))
 
 
@@ -339,8 +350,8 @@ def mcmaster_92815a202_envelope() -> Compound:
     """Two plain cylinders that contain the 92815A202 thumb nut, in the frame of `mcmaster_92815a202`.
 
     For clearance checks: an exact distance to the knurled model costs over a second, and to this a few
-    milliseconds. The envelope contains the model, so a clearance measured to it is never larger than the
-    true one.
+    milliseconds. The envelope contains the model, so a clearance measured to it is never larger than the true
+    one.
     """
     on_floor = (Align.CENTER, Align.CENTER, Align.MIN)
     collar = Cylinder(
@@ -348,7 +359,7 @@ def mcmaster_92815a202_envelope() -> Compound:
     )
     head_height = MCMASTER_92815A202_HEIGHT - MCMASTER_92815A202_COLLAR_HEIGHT
     head = Cylinder(MCMASTER_92815A202_DIAMETER / 2, head_height, align=on_floor)
-    return collar + Pos(0, 0, MCMASTER_92815A202_COLLAR_HEIGHT) * head
+    return cast(Compound, collar + Pos(0, 0, MCMASTER_92815A202_COLLAR_HEIGHT) * head)
 
 
 @cache
@@ -418,7 +429,8 @@ def mcmaster_91131a028() -> tuple[Compound, Compound]:
 
 @cache
 def mcmaster_8681n11() -> Compound:
-    """McMaster 8681N11 3 in corner bracket; width along x centered on the origin, outer corner on the y and z axes.
+    """McMaster 8681N11 3 in corner bracket; width along x centered on the origin, outer corner on the y and z
+    axes.
 
     One leg lies along +y and the other along +z, both starting at the outer corner (y=z=0).
     """
@@ -428,7 +440,8 @@ def mcmaster_8681n11() -> Compound:
 
 @cache
 def mcmaster_98164a527() -> Compound:
-    """McMaster 98164A527 5/16"-18 × 1-3/8" 316 stainless button-head screw (unthreaded model); axis +Z through the origin.
+    """McMaster 98164A527 5/16"-18 × 1-3/8" 316 stainless button-head screw (unthreaded model); axis +Z
+    through the origin.
 
     The head's bearing face is at z=0, with the head toward +Z and the shank toward -Z.
     """
@@ -437,7 +450,8 @@ def mcmaster_98164a527() -> Compound:
 
 @cache
 def mcmaster_90099a030() -> tuple[Compound, Compound]:
-    """McMaster 90099A030 5/16"-18 heavy-profile locknut (unthreaded model) as (nut, nylon insert); axis +Z through the origin.
+    """McMaster 90099A030 5/16"-18 heavy-profile locknut (unthreaded model) as (nut, nylon insert); axis +Z
+    through the origin.
 
     The seating face is at z=0, with the nylon insert end toward +Z.
     """
@@ -448,12 +462,14 @@ def mcmaster_90099a030() -> tuple[Compound, Compound]:
 
 @cache
 def mcmaster_96659a134() -> Compound:
-    """McMaster 96659A134 5/16" SAE washer; axis +Z through the origin, one face at z=0, the other at +thickness."""
+    """McMaster 96659A134 5/16" SAE washer; axis +Z through the origin, one face at z=0, the other at
+    +thickness."""
     return _moved("McMaster-96659A134.step", Pos(0, 0, MCMASTER_96659A134_THICKNESS / 2))
 
 
 def _m5_socket_screw(filename: str, length: float) -> Compound:
-    """A McMaster M5 socket head cap screw model: axis +Z, head bearing face at z=0, head toward -Z, shank to +Z."""
+    """A McMaster M5 socket head cap screw model: axis +Z, head bearing face at z=0, head toward -Z, shank to
+    +Z."""
     return _moved(filename, Pos(0, 0, (length - MCMASTER_92290A_HEAD_HEIGHT) / 2) * Rot(X=180))
 
 
@@ -461,7 +477,8 @@ def _m5_socket_screw(filename: str, length: float) -> Compound:
 def mcmaster_92290a228() -> Compound:
     """McMaster 92290A228 M5 × 0.8 × 12 mm 316 stainless socket head screw (unthreaded model).
 
-    Axis +Z through the origin, the head's bearing face at z=0 with the head toward -Z and the shank toward +Z.
+    Axis +Z through the origin, the head's bearing face at z=0 with the head toward -Z and the shank toward
+    +Z.
     """
     return _m5_socket_screw("McMaster-92290A228.step", MCMASTER_92290A228_LENGTH)
 
@@ -470,14 +487,16 @@ def mcmaster_92290a228() -> Compound:
 def mcmaster_92290a242() -> Compound:
     """McMaster 92290A242 M5 × 0.8 × 20 mm 316 stainless socket head screw (unthreaded model).
 
-    Axis +Z through the origin, the head's bearing face at z=0 with the head toward -Z and the shank toward +Z.
+    Axis +Z through the origin, the head's bearing face at z=0 with the head toward -Z and the shank toward
+    +Z.
     """
     return _m5_socket_screw("McMaster-92290A242.step", MCMASTER_92290A242_LENGTH)
 
 
 @cache
 def mcmaster_93475a240() -> Compound:
-    """McMaster 93475A240 M5 flat washer; axis +Z through the origin, one face at z=0, the other at +thickness."""
+    """McMaster 93475A240 M5 flat washer; axis +Z through the origin, one face at z=0, the other at
+    +thickness."""
     return _moved("McMaster-93475A240.step", Pos(0, 0, MCMASTER_93475A240_THICKNESS / 2))
 
 
@@ -485,7 +504,8 @@ def mcmaster_93475a240() -> Compound:
 def mcmaster_91292a114() -> Compound:
     """McMaster 91292A114 M3 × 0.5 × 12 mm 18-8 stainless socket head screw (unthreaded model).
 
-    Axis +Z through the origin, the head's bearing face at z=0 with the head toward -Z and the shank toward +Z.
+    Axis +Z through the origin, the head's bearing face at z=0 with the head toward -Z and the shank toward
+    +Z.
     """
     shift = (MCMASTER_91292A114_LENGTH - MCMASTER_91292A114_HEAD_HEIGHT) / 2
     return _moved("McMaster-91292A114.step", Pos(0, 0, shift) * Rot(X=180))
@@ -495,7 +515,8 @@ def mcmaster_91292a114() -> Compound:
 def mcmaster_91292a111() -> Compound:
     """McMaster 91292A111 M3 × 0.5 × 6 mm 18-8 stainless socket head screw (unthreaded model).
 
-    Axis +Z through the origin, the head's bearing face at z=0 with the head toward -Z and the shank toward +Z.
+    Axis +Z through the origin, the head's bearing face at z=0 with the head toward -Z and the shank toward
+    +Z.
     """
     shift = (MCMASTER_91292A111_LENGTH - MCMASTER_91292A111_HEAD_HEIGHT) / 2
     return _moved("McMaster-91292A111.step", Pos(0, 0, shift) * Rot(X=180))
@@ -505,14 +526,16 @@ def mcmaster_91292a111() -> Compound:
 def mcmaster_92095a452() -> Compound:
     """McMaster 92095A452 M2 × 0.4 × 5 mm 18-8 stainless button head screw (unthreaded model).
 
-    Axis +Z through the origin, the head's bearing face at z=0 with the head toward -Z and the shank toward +Z.
+    Axis +Z through the origin, the head's bearing face at z=0 with the head toward -Z and the shank toward
+    +Z.
     """
     return _moved("McMaster-92095A452.step", Pos(0, 0, MCMASTER_92095A452_LENGTH / 2) * Rot(X=180))
 
 
 @cache
 def mcmaster_91545a410() -> Compound:
-    """McMaster 91545A410 M2 nylon washer; axis +Z through the origin, one face at z=0, the other at +thickness."""
+    """McMaster 91545A410 M2 nylon washer; axis +Z through the origin, one face at z=0, the other at
+    +thickness."""
     return _moved("McMaster-91545A410.step", Pos(0, 0, MCMASTER_91545A410_THICKNESS / 2))
 
 
@@ -530,13 +553,15 @@ def mcmaster_97936a109() -> Compound:
 
 @cache
 def mcmaster_91585a351() -> Compound:
-    """McMaster 91585A351 Ø3 × 10 mm 18-8 stainless dowel pin; axis +Z through the origin, centered on its length."""
+    """McMaster 91585A351 Ø3 × 10 mm 18-8 stainless dowel pin; axis +Z through the origin, centered on its
+    length."""
     return _moved("McMaster-91585A351.step", Rot(Y=90))
 
 
 @cache
 def mcmaster_91585a457() -> Compound:
-    """McMaster 91585A457 Ø4 × 20 mm 18-8 stainless dowel pin; axis +Z through the origin, centered on its length."""
+    """McMaster 91585A457 Ø4 × 20 mm 18-8 stainless dowel pin; axis +Z through the origin, centered on its
+    length."""
     return _moved("McMaster-91585A457.step", Rot(Y=90))
 
 
@@ -553,14 +578,16 @@ def mcmaster_91828a211() -> Compound:
 def mcmaster_92290a265() -> Compound:
     """McMaster 92290A265 M5 × 0.8 × 50 mm 316 stainless socket head screw (unthreaded model).
 
-    Axis +Z through the origin, the head's bearing face at z=0 with the head toward -Z and the shank toward +Z.
+    Axis +Z through the origin, the head's bearing face at z=0 with the head toward -Z and the shank toward
+    +Z.
     """
     return _m5_socket_screw("McMaster-92290A265.step", MCMASTER_92290A265_LENGTH)
 
 
 @cache
 def mcmaster_91116a350() -> Compound:
-    """McMaster 91116A350 M5 oversized washer; axis +Z through the origin, one face at z=0, the other at +thickness."""
+    """McMaster 91116A350 M5 oversized washer; axis +Z through the origin, one face at z=0, the other at
+    +thickness."""
     return _moved("McMaster-91116A350.step", Pos(0, 0, MCMASTER_91116A350_THICKNESS / 2))
 
 
@@ -578,8 +605,8 @@ def m5_socket_screw(length: float) -> Compound:
     """An M5 socket head cap screw of the given length under the head, as the kit screws are modeled.
 
     The assortment kits have no vendor models, so this is the shortest McMaster M5 model (12, 20 or 50 mm) at
-    least that long, with its shank cut to length. Axis +Z through the origin, the head's bearing face at z=0 with
-    the head toward -Z and the shank toward +Z.
+    least that long, with its shank cut to length. Axis +Z through the origin, the head's bearing face at z=0
+    with the head toward -Z and the shank toward +Z.
     """
     models = (
         (MCMASTER_92290A228_LENGTH, mcmaster_92290a228),

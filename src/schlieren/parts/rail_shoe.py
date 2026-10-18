@@ -18,6 +18,7 @@ from build123d import (
     Part,
     Pos,
     Rot,
+    Shape,
     fillet,
 )
 
@@ -198,7 +199,7 @@ VIEWER_RAIL_OVERHANG = 15.0  # Rail shown beyond each end of the shoe.
 
 # Built once per parameter set and shared (see parts/carriage.py); the cached solids must not be modified.
 @cache
-def build_rail_shoe(p: RailShoeParameters | None = None) -> Part:
+def build_rail_shoe(p: RailShoeParameters | None = None) -> Compound:
     """Return one printable solid in assembly coordinates, without hardware."""
     p = p or RailShoeParameters()
     p.validate()
@@ -227,10 +228,9 @@ def build_rail_shoe(p: RailShoeParameters | None = None) -> Part:
     ]
     shoe = fillet(root, p.collar_root_fillet)
 
-    # The collar reaches farthest in +x at the ear's inner (+y) face.
-    # Measure ear_width from that circle intersection so the shortest
-    # exposed x-edge is exactly ear_width. Start at x=0 to overlap the
-    # collar positively; the subsequent post-bore cut removes the interior.
+    # The collar reaches farthest in +x at the ear's inner (+y) face. Measure ear_width from that circle
+    # intersection so the shortest exposed x-edge is exactly ear_width. Start at x=0 to overlap the collar
+    # positively; the subsequent post-bore cut removes the interior.
     ear_y_min = p.split_gap / 2
     collar_x_at_inner_face = sqrt(p.collar_outer_radius**2 - ear_y_min**2)
     ear_x_end = collar_x_at_inner_face + p.ear_width
@@ -249,8 +249,8 @@ def build_rail_shoe(p: RailShoeParameters | None = None) -> Part:
     )
     shoe += screw_ear
 
-    # Only the two outer vertical, concave ear/collar junctions. Leave the
-    # split-facing edges sharp so the relaxed gap and inner width stay fixed.
+    # Only the two outer vertical, concave ear/collar junctions. Leave the split-facing edges sharp so the
+    # relaxed gap and inner width stay fixed.
     outer_root_edges = []
     for outer_y in (ear_y_min + p.nut_ear_thickness, -ear_y_min - p.screw_ear_thickness):
         root_x = sqrt(p.collar_outer_radius**2 - outer_y**2)
@@ -269,9 +269,8 @@ def build_rail_shoe(p: RailShoeParameters | None = None) -> Part:
     bore = z_cylinder(p.post_bore, 0, 0, -CUT_OVERRUN, p.collar_top + CUT_OVERRUN)
     shoe -= bore
 
-    # Radial split toward +x, centered on y=0. The rectangle ends at
-    # the relief center; the circular bore extends another radius below it.
-    # Include the bridge/skirt if the requested relief depth reaches them.
+    # Radial split toward +x, centered on y=0. The rectangle ends at the relief center; the circular bore
+    # extends another radius below it. Include the bridge/skirt if the requested relief depth reaches them.
     split_length = max(ear_x_end, p.width / 2) + CUT_OVERRUN
     split = box_between(
         0, split_length, -p.split_gap / 2, p.split_gap / 2, p.split_relief_z, p.collar_top + CUT_OVERRUN
@@ -285,15 +284,15 @@ def build_rail_shoe(p: RailShoeParameters | None = None) -> Part:
     )
     shoe -= side_holes
 
-    # Center on the exposed rectangular inner ear faces, whose x-span is
-    # collar_x_at_inner_face .. ear_x_end. Both features share a y-axis.
+    # Center on the exposed rectangular inner ear faces, whose x-span is collar_x_at_inner_face .. ear_x_end.
+    # Both features share a y-axis.
     clamp_x, clamp_z = p.clamp_axis_x, p.clamp_axis_z
     screw_outer_y, nut_outer_y = p.clamp_screw_outer_y, p.clamp_nut_outer_y
     clamp_hole = y_cylinder(
         p.m3_clearance_diameter, clamp_x, clamp_z, screw_outer_y - CUT_OVERRUN, nut_outer_y + CUT_OVERRUN
     )
-    # Nut inserts from +y; the inner wall carries its axial clamp load.
-    # Hex vertices lie along x, with horizontal flats in z.
+    # Nut inserts from +y; the inner wall carries its axial clamp load. Hex vertices lie along x, with
+    # horizontal flats in z.
     nut = y_hex(
         p.clamp_nut_across_flats + p.nut_across_flats_clearance,
         clamp_x,
@@ -362,7 +361,7 @@ def post_stack(
     loc: Location | None = None,
     *,
     y: float = 0.0,
-    shoe: Part | None = None,
+    shoe: Shape | None = None,
     ring: bool = False,
     clamp_hardware: bool = True,
     side_screws: bool = False,
@@ -396,9 +395,9 @@ def post_stack(
     return parts
 
 
-def viewer_assembly(shoe: Part, p: RailShoeParameters | None = None) -> Compound:
-    """Shoe on a generic 2020 rail segment, with the datum disc and the post stack's vendor post and
-    hardware (including the side-slot screws), all but the shoe grouped as reference parts."""
+def viewer_assembly(shoe: Shape, p: RailShoeParameters | None = None) -> Compound:
+    """Shoe on a generic 2020 rail segment, with the datum disc and the post stack's vendor post and hardware
+    (including the side-slot screws), all but the shoe grouped as reference parts."""
     p = p or RailShoeParameters()
     refs = reference_parts(p)
     stack = {part.label: part for part in post_stack(shoe=shoe, side_screws=True, p=p)}

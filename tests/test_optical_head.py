@@ -3,7 +3,7 @@
 import unittest
 from math import pi
 
-from schlieren.cad import box_between, children_by_label, leaves, moved
+from schlieren.cad import box_between, children_by_label, intersect, leaves, moved
 from schlieren.parts.optical_head import (
     IMAGING_SIDE,
     OpticalHeadParameters,
@@ -163,8 +163,7 @@ class OpticalHeadTests(unittest.TestCase):
         for group in ("Source rail fixtures", "Imaging rail fixtures"):
             for s, f in near_pairs(leaves(groups[group]), frame, MIN_CLEARANCE):
                 if f.label == "Rail":
-                    common = s.intersect(f)
-                    volume = common.volume if common is not None else 0.0
+                    volume = intersect(s, f).volume
                     self.assertLess(volume, INTERFERENCE_TOLERANCE, f"{s.label} and the rail interfere")
                 else:
                     self.assertGreaterEqual(

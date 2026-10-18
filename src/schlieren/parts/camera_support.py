@@ -44,6 +44,7 @@ from build123d import (
     Pos,
     RegularPolygon,
     Rot,
+    Shape,
     Solid,
     Vector,
     Wire,
@@ -117,7 +118,8 @@ class CameraSupportParameters:
     optical_height: float = OPTICAL_HEIGHT  # §3.4.
     rail_size: float = 20.0
 
-    # Phone in its case, landscape, screen aft (§9.1), Main camera (the lower aperture in portrait) on the axis.
+    # Phone in its case, landscape, screen aft (§9.1), Main camera (the lower aperture in portrait) on the
+    # axis.
     phone: PhoneParameters = field(default_factory=PhoneParameters)
 
     # Telephoto (§9.2): boss, shoulder, barrel, and focus ring, measured from the aft end.
@@ -154,9 +156,9 @@ class CameraSupportParameters:
     clamp_screw_above_ring: float = 4.25  # Screw axis above the ring top; the head clears the root fillet.
     ear_top_above_ring: float = 8.75
     clamp_head_diameter: float = 5.5  # Screw head, which the ear must clear.
-    # Pad pockets: each bearing surface sits in a pocket whose rim stands above it, so a ball end that
-    # wanders reaches a wall instead of the edge of the pad. The rim stays below the screw's end face, which
-    # is 1.2 mm behind the ball apex.
+    # Pad pockets: each bearing surface sits in a pocket whose rim stands above it, so a ball end that wanders
+    # reaches a wall instead of the edge of the pad. The rim stays below the screw's end face, which is 1.2 mm
+    # behind the ball apex.
     pad_wall_height: float = 0.8  # Rim above the pad face.
     pad_wall: float = 1.5  # Wall round each pocket.
     pad_pocket_clearance: float = (
@@ -181,12 +183,12 @@ class CameraSupportParameters:
     yoke_boss_width: float = 16.0  # Across the screw axis, to the outboard end of the arm.
     yoke_clearance_below_collar: float = 13.0  # Crossbar top below the collar, clear of the thumb nuts.
     yoke_crossbar: float = 10.0
-    # Thickness of the yoke along the rail. Walls round the insert holes and counterbores are
-    # (thickness - 8.12 mm)/2, about 3 mm; heat-set inserts want at least 2 mm in PLA.
+    # Thickness of the yoke along the rail. Walls round the insert holes and counterbores are (thickness -
+    # 8.12 mm)/2, about 3 mm; heat-set inserts want at least 2 mm in PLA.
     yoke_thickness: float = 14.0
     yoke_min_insert_wall: float = 2.5
-    # Profile fillets, mm. The column root takes the arm's bending, so it is the largest; the free corners
-    # are rounded to keep them from catching and to spread the stress where the profile turns.
+    # Profile fillets, mm. The column root takes the arm's bending, so it is the largest; the free corners are
+    # rounded to keep them from catching and to spread the stress where the profile turns.
     yoke_root_fillet: float = 5.0  # Column to crossbar underside, inside corner.
     yoke_blend_fillet: float = 4.0  # Crossbar underside to arm back, and arm face to crossbar top.
     yoke_corner_fillet: float = 2.0  # Outboard corners of the arm.
@@ -357,8 +359,8 @@ class CameraSupportParameters:
     def pad_wall_relief(self) -> float:
         """How far the pocket opens outward from the pad edge above the pad face, per side.
 
-        The rim is cut back so that the ball stops pad_edge_margin short of the pad edge, not at the edge
-        of the sphere's reach against a rim standing at the pad edge.
+        The rim is cut back so that the ball stops pad_edge_margin short of the pad edge, not at the edge of
+        the sphere's reach against a rim standing at the pad edge.
         """
         return self.ball_rim_standoff - self.pad_edge_margin - self.pad_pocket_clearance / 2
 
@@ -486,8 +488,8 @@ def _adjuster(p: CameraSupportParameters, label: str, loc: Location) -> Compound
 
 
 def rod_layout(p: CameraSupportParameters) -> tuple[float, float]:
-    """Groove rods of the fore/aft stop pad: half the spacing of their axes, and their axes' height in the
-    pad frame. The ball nests between them; the rods lie on the pocket floor."""
+    """Groove rods of the fore/aft stop pad: half the spacing of their axes, and their axes' height in the pad
+    frame. The ball nests between them; the rods lie on the pocket floor."""
     ball_radius, rod_radius = p.ball_diameter / 2, p.groove_rod_diameter / 2
     half_spacing = p.groove_rod_diameter * 0.75
     nest = sqrt((ball_radius + rod_radius) ** 2 - half_spacing**2)  # Rod axes beyond the ball center.
@@ -568,18 +570,18 @@ def _band_wire(p: CameraSupportParameters, station: float) -> Wire:
     return Wire(edges)
 
 
-def _swept_circle(wire: Wire, radius: float) -> Part:
+def _swept_circle(wire: Wire, radius: float) -> Compound:
     section = Face(Wire.make_circle(radius, Plane(origin=wire.start_point(), z_dir=wire.tangent_at(0))))
     return Part([Solid.sweep(section, path=wire)])
 
 
-def build_band(p: CameraSupportParameters | None = None, station: float = 0.0) -> Part:
+def build_band(p: CameraSupportParameters | None = None, station: float = 0.0) -> Compound:
     """The endless retaining cord of a collar, on the barrel and the neck of its yoke's peg."""
     p = p or CameraSupportParameters()
     return _swept_circle(_band_wire(p, station), p.cord_radius)
 
 
-def _edges_along_rail(body: Part, points: list[tuple[float, float]]) -> list:
+def _edges_along_rail(body: Shape, points: list[tuple[float, float]]) -> list:
     """The edges of body that run along the rail and pass through the given (x, z) points."""
     found = []
     for x, z in points:
@@ -600,7 +602,7 @@ def _edges_along_rail(body: Part, points: list[tuple[float, float]]) -> list:
 @cache
 def build_collar(
     p: CameraSupportParameters | None = None, station: float = 0.0, rod_side: int | None = None
-) -> Part:
+) -> Shape:
     """Split collar clamped on the lens barrel at a station, its clamp ear up.
 
     A thin ring with a flat platform at each screw, in which a pocket holds the bearing surface (a magnet, or
@@ -712,7 +714,7 @@ def build_collar(
     return body
 
 
-def build_collar_for_print(p: CameraSupportParameters | None = None, aft: bool = False) -> Part:
+def build_collar_for_print(p: CameraSupportParameters | None = None, aft: bool = False) -> Shape:
     """A collar as printed: ring axis vertical, one end face on the bed, centered on the origin, bed at z = 0.
 
     The layers then lie in the plane of the clamp and pad loads. The aft collar carries the groove rods.
@@ -724,7 +726,8 @@ def build_collar_for_print(p: CameraSupportParameters | None = None, aft: bool =
 
 
 def _arm_point(p: CameraSupportParameters, side: int, along: float, across: float) -> tuple[float, float]:
-    """(x, z) of a point on a screw's axis plane: along its axis from the lens axis, across it (up-outboard)."""
+    """(x, z) of a point on a screw's axis plane: along its axis from the lens axis, across it
+    (up-outboard)."""
     a = radians(p.screw_angle)
     return (
         side * (along * sin(a) + across * cos(a)),
@@ -736,8 +739,8 @@ def _yoke_profile(p: CameraSupportParameters) -> Face:
     """Filleted yoke outline in the x-z plane: column, crossbar, and an inclined arm either side.
 
     Each arm is a slab of the boss thickness, square to its screw. Its lens-side face carries the insert and
-    runs down to the crossbar top; its back face runs down to the crossbar underside, so there is no stub
-    or step. Inside corners are filleted most generously.
+    runs down to the crossbar top; its back face runs down to the crossbar underside, so there is no stub or
+    step. Inside corners are filleted most generously.
     """
     a = radians(p.screw_angle)
     top = p.yoke_top
@@ -775,7 +778,7 @@ def _yoke_profile(p: CameraSupportParameters) -> Face:
     return face
 
 
-def _yoke(p: CameraSupportParameters, station: float) -> Part:
+def _yoke(p: CameraSupportParameters, station: float) -> Compound:
     """One printed yoke: column with an insert hole in its foot, crossbar, and two inclined arms.
 
     Printed on its side, so every layer lies in the plane of the loads. The column's flat underside sits on
@@ -817,13 +820,13 @@ def _straddle(
     clamp_ys: tuple[float, ...],
     yoke_stations: tuple[float, ...] = (),
     square_sides: tuple[int, ...] = (),
-) -> Part:
+) -> Shape:
     """Saddle straddling the rail from y0 to y1, as the common rail shoe's lower section (§5.3).
 
     Same rail opening, side walls, skirt depth, deck thickness, and rounded outside corners; an M5 clearance
     hole crosses the skirts at each clamp_ys station, at rail mid-height, for the side-slot screws. At each
-    yoke station the deck carries two locating walls across the rail, with a countersunk M5 hole between
-    them, the head flush with the underside.
+    yoke station the deck carries two locating walls across the rail, with a countersunk M5 hole between them,
+    the head flush with the underside.
     """
     r = p.rail_shoe
     shoe = Pos(-p.shoe_outer, y0, -r.skirt_depth) * Box(
@@ -871,7 +874,7 @@ def _straddle(
 
 
 @cache
-def build_cradle_shoe(p: CameraSupportParameters | None = None) -> Part:
+def build_cradle_shoe(p: CameraSupportParameters | None = None) -> Shape:
     """Lens-cradle saddle, printed deck-down, symmetric about the middle of the two stations."""
     p = p or CameraSupportParameters()
     p.validate()
@@ -886,7 +889,7 @@ def build_cradle_shoe(p: CameraSupportParameters | None = None) -> Part:
     )
 
 
-def build_cradle_shoe_for_print(p: CameraSupportParameters | None = None) -> Part:
+def build_cradle_shoe_for_print(p: CameraSupportParameters | None = None) -> Shape:
     """The cradle shoe as printed, skirts on the bed and deck up, centered on the origin, bed at z = 0."""
     shoe = build_cradle_shoe(p)
     box = shoe.bounding_box()
@@ -894,14 +897,14 @@ def build_cradle_shoe_for_print(p: CameraSupportParameters | None = None) -> Par
 
 
 @cache
-def build_cradle_yoke(p: CameraSupportParameters | None = None, station: float = 0.0) -> Part:
+def build_cradle_yoke(p: CameraSupportParameters | None = None, station: float = 0.0) -> Compound:
     """Yoke for the collar at a station, printed on its side and bolted to the cradle shoe."""
     p = p or CameraSupportParameters()
     p.validate()
     return _yoke(p, station)
 
 
-def build_cradle_yoke_for_print(p: CameraSupportParameters | None = None) -> Part:
+def build_cradle_yoke_for_print(p: CameraSupportParameters | None = None) -> Shape:
     """A yoke laid on its side as printed: profile plane on the bed, centered on the origin, bed at z = 0."""
     yoke = moved(build_cradle_yoke(p), Rot(X=90))
     box = yoke.bounding_box()
@@ -935,13 +938,13 @@ def _collar_clamp_hardware(p: CameraSupportParameters, station: float) -> list[P
 
 
 @cache
-def build_yoke_assembly(p: CameraSupportParameters | None = None) -> Compound:
+def build_yoke_assembly(p: CameraSupportParameters | None = None) -> Shape:
     """A yoke with its joint insert and screw and its two adjusters, in the yoke's own frame.
 
     The frame's origin is on the lens axis at the yoke's station, with +y toward the other collar. Left and
     right are as seen looking that way, so a yoke placed turned half a turn about the vertical axis (the fore
-    one) has its left on the rig's right. The fore yoke is the aft yoke turned half a turn, with its hardware, so
-    one assembly stands for both; it must not be modified.
+    one) has its left on the rig's right. The fore yoke is the aft yoke turned half a turn, with its hardware,
+    so one assembly stands for both; it must not be modified.
     """
     p = p or CameraSupportParameters()
     p.validate()
@@ -953,13 +956,13 @@ def build_yoke_assembly(p: CameraSupportParameters | None = None) -> Compound:
 
 
 @cache
-def build_phone_rest(p: CameraSupportParameters | None = None) -> Part:
+def build_phone_rest(p: CameraSupportParameters | None = None) -> Compound:
     """Phone-specific printed shoe with the arm that carries the rest rod, printed on its side.
 
     The whole part is one profile in the plane of the loads, extruded along the rail, so each layer is that
-    profile and the arm, as long as the shoe, grows from the bed with no bridge or overhang; only the side-slot
-    screw bores are horizontal. The arm's inside corners are filleted against stress, the root largest, its
-    outside corners rounded, and the rod lies in a half-round seat in its top.
+    profile and the arm, as long as the shoe, grows from the bed with no bridge or overhang; only the
+    side-slot screw bores are horizontal. The arm's inside corners are filleted against stress, the root
+    largest, its outside corners rounded, and the rod lies in a half-round seat in its top.
     """
     p = p or CameraSupportParameters()
     p.validate()
@@ -984,8 +987,9 @@ def build_phone_rest(p: CameraSupportParameters | None = None) -> Part:
     return rest
 
 
-def build_phone_rest_for_print(p: CameraSupportParameters | None = None) -> Part:
-    """The phone rest laid on its side as printed: profile plane on the bed, centered on the origin, bed at z = 0."""
+def build_phone_rest_for_print(p: CameraSupportParameters | None = None) -> Shape:
+    """The phone rest laid on its side as printed: profile plane on the bed, centered on the origin, bed at z
+    = 0."""
     rest = moved(build_phone_rest(p), Rot(X=90))
     box = rest.bounding_box()
     return moved(rest, Pos(-(box.min.X + box.max.X) / 2, -(box.min.Y + box.max.Y) / 2, -box.min.Z))

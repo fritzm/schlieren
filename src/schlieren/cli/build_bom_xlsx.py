@@ -1,9 +1,9 @@
 """Build a BOM workbook (.xlsx) from bom/bom.csv.
 
-Produces a BOM tab (pure data, with procurement-state conditional formatting) and a Summary tab whose
-rollups are live formulas over the BOM tab. The .xlsx is a generated artifact, versioned beside the CSV so it
-can be opened or shared straight from the repository; bom/bom.csv is authoritative. Edits made in a copy of
-the workbook come back through `uv run reconcile-bom`.
+Produces a BOM tab (pure data, with procurement-state conditional formatting) and a Summary tab whose rollups
+are live formulas over the BOM tab. The .xlsx is a generated artifact, versioned beside the CSV so it can be
+opened or shared straight from the repository; bom/bom.csv is authoritative. Edits made in a copy of the
+workbook come back through `uv run reconcile-bom`.
 
     uv run build-bom-xlsx [-o bom/schlieren-bom.xlsx]
 """
@@ -119,7 +119,8 @@ def write_bom_sheet(ws, header: list[str], rows: list[list[str]]) -> None:
                 state_range, CellIsRule(operator="equal", formula=[f'"{state}"'], fill=fill)
             )
 
-    # A rule rather than fixed borders, so the separators follow the data when the sheet is sorted or filtered.
+    # A rule rather than fixed borders, so the separators follow the data when the sheet is sorted or
+    # filtered.
     subsystem_col = chr(ord("A") + header.index(SUBSYSTEM_COLUMN))
     last_col = chr(ord("A") + len(header) - 1)
     ws.conditional_formatting.add(

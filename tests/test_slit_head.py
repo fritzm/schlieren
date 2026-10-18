@@ -20,8 +20,8 @@ from schlieren.vendor_cad import SM1RC_M_THICKNESS, thorlabs_fas100, thorlabs_sm
 
 MODEL_MATCH = 0.001
 WORKING_ROTATIONS = (0, 5, -5, 90, -90)  # Horizontal, vertical, and parallelism trim.
-ROTATION_SWEEP = range(-110, 111, 10)
-TR50_STUD_MAX = 5.2  # TR50/M drawing: setscrew stud 4.6-5.2 mm above the post top.  # Working range with margin past vertical; ±90 included.
+ROTATION_SWEEP = range(-110, 111, 10)  # Working range with margin past vertical; ±90 included.
+TR50_STUD_MAX = 5.2  # TR50/M drawing: setscrew stud 4.6-5.2 mm above the post top.
 
 
 def _overlap(a, b):
@@ -70,7 +70,8 @@ class SlitHeadTests(unittest.TestCase):
         self.assertEqual(len(cut.solids()), 3)
 
     def test_adjustment_keeps_slit_parallel_and_square(self):
-        """In-plane stage rotation from adjusting, over a 10 mm illuminated slit length (first-order model)."""
+        """In-plane stage rotation from adjusting, over a 10 mm illuminated slit length (first-order
+        model)."""
         p = self.p
         lit_length = 10.0
         # Width: a 0.1 mm change tapers the slit by under 1 um; full travel by under 10 um.

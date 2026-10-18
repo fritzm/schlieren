@@ -103,7 +103,8 @@ class BomWorkbookTests(unittest.TestCase):
             self.assertEqual(first.read_bytes(), second.read_bytes())
 
     def test_versioned_workbook_matches_csv(self):
-        """bom/schlieren-bom.xlsx is generated; rebuild it (uv run build-bom-xlsx) whenever bom.csv changes."""
+        """bom/schlieren-bom.xlsx is generated; rebuild it (uv run build-bom-xlsx) whenever bom.csv
+        changes."""
         header, rows = build_bom_xlsx.read_bom(build_bom_xlsx.BOM_CSV)
         workbook_header, workbook_rows = reconcile_bom.read_workbook_bom(build_bom_xlsx.DEFAULT_OUTPUT)
         self.assertEqual(workbook_header, header)
@@ -227,8 +228,9 @@ class ReconcileBomTests(unittest.TestCase):
                 def __str__(self):
                     raise RuntimeError("cannot be written")
 
+            unwritable_rows: list[list] = [[Unwritable()] * 12]
             with self.assertRaises(RuntimeError):
-                reconcile_bom.write_bom(path, self.header, [[Unwritable()] * 12])
+                reconcile_bom.write_bom(path, self.header, unwritable_rows)
             self.assertEqual(path.read_text(encoding="utf-8"), "keep\n")
             self.assertEqual([p.name for p in Path(tmp).iterdir()], ["bom.csv"])
 

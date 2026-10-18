@@ -2,14 +2,14 @@
 
 A FAS100 turns in a McMaster 98625A950 brass insert pressed into a printed block, and its ball tip bears on an
 N52 bar magnet let into the part it pushes. The three pieces are built here in the adjuster's own frame, with
-the screw axis along +z, so each model places them with one location (`fas100_children` and the magnet) or
-one frame for the insert.
+the screw axis along +z, so each model places them with one location (`fas100_children` and the magnet) or one
+frame for the insert.
 
 Frame for `fas100_children` and `bearing_magnet`: origin at the ball-tip apex, +z along the screw toward the
 knob, so the magnet occupies z from -thickness to 0.
 """
 
-from build123d import Location, Part
+from build123d import Compound, Location, Part
 
 from schlieren.cad import CUT_OVERRUN, box_between, labeled, z_cylinder
 from schlieren.hardware import (
@@ -62,7 +62,7 @@ def insert_98625a950(
     body_diameter: float = INSERT_98625A950_BODY_DIAMETER,
     flange_diameter: float = INSERT_98625A950_FLANGE_DIAMETER,
     flange_thickness: float = INSERT_98625A950_FLANGE_THICKNESS,
-) -> Part:
+) -> Compound:
     """The 1/4"-80 insert on the axis +z through (x, y), with its plain 1/4 in bore.
 
     The body spans z from body_start to body_start + body_length. The flange is against its start face when

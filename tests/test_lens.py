@@ -4,7 +4,7 @@ import unittest
 from itertools import pairwise
 from math import pi
 
-from schlieren.cad import box_between, y_cylinder
+from schlieren.cad import box_between, intersect, y_cylinder
 from schlieren.parts.lens import (
     LensParameters,
     build_focus_ring,
@@ -104,14 +104,14 @@ class LensTests(unittest.TestCase):
         above = y_cylinder(2 * (r + h), 0, 0, y0 - 1, y0 + p.focus_ring_length + 1) - y_cylinder(
             2 * (r + 0.05), 0, 0, y0 - 1, y0 + p.focus_ring_length + 1
         )
-        ridges = self.ring & above
+        ridges = intersect(self.ring, above)
         self.assertEqual(len(ridges.solids()), p.focus_ridge_count)
         # Rectangular ridges: width x (height above the cut) x length, less the round of the cut annulus.
         expected = p.focus_ridge_count * p.focus_ridge_width * (h - 0.05) * p.focus_ring_length
         self.assertAlmostEqual(ridges.volume / expected, 1.0, delta=0.03)
         # Ridges are axial: every cross-section through the ring is the same.
         mid = y0 + p.focus_ring_length / 2
-        cut = lambda y: (self.ring & box_between(-50, 50, y, y + 0.01, -50, 50)).volume  # noqa: E731
+        cut = lambda y: intersect(self.ring, box_between(-50, 50, y, y + 0.01, -50, 50)).volume  # noqa: E731
         self.assertAlmostEqual(cut(mid - 2), cut(mid + 2), delta=1e-6)
 
     def test_barrel_has_a_channel_that_holds_the_focus_ring_without_overlap(self):
@@ -127,7 +127,7 @@ class LensTests(unittest.TestCase):
         self.assertAlmostEqual(
             body_width_at(p.focus_ring_start + p.focus_ring_length + 0.5), p.barrel_diameter, delta=TOL
         )
-        self.assertLess((self.body & self.ring).volume, 1e-6)
+        self.assertLess(intersect(self.body, self.ring).volume, 1e-6)
         self.assertEqual(len((self.body + self.ring).solids()), 1)  # Bearing on the channel floor.
 
     def test_barrel_ahead_of_the_focus_ring_keeps_its_diameter_with_a_rounded_front_edge(self):
@@ -148,7 +148,7 @@ class LensTests(unittest.TestCase):
         self.assertAlmostEqual(p.front_glass_depth, 0.335 * INCH, delta=TOL)  # Measured.
 
         def solid_in(diameter, y0, y1):
-            return (self.body & y_cylinder(diameter, 0, 0, y0, y1)).volume
+            return intersect(self.body, y_cylinder(diameter, 0, 0, y0, y1)).volume
 
         diameters = [p.front_step_diameter(k) for k in range(p.front_step_count)]
         self.assertAlmostEqual(diameters[0], p.front_aperture_diameter)
@@ -173,7 +173,7 @@ class LensTests(unittest.TestCase):
         self.assertLess(
             solid_in(p.front_glass_diameter - 0.02, front - p.front_glass_depth + 0.01, front), 1e-6
         )  # Nothing stands in the staircase.
-        self.assertLess((self.body & glass).volume, 1e-6)
+        self.assertLess(intersect(self.body, glass).volume, 1e-6)
         self.assertLess(box.size.X, p.focus_ring_bore_diameter)  # Inside the ring's channel.
 
     def test_thin_groove_runs_round_the_barrel_1_3_in_from_the_shoulder(self):
@@ -211,8 +211,8 @@ class LensTests(unittest.TestCase):
         hollow = box_between(
             -p.boss_bore_diameter / 2 + 0.1, p.boss_bore_diameter / 2 - 0.1, 0.0, p.glass_inset, -1, 1
         )
-        self.assertLess((self.body & hollow).volume, 1e-6)  # Open in front of the glass.
-        self.assertLess((self.body & self.glass).volume, 1e-6)  # The glass sits in the bore.
+        self.assertLess(intersect(self.body, hollow).volume, 1e-6)  # Open in front of the glass.
+        self.assertLess(intersect(self.body, self.glass).volume, 1e-6)  # The glass sits in the bore.
 
 
 if __name__ == "__main__":

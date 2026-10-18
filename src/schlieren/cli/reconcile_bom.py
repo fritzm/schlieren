@@ -1,7 +1,7 @@
 """Compare an edited copy of the BOM workbook with bom/bom.csv, and optionally apply its edits to the CSV.
 
-bom/bom.csv is authoritative. The workbook is a generated view, but it is the convenient place to edit the
-BOM in a spreadsheet program. This command reads the workbook's BOM tab, matches rows to the CSV by ID, and
+bom/bom.csv is authoritative. The workbook is a generated view, but it is the convenient place to edit the BOM
+in a spreadsheet program. This command reads the workbook's BOM tab, matches rows to the CSV by ID, and
 reports rows added, removed, and changed, field by field. Nothing is written unless --apply is given; review
 the report (and afterwards `git diff bom/bom.csv`) before accepting the result.
 
@@ -131,7 +131,8 @@ def report(diff: BomDiff, header: list[str]) -> str:
 
 
 def write_bom(path: Path, header: list[str], rows: list[list[str]]) -> None:
-    """Write the BOM as canonical CSV, replacing path atomically so an interruption cannot leave half a file."""
+    """Write the BOM as canonical CSV, replacing path atomically so an interruption cannot leave half a
+    file."""
     fd, temporary = tempfile.mkstemp(dir=path.parent, prefix=f".{path.name}.", suffix=".tmp")
     try:
         with os.fdopen(fd, "w", newline="", encoding="utf-8") as f:

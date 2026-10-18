@@ -11,11 +11,11 @@ Design areas marked **Provisional** in the sections above:
   against the lead insulation, cap thread root radius, and Convoy star notch geometry
   ([§6.4](06-light-source.md#64-led-board-mounting)); heatsink temperature rise at 700 mA; white-module
   long-gap focus margin.
-- **Lens cradle and phone rest** ([§9](09-camera-telephoto.md#9-camera-and-telephoto-support)): retaining-band ring
-  size on an assumed modulus ([§9.8](09-camera-telephoto.md#98-retaining-bands)); the lens alignment
+- **Lens cradle and phone rest** ([§9](09-camera-telephoto.md#9-camera-and-telephoto-support)): retaining-band
+  ring size on an assumed modulus ([§9.8](09-camera-telephoto.md#98-retaining-bands)); the lens alignment
   procedure, untested ([§9.9](09-camera-telephoto.md#99-lens-alignment)). The alignment tolerances rest on
-  assumed lens and camera values, and the contact loads on an assumed lens balance point. The
-  inside of the phone case (camera lip height, back and front thickness, openings) is assumed
+  assumed lens and camera values, and the contact loads on an assumed lens balance point. The inside of the
+  phone case (camera lip height, back and front thickness, openings) is assumed
   ([§9.1](09-camera-telephoto.md#91-camera)).
 - **Mirror cell** ([§10.5](10-mirror-cell.md#105-mirror-mounting),
   [§10.8](10-mirror-cell.md#108-mirror-safety-and-transport-retention)): RTV adhesion primer decision; safety
@@ -35,5 +35,5 @@ Design areas marked **Provisional** in the sections above:
    hole sizes ([§10.9](10-mirror-cell.md#109-tripod-interface)).
 4. Assemble the tabletop optical head.
 5. Perform a dry optical layout near 3.2 m before making any remaining irreversible holes or bonds.
-6. Bond the mirror into the moving plate ([§10.5](10-mirror-cell.md#105-mirror-mounting))
-   after a dry fit and an adhesion test.
+6. Bond the mirror into the moving plate ([§10.5](10-mirror-cell.md#105-mirror-mounting)) after a dry fit and
+   an adhesion test.

@@ -9,17 +9,18 @@ plate. Its KB250-80 knob bears on a McMaster 91131A028 spherical washer pair who
 shallow socket in the rear face of the fixed plate, so the spring holds the knob against the washer.
 
 The plates, with their holes, counterbores, and sockets, are modeled in detail, as are the Kozak parts, the
-spherical washers, the brackets, and the bracket fasteners (vendor models; the screw and locknut models are the
-unthreaded variants). Each bracket is flush with a side edge of the plates and takes four button-head screws, heads on
-the bracket, with a washer and locknut behind the plywood; the plywood holes match the Ø8.33 mm bracket holes. The
-mirror is an envelope: Ø203 mm, f=1600 mm, edge thickness assumed 18 mm, its back flush with the plate's rear face. The
-springs are plain helices, an illustration with an approximate turn count, and the seat washers are catalog
-envelopes. The CAMVATE sliding plate under the base is a rough model: its dovetail section from caliper measurements, its
-length, thickness, through slot, and rear V-notch from the seller's dimensioned image. Its screw hardware is
-removed in this application. Its four M4 screws are envelopes (catalog head and shank sizes) in countersunk base holes and tapped plate holes
-drawn at the nominal thread. Not drawn: the plate's pads, the RTV pad phasing (arbitrary: 0°, 60°, ...), the safety
-retainers and transport sandwich (§10.8, not yet designed), and the 1/8 in alignment guide holes (drilled out by
-the final 5/16 in hole).
+spherical washers, the brackets, and the bracket fasteners (vendor models; the screw and locknut models are
+the unthreaded variants). Each bracket is flush with a side edge of the plates and takes four button-head
+screws, heads on the bracket, with a washer and locknut behind the plywood; the plywood holes match the Ø8.33
+mm bracket holes. The mirror is an envelope: Ø203 mm, f=1600 mm, edge thickness assumed 18 mm, its back flush
+with the plate's rear face. The springs are plain helices, an illustration with an approximate turn count, and
+the seat washers are catalog envelopes. The CAMVATE sliding plate under the base is a rough model: its
+dovetail section from caliper measurements, its length, thickness, through slot, and rear V-notch from the
+seller's dimensioned image. Its screw hardware is removed in this application. Its four M4 screws are
+envelopes (catalog head and shank sizes) in countersunk base holes and tapped plate holes drawn at the nominal
+thread. Not drawn: the plate's pads, the RTV pad phasing (arbitrary: 0°, 60°, ...), the safety retainers and
+transport sandwich (§10.8, not yet designed), and the 1/8 in alignment guide holes (drilled out by the final
+5/16 in hole).
 
 Coordinates: origin at the middle of the base's front edge, on its top surface. +x is right looking along +y,
 +y runs from the front edge toward the rear of the base (the mirror looks toward -y), and z is up. The three
@@ -39,6 +40,7 @@ from build123d import (
     Polygon,
     Pos,
     Rot,
+    Shape,
     Solid,
     Sphere,
     Wire,
@@ -52,6 +54,7 @@ from schlieren.cad import (
     box_between,
     centered_box,
     centered_cylinder,
+    intersect,
     labeled,
     leaves,
     y_cylinder,
@@ -102,8 +105,8 @@ BRACKETS = {"left": -1, "right": 1}  # Side of the cell, by sign of x.
 QR_SIDES = {"left": -1, "right": 1}  # By sign of x.
 QR_STATIONS = ("front", "rear")
 
-# Knob seat: the screw's end bottoms in the knob's Ø6.35 bore. Distance from the ball tip to
-# the knob's open face, along the screw.
+# Knob seat: the screw's end bottoms in the knob's Ø6.35 bore. Distance from the ball tip to the knob's open
+# face, along the screw.
 KNOB_FACE_FROM_TIP = (
     KOZAK_TS250_BALL_RADIUS + KOZAK_TS250_END_X - (KOZAK_KB250_OPEN_X - KOZAK_KB250_BORE_BOTTOM_X)
 )
@@ -142,8 +145,8 @@ class MirrorCellParameters:
     # §10.3 springs and seat washers (McMaster 2022N186, 98017A199 catalog values).
     spring_od: float = 0.5 * INCH
     spring_id: float = 0.424 * INCH
-    # Visualization only: the catalog gives no coil count. 4.3 turns is the 13 lbf/in rate worked back through the
-    # music-wire shear modulus (about 2.3 active coils) plus two closed end coils.
+    # Visualization only: the catalog gives no coil count. 4.3 turns is the 13 lbf/in rate worked back through
+    # the music-wire shear modulus (about 2.3 active coils) plus two closed end coils.
     spring_coils: float = 4.3
     seat_washer_od: float = 0.625 * INCH
     seat_washer_id: float = 0.390 * INCH
@@ -152,14 +155,14 @@ class MirrorCellParameters:
     # §10.7 bracket screws pass through the Ø8.33 mm bracket holes; the plywood holes are made the same size.
     bracket_hole_diameter: float = MCMASTER_8681N11_HOLE_DIAMETER
 
-    # §10.9 CAMVATE sliding plate, roughly: the seller's dimensioned image gives the length, 12 mm thickness, and a
-    # through slot between the two end camera-screw positions 140 mm apart, and a V-notch in one end; the dovetail
-    # section is caliper-measured. Its screw hardware is removed, and its pads and M4 holes are not modeled.
-    # Provisional: the notch end (here the rear).
+    # §10.9 CAMVATE sliding plate, roughly: the seller's dimensioned image gives the length, 12 mm thickness,
+    # and a through slot between the two end camera-screw positions 140 mm apart, and a V-notch in one end;
+    # the dovetail section is caliper-measured. Its screw hardware is removed, and its pads and M4 holes are
+    # not modeled. Provisional: the notch end (here the rear).
     qr_plate_length: float = 7.0 * INCH
     qr_plate_thickness: float = 12.0
-    # Caliper measurements of the dovetail section, approximate: the narrow neck against the base, then a flare out
-    # to the full width at the bottom.
+    # Caliper measurements of the dovetail section, approximate: the narrow neck against the base, then a
+    # flare out to the full width at the bottom.
     qr_neck_width: float = 1.709 * INCH
     qr_neck_depth: float = 0.162 * INCH
     qr_base_width: float = 1.960 * INCH
@@ -168,10 +171,10 @@ class MirrorCellParameters:
     qr_notch_width: float = 10.0
     qr_notch_depth: float = 4.0
 
-    # §10.9 plate screws: McMaster 92125A196, M4 × 0.7 × 18 mm, 90° flat head (catalog head Ø8 mm), two stations
-    # 1.875 in from the nearer plate end and ±0.500 in from the centerline. Provisional: the base's Ø4.5 mm clearance
-    # hole, the 0.2 mm the head sits below the surface, and the depth of the tapped holes (drawn at the nominal
-    # Ø4 mm thread, not the 3.3 mm tap drill).
+    # §10.9 plate screws: McMaster 92125A196, M4 × 0.7 × 18 mm, 90° flat head (catalog head Ø8 mm), two
+    # stations 1.875 in from the nearer plate end and ±0.500 in from the centerline. Provisional: the base's
+    # Ø4.5 mm clearance hole, the 0.2 mm the head sits below the surface, and the depth of the tapped holes
+    # (drawn at the nominal Ø4 mm thread, not the 3.3 mm tap drill).
     qr_screw_inset: float = 1.875 * INCH
     qr_screw_x: float = 0.5 * INCH
     qr_screw_diameter: float = 4.0
@@ -251,7 +254,8 @@ class MirrorCellParameters:
 
     @property
     def mirror_front_y(self) -> float:
-        """The mirror's back is flush with the rear face of the plate: both rest on the bench during the RTV cure."""
+        """The mirror's back is flush with the rear face of the plate: both rest on the bench during the RTV
+        cure."""
         return self.moving_plate_rear_y - self.mirror_edge_thickness
 
     @property
@@ -325,7 +329,8 @@ class MirrorCellParameters:
 
 
 def moving_plate_outline(p: MirrorCellParameters) -> list[tuple[float, float]]:
-    """(x, z) vertices of the truncated hexagon, about the mirror center; one vertex up, the lower one clipped."""
+    """(x, z) vertices of the truncated hexagon, about the mirror center; one vertex up, the lower one
+    clipped."""
     radius, apothem = p.hex_circumradius, p.apothem
     side = apothem  # x of the vertical flats.
     upper, lower = radius / 2, -radius / 2  # z of the side vertices.
@@ -351,7 +356,7 @@ def _plate(outline: list[tuple[float, float]], thickness: float, rear_y: float) 
     return Pos(0, rear_y, 0) * (Rot(X=90) * prism)
 
 
-def build_moving_plate(p: MirrorCellParameters | None = None) -> Part:
+def build_moving_plate(p: MirrorCellParameters | None = None) -> Compound:
     p = p or MirrorCellParameters()
     cz = p.mirror_center_z
     outline = [(x, z + cz) for x, z in moving_plate_outline(p)]
@@ -383,8 +388,9 @@ def build_moving_plate(p: MirrorCellParameters | None = None) -> Part:
     return plate
 
 
-def build_fixed_plate(p: MirrorCellParameters | None = None) -> Part:
-    """The cell-adjuster plate: spring-seat counterbores in the front face, spherical-washer sockets in the rear."""
+def build_fixed_plate(p: MirrorCellParameters | None = None) -> Compound:
+    """The cell-adjuster plate: spring-seat counterbores in the front face, spherical-washer sockets in the
+    rear."""
     p = p or MirrorCellParameters()
     half = p.plate_width / 2
     outline = [(-half, 0.0), (half, 0.0), (half, p.fixed_plate_height), (-half, p.fixed_plate_height)]
@@ -420,8 +426,9 @@ def build_fixed_plate(p: MirrorCellParameters | None = None) -> Part:
     return plate
 
 
-def build_base_plate(p: MirrorCellParameters | None = None) -> Part:
-    """The base plate, with the four bracket-screw holes and the four countersunk quick-release screw holes."""
+def build_base_plate(p: MirrorCellParameters | None = None) -> Compound:
+    """The base plate, with the four bracket-screw holes and the four countersunk quick-release screw
+    holes."""
     p = p or MirrorCellParameters()
     plate = box_between(-p.plate_width / 2, p.plate_width / 2, 0, p.base_depth, -p.base_thickness, 0)
     for side in BRACKETS.values():
@@ -442,7 +449,7 @@ def build_base_plate(p: MirrorCellParameters | None = None) -> Part:
     return plate
 
 
-def build_qr_screw(p: MirrorCellParameters | None = None) -> Part:
+def build_qr_screw(p: MirrorCellParameters | None = None) -> Shape:
     """Envelope of an M4 × 18 mm 90° flat-head screw: axis +z, head top face at z=0, shank toward -z."""
     p = p or MirrorCellParameters()
     head_radius, shank_radius = p.qr_screw_head_diameter / 2, p.qr_screw_diameter / 2
@@ -453,16 +460,17 @@ def build_qr_screw(p: MirrorCellParameters | None = None) -> Part:
 
 
 def quick_release_outline(p: MirrorCellParameters) -> list[tuple[float, float]]:
-    """(x, z) of the plate's dovetail section: a narrow neck against the base underside, flaring to full width."""
+    """(x, z) of the plate's dovetail section: a narrow neck against the base underside, flaring to full
+    width."""
     top = -p.base_thickness
     neck, flare, bottom = p.qr_neck_width / 2, p.qr_base_width / 2, top - p.qr_plate_thickness
     shoulder = top - p.qr_neck_depth
     return [(-neck, top), (neck, top), (neck, shoulder), (flare, bottom), (-flare, bottom), (-neck, shoulder)]
 
 
-def build_quick_release_plate(p: MirrorCellParameters | None = None) -> Part:
-    """The sliding plate under the base: its camera face (slot side) against the underside, front end flush with
-    the base's front edge, V-notch at the rear end."""
+def build_quick_release_plate(p: MirrorCellParameters | None = None) -> Compound:
+    """The sliding plate under the base: its camera face (slot side) against the underside, front end flush
+    with the base's front edge, V-notch at the rear end."""
     p = p or MirrorCellParameters()
     thickness = p.qr_plate_thickness
     center_z = -p.base_thickness - thickness / 2
@@ -489,7 +497,7 @@ def build_quick_release_plate(p: MirrorCellParameters | None = None) -> Part:
     return plate
 
 
-def build_mirror(p: MirrorCellParameters | None = None) -> Part:
+def build_mirror(p: MirrorCellParameters | None = None) -> Compound:
     """Concave front toward -y, back flush with the rear face of the moving plate."""
     p = p or MirrorCellParameters()
     front = p.mirror_front_y
@@ -499,12 +507,12 @@ def build_mirror(p: MirrorCellParameters | None = None) -> Part:
     return blank - Pos(*center) * Sphere(radius)
 
 
-def build_rtv_pad(p: MirrorCellParameters, index: int) -> Part:
+def build_rtv_pad(p: MirrorCellParameters, index: int) -> Compound:
     """One pad in the radial gap between mirror edge and aperture, at 360°/count × index from +x."""
     mirror_mid = p.mirror_front_y + p.mirror_edge_thickness / 2  # Pads are centered on the mirror's edge.
     mid_radius = (p.mirror_diameter + p.aperture_diameter) / 4
-    # Built about the z axis, then stood on the y axis. The pad is the part of the gap annulus within reach of a
-    # block of the pad's length, so its ends follow the mirror edge and the aperture wall.
+    # Built about the z axis, then stood on the y axis. The pad is the part of the gap annulus within reach of
+    # a block of the pad's length, so its ends follow the mirror edge and the aperture wall.
     depth = p.rtv_pad_depth
     annulus = centered_cylinder(p.aperture_diameter, depth) - centered_cylinder(
         p.mirror_diameter, depth + 2 * CUT_OVERRUN
@@ -528,16 +536,18 @@ def build_spring(p: MirrorCellParameters, x: float, y0: float, z: float) -> Part
     return along_y((x, y0, z)) * (Pos(0, 0, wire / 2) * coil)
 
 
-def _tube(x: float, y0: float, z: float, outer: float, inner: float, length: float) -> Part:
+def _tube(x: float, y0: float, z: float, outer: float, inner: float, length: float) -> Compound:
     return y_cylinder(outer, x, z, y0, y0 + length) - y_cylinder(
         inner, x, z, y0 - CUT_OVERRUN, y0 + length + CUT_OVERRUN
     )
 
 
 def _bracket_fasteners(p: MirrorCellParameters, name: str, side: int) -> list[Part]:
-    """Screws, washers, and locknuts for one bracket: heads on the bracket, nuts on the far side of the plywood.
+    """Screws, washers, and locknuts for one bracket: heads on the bracket, nuts on the far side of the
+    plywood.
 
-    The upright leg's screws point toward +y through the fixed plate, the base leg's toward -z through the base.
+    The upright leg's screws point toward +y through the fixed plate, the base leg's toward -z through the
+    base.
     """
     screw, washer = mcmaster_98164a527(), mcmaster_96659a134()
     nut, insert = mcmaster_90099a030()
@@ -670,7 +680,7 @@ def adjuster_section(cell: Compound, p: MirrorCellParameters, name: str) -> Comp
         if leaf.label.endswith(f" {name}") and leaf.label.startswith(ADJUSTER_HARDWARE_LABELS):
             kept.append(leaf)
         elif leaf.label in SECTIONED_LABELS:
-            piece = leaf & keep
+            piece = intersect(leaf, keep)
             if piece.solids():
                 kept.append(labeled(piece, leaf.label, leaf.color))
     return assembly(f"Adjuster section {name}", kept)

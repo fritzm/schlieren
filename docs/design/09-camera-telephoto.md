@@ -1,7 +1,7 @@
 ## 9. Camera and telephoto support
 
-The camera and lens are chosen ([§9.1](#91-camera)–[9.2](#92-telephoto)). Their support is a lens cradle and
-a phone rest ([§9.4](#94-support)–[9.8](#98-retaining-bands)), with an alignment procedure
+The camera and lens are chosen ([§9.1](#91-camera)–[9.2](#92-telephoto)). Their support is a lens cradle and a
+phone rest ([§9.4](#94-support)–[9.8](#98-retaining-bands)), with an alignment procedure
 ([§9.9](#99-lens-alignment)). **Provisional:** the inside of the phone case and the alignment procedure
 ([§11](11-open-work.md#11-provisional-areas-and-next-steps)).
 
@@ -10,9 +10,9 @@ a phone rest ([§9.4](#94-support)–[9.8](#98-retaining-bands)), with an alignm
 - Apple iPhone 17, base model, in intended protective case
 - held in landscape, with the rear cameras toward the mirror and the camera end of the phone toward the
   optical axis
-- the Main camera is used, at 1× (or its 2× crop). It is the lower of the two rear apertures with the phone
-  in portrait, "rear camera 2" on Apple's drawing (`docs/reference/Apple-iPhone-17.pdf`); the upper aperture
-  is the Ultra Wide, used only at 0.5×
+- the Main camera is used, at 1× (or its 2× crop). It is the lower of the two rear apertures with the phone in
+  portrait, "rear camera 2" on Apple's drawing (`docs/reference/Apple-iPhone-17.pdf`); the upper aperture is
+  the Ultra Wide, used only at 0.5×
 - measured camera optical axis approximately 60.6 mm above the lower long edge, in the case
 - measured Main camera axis approximately 1.350 in / 34.3 mm from the near short edge, in the case; the case
   shape makes this hard to measure accurately with calipers
@@ -30,21 +30,21 @@ The drawing and the two measurements agree. The cameras are 57.83 mm from the fa
 phone, so the measured 60.6 mm implies a case wall of about 2.8 mm at that edge; the 31.34 mm and the measured
 34.3 mm imply about 3.0 mm at the short edge (both calculated).
 
-Phone model, from Apple's drawing and the measurements above: the bare body with the drawing's corner
-profile and glass edge, the camera plateau (1.78 mm above the back glass; its top face is blended into the
-glass by a concave fillet 2.62 mm wide, whose foot is 1.18 mm and 1.34 mm from the long and short edges) with
-the two Ø16.00 camera glass rings (3.45 mm; the rings are 17.72 mm apart and do not touch), and the side,
-action, and volume buttons (0.45 mm proud). The Camera Control and SIM tray are flush
-with the edge and have no geometry. The case is an OtterBox Commuter, whose outside is the measured size:
-155.5 × 77.0 mm, with walls of 2.96 mm at the short edges and 2.77 mm at the long edges calculated from the
-measured camera position, and 12.95 mm thick. **Provisional:** OtterBox publishes no drawing, so the inside of
-the case is assumed apart from the front rim, which is measured to stand 0.050 in. (1.27 mm) proud of the
-screen. That puts the bare phone's camera glass 0.28 mm under the camera lip, whose top is the back plane
-where the lens seats, and leaves the rest of the 12.95 mm to the back plate's inside; the opening's corner
-radius (12 mm) and the 1.2 mm round on the front rim's inner edge, which the rim height
-limits, are assumed. The camera opening is measured: 1.585 × 1.35 in. (40.26 × 34.29 mm), centered on the
-plateau along the length, with its long edge 0.180 in. (4.57 mm) from the case's camera-side edge; it clears the
-plateau and the flash. The model does not show the case's port openings.
+Phone model, from Apple's drawing and the measurements above: the bare body with the drawing's corner profile
+and glass edge, the camera plateau (1.78 mm above the back glass; its top face is blended into the glass by a
+concave fillet 2.62 mm wide, whose foot is 1.18 mm and 1.34 mm from the long and short edges) with the two
+Ø16.00 camera glass rings (3.45 mm; the rings are 17.72 mm apart and do not touch), and the side, action, and
+volume buttons (0.45 mm proud). The Camera Control and SIM tray are flush with the edge and have no geometry.
+The case is an OtterBox Commuter, whose outside is the measured size: 155.5 × 77.0 mm, with walls of 2.96 mm
+at the short edges and 2.77 mm at the long edges calculated from the measured camera position, and 12.95 mm
+thick. **Provisional:** OtterBox publishes no drawing, so the inside of the case is assumed apart from the
+front rim, which is measured to stand 0.050 in. (1.27 mm) proud of the screen. That puts the bare phone's
+camera glass 0.28 mm under the camera lip, whose top is the back plane where the lens seats, and leaves the
+rest of the 12.95 mm to the back plate's inside; the opening's corner radius (12 mm) and the 1.2 mm round on
+the front rim's inner edge, which the rim height limits, are assumed. The camera opening is measured: 1.585 ×
+1.35 in. (40.26 × 34.29 mm), centered on the plateau along the length, with its long edge 0.180 in. (4.57 mm)
+from the case's camera-side edge; it clears the plateau and the flash. The model does not show the case's port
+openings.
 
 Initial recording modes:
 
@@ -68,12 +68,12 @@ Measured sections, from the aft end forward:
 | main barrel                | 4.285 in / 108.8 mm | about 37.0 mm       |
 
 The overall length is 4.785 in / 121.5 mm. The boss threads into the lens mount on the phone case, and the
-shoulder seats against the mount; the model takes the aft end of the boss to be at the back plane of the
-cased phone. The main barrel is 1.457 in / 37.01 mm in diameter at its rear end and 1.459 in / 37.06 mm
-further forward. The focus ring, 0.455 in / 11.6 mm long, ends 0.175 in / 4.4 mm behind the front of the
-barrel, so it starts 105.5 mm from the aft end. The barrel is clampable from 12.7 mm to the focus ring, about
-93 mm, and the focus ring must stay clear. The overall length is about 4.7 mm more than the 116.8 mm listed
-for the lens; the difference is not resolved.
+shoulder seats against the mount; the model takes the aft end of the boss to be at the back plane of the cased
+phone. The main barrel is 1.457 in / 37.01 mm in diameter at its rear end and 1.459 in / 37.06 mm further
+forward. The focus ring, 0.455 in / 11.6 mm long, ends 0.175 in / 4.4 mm behind the front of the barrel, so it
+starts 105.5 mm from the aft end. The barrel is clampable from 12.7 mm to the focus ring, about 93 mm, and the
+focus ring must stay clear. The overall length is about 4.7 mm more than the 116.8 mm listed for the lens; the
+difference is not resolved.
 
 The lens is modeled in `src/schlieren/parts/lens.py`, for visualization only.
 
@@ -119,7 +119,9 @@ mount. Two separate rail fixtures carry them:
 
 <p align="center">
   <img src="figures/camera-support.png" width="500" style="max-width: 90%"
-       alt="Lens cradle and phone rest on the imaging rail: two collars on the lens barrel, each on a pair of inclined screws in a yoke bolted to the cradle shoe, a retaining band round the barrel beside each yoke, and the phone hanging from the lens with its lower edge on the rest arm">
+       alt="Lens cradle and phone rest on the imaging rail: two collars on the lens barrel, each on a pair of
+       inclined screws in a yoke bolted to the cradle shoe, a retaining band round the barrel beside each
+       yoke, and the phone hanging from the lens with its lower edge on the rest arm">
   <br>
   <em>Fig. 10. Lens cradle and phone rest on the imaging rail, with the phone and the lens</em>
 </p>
@@ -135,13 +137,13 @@ Each station's pair of screws places one point of the lens axis, so the two stat
 pointing without coupling between them beyond the lever ratio. A second groove would fix the fore/aft position
 a second time against the spacing of the collars on the lens, and would stop the pad sliding that yaw
 adjustment needs. Holding the lens, not the phone, takes the lens weight off the lens mount: the mount carries
-about 1.3 N in shear (calculated), against roughly 170 N·mm of bending if the lens were cantilevered from
-the phone.
+about 1.3 N in shear (calculated), against roughly 170 N·mm of bending if the lens were cantilevered from the
+phone.
 
 The model is `src/schlieren/parts/camera_support.py`. It holds the printed parts, with their fits, pockets,
 fillets, and wall thicknesses, and checks contacts, clearances, and the lens and cord loads; purchased
-hardware is envelopes or vendor models. The phone is modeled in
-`src/schlieren/parts/phone.py` ([§9.1](#91-camera)).
+hardware is envelopes or vendor models. The phone is modeled in `src/schlieren/parts/phone.py`
+([§9.1](#91-camera)).
 
 ### 9.5 Lens cradle
 
@@ -166,8 +168,8 @@ Each collar is a thin ring on the barrel with a clamp ear on top and a flat pad 
   corners and the outer edges of both ring ends at 1 mm, for the fingers. The faces of the split stay sharp so
   that the gap stays fixed.
 
-The two collars are the same part except that the aft collar's left pad is a rod seat in place of a magnet seat
-(below).
+The two collars are the same part except that the aft collar's left pad is a rod seat in place of a magnet
+seat (below).
 
 #### Pads and pockets
 
@@ -175,9 +177,9 @@ Each screw tip bears on a flat pad on the collar, tangent to the ring at the scr
 magnet thickness outside the ring, and the pocket floor is tangent to the ring's outside. Each pad sits in a
 pocket with a rim round it, so a ball end that wanders reaches a wall instead of the edge of the pad:
 
-- three pads are the 10 × 5 × 2 mm magnets, set with the 10 mm side across the rail, bonded with low-viscosity cyanoacrylate wicked in, into pockets
-  0.2 mm larger across each dimension (0.1 mm per side, the allowance every printed magnet pocket in the
-  design uses);
+- three pads are the 10 × 5 × 2 mm magnets, set with the 10 mm side across the rail, bonded with low-viscosity
+  cyanoacrylate wicked in, into pockets 0.2 mm larger across each dimension (0.1 mm per side, the allowance
+  every printed magnet pocket in the design uses);
 - the fourth, at the aft left screw, is a groove between two dowel pins of 3 mm diameter and 10 mm length,
   lying across the rail on the pocket floor. The ball sits between them, free to slide across the rail but not
   along it. A printed rib 1.0 mm high and about 1.7 mm wide runs between the pins along the pocket, and each
@@ -185,9 +187,8 @@ pocket with a rim round it, so a ball end that wanders reaches a wall instead of
   parallel, so bonding them needs no spacer. The ball stays 1.0 mm clear of the rib;
 - the rim stands 0.8 mm above the pad face. The ball-tip screw's end face is 1.2 mm behind the ball apex, so
   the rim stays below it;
-- above the pad face the pocket opens outward by 0.23 mm per side, so that the rim edge stops the ball apex
-  1 mm short of the pad edge, the margin the travel limits below assume. The walls round the pockets are
-  1.5 mm.
+- above the pad face the pocket opens outward by 0.23 mm per side, so that the rim edge stops the ball apex 1
+  mm short of the pad edge, the margin the travel limits below assume. The walls round the pockets are 1.5 mm.
 
 The two screws of a station are at right angles, so advancing one slides the collar across the other's pad by
 the same distance. Pad size, not screw travel, limits the adjustment. Calculated, keeping each ball 1 mm
@@ -245,9 +246,9 @@ The fitting and removal sequence is set by the bands ([§9.8](#98-retaining-band
 The phone hangs from the lens with its body to the outboard side of the optical axis
 ([§3.4](01-context-and-layout.md#34-common-optical-axis-datum)). Its weight, centered about 43 mm from the
 lens axis, would turn the lens in its collars. The phone rest stops that: the phone's lower long edge sits on
-one dowel pin lying along the rail, about 100 mm outboard of the axis, on the arm of a short printed
-shoe of its own. The shoe's lower section is that of the cradle shoe ([§9.5](#95-lens-cradle)), with a
-single pair of M5 clearance holes for the side-slot screw.
+one dowel pin lying along the rail, about 100 mm outboard of the axis, on the arm of a short printed shoe of
+its own. The shoe's lower section is that of the cradle shoe ([§9.5](#95-lens-cradle)), with a single pair of
+M5 clearance holes for the side-slot screw.
 
 - The shoe is 22 mm long and centered under the rod. The arm runs across the rail from the shoe's outboard
   wall to 8 mm beyond the rod, 10 mm deep and as long as the shoe. The rod lies half sunk in a half-round seat
@@ -315,8 +316,8 @@ upon until measured.
 
 Each band is an endless O-ring, 2 mm in section, of oil-resistant 70A Buna-N with an inside diameter of about
 40 mm, lying round the bare barrel beside its yoke on the side toward the other collar, 11.8 mm from the
-collar's center. Its two legs run down inboard of the thumb nuts to a peg on the center of the yoke's
-crossbar face. The peg has a 4 mm stem and a 6 mm lip; the ring lies on the stem under the lip.
+collar's center. Its two legs run down inboard of the thumb nuts to a peg on the center of the yoke's crossbar
+face. The peg has a 4 mm stem and a 6 mm lip; the ring lies on the stem under the lip.
 
 - The band acts on the barrel, which the collar's clamp carries to the pads, exactly as it carries the lens
   weight. The ring needs no groove on the collar and settles into the plane through the peg.
@@ -327,18 +328,18 @@ crossbar face. The peg has a 4 mm stem and a 6 mm lip; the ring lies on the stem
   and about 0.8 N from the other. That raises the tap threshold at the fore end to roughly 13–14 N.
 - The legs clear the thumb nuts by more than 5 mm, so the cord stays out of the way of the fingers.
 - To fit, slide the rings over the front of the lens onto the bare barrel before clamping the collars on;
-  refitting one afterwards means stretching it round the other collar and its ear. A band stays on the lens when the
-  lens is lifted out with the peg end unhooked.
+  refitting one afterwards means stretching it round the other collar and its ear. A band stays on the lens
+  when the lens is lifted out with the peg end unhooked.
 
-**Provisional:** the contact loads rest on the assumed balance point above, and the ring size
-is chosen on an assumed modulus; the next larger inside diameter is the alternative if the 40 mm ring is too
-tight.
+**Provisional:** the contact loads rest on the assumed balance point above, and the ring size is chosen on an
+assumed modulus; the next larger inside diameter is the alternative if the 40 mm ring is too tight.
 
 ### 9.9 Lens alignment
 
 This is the alignment the cradle must make possible, kept here as a feasibility check on the adjusters; a
 consolidated setup and alignment procedure comes later. **Provisional:** the procedure is untested, and its
-targets assume that the printed shoe seats fully on the rail top and the collars seat on their barrel sections.
+targets assume that the printed shoe seats fully on the rail top and the collars seat on their barrel
+sections.
 
 The tolerances ([§9.3](#93-alignment-requirements)) are loose compared with the adjuster resolution, so the
 alignment is mechanical first and then finished through the camera, with no laser.
@@ -354,8 +355,9 @@ pitch of 0.8 mm (calculated):
 
 The sequence:
 
-1. Fit both collars and the phone on the lens at their stations, set the four thumb nuts to equal exposed screw
-   length (mid-travel), and note their positions. Put the cradle shoe on the rail with its clamp screws loose.
+1. Fit both collars and the phone on the lens at their stations, set the four thumb nuts to equal exposed
+   screw length (mid-travel), and note their positions. Put the cradle shoe on the rail with its clamp screws
+   loose.
 2. Slide the shoe along the rail to put the lens front at the planned gap from the slip ring's rear face, then
    snug the clamp screws. The groove at the aft left screw fixes the lens fore/aft on the cradle, so nothing
    later moves it.
@@ -366,8 +368,8 @@ The sequence:
    mm lateral play, from the shoe's outer wall to the barrel side, whose target is 18.5 − 15.2 = about 3.3 mm.
    A ±0.5 mm error between the stations is about 0.4° of pitch or yaw, within tolerance.
 4. Finish through the camera, because the phone camera may not lie on the barrel axis in its mount and case.
-   With the source lit and the cutoff cleared, view the returned field at 1× and trim the aft screws in x and z
-   until the vignetting at the corners is even; a turn of one screw is only about 0.6 mm, so turn in small
+   With the source lit and the cutoff cleared, view the returned field at 1× and trim the aft screws in x and
+   z until the vignetting at the corners is even; a turn of one screw is only about 0.6 mm, so turn in small
    steps. The mirror should sit centered in the frame, which sets pitch and yaw to within the spare 1.2°.
 5. Check the roll: the phone rest rod should just touch the phone's lower edge without lifting it, a paper
    strip sliding between them with light drag. A lower-edge height different from the model is taken up by

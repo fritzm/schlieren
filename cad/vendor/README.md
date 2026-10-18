@@ -1,15 +1,15 @@
 # Vendor CAD models
 
-Manufacturer-supplied 3D models of purchased parts, loaded by `schlieren.vendor_cad` for viewer assemblies
-and clearance checks. Like `docs/reference/`, these are manufacturer specifications, not measured values or
+Manufacturer-supplied 3D models of purchased parts, loaded by `schlieren.vendor_cad` for viewer assemblies and
+clearance checks. Like `docs/reference/`, these are manufacturer specifications, not measured values or
 committed project dimensions.
 
-`schlieren.vendor_cad` keeps a copy of each model's geometry in `.cache/vendor/` (not versioned), because reading
-that back is far faster than parsing the STEP file in every process. An entry is rebuilt when its STEP file
-changes; the directory can be deleted at any time.
+`schlieren.vendor_cad` keeps a copy of each model's geometry in `.cache/vendor/` (not versioned), because
+reading that back is far faster than parsing the STEP file in every process. An entry is rebuilt when its STEP
+file changes; the directory can be deleted at any time.
 
-Name files `<Brand>-<part>.step` following the `docs/reference/` convention (`/` in part numbers becomes
-`-`). Keep the vendor file unmodified; place it in project coordinates in code, not by re-exporting.
+Name files `<Brand>-<part>.step` following the `docs/reference/` convention (`/` in part numbers becomes `-`).
+Keep the vendor file unmodified; place it in project coordinates in code, not by re-exporting.
 
 | File | Vendor file | Source | Native frame |
 |---|---|---|---|
@@ -56,7 +56,8 @@ Name files `<Brand>-<part>.step` following the `docs/reference/` convention (`/`
 Thorlabs CAD downloads are listed per product through the site's GraphQL API at
 `https://www.thorlabs.com/graphql`, e.g. `{ products(storeId: "Thorlabs-Website", filter: "name:\"SM1RC/M\"")
 { items { name assets { group optiUrl } } } }`; the `Step` asset is the one build123d can read (the `CAD PDF`
-asset is the drawing filed in `docs/reference/`). SolidWorks (`.sldprt`) and eDrawing files are not usable here.
+asset is the drawing filed in `docs/reference/`). SolidWorks (`.sldprt`) and eDrawing files are not usable
+here.
 
 Project policy: where a vendor model is available, use its exact values in preference to rounded dimensions
 from the drawing. Thorlabs SM1 parts are inch-primary, so their models are exact while the drawings' mm values

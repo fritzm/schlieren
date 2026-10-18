@@ -52,7 +52,8 @@ bottoming on the metal datum disc. The model, with its PLA fit allowances, is
 
 <p align="center">
   <img src="figures/rail-shoe.png" width="300" style="max-width: 80%"
-       alt="Common rail shoe on the rail and TR50/M post: saddle body, split clamping collar, and clamp ears with the captured-nut pocket">
+       alt="Common rail shoe on the rail and TR50/M post: saddle body, split clamping collar, and clamp ears
+       with the captured-nut pocket">
   <br>
   <em>Fig. 3. Common rail shoe on rail with TR50/M post</em>
 </p>
@@ -63,12 +64,12 @@ Every printed split clamp in the apparatus uses the same hardware:
 
 M3 socket-head screw → clearance through one ear → captured M3 hex nut in the opposite ear.
 
-- McMaster 91292A114 — M3 × 0.5 × 12 mm fully threaded 18-8 stainless socket-head screw; 5.5 mm head
-  diameter, 3 mm head height, 2.5 mm hex drive. The same screw serves the carriage keeper frame
+- McMaster 91292A114 — M3 × 0.5 × 12 mm fully threaded 18-8 stainless socket-head screw; 5.5 mm head diameter,
+  3 mm head height, 2.5 mm hex drive. The same screw serves the carriage keeper frame
   ([§8.4](08-cutoff.md#84-cassette-seating)) and the slit head ([§7](07-source-slit.md#7-source-slit)).
 - McMaster 91828A211 — full-height M3 × 0.5 18-8 stainless hex nut; 5.5 mm across flats × 2.4 mm high, DIN
   934. The same nut serves the keeper frame, the cassette clamp bars
-  ([§8.7](08-cutoff.md#87-cassette-clamp-bars)), and the slit head.
+       ([§8.7](08-cutoff.md#87-cassette-clamp-bars)), and the slit head.
 - No washer, nyloc, or threaded insert.
 
 Ear thickness and the approximately 1–2 mm relaxed split gap are designed around the 12 mm screw length.

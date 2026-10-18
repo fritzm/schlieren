@@ -10,15 +10,15 @@ at z=0; the plate lies at positive y and the rails run aft of it to negative y. 
 the source rail) or +1 (right, the imaging rail). Each rail assembly is built in its §3.4 rail frame, the same
 senses with y along that rail and the origin at its pivot.
 
-The thumb nuts, feet, foot screws, and foot washers are the vendor models. Other fasteners, washers, and nuts are plain nominal envelopes
-without threads or sockets, and the T-nuts are not modeled.
+The thumb nuts, feet, foot screws, and foot washers are the vendor models. Other fasteners, washers, and nuts
+are plain nominal envelopes without threads or sockets, and the T-nuts are not modeled.
 """
 
 from dataclasses import dataclass
 from functools import cache
 from math import atan, cos, degrees, pi, sin
 
-from build123d import Compound, Location, Part, Pos, Rot
+from build123d import Compound, Location, Part, Pos, Rot, Shape
 
 from schlieren.cad import CUT_OVERRUN, assembly, box_between, floor_box, labeled, place, z_cylinder
 from schlieren.palette import BLACK_ANODIZED, BLACK_OXIDE, METAL, PLYWOOD, RUBBER, SORBOTHANE, STEEL_GRAY
@@ -45,11 +45,12 @@ from schlieren.vendor_cad import (
 
 SIDES = {"Left": -1, "Right": 1}
 
-# Nominal M5 hardware envelopes (ISO 4762 socket head, ISO 7089 washer, nyloc), for the viewer and stack checks.
+# Nominal M5 hardware envelopes (ISO 4762 socket head, ISO 7089 washer, nyloc), for the viewer and stack
+# checks.
 M5_SHANK_DIAMETER = 5.0
 M5_WASHER_DIAMETER = 10.0
-# The foot-block washers are from the general M5 assortment (§4.4), not a purchased McMaster part; the 93475A240
-# model stands in for them, and its 1.0 mm is the nominal thickness, not a measurement.
+# The foot-block washers are from the general M5 assortment (§4.4), not a purchased McMaster part; the
+# 93475A240 model stands in for them, and its 1.0 mm is the nominal thickness, not a measurement.
 M5_WASHER_THICKNESS = MCMASTER_93475A240_THICKNESS
 M5_NYLOC_HEIGHT = MCMASTER_93625A225_HEIGHT
 
@@ -251,7 +252,7 @@ def _bore(diameter: float, length: float, x: float = 0.0, y: float = 0.0, z: flo
     return z_cylinder(diameter, x, y, z - CUT_OVERRUN, z + length + CUT_OVERRUN)
 
 
-def build_pivot_plate(p: FrameParameters | None = None) -> Part:
+def build_pivot_plate(p: FrameParameters | None = None) -> Compound:
     """The front pivot plate with its two pivot holes and four yaw-bolt holes."""
     p = p or FrameParameters()
     p.validate()
@@ -268,7 +269,7 @@ def build_pivot_plate(p: FrameParameters | None = None) -> Part:
     return plate
 
 
-def build_foot_block(p: FrameParameters | None = None) -> Part:
+def build_foot_block(p: FrameParameters | None = None) -> Compound:
     """One rear foot block, centered on x=y=0 with its length along y and its top (rail) face at z=0."""
     p = p or FrameParameters()
     p.validate()
@@ -278,7 +279,7 @@ def build_foot_block(p: FrameParameters | None = None) -> Part:
     return block
 
 
-def build_joining_plate(p: FrameParameters | None = None) -> Part:
+def build_joining_plate(p: FrameParameters | None = None) -> Compound:
     """A 3-hole joining plate, centered on x=y=0 with its length along y and its bottom face at z=0."""
     p = p or FrameParameters()
     plate = floor_box(p.joining_plate_width, p.joining_plate_length, p.joining_plate_thickness)
@@ -289,7 +290,7 @@ def build_joining_plate(p: FrameParameters | None = None) -> Part:
     return plate
 
 
-def _ring(outer_diameter: float, inner_diameter: float, height: float) -> Part:
+def _ring(outer_diameter: float, inner_diameter: float, height: float) -> Compound:
     return z_cylinder(outer_diameter, 0, 0, 0, height) - _bore(inner_diameter, height)
 
 
@@ -356,7 +357,7 @@ def _plate_assembly(p: FrameParameters) -> Compound:
         ),
     ]
 
-    def stack(label: str, x: float, y: float, top: float, nut: Compound) -> None:
+    def stack(label: str, x: float, y: float, top: float, nut: Shape) -> None:
         """Screw up through the plate at (x, y), with washers under the plate and on the surface at top."""
         for part, name, z, color in (
             (mcmaster_92290a265(), "screw", under_head, STEEL_GRAY),

@@ -1,4 +1,5 @@
-"""The tabletop optical head: the frame with the source and imaging fixtures placed on their rails (design §2).
+"""The tabletop optical head: the frame with the source and imaging fixtures placed on their rails (design
+§2).
 
 An assembly of the other part models, for viewing and for checks that no single part model can make: that the
 fixtures keep clear of each other and of the rails, and that the optical conjugates fall where §3 puts them.
@@ -15,7 +16,7 @@ the rail top at z=0 and the rail's pivot axis at the origin, then moved onto its
 from dataclasses import dataclass, field
 from math import pi
 
-from build123d import Compound, Pos
+from build123d import Compound, Pos, Shape
 
 from schlieren.cad import assembly, place, recolored
 from schlieren.palette import PRINTED_BLACK_PLA, PRINTED_COLORS
@@ -36,7 +37,8 @@ from schlieren.parts.slit_head import SlitHeadParameters, build_slit_head_assemb
 
 SOURCE_SIDE = -1  # Left rail (§3.4).
 IMAGING_SIDE = 1  # Right rail.
-# Parts of the camera support's stand-alone model that exist only to stand it alone; the head has the frame's rails.
+# Parts of the camera support's stand-alone model that exist only to stand it alone; the head has the frame's
+# rails.
 STAND_ALONE_LABELS = ("Rail", "Optical axis")
 
 
@@ -143,11 +145,11 @@ def build_optical_head(
     right_yaw: float = 0.0,
     slit_rotation: float = 0.0,
     printed_color: tuple | None = PRINTED_BLACK_PLA,
-) -> Compound:
+) -> Shape:
     """The frame with each rail's fixtures on it, rails yawed outward from nominal by the given degrees.
 
-    The printed parts are shown in printed_color, the filament they are printed in, in place of the hues
-    that tell them apart in the part models; None keeps those.
+    The printed parts are shown in printed_color, the filament they are printed in, in place of the hues that
+    tell them apart in the part models; None keeps those.
     """
     h = h or OpticalHeadParameters()
     h.validate()

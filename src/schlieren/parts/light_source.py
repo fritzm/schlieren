@@ -1,26 +1,20 @@
 """Light source stack-up: threaded LED module, condenser, and iris on one SMR1/M; canonical design §6.
 
-The LED star board mounts on a Thorlabs SM1CP2M externally threaded end cap,
-which threads into the LED-side face of the SMR1/M and seats on its knurled
-flange. An Alpha CN40-40B pin-fin heatsink is bolted to the rear of the cap.
-The SM1V05 (holding the ACL2520U-A, plano face toward the LED) threads into the
-slit-side face and is locked by its SM1NT ring; its thread engagement is the
-focus adjustment. The SM1L03 tube threads into the SM1V05 open end and the
-SM1D12 iris into the SM1L03, so lens, tube, and iris move together with focus.
+The LED star board mounts on a Thorlabs SM1CP2M externally threaded end cap, which threads into the LED-side
+face of the SMR1/M and seats on its knurled flange. An Alpha CN40-40B pin-fin heatsink is bolted to the rear
+of the cap. The SM1V05 (holding the ACL2520U-A, plano face toward the LED) threads into the slit-side face and
+is locked by its SM1NT ring; its thread engagement is the focus adjustment. The SM1L03 tube threads into the
+SM1V05 open end and the SM1D12 iris into the SM1L03, so lens, tube, and iris move together with focus.
 
-Axial coordinate u (mm): u=0 at the LED-side face of the SMR1/M, +u toward
-the slit. Assembly coordinates: the §3.4 source rail frame, x transverse, +y along u (toward the mirror), z=0 at the
-rail top.
-Nothing here is printed; the solids are vendor STEP models (Thorlabs TR50/M,
-SMR1/M, SM1CP2M, SM1V05, ACL2520U-A, SM1L03, SM1D12; Alpha CN40-40B) or, for the
-star board and LED package, representative solids built from the outline
-drawings, for viewing and clearance checks. The
-SM1L03's own retaining ring is not modeled: the iris thread occupies its place
-at the tube's open end. The cap and the heatsink base carry the §6.4 holes
-(`light_source_holes`), with the McMaster heatsink screws, board screws, and
-insulating washers as vendor models; the leads are not modeled.
-Dimension sources are noted per field: catalog values
-are from the drawings in docs/reference/.
+Axial coordinate u (mm): u=0 at the LED-side face of the SMR1/M, +u toward the slit. Assembly coordinates: the
+§3.4 source rail frame, x transverse, +y along u (toward the mirror), z=0 at the rail top. Nothing here is
+printed; the solids are vendor STEP models (Thorlabs TR50/M, SMR1/M, SM1CP2M, SM1V05, ACL2520U-A, SM1L03,
+SM1D12; Alpha CN40-40B) or, for the star board and LED package, representative solids built from the outline
+drawings, for viewing and clearance checks. The SM1L03's own retaining ring is not modeled: the iris thread
+occupies its place at the tube's open end. The cap and the heatsink base carry the §6.4 holes
+(`light_source_holes`), with the McMaster heatsink screws, board screws, and insulating washers as vendor
+models; the leads are not modeled. Dimension sources are noted per field: catalog values are from the drawings
+in docs/reference/.
 """
 
 from dataclasses import dataclass
@@ -73,8 +67,8 @@ class LEDBoard:
     thickness_in: float
     # Catalog / nominal outline diameter.
     outline_diameter: float
-    # Calculated from the LED outline drawing: apparent emitter height above
-    # the package solder pads, seen through the silicone dome.
+    # Calculated from the LED outline drawing: apparent emitter height above the package solder pads, seen
+    # through the silicone dome.
     emitter_height: float
     # LED outline drawing (catalog): square package side, substrate thickness, dome diameter, overall height.
     package_side: float
@@ -99,8 +93,8 @@ class LightSourceParameters:
     # Frozen project datum (§3.4).
     optical_height: float = OPTICAL_HEIGHT
     datum_thickness: float = DATUM_DISC_THICKNESS
-    # Thorlabs TR50/M: metric-primary; its STEP model is rounded to inches (1.969 in, 0.499 in), so the
-    # metric nominal values are exact.
+    # Thorlabs TR50/M: metric-primary; its STEP model is rounded to inches (1.969 in, 0.499 in), so the metric
+    # nominal values are exact.
     post_length: float = POST_LENGTH
     post_diameter: float = POST_DIAMETER
     # Thorlabs SMR1/M, SM1CP2M, SM1V05, SM1L03, SM1D12: inch-primary; exact values from the STEP models in
@@ -240,11 +234,12 @@ def build_star_board(board):
     notch += Pos(STAR_NOTCH_CENTER_RADIUS + reach / 2, 0) * Rectangle(reach, STAR_NOTCH_WIDTH)
     for i in range(STAR_NOTCH_COUNT):
         outline -= Rot(Z=i * 360 / STAR_NOTCH_COUNT) * notch
-    return extrude(outline, board.thickness)
+    return extrude(outline, board.thickness)  # ty: ignore[invalid-argument-type]
 
 
 def build_led_package(board):
-    """Representative LED package: square substrate and silicone dome; solder face on z=0, +z toward the lens."""
+    """Representative LED package: square substrate and silicone dome; solder face on z=0, +z toward the
+    lens."""
     dome_radius = board.dome_diameter / 2
     dome_center = board.package_height - dome_radius
     package = floor_box(board.package_side, board.package_side, board.package_base)
@@ -267,7 +262,8 @@ def _drilled(part, holes, diameter_of, y0, y1):
 
 @cache
 def build_drilled_cap(p, holes):
-    """SM1CP2M cap in its vendor frame, drilled through: M3 and M2 tap drills (threads not cut), lead holes."""
+    """SM1CP2M cap in its vendor frame, drilled through: M3 and M2 tap drills (threads not cut), lead
+    holes."""
     return _drilled(thorlabs_sm1cp2m(), holes, holes.cap_hole_diameter, p.heatsink_front, p.cap_face)
 
 
@@ -280,8 +276,8 @@ def build_drilled_heatsink(p, holes):
 def build_light_source_assembly(p=None, board=GREEN, engagement=None, side_screws=False, holes=None):
     """Purchased parts in rail-top coordinates; the post is centered at the SMR1/M midplane.
 
-    The post, the printed rail shoe under it, and the shoe's vendor hardware are grouped as REFERENCE_HARDWARE_LABEL;
-    side_screws adds the shoe's side-slot screws to that group.
+    The post, the printed rail shoe under it, and the shoe's vendor hardware are grouped as
+    REFERENCE_HARDWARE_LABEL; side_screws adds the shoe's side-slot screws to that group.
     """
     p = p or LightSourceParameters()
     p.validate()
@@ -368,8 +364,8 @@ def light_source_section(module: Compound) -> Compound:
     """Exposition view of the optical train: the module cut along the vertical plane through its axis.
 
     The -x half of the SMR1/M, SM1V05, SM1L03, and iris is kept, so the cut face looks toward +x; the parts in
-    WHOLE_IN_SECTION are kept entire. The post, rail shoe, and its clamp screw and nut (REFERENCE_HARDWARE_LABEL)
-    are omitted.
+    WHOLE_IN_SECTION are kept entire. The post, rail shoe, and its clamp screw and nut
+    (REFERENCE_HARDWARE_LABEL) are omitted.
     """
     half_space = centered_box(SECTION_BOX_SIZE, SECTION_BOX_SIZE, SECTION_BOX_SIZE, x=-SECTION_BOX_SIZE / 2)
     kept = []

@@ -1,16 +1,16 @@
 """The cased iPhone 17, design §9.1.
 
-Frame: the §3.4 imaging-rail frame the phone is held in. The origin is the Main camera axis on the back
-plane of the cased phone (y = 0, where the lens seats); +x runs along the phone's length away from the near
-short edge, +y toward the mirror (out of the back), and z is up, across the phone's width, with the camera
-27 mm from the upper long edge and the buttons' side below. So the phone is in landscape, screen aft, camera
-end toward the optical axis, as held in §9.1.
+Frame: the §3.4 imaging-rail frame the phone is held in. The origin is the Main camera axis on the back plane
+of the cased phone (y = 0, where the lens seats); +x runs along the phone's length away from the near short
+edge, +y toward the mirror (out of the back), and z is up, across the phone's width, with the camera 27 mm
+from the upper long edge and the buttons' side below. So the phone is in landscape, screen aft, camera end
+toward the optical axis, as held in §9.1.
 
 Three solids:
 
 - the bare phone, from Apple's drawing (docs/reference/Apple-iPhone-17.pdf): the outline with the drawing's
-  corner profile, the rounded glass edges, the camera plateau with its base fillet, the side button, and the action and volume
-  buttons. The Camera Control and the SIM tray are flush with the edge and have no geometry;
+  corner profile, the rounded glass edges, the camera plateau with its base fillet, the side button, and the
+  action and volume buttons. The Camera Control and the SIM tray are flush with the edge and have no geometry;
 - the camera glass: the two rings standing on the plateau;
 - the case, an OtterBox Commuter. Its outside is the measured length, width, and thickness. The inside is
   the bare phone, the back and front openings and the camera lip are assumed: OtterBox publishes no drawing.
@@ -23,15 +23,31 @@ import math
 from dataclasses import dataclass
 from functools import cache
 
-from build123d import Axis, Edge, Face, Part, Plane, Pos, SlotOverall, Vector, Wire, extrude, fillet, sweep
+from build123d import (
+    Axis,
+    Compound,
+    Edge,
+    Face,
+    Part,
+    Plane,
+    Pos,
+    Shape,
+    SlotOverall,
+    Vector,
+    VectorLike,
+    Wire,
+    extrude,
+    fillet,
+    sweep,
+)
 
-from schlieren.cad import CUT_OVERRUN, assembly, box_between, labeled, y_cylinder
+from schlieren.cad import CUT_OVERRUN, assembly, box_between, intersect, labeled, y_cylinder
 from schlieren.palette import LENS_BLACK, PHONE_BODY, PHONE_CASE
 from schlieren.standards import INCH
 from schlieren.validation import require_positive_dimensions
 
-# Apple's corner profile (Detail A, all four corners): distance along one edge from the corner of the
-# bounding rectangle, and across it, for points from one edge's tangent to the other's.
+# Apple's corner profile (Detail A, all four corners): distance along one edge from the corner of the bounding
+# rectangle, and across it, for points from one edge's tangent to the other's.
 CORNER_PROFILE = (
     (19.23, 0.00),
     (14.53, 0.02),
@@ -93,8 +109,8 @@ class PhoneParameters:
     camera_inset_from_end: float = 34.3  # Main camera from the near short edge.
     cased_thickness: float = 0.510 * INCH
 
-    # Case. The front rim stands this far proud of the screen (measured); the back plate's inside is
-    # whatever thickness that leaves, which puts the camera glass under the camera lip (assumed).
+    # Case. The front rim stands this far proud of the screen (measured); the back plate's inside is whatever
+    # thickness that leaves, which puts the camera glass under the camera lip (assumed).
     front_rim_height: float = 0.050 * INCH
     case_corner_radius: float = 12.0
     case_edge_fillet: float = 2.0
@@ -182,21 +198,22 @@ def _bare_outline(p: PhoneParameters, y: float) -> Face:
         (x0, z0, 1, 1, True),
     )
     edges: list[Edge] = []
-    previous = None
+    previous: VectorLike | None = None
     for cx, cz, sx, sz, reverse in corners:
-        points = [Vector(cx + sx * a, y, cz + sz * b) for a, b in CORNER_PROFILE]
+        points: list[VectorLike] = [Vector(cx + sx * a, y, cz + sz * b) for a, b in CORNER_PROFILE]
         if reverse:
             points.reverse()
         if previous is not None:
             edges.append(Edge.make_line(previous, points[0]))
         edges.append(Edge.make_spline(points))
         previous = points[-1]
+    assert previous is not None
     first = edges[0].start_point()
     edges.append(Edge.make_line(previous, first))
     return Face(Wire(edges))
 
 
-def _edge_loops(solid: Part, y_planes: tuple[float, float]) -> list[Edge]:
+def _edge_loops(solid: Shape, y_planes: tuple[float, ...]) -> list[Edge]:
     """The edges of the solid that lie in either of the y planes."""
     found = []
     for edge in solid.edges():
@@ -225,7 +242,7 @@ def _camera_centers(p: PhoneParameters) -> tuple[tuple[float, float], tuple[floa
     return (p.x_of(p.main_camera_from_end), z), (p.x_of(p.ultra_wide_from_end), z)
 
 
-def _button(p: PhoneParameters, spec: ButtonSpec) -> Part:
+def _button(p: PhoneParameters, spec: ButtonSpec) -> Compound:
     """A protruding button as a stadium in the edge's plane, embedded 1 mm in the housing."""
     x = p.x_of(spec.center)
     y = p.back_glass_y - p.thickness / 2
@@ -238,7 +255,7 @@ def _button(p: PhoneParameters, spec: ButtonSpec) -> Part:
     return fillet(box.edges().filter_by(Axis.Z), spec.width / 2 - 0.05)
 
 
-def _filleted_plateau(p: PhoneParameters) -> Part:
+def _filleted_plateau(p: PhoneParameters) -> Compound:
     """The plateau with its concave fillet, clipped to the body's outline.
 
     The fillet is a circular arc tangent to the back glass at the foot and meeting the top face at the
@@ -280,12 +297,12 @@ def _filleted_plateau(p: PhoneParameters) -> Part:
         amount=p.plateau_height + 2 * CUT_OVERRUN,
         dir=Vector(0, 1, 0),
     )
-    return plateau & outline
+    return intersect(plateau, outline)
 
 
 # Built once per parameter set and shared (see parts/carriage.py); the cached solids must not be modified.
 @cache
-def build_bare_phone(p: PhoneParameters | None = None) -> Part:
+def build_bare_phone(p: PhoneParameters | None = None) -> Shape:
     """Housing with glass edges, camera plateau, and the protruding buttons, one solid."""
     p = p or PhoneParameters()
     p.validate()
@@ -299,7 +316,7 @@ def build_bare_phone(p: PhoneParameters | None = None) -> Part:
 
 
 @cache
-def build_camera_glass(p: PhoneParameters | None = None) -> Part:
+def build_camera_glass(p: PhoneParameters | None = None) -> Shape:
     """The two camera glass rings, on top of the plateau."""
     p = p or PhoneParameters()
     y0 = p.back_glass_y + p.plateau_height
@@ -309,7 +326,7 @@ def build_camera_glass(p: PhoneParameters | None = None) -> Part:
 
 
 @cache
-def build_case(p: PhoneParameters | None = None) -> Part:
+def build_case(p: PhoneParameters | None = None) -> Compound:
     """The case: a shell round the bare phone with the front window and camera opening."""
     p = p or PhoneParameters()
     p.validate()
