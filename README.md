@@ -44,10 +44,16 @@ uv sync                                          # set up the environment
 uv run run-tests [--full]                        # run the tests in parallel (--full adds the slow ones)
 uvx ruff check . && uvx ruff format .            # lint and format
 
+uv run frame [--show] [--figure]                 # tabletop frame layout and plywood parts
+uv run optical-head [--show] [--figure]          # optical head stations and interference check
 uv run light-source [--show] [--figure]          # light source focus stack-up
 uv run slit-head [--show]                        # source-slit flexure head
 uv run carriage [--show]                         # cutoff carriage
 uv run cassette [--show]                         # cassette blank and clamp bars
+uv run mirror-cell [--show] [--figure]           # mirror cell and base-plate drilling layout
+uv run camera-support [--show] [--figure]        # lens cradle and phone rest
+uv run lens [--show]                             # telephoto lens
+uv run phone [--show]                            # cased iPhone
 uv run rail-shoe [--show] [--figure]             # common rail shoe
 
 uv run build-design-doc [--pdf]                  # docs/design/ -> exports/docs/, docs/schlieren-design.pdf

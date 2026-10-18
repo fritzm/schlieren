@@ -4,9 +4,10 @@ assembly."""
 import argparse
 from pathlib import Path
 
-from schlieren.cli._common import add_show_option, render, show
+from schlieren.cli._common import add_figure_option, add_show_option, render, show
 from schlieren.parts.optical_head import OpticalHeadParameters, build_optical_head
 
+DEFAULT_FIGURE = Path("docs/design/figures/optical-head.png")
 FIGURE_VIEW_DIRECTION = (1.0, -0.9, 0.7)  # From behind, outboard of the imaging rail and above.
 
 
@@ -22,7 +23,7 @@ def main() -> None:
     )
     parser.add_argument("--right-yaw", type=float, default=0.0, help="Imaging rail yaw outward, deg")
     parser.add_argument("--slit-rotation", type=float, default=0.0, help="Slit head rotation, deg")
-    parser.add_argument("--figure", type=Path, help="Render the assembly to this PNG path")
+    add_figure_option(parser, DEFAULT_FIGURE, "the whole optical head")
     args = parser.parse_args()
     overrides = {"cutoff_stagger": args.stagger}
     if args.slit_station is not None:
