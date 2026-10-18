@@ -47,10 +47,11 @@ class HoleLayoutParameters:
     heatsink_diameter: float = 40.0
     lattice_pitch: float = 6.9
     pin_diameter: float = 2.8
-    # Thorlabs SM1CP2M: SM1 external thread major diameter. The thread root is an estimate, not a drawing
-    # value: the lead holes' outer edges must stay inside it. **Provisional**; measure a cap.
+    # Thorlabs SM1CP2M: SM1 external thread major diameter, and the straight shank beneath the threads (the
+    # thread relief), measured on a cap at 0.988 in. The relief is the boss's minimum radius: the holes'
+    # outer edges must stay inside it.
     cap_thread_major_diameter: float = 1.035 * INCH
-    cap_thread_root_radius: float = 12.5
+    cap_relief_radius: float = 0.988 * INCH / 2
     # 20 mm star board, flat to flat (nominal), notches on its six corners (NewEnergy LST1-01F06 drawing).
     star_across_flats: float = 20.0
     notch_center_radius: float = STAR_NOTCH_CENTER_RADIUS
@@ -71,7 +72,7 @@ class HoleLayoutParameters:
     min_wall: float = 1.0  # Between holes in the cap, to the thread major radius.
     min_pin_gap: float = 1.0  # Lead hole edge to pin edge.
     min_head_gap: float = 0.5  # Socket-head edge to pin edge.
-    min_root_wall: float = 0.4  # Lead hole edge to the thread root.
+    min_relief_wall: float = 0.4  # Lead hole edge to the thread relief.
 
     @property
     def pin_radius(self) -> float:
@@ -131,8 +132,7 @@ class HoleLayoutParameters:
                 for h in m3
                 for px, py in pins
             ),
-            "lead_to_root": self.cap_thread_root_radius
-            - max(hypot(*h.position) + lead_radius for h in leads),
+            "lead_to_relief": self.cap_relief_radius - max(hypot(*h.position) + lead_radius for h in leads),
             "lead_to_star_edge": min(hypot(*h.position) - lead_radius for h in leads)
             - self.star_across_flats / 2,
         }
@@ -143,7 +143,7 @@ class HoleLayoutParameters:
             "cap_wall": self.min_wall,
             "lead_to_pin": self.min_pin_gap,
             "head_to_pin": self.min_head_gap,
-            "lead_to_root": self.min_root_wall,
+            "lead_to_relief": self.min_relief_wall,
             "lead_to_star_edge": 0.0,
         }
         short = [
@@ -152,5 +152,5 @@ class HoleLayoutParameters:
         if short:
             raise ValueError("Hole layout clearance: " + "; ".join(short))
         for hole in self.holes():
-            if hypot(*hole.position) + self.keep_out_radius(hole.kind) > self.cap_thread_root_radius:
-                raise ValueError(f"{hole.name} reaches the cap thread root")
+            if hypot(*hole.position) + self.keep_out_radius(hole.kind) > self.cap_relief_radius:
+                raise ValueError(f"{hole.name} reaches the cap thread relief")

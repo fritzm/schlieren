@@ -79,7 +79,7 @@ class HoleLayoutTest(unittest.TestCase):
         self.assertGreaterEqual(gaps["cap_wall"], self.p.min_wall)
         self.assertGreaterEqual(gaps["lead_to_pin"], self.p.min_pin_gap)
         self.assertGreaterEqual(gaps["head_to_pin"], self.p.min_head_gap)
-        self.assertGreaterEqual(gaps["lead_to_root"], self.p.min_root_wall)
+        self.assertGreaterEqual(gaps["lead_to_relief"], self.p.min_relief_wall)
         self.assertGreaterEqual(gaps["lead_to_star_edge"], -1e-9)
 
     def test_holes_do_not_overlap_in_the_cap(self):
@@ -108,10 +108,10 @@ class HoleLayoutTest(unittest.TestCase):
         self.assertLess(M2_SCREW_LENGTH, cap)
         self.assertLess(M3_SCREW_LENGTH - HEATSINK_BASE, cap)
 
-    def test_every_hole_stays_inside_the_cap_thread_root(self):
+    def test_every_hole_stays_inside_the_cap_thread_relief(self):
         for hole in self.p.holes():
             self.assertLess(
-                math.hypot(*hole.position) + self.p.keep_out_radius(hole.kind), self.p.cap_thread_root_radius
+                math.hypot(*hole.position) + self.p.keep_out_radius(hole.kind), self.p.cap_relief_radius
             )
 
     def test_tightened_lead_radius_is_rejected(self):

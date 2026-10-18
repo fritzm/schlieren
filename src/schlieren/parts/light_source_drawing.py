@@ -38,7 +38,7 @@ text { font-family: Helvetica, Arial, sans-serif; fill: #000; }
 .ghost { fill: none; stroke: #666; stroke-width: 0.15; stroke-dasharray: 0.8 0.5; }
 .cap { fill: none; stroke: #b36200; stroke-width: 0.25; }
 .cap-flange { fill: none; stroke: #b36200; stroke-width: 0.2; stroke-dasharray: 2 1; }
-.cap-root { fill: none; stroke: #b36200; stroke-width: 0.15; stroke-dasharray: 0.6 0.6; }
+.cap-relief { fill: none; stroke: #b36200; stroke-width: 0.15; stroke-dasharray: 0.6 0.6; }
 .star { fill: #d6e4f2; stroke: #2f5f98; stroke-width: 0.25; fill-opacity: 0.9; }
 .notch { fill: #fff; stroke: none; }
 .notch-edge { fill: none; stroke: #2f5f98; stroke-width: 0.25; }
@@ -158,7 +158,7 @@ def layout_drawing_svg(p: HoleLayoutParameters | None = None) -> str:
 
     sheet.circle(0, 0, p.heatsink_diameter, "heatsink")
     _pins(p, sheet, "pin")
-    sheet.circle(0, 0, 2 * p.cap_thread_root_radius, "cap-root")
+    sheet.circle(0, 0, 2 * p.cap_relief_radius, "cap-relief")
     sheet.circle(0, 0, p.cap_thread_major_diameter, "cap")
     sheet.circle(0, 0, 30.48, "cap-flange")
     _star(p, sheet)
@@ -190,7 +190,7 @@ def layout_drawing_svg(p: HoleLayoutParameters | None = None) -> str:
     sheet.text(
         -width / 2 + 3,
         -31.5,
-        "View from the LED side. Orange: cap (Ø26.29 thread, estimated root, Ø30.48 flange); blue: 20 mm star; "
+        "View from the LED side. Orange: cap (Ø26.29 thread, Ø25.1 relief, Ø30.48 flange); blue: 20 mm star; "
         "grey: heatsink pins.",
         "start",
         SMALL_FONT_SIZE,

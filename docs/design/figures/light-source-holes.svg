@@ -6,7 +6,7 @@ text { font-family: Helvetica, Arial, sans-serif; fill: #000; }
 .ghost { fill: none; stroke: #666; stroke-width: 0.15; stroke-dasharray: 0.8 0.5; }
 .cap { fill: none; stroke: #b36200; stroke-width: 0.25; }
 .cap-flange { fill: none; stroke: #b36200; stroke-width: 0.2; stroke-dasharray: 2 1; }
-.cap-root { fill: none; stroke: #b36200; stroke-width: 0.15; stroke-dasharray: 0.6 0.6; }
+.cap-relief { fill: none; stroke: #b36200; stroke-width: 0.15; stroke-dasharray: 0.6 0.6; }
 .star { fill: #d6e4f2; stroke: #2f5f98; stroke-width: 0.25; fill-opacity: 0.9; }
 .notch { fill: #fff; stroke: none; }
 .notch-edge { fill: none; stroke: #2f5f98; stroke-width: 0.25; }
@@ -48,7 +48,7 @@ text { font-family: Helvetica, Arial, sans-serif; fill: #000; }
 <circle class="pin" cx="60.350" cy="25.650" r="1.400"/>
 <circle class="pin" cx="67.250" cy="39.450" r="1.400"/>
 <circle class="pin" cx="67.250" cy="32.550" r="1.400"/>
-<circle class="cap-root" cx="50.000" cy="36.000" r="12.500"/>
+<circle class="cap-relief" cx="50.000" cy="36.000" r="12.548"/>
 <circle class="cap" cx="50.000" cy="36.000" r="13.144"/>
 <circle class="cap-flange" cx="50.000" cy="36.000" r="15.240"/>
 <polygon class="star" points="61.547,36.000 55.774,26.000 44.226,26.000 38.453,36.000 44.226,46.000 55.774,46.000"/>
@@ -93,6 +93,6 @@ text { font-family: Helvetica, Arial, sans-serif; fill: #000; }
 <text x="64.000" y="9.510" font-size="1.7" text-anchor="start">lead Ø2 (+0.0, +11.0)</text>
 <line class="leader" x1="50.000" y1="47.000" x2="63.000" y2="63.000"/>
 <text x="64.000" y="63.510" font-size="1.7" text-anchor="start">lead Ø2 (+0.0, -11.0)</text>
-<text x="3.000" y="67.500" font-size="1.35" text-anchor="start">View from the LED side. Orange: cap (Ø26.29 thread, estimated root, Ø30.48 flange); blue: 20 mm star; grey: heatsink pins.</text>
+<text x="3.000" y="67.500" font-size="1.35" text-anchor="start">View from the LED side. Orange: cap (Ø26.29 thread, Ø25.1 relief, Ø30.48 flange); blue: 20 mm star; grey: heatsink pins.</text>
 <text x="3.000" y="69.700" font-size="1.35" text-anchor="start">All holes are through. Cap drilled M3 Ø2.5, M2 Ø1.6, lead Ø2; heatsink base M3 Ø3.3, lead Ø2. Dashed circles: M3 head Ø5.5.</text>
 </svg>
