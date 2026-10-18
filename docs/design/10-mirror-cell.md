@@ -378,6 +378,3 @@ marked through the base holes with the plate held against the underside, and tap
   <em>Fig. 14. Base plate drilling layout, seen from above, in cell coordinates (front edge at the
     bottom)</em>
 </p>
-
-**Provisional:** the Ø4.5 mm clearance hole, the countersink diameter, and the depth of the tapped holes in
-the sliding plate.

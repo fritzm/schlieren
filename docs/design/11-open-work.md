@@ -19,8 +19,7 @@ Design areas marked **Provisional** in the sections above:
   ([§9.1](09-camera-telephoto.md#91-camera)).
 - **Mirror cell** ([§10.5](10-mirror-cell.md#105-mirror-mounting),
   [§10.8](10-mirror-cell.md#108-mirror-safety-and-transport-retention)): RTV adhesion primer decision; safety
-  retainers; transport sandwich covers, foam, and 1/4-80 thumb screws; quick-release screw hole sizes
-  ([§10.9](10-mirror-cell.md#109-tripod-interface)).
+  retainers; transport sandwich covers, foam, and 1/4-80 thumb screws.
 
 ### 11.2 Next steps
 
@@ -29,11 +28,9 @@ Design areas marked **Provisional** in the sections above:
    notch geometry against the physical parts ([§6.4](06-light-source.md#64-led-board-mounting)). Confirm that
    the white module reaches focus; if not, add a thin cap-flange shim
    ([§6.7](06-light-source.md#67-focus-and-module-interchange)). Bench-test the heatsink temperature rise.
-2. Test the lens alignment procedure ([§9.9](09-camera-telephoto.md#99-lens-alignment)).
-3. Design the mirror-cell safety retainers and settle the transport sandwich
-   ([§10.8](10-mirror-cell.md#108-mirror-safety-and-transport-retention)), and confirm the quick-release screw
-   hole sizes ([§10.9](10-mirror-cell.md#109-tripod-interface)).
-4. Assemble the tabletop optical head.
-5. Perform a dry optical layout near 3.2 m before making any remaining irreversible holes or bonds.
-6. Bond the mirror into the moving plate ([§10.5](10-mirror-cell.md#105-mirror-mounting)) after a dry fit and
-   an adhesion test.
+2. Assemble the tabletop optical head.
+3. Bond the mirror into the moving plate ([§10.5](10-mirror-cell.md#105-mirror-mounting)) after an adhesion
+   test.
+4. Test the lens alignment procedure ([§9.9](09-camera-telephoto.md#99-lens-alignment)).
+5. Design the mirror-cell safety retainers and settle the transport sandwich
+   ([§10.8](10-mirror-cell.md#108-mirror-safety-and-transport-retention)).
