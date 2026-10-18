@@ -7,8 +7,8 @@ Procurement state and the CAD state of printed parts are tracked in `bom/bom.csv
 Design areas marked **Provisional** in the sections above:
 
 - **Light source** ([§6.2](06-light-source.md#62-led-modules), [§6.3](06-light-source.md#63-common-heatsink),
-  [§6.7](06-light-source.md#67-focus-and-module-interchange)): M3 heatsink-screw length; lead hole size
-  against the lead insulation, cap thread root radius, and Convoy star notch geometry
+  [§6.7](06-light-source.md#67-focus-and-module-interchange)): M3 heatsink-screw length; cap thread root
+  radius and Convoy star notch geometry
   ([§6.4](06-light-source.md#64-led-board-mounting)); heatsink temperature rise at 700 mA; white-module
   long-gap focus margin.
 - **Lens cradle and phone rest** ([§9](09-camera-telephoto.md#9-camera-and-telephoto-support)): retaining-band
@@ -25,7 +25,7 @@ Design areas marked **Provisional** in the sections above:
 ### 11.2 Next steps
 
 1. Fabricate both threaded LED modules: drill and tap the caps and heatsinks, center each board, and set focus
-   on the slit blades; measure the cap thread root radius, and check the lead hole size and the Convoy star
+   on the slit blades; measure the cap thread root radius, and check the Convoy star
    notch geometry against the physical parts ([§6.4](06-light-source.md#64-led-board-mounting)). Confirm that
    the white module reaches focus; if not, add a thin cap-flange shim
    ([§6.7](06-light-source.md#67-focus-and-module-interchange)). Bench-test the heatsink temperature rise.

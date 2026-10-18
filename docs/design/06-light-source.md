@@ -76,8 +76,8 @@ Interfaces:
   heads in open cells between four pins, into M3 holes tapped through the cap. Positions are in
   [§6.4](#64-led-board-mounting).
 - Leads drop past the star board's flat edges through two Ø2.0 mm holes in the cap and the heatsink base, 11.0
-  mm from the axis (inside the thread root), and out between the pin columns. **Provisional:** the hole size
-  against the lead insulation ([§6.4](#64-led-board-mounting)).
+  mm from the axis (inside the thread root), and out between the pin columns. The pigtail wire measures
+  about 1.7 mm over its insulation.
 - Fabrication is drilling and tapping of purchased aluminum parts only. Every hole in the cap and the heatsink
   base is a through hole, so plain plug taps are enough.
 
@@ -172,12 +172,11 @@ the frame of the pin lattice; the cap and the heatsink are drilled to the same c
 - The smallest wall between holes in the cap, measured to the thread major radius, is 4.9 mm. The lead holes'
   outer edges, at 12.0 mm radius, leave about 0.5 mm to the estimated thread root.
 
-**Provisional:** the lead hole size against the insulation of the leads (a Ø2.0 hole leaves no room for
-thicker wire, since the outer edge is limited by the thread root); the cap thread root radius (estimated at
+**Provisional:** the cap thread root radius (estimated at
 12.5 mm, to be measured on a cap); and the Convoy star's notch geometry, which is taken from the NewEnergy
 drawing and must be checked against the physical board.
 
-Full-scale drilling templates for both parts, to print at 100% and stick on, come from
+Full-scale drilling templates for both parts, to print at 100% on Avery 15663 labels (first row) and stick on, come from
 `uv run light-source --templates`: the cap template goes on the LED-side face with its crosshair on the
 center-drill mark, and the heatsink template on the flat base face, aligned to the pin rows. Both are viewed
 from the LED side, so they share one set of coordinates.

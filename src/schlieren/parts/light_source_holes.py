@@ -63,7 +63,8 @@ class HoleLayoutParameters:
     # Heatsink base: M3 clearance, and the M3 socket-head screw head (ISO 4762).
     m3_clearance_diameter: float = M3_CLEARANCE_DIAMETER
     m3_head_diameter: float = M3_SOCKET_HEAD_DIAMETER
-    # Lead holes, in both the cap and the heatsink base. **Provisional:** the lead insulation must fit.
+    # Lead holes, in both the cap and the heatsink base: the pigtail wire measures about 1.7 mm over its
+    # insulation.
     lead_hole_diameter: float = 2.0
     lead_radius: float = 11.0  # Just outside the star's flat edge, whose radius is star_across_flats / 2.
     # Required minimum material and gaps.
