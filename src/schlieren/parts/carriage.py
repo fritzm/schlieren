@@ -557,11 +557,17 @@ def _build_fixed_body(p=None):
 def _split_fixed_body(p):
     stock = _build_fixed_body(p)
     width = 2 * (p.side_fastener_x + p.side_lug_radius) + 2  # Includes the side lugs.
-    base = stock & floor_box(
-        width, p.plate_length, p.spigot_length + p.plate_thickness, y=p.plate_center_y, z=-p.spigot_length
+    base = intersect(
+        stock,
+        floor_box(
+            width, p.plate_length, p.spigot_length + p.plate_thickness, y=p.plate_center_y, z=-p.spigot_length
+        ),
     )
-    frame = stock & floor_box(
-        width, p.plate_length, p.keeper_z - p.plate_thickness, y=p.plate_center_y, z=p.plate_thickness
+    frame = intersect(
+        stock,
+        floor_box(
+            width, p.plate_length, p.keeper_z - p.plate_thickness, y=p.plate_center_y, z=p.plate_thickness
+        ),
     )
     return base, frame
 
