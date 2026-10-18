@@ -176,10 +176,10 @@ the frame of the pin lattice; the cap and the heatsink are drilled to the same c
 **Provisional:** the Convoy star's notch geometry, which is taken from the NewEnergy drawing and must be
 checked against the physical board.
 
-Full-scale drilling templates for both parts, to print at 100% on Avery 15663 labels (first row) and stick on, come from
-`uv run light-source --templates`: the cap template goes on the LED-side face with its crosshair on the
-center-drill mark, and the heatsink template on the flat base face, aligned to the pin rows. Both are viewed
-from the LED side, so they share one set of coordinates.
+Full-scale drilling templates for both parts, to print at 100% on white Avery 5263 laser labels (first row)
+and stick on, come from `uv run light-source --templates`: the cap template goes on the LED-side face with its
+crosshair on the center-drill mark, and the heatsink template on the flat base face, aligned to the pin rows.
+Both are viewed from the LED side, so they share one set of coordinates.
 
 ### 6.5 Power and wiring
 

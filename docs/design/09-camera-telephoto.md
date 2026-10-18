@@ -303,14 +303,15 @@ Hardware:
 
 The collars sit on their pads under gravity alone, so each pad pair is held down by an elastic band. The pairs
 carry only the lens and phone weight, and the fore pair least of all: contact loads, calculated from the
-measured 215 g lens and 238.6 g cased phone, with an assumed balance point 60–70 mm from the aft end, are
+measured 215 g lens and 238.6 g cased phone, with the lens balance point measured at about 60 mm behind its
+front (about 61.5 mm from the aft end), are
 
-- aft screw pair: about 2.7–3.0 N;
-- fore screw pair: about 0.5–0.8 N. The phone hangs behind the aft collar, so its weight pivots the lens about
+- aft screw pair: about 2.9 N;
+- fore screw pair: about 0.5 N. The phone hangs behind the aft collar, so its weight pivots the lens about
   the aft screws and unloads the fore pair, but it cannot lift it: the lens moment is the larger.
 
 A downward push on the phone, such as a screen tap, lifts the fore end when it exceeds roughly 2.5 times the
-fore pair's load, about 1.2–1.9 N unaided, and a sideways nudge unseats a pad when it exceeds the load on its
+fore pair's load, about 1.3 N unaided, and a sideways nudge unseats a pad when it exceeds the load on its
 pair. The alloy-steel screw tips are attracted to the magnet pads, which adds some preload; it is not relied
 upon until measured.
 
@@ -325,14 +326,13 @@ face. The peg has a 4 mm stem and a 6 mm lip; the ring lies on the stem under th
   size stretched about 19% pulls about 3 N (calculated, with a 70A rubber modulus of about 5 MPa assumed).
 - Each band acts about 12 mm from its collar. With one band beside each yoke, between the collars, each pad
   pair receives the hold-down of 5 N in total from the two bands (calculated), about 4.2 N from its own band
-  and about 0.8 N from the other. That raises the tap threshold at the fore end to roughly 13–14 N.
+  and about 0.8 N from the other. That raises the tap threshold at the fore end to roughly 14 N.
 - The legs clear the thumb nuts by more than 5 mm, so the cord stays out of the way of the fingers.
 - To fit, slide the rings over the front of the lens onto the bare barrel before clamping the collars on;
   refitting one afterwards means stretching it round the other collar and its ear. A band stays on the lens
   when the lens is lifted out with the peg end unhooked.
 
-**Provisional:** the contact loads rest on the assumed balance point above, and the ring size is chosen on an
-assumed modulus; the next larger inside diameter is the alternative if the 40 mm ring is too tight.
+**Provisional:** the ring size is chosen on an assumed modulus; the next larger inside diameter is the alternative if the 40 mm ring is too tight.
 
 ### 9.9 Lens alignment
 

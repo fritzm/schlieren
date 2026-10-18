@@ -5,7 +5,7 @@ Two full-scale SVGs (one user unit is 1 mm), both in the plan view from the LED 
 
 - the design-doc figure of the layout: heatsink pins, cap, star board, and every hole with its position;
 - a sheet of two drilling templates, one for the cap and one for the heatsink base, to print at 100% on the
-  first row of an Avery 15663 label sheet, cut out, and stick on.
+  first row of an Avery 5263 label sheet, cut out, and stick on.
 """
 
 from math import cos, radians, sin
@@ -19,7 +19,7 @@ TITLE_FONT_SIZE = 2.4
 MARK = 1.5  # Half-length of the crosshair on each hole in a template.
 EDGE_TICK = (1.0, 4.0)  # Template alignment ticks start and end this far outside the rim.
 LETTER = (215.9, 279.4)  # Template sheet, US Letter portrait.
-# Avery 15663 labels (2 columns by 5 rows of 4 x 2 in labels with no row gap), in the sheet's own
+# Avery 5263 labels (2 columns by 5 rows of 4 x 2 in labels with no row gap), in the sheet's own
 # coordinates, from Avery's template for the product.
 LABEL_WIDTH = 101.6
 LABEL_HEIGHT = 50.8
@@ -208,7 +208,7 @@ def layout_drawing_svg(p: HoleLayoutParameters | None = None) -> str:
 
 
 def drilling_templates_svg(p: HoleLayoutParameters | None = None) -> str:
-    """A US Letter label sheet (Avery 15663) with the cap and heatsink drilling templates at 100% scale."""
+    """A US Letter label sheet (Avery 5263) with the cap and heatsink drilling templates at 100% scale."""
     p = p or HoleLayoutParameters()
     p.validate()
     width, height = LETTER
@@ -224,7 +224,7 @@ def drilling_templates_svg(p: HoleLayoutParameters | None = None) -> str:
         "LED module drilling templates, SM1CP2M cap and CN40-40B heatsink</text>"
     )
     notes = [
-        "Print at 100% (no fit to page) on Avery 15663 labels, first row, and check the 20 mm bar against a rule. "
+        "Print at 100% (no fit to page) on Avery 5263 labels, first row, and check the 20 mm bar against a rule. "
         "Plan view from the LED side, +x to the right.",
         "ALL HOLES ARE THROUGH HOLES. Plain plug taps are enough (M3 × 0.5 and M2 × 0.4); no bottoming tap is needed.",
     ]
