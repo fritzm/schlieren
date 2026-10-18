@@ -137,10 +137,10 @@ The intended illumination cone is approximately ±1.8° to ±2.0°, correspondin
 Useful nominal beam diameters for a ±1.8° cone are:
 
 | Distance from source slit | Approx. beam diameter |
-|---------------------------|-----------------------|
-|                       1 m |                 63 mm |
-|                       2 m |                127 mm |
-|                     3.2 m |                203 mm |
+| ------------------------- | --------------------- |
+| 1 m                       | 63 mm                 |
+| 2 m                       | 127 mm                |
+| 3.2 m                     | 203 mm                |
 
 The mirror's approximately f/7.9 focal ratio should not be confused with this source cone. The source operates
 near 2f, at approximately the mirror center of curvature.

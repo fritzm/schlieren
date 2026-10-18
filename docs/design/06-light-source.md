@@ -55,7 +55,7 @@ industry standard 20mm "star" MCPCB carriers. Each carrier is mounted on an iden
 cap, so the SM1 thread and cap flange are the interchange standard.
 
 | Module | Emitter                             | Board                                    | Initial operating current (mA) |
-|--------|-------------------------------------|------------------------------------------|--------------------------------|
+| ------ | ----------------------------------- | ---------------------------------------- | ------------------------------ |
 | Green  | OSRAM OSLON SSL 120, 530 nm nominal | NewEnergy star board, LST1-01F06-GRN1-00 | ~350                           |
 | White  | Nichia 519A R9080, 5000 K           | Convoy 20 mm star/DTP carrier            | ~500–700                       |
 
@@ -155,11 +155,11 @@ heatsink base.
 Coordinates are in millimeters from the optical axis, +x to the right and +y up as seen from the LED side, in
 the frame of the pin lattice; the cap and the heatsink are drilled to the same coordinates:
 
-| Hole | Position | In the cap | In the heatsink base |
-|---|---|---|---|
-| M3, three | (+6.90, +6.90), (−6.90, +6.90), (+6.90, −6.90) | Ø2.5 tap drill, M3 × 0.5 | Ø3.3 clearance |
-| M2, two | (±9.525, 0) | Ø1.6 tap drill, M2 × 0.4 | none |
-| Lead, two | (0, ±11.0) | Ø2.0 | Ø2.0 |
+| Hole      | Position                                       | In the cap               | In the heatsink base |
+| --------- | ---------------------------------------------- | ------------------------ | -------------------- |
+| M3, three | (+6.90, +6.90), (−6.90, +6.90), (+6.90, −6.90) | Ø2.5 tap drill, M3 × 0.5 | Ø3.3 clearance       |
+| M2, two   | (±9.525, 0)                                    | Ø1.6 tap drill, M2 × 0.4 | none                 |
+| Lead, two | (0, ±11.0)                                     | Ø2.0                     | Ø2.0                 |
 
 - M3 holes: each is the center of a cell of the pin lattice, 4.88 mm from each of four pins, so the Ø5.5 mm
   socket head lands between the pins with 0.73 mm to spare and the key reaches it. Three screws hold the
@@ -235,9 +235,9 @@ OSLON about 0.45 mm, 519A about 0.75 mm), with the gap range each module reaches
 range:
 
 | Module | Emitter height above cap face | Emitter-to-plano gap range | SM1V05 engagement at 15 mm gap |
-|---|---|---|---|
-| Green | about 2.1 mm | about 13.2–16.2 mm | about 3.9 mm |
-| White | about 2.3 mm | about 12.9–16.0 mm | about 3.7 mm |
+| ------ | ----------------------------- | -------------------------- | ------------------------------ |
+| Green  | about 2.1 mm                  | about 13.2–16.2 mm         | about 3.9 mm                   |
+| White  | about 2.3 mm                  | about 12.9–16.0 mm         | about 3.7 mm                   |
 
 The two modules focus about 0.2 mm apart in engagement, about one-third of a turn of the SM1 thread. An index
 mark per module on the SM1V05 is optional.

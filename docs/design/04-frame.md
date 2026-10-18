@@ -23,7 +23,7 @@ There is no rear crossrail.
 Measured slot geometry of the extrusion:
 
 | Feature               | Measured value      |
-|-----------------------|---------------------|
+| --------------------- | ------------------- |
 | Slot mouth width      | 0.258 in / 6.55 mm  |
 | Internal cavity width | 0.436 in / 11.07 mm |
 | Slot depth            | 0.254 in / 6.45 mm  |

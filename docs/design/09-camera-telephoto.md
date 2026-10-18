@@ -61,11 +61,11 @@ Initial recording modes:
 
 Measured sections, from the aft end forward:
 
-| Section                    | Length              | Outside diameter    |
-|----------------------------|---------------------|---------------------|
-| threaded boss ring (17 mm) | 0.10 in / 2.5 mm    | 17 mm thread        |
-| shoulder                   | 0.40 in / 10.2 mm   | 1.26 in / 32.0 mm   |
-| main barrel                | 4.285 in / 108.8 mm | about 37.0 mm       |
+| Section                    | Length              | Outside diameter  |
+| -------------------------- | ------------------- | ----------------- |
+| threaded boss ring (17 mm) | 0.10 in / 2.5 mm    | 17 mm thread      |
+| shoulder                   | 0.40 in / 10.2 mm   | 1.26 in / 32.0 mm |
+| main barrel                | 4.285 in / 108.8 mm | about 37.0 mm     |
 
 The overall length is 4.785 in / 121.5 mm. The boss threads into the lens mount on the phone case, and the
 shoulder seats against the mount; the model takes the aft end of the boss to be at the back plane of the cased
@@ -88,13 +88,13 @@ passes through it, then spreads again at the ±1.82° cone angle
 where they rest on assumed values: a lens front about 42 mm behind the cutoff plane, a 10 mm lit slit image, a
 Main-camera pupil of about 3.7 mm (6 mm focal length at f/1.6), and a telephoto clear aperture near 30 mm.
 
-| Quantity                                        | Value                    |
-|-------------------------------------------------|--------------------------|
-| Beam cone at the lens front                     | about 2.7 mm diameter    |
-| Beam footprint at the lens front                | about 2.7 × 12.7 mm      |
-| Slit image at the phone, reduced 7× by the lens | about 1.4 mm long        |
-| Frame at 1×, 4K 16:9, through the lens          | about 9.9° × 6.1°        |
-| Mirror in the frame                             | 3.6° of the 6.1° height  |
+| Quantity                                        | Value                   |
+| ----------------------------------------------- | ----------------------- |
+| Beam cone at the lens front                     | about 2.7 mm diameter   |
+| Beam footprint at the lens front                | about 2.7 × 12.7 mm     |
+| Slit image at the phone, reduced 7× by the lens | about 1.4 mm long       |
+| Frame at 1×, 4K 16:9, through the lens          | about 9.9° × 6.1°       |
+| Mirror in the frame                             | 3.6° of the 6.1° height |
 
 The resulting tolerances on the camera and lens as one body:
 
@@ -195,7 +195,7 @@ the same distance. Pad size, not screw travel, limits the adjustment. Calculated
 inside the pad edges, which the rim enforces:
 
 | Adjustment                           | Range                       |
-|--------------------------------------|-----------------------------|
+| ------------------------------------ | --------------------------- |
 | Each screw                           | about ±3 mm                 |
 | A station, in x or in z alone        | about ±4 mm                 |
 | Lens tilt, pitch or yaw              | about ±2°                   |
