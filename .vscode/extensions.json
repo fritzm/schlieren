@@ -1,4 +1,7 @@
 {
-    "recommendations": ["astral-sh.ty", "charliermarsh.ruff"],
-    "unwantedRecommendations": ["ms-python.vscode-pylance"]
+    "recommendations": [
+        "bernhard-42.ocp-cad-viewer",
+        "charliermarsh.ruff",
+        "astral-sh.ty"
+    ]
 }
