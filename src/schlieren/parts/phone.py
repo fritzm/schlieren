@@ -1,22 +1,50 @@
 """The cased iPhone 17, design §9.1.
 
 Frame: the §3.4 imaging-rail frame the phone is held in. The origin is the Main camera axis on the back plane
-of the cased phone (y = 0, where the lens seats); +x runs along the phone's length away from the near short
-edge, +y toward the mirror (out of the back), and z is up, across the phone's width, with the camera 27 mm
-from the upper long edge and the buttons' side below. So the phone is in landscape, screen aft, camera end
-toward the optical axis, as held in §9.1.
+of the cased phone (y = 0): the top of the camera cover, which the lens aft end seats against; +x runs along
+the phone's length away from the near short edge, +y toward the mirror (out of the back), and z is up, across
+the phone's width, with the camera 27 mm from the upper long edge and the buttons' side below. So the phone is
+in landscape, screen aft, camera end toward the optical axis, as held in §9.1.
 
-Three solids:
+Three solids, and the assembly draws the flash and the camera glass rings in their own colors:
 
-- the bare phone, from Apple's drawing (docs/reference/Apple-iPhone-17.pdf): the outline with the drawing's
-  corner profile, the rounded glass edges, the camera plateau with its base fillet, the side button, and the
-  action and volume buttons. The Camera Control and the SIM tray are flush with the edge and have no geometry;
-- the camera glass: the two rings standing on the plateau;
-- the case, an OtterBox Commuter. Its outside is the measured length, width, and thickness. The inside is
-  the bare phone, the back and front openings and the camera lip are assumed: OtterBox publishes no drawing.
+- The bare phone, from Apple's drawing (docs/reference/Apple-iPhone-17.pdf) and the measurements in §9.1: the
+  149.61 x 71.45 x 7.95 mm body with the drawing's corner profile and glass edge; the camera plateau, 1.78 mm
+  above the back glass, whose top face is blended into the glass by a concave fillet 2.62 mm wide (its foot is
+  1.18 mm and 1.34 mm from the long and short edges); the two Ø16.00 camera glass rings, 3.45 mm above the back
+  glass, 17.72 mm apart and not touching, which are part of the solid; and the side, action, and volume
+  buttons, 0.45 mm proud. The Camera Control and the SIM tray are flush with the edge and have no geometry,
+  and nor has the Ø6.28 mm flash, which is flush with the back glass, beside the plateau and centered on it
+  lengthwise (Apple's Detail D); the assembly draws it as a silver disc cut into the housing.
+- The camera cover, the clear adhesive polycarbonate stadium supplied with the case. It sits on the plateau at
+  the plateau's top-face size and stands 0.080 in (2.03 mm) above it (measured), counterbored underneath for
+  each glass ring (diametral clearance 0.4 mm over the ring, assumed). It leaves a 0.36 mm web over the glass.
+- The case, an OtterBox Commuter. Its outside is the measured 155.5 x 77.0 mm and 0.540 in (13.72 mm) deep from
+  the flat back to the front, with walls of 2.96 mm at the short edges and 2.77 mm at the long edges
+  calculated from the measured camera position. The phone lies on the 0.125 in (3.18 mm) back plate, so the
+  front rim stands 2.59 mm proud of the screen (calculated: depth less back plate less phone). The camera
+  glass stands 0.28 mm proud of the flat back.
 
-**Provisional**: the case's inside geometry (back thickness, camera lip, opening corners) and the depth of the
-camera glass under the lip, which the measured front rim fixes.
+  The camera opening in the back is measured, 1.590 x 1.350 in (40.39 x 34.29 mm) at the phone's back glass,
+  centered on the plateau lengthwise, its camera-side long edge at the foot of the plateau's blend fillet,
+  and its corners rounded to the fillet foot's end radius (12.44 mm). Its wall flares uniformly to
+  1.750 x 1.475 in (44.45 x 37.47 mm) at the ridge top; the corner radius grows by the mean growth of the
+  half-dimensions (assumed). It clears the plateau and the flash.
+
+  A protective ridge stands outside the opening's edge, round the opening: 0.050 in (1.27 mm) high, 0.085 in
+  (2.16 mm) wide at its foot on the flat back, and with a flat top 0.040 in (1.02 mm) wide (all measured).
+  Its foot and top are measured from the flared inner edge, so the outer wall slopes between the two widths.
+  Where the outer wall comes within the case's back edge round (along the camera-side edge and the near end),
+  it continues straight down over the round, which it cuts short; it never passes the case's side faces. The
+  ridge top is 0.63 mm ahead of the cover top.
+
+  The lens reaches through the opening and seats on the cover top, so the ridge does not set the lens
+  spacing: the back plane (y = 0) is the cover top, and the cased phone is 14.35 mm thick behind it. The
+  model does not show the case's port openings, and the 1.2 mm round on the front rim's inner edge is assumed.
+  OtterBox publishes no drawing, so the rest of the inside of the case is assumed.
+
+**Provisional**: the ridge's placement outside the opening's edge, the opening's corner radius growth, the
+cover's counterbore clearance, and the cover's top-face outline (it follows the plateau's flat top).
 """
 
 import math
@@ -31,6 +59,7 @@ from build123d import (
     Part,
     Plane,
     Pos,
+    RectangleRounded,
     Shape,
     SlotOverall,
     Vector,
@@ -38,11 +67,12 @@ from build123d import (
     Wire,
     extrude,
     fillet,
+    loft,
     sweep,
 )
 
-from schlieren.cad import CUT_OVERRUN, assembly, box_between, intersect, labeled, y_cylinder
-from schlieren.palette import LENS_BLACK, PHONE_BODY, PHONE_CASE
+from schlieren.cad import CUT_OVERRUN, assembly, box_between, fused, intersect, labeled, y_cylinder
+from schlieren.palette import CAMERA_COVER, FLASH_SILVER, LENS_BLACK, PHONE_BODY, PHONE_CASE
 from schlieren.standards import INCH
 from schlieren.validation import require_positive_dimensions
 
@@ -103,31 +133,79 @@ class PhoneParameters:
     flash_u: float = 30.41
     flash_v: float = 22.48
     flash_diameter: float = 6.28
+    flash_depth: float = 0.5  # Display only: the flash is flush with the back glass; this is its drawn disc.
 
     # Measured in the case, §9.1.
     camera_height_above_edge: float = 60.6  # Main camera above the lower long edge.
     camera_inset_from_end: float = 34.3  # Main camera from the near short edge.
-    cased_thickness: float = 0.510 * INCH
+    case_depth: float = 0.540 * INCH  # Flat back of the case to its front.
+    case_back_thickness: float = 0.125 * INCH  # Of the back plate, at the flat back.
 
-    # Case. The front rim stands this far proud of the screen (measured); the back plate's inside is whatever
-    # thickness that leaves, which puts the camera glass under the camera lip (assumed).
-    front_rim_height: float = 0.050 * INCH
+    # Case. The camera ridge is a band round the camera opening, outside its edge (assumed), of this height,
+    # width at its foot on the flat back, and flat top width (all measured). The lens reaches through the
+    # opening to the camera glass, so the ridge does not set the back plane; it must stand above the camera
+    # cover, which is proud of the flat back.
+    camera_ridge_height: float = 0.050 * INCH
+    camera_ridge_width: float = 0.085 * INCH
+    camera_ridge_top_width: float = 0.040 * INCH
+    # The clear polycarbonate cover over the plateau top (stadium at the plateau's full size). Its thickness is
+    # measured; the counterbore clearance is assumed.
+    camera_cover_thickness: float = 0.080 * INCH
+    camera_cover_bore_diametral_clearance: float = 0.4
     case_corner_radius: float = 12.0
     case_edge_fillet: float = 2.0
     case_rim_fillet: float = 1.2  # Round of the front rim's inner edge; the 1.27 mm rim height limits it.
     case_front_lip_width: float = 2.5  # Of the front rim over the screen edge.
-    # The camera opening: measured, except the corner radius. Centered on the plateau along the length.
-    camera_opening_length: float = 1.585 * INCH  # Along the long edges.
+    # The camera opening (measured size): centered on the plateau along the length, and its camera-side long
+    # edge hugs the foot of the plateau's blend fillet. Its wall flares: these are the size at the phone's back
+    # glass, and the size at the top of the ridge is larger, flaring uniformly about the same center.
+    camera_opening_length: float = 1.590 * INCH  # Along the long edges.
     camera_opening_width: float = 1.35 * INCH  # Along the short edges.
-    camera_opening_setback: float = 0.180 * INCH  # From the case's camera-side long edge to the opening.
-    camera_opening_corner_radius: float = 12.0  # Assumed.
+    camera_opening_top_length: float = 1.750 * INCH
+    camera_opening_top_width: float = 1.475 * INCH
 
     def validate(self) -> None:
         require_positive_dimensions(self)
-        if self.camera_glass_recess <= 0:
-            raise ValueError("The case must leave the camera glass under the camera lip")
+        if self.camera_cover_recess <= 0:
+            raise ValueError("The camera ridge must stand above the camera cover")
+        if self.camera_bore_depth >= self.camera_cover_thickness:
+            raise ValueError("The camera cover must leave a web over the camera glass")
+        if self.front_rim_height <= 0:
+            raise ValueError("The case depth must leave a front rim over the screen")
         if self.case_side_wall <= 0 or self.case_end_wall <= 0:
             raise ValueError("The measured camera position must leave a case wall")
+
+    @property
+    def camera_opening_z_hi(self) -> float:
+        """The opening's camera-side long edge: at the foot of the plateau's blend fillet."""
+        return self.z_of(self.plateau_foot_u[0])
+
+    @property
+    def camera_opening_corner_radius(self) -> float:
+        """The opening's corner radius, that of the fillet foot's rounded ends, so the corners follow it."""
+        return (self.plateau_foot_u[1] - self.plateau_foot_u[0]) / 2
+
+    @property
+    def camera_ridge_top_y(self) -> float:
+        return self.flat_back_y + self.camera_ridge_height
+
+    def camera_opening_at(self, y: float) -> tuple[float, float, float]:
+        """The opening's (length, width, corner radius) in the plane y. The flare is linear from the back
+        glass to the ridge top, and the corner radius grows by the mean growth of the two half-dimensions."""
+        t = (y - self.back_glass_y) / (self.camera_ridge_top_y - self.back_glass_y)
+        grow_length = (self.camera_opening_top_length - self.camera_opening_length) / 2
+        grow_width = (self.camera_opening_top_width - self.camera_opening_width) / 2
+        return (
+            self.camera_opening_length + 2 * t * grow_length,
+            self.camera_opening_width + 2 * t * grow_width,
+            self.camera_opening_corner_radius + t * (grow_length + grow_width) / 2,
+        )
+
+    @property
+    def camera_opening_center(self) -> tuple[float, float]:
+        """(x, z) of the opening's center at the back glass: the plateau's middle lengthwise."""
+        x = (self.x_of(self.plateau_v[0]) + self.x_of(self.plateau_v[1])) / 2
+        return x, self.camera_opening_z_hi - self.camera_opening_width / 2
 
     @property
     def plateau_fillet_width(self) -> float:
@@ -153,18 +231,47 @@ class PhoneParameters:
         return self.width + 2 * self.case_side_wall
 
     @property
+    def cased_thickness(self) -> float:
+        """From the back plane (the camera glass top) to the case front."""
+        return -self.front_case_y
+
+    @property
+    def front_rim_height(self) -> float:
+        """How far the front rim stands proud of the screen: the depth less the back plate and the phone."""
+        return self.case_depth - self.case_back_thickness - self.thickness
+
+    @property
+    def camera_cover_height(self) -> float:
+        """The top of the camera cover above the bare phone's back glass: the back plane."""
+        return self.plateau_height + self.camera_cover_thickness
+
+    @property
+    def camera_bore_depth(self) -> float:
+        """How deep each counterbore reaches up into the cover: the glass standing proud of the plateau."""
+        return self.camera_glass_height - self.plateau_height
+
+    @property
     def back_glass_y(self) -> float:
-        """The bare phone's back glass: its front sits the rim height under the case front."""
-        return self.front_glass_y + self.thickness
+        """The bare phone's back glass, the camera cover height under the back plane."""
+        return -self.camera_cover_height
+
+    @property
+    def flat_back_y(self) -> float:
+        """The case's flat back: the back plate's thickness behind the phone's back glass."""
+        return self.back_glass_y + self.case_back_thickness
+
+    @property
+    def front_case_y(self) -> float:
+        return self.flat_back_y - self.case_depth
 
     @property
     def front_glass_y(self) -> float:
-        return self.front_rim_height - self.cased_thickness
+        return self.back_glass_y - self.thickness
 
     @property
-    def camera_glass_recess(self) -> float:
-        """How far the camera glass stands under the camera lip, whose top is the back plane."""
-        return -(self.back_glass_y + self.camera_glass_height)
+    def camera_cover_recess(self) -> float:
+        """How far the camera cover top, the back plane, stands under the camera ridge top."""
+        return self.camera_ridge_height - self.camera_cover_height + self.case_back_thickness
 
     @property
     def x_near(self) -> float:
@@ -302,10 +409,8 @@ def _filleted_plateau(p: PhoneParameters) -> Compound:
 
 # Built once per parameter set and shared (see parts/carriage.py); the cached solids must not be modified.
 @cache
-def build_bare_phone(p: PhoneParameters | None = None) -> Shape:
-    """Housing with glass edges, camera plateau, and the protruding buttons, one solid."""
-    p = p or PhoneParameters()
-    p.validate()
+def _bare_housing(p: PhoneParameters) -> Shape:
+    """The bare phone without its camera glass rings: housing with glass edges, camera plateau, and buttons."""
     body = extrude(_bare_outline(p, p.back_glass_y), amount=p.thickness, dir=Vector(0, -1, 0))
     body = fillet(_edge_loops(body, (p.back_glass_y, p.front_glass_y)), p.edge_fillet)
     body = body + _filleted_plateau(p)
@@ -315,14 +420,48 @@ def build_bare_phone(p: PhoneParameters | None = None) -> Shape:
     return body
 
 
+def _flash(p: PhoneParameters) -> Shape:
+    """The rear flash: a disc flush with the back glass, drawn flash_depth deep (display only)."""
+    return y_cylinder(
+        p.flash_diameter, p.x_of(p.flash_v), p.z_of(p.flash_u), p.back_glass_y - p.flash_depth, p.back_glass_y
+    )
+
+
 @cache
-def build_camera_glass(p: PhoneParameters | None = None) -> Shape:
-    """The two camera glass rings, on top of the plateau."""
+def _display_housing(p: PhoneParameters) -> Shape:
+    """The bare phone's housing with the flash's disc cut out, so the assembly can draw the flash in its own
+    color."""
+    return _bare_housing(p) - _flash(p)
+
+
+@cache
+def build_bare_phone(p: PhoneParameters | None = None) -> Shape:
+    """The bare phone: housing, camera plateau with its glass rings, and the buttons, one solid."""
     p = p or PhoneParameters()
+    p.validate()
+    return fused(_bare_housing(p), _camera_glass(p))
+
+
+@cache
+def _camera_glass(p: PhoneParameters) -> Shape:
+    """The two camera glass rings, on top of the plateau."""
     y0 = p.back_glass_y + p.plateau_height
     y1 = p.back_glass_y + p.camera_glass_height
     rings = [y_cylinder(p.camera_ring_diameter, x, z, y0, y1) for x, z in _camera_centers(p)]
     return rings[0] + rings[1]
+
+
+@cache
+def build_camera_cover(p: PhoneParameters | None = None) -> Shape:
+    """The camera cover: the plateau's stadium, counterbored underneath for the two glass rings."""
+    p = p or PhoneParameters()
+    p.validate()
+    y0 = p.back_glass_y + p.plateau_height
+    cover = _plateau(p, y0, y0 + p.camera_cover_thickness)
+    bore = p.camera_ring_diameter + p.camera_cover_bore_diametral_clearance
+    for x, z in _camera_centers(p):
+        cover = cover - y_cylinder(bore, x, z, y0 - CUT_OVERRUN, y0 + p.camera_bore_depth)
+    return cover
 
 
 @cache
@@ -332,10 +471,16 @@ def build_case(p: PhoneParameters | None = None) -> Compound:
     p.validate()
     x0, x1 = p.x_near - p.case_end_wall, p.x_near + p.length + p.case_end_wall
     z0, z1 = p.z_lower - p.case_side_wall, p.z_upper + p.case_side_wall
-    y_front = -p.cased_thickness
-    shell = box_between(x0, x1, y_front, 0.0, z0, z1)
+    y_front = p.front_case_y
+    y_back = p.flat_back_y  # The flat back; the ridge, not modeled, rises from it.
+    shell = box_between(x0, x1, y_front, y_back, z0, z1)
     shell = fillet(shell.edges().filter_by(Axis.Y), p.case_corner_radius)
-    shell = fillet(_edge_loops(shell, (y_front, 0.0)), p.case_edge_fillet)
+    # The case outline without its back edge round, which the ridge's outer wall fills where they meet.
+    envelope = fillet(
+        box_between(x0, x1, y_front, p.camera_ridge_top_y + CUT_OVERRUN, z0, z1).edges().filter_by(Axis.Y),
+        p.case_corner_radius,
+    )
+    shell = fillet(_edge_loops(shell, (y_front, y_back)), p.case_edge_fillet)
     shell = shell - build_bare_phone(p)
     # Front window: the screen, inside the rim.
     lip = p.case_front_lip_width
@@ -355,29 +500,40 @@ def build_case(p: PhoneParameters | None = None) -> Compound:
         and p.x_near + p.length - lip + 1e-6 > e.bounding_box().max.X
     ]
     shell = fillet(rim, p.case_rim_fillet)
-    # Back: the camera opening, which also clears the flash.
-    xc = (p.x_of(p.plateau_v[0]) + p.x_of(p.plateau_v[1])) / 2
-    z_hi = z1 - p.camera_opening_setback
-    opening = box_between(
-        xc - p.camera_opening_length / 2,
-        xc + p.camera_opening_length / 2,
-        p.back_glass_y - CUT_OVERRUN,
-        CUT_OVERRUN,
-        z_hi - p.camera_opening_width,
-        z_hi,
-    )
-    cutout = fillet(opening.edges().filter_by(Axis.Y), p.camera_opening_corner_radius)
-    return shell - cutout
+    # Back: the camera ridge and the flared opening through it, which also clears the flash.
+    xc, zc = p.camera_opening_center
+
+    def section(y: float, grow: float = 0.0):
+        length, width, radius = p.camera_opening_at(y)
+        sketch = (
+            _plate_plane(y)
+            * Pos(xc, zc)
+            * RectangleRounded(length + 2 * grow, width + 2 * grow, radius + grow)
+        )
+        return sketch.face()
+
+    top = p.camera_ridge_top_y
+    foot_grow, top_grow = p.camera_ridge_width, p.camera_ridge_top_width
+    ridge = loft([section(y_back, foot_grow), section(top, top_grow)])
+    # Below the flat back the outer wall continues straight down over the case's back edge round, which it
+    # abbreviates where the two meet.
+    skirt = extrude(section(y_back, foot_grow), amount=p.case_edge_fillet, dir=Vector(0, -1, 0))
+    ridge = intersect(fused(ridge, skirt), envelope)
+    cutout = loft([section(p.back_glass_y - CUT_OVERRUN), section(top + CUT_OVERRUN)])
+    return fused(shell, ridge) - build_bare_phone(p) - cutout
 
 
 def build_phone(p: PhoneParameters | None = None):
-    """The cased phone as an assembly: case, bare phone, camera glass."""
+    """The cased phone as an assembly: case, bare phone, and camera cover."""
     p = p or PhoneParameters()
     return assembly(
         "Phone",
         [
             labeled(build_case(p), "Case", PHONE_CASE),
-            labeled(build_bare_phone(p), "Bare phone", PHONE_BODY),
-            labeled(build_camera_glass(p), "Camera glass", LENS_BLACK),
+            # Drawn in three colors; the rings and the flash are part of the bare phone.
+            labeled(_display_housing(p), "Bare phone", PHONE_BODY),
+            labeled(_flash(p), "Flash", FLASH_SILVER),
+            labeled(_camera_glass(p), "Camera glass", LENS_BLACK),
+            labeled(build_camera_cover(p), "Camera cover", CAMERA_COVER),
         ],
     )

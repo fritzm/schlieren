@@ -152,6 +152,7 @@ def render_figure(
         surface = _actor(normals)
         assert part.color is not None, f"Part {part.label!r} has no color"
         surface.GetProperty().SetColor(*tuple(part.color)[:3])
+        surface.GetProperty().SetOpacity(tuple(part.color)[3])
         surface.GetProperty().SetAmbient(SURFACE_AMBIENT)
         renderer.AddActor(surface)
 

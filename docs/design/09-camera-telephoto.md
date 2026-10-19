@@ -16,7 +16,8 @@ phone rest ([§9.4](#94-support)–[9.8](#98-retaining-bands)), with an alignmen
 - measured camera optical axis approximately 60.6 mm above the lower long edge, in the case
 - measured Main camera axis approximately 1.350 in / 34.3 mm from the near short edge, in the case; the case
   shape makes this hard to measure accurately with calipers
-- measured case thickness approximately 0.510 in / 12.95 mm (bare phone 7.95 mm); the case corners are rounded
+- measured case depth, flat back to front, 0.540 in / 13.72 mm (bare phone 7.95 mm), and back plate thickness
+  0.125 in / 3.18 mm; the case corners are rounded
 - measured mass 188.7 g bare, with its glass screen protector, and 238.6 g in the case
 
 Manufacturer dimensions of the bare phone, from the drawing:
@@ -30,21 +31,14 @@ The drawing and the two measurements agree. The cameras are 57.83 mm from the fa
 phone, so the measured 60.6 mm implies a case wall of about 2.8 mm at that edge; the 31.34 mm and the measured
 34.3 mm imply about 3.0 mm at the short edge (both calculated).
 
-Phone model, from Apple's drawing and the measurements above: the bare body with the drawing's corner profile
-and glass edge, the camera plateau (1.78 mm above the back glass; its top face is blended into the glass by a
-concave fillet 2.62 mm wide, whose foot is 1.18 mm and 1.34 mm from the long and short edges) with the two
-Ø16.00 camera glass rings (3.45 mm; the rings are 17.72 mm apart and do not touch), and the side, action, and
-volume buttons (0.45 mm proud). The Camera Control and SIM tray are flush with the edge and have no geometry.
-The case is an OtterBox Commuter, whose outside is the measured size: 155.5 × 77.0 mm, with walls of 2.96 mm
-at the short edges and 2.77 mm at the long edges calculated from the measured camera position, and 12.95 mm
-thick. **Provisional:** OtterBox publishes no drawing, so the inside of the case is assumed apart from the
-front rim, which is measured to stand 0.050 in. (1.27 mm) proud of the screen. That puts the bare phone's
-camera glass 0.28 mm under the camera lip, whose top is the back plane where the lens seats, and leaves the
-rest of the 12.95 mm to the back plate's inside; the opening's corner radius (12 mm) and the 1.2 mm round on
-the front rim's inner edge, which the rim height limits, are assumed. The camera opening is measured: 1.585 ×
-1.35 in. (40.26 × 34.29 mm), centered on the plateau along the length, with its long edge 0.180 in. (4.57 mm)
-from the case's camera-side edge; it clears the plateau and the flash. The model does not show the case's port
-openings.
+The phone is modeled in `src/schlieren/parts/phone.py`, whose comments describe the bare phone, the case, and
+the camera cover in detail. The case is an OtterBox Commuter, whose outside is the measured size, 155.5 × 77.0
+mm, with walls of 2.96 mm at the short edges and 2.77 mm at the long edges (calculated from the measured
+camera position). A clear adhesive polycarbonate cover supplied with the case sits on the camera plateau. The
+lens reaches through the opening in the case back and seats on the cover top, which is the back plane of the
+cased phone, and the cased phone is 14.35 mm thick behind it. **Provisional:** OtterBox publishes no drawing,
+so the inside of the case, the ridge round the camera opening, and the cover's counterbores are partly assumed
+(see the model's comments).
 
 Initial recording modes:
 
@@ -68,12 +62,15 @@ Measured sections, from the aft end forward:
 | main barrel                | 4.285 in / 108.8 mm | about 37.0 mm     |
 
 The overall length is 4.785 in / 121.5 mm. The boss threads into the lens mount on the phone case, and the
-shoulder seats against the mount; the model takes the aft end of the boss to be at the back plane of the cased
-phone. The main barrel is 1.457 in / 37.01 mm in diameter at its rear end and 1.459 in / 37.06 mm further
-forward. The focus ring, 0.455 in / 11.6 mm long, ends 0.175 in / 4.4 mm behind the front of the barrel, so it
-starts 105.5 mm from the aft end. The barrel is clampable from 12.7 mm to the focus ring, about 93 mm, and the
-focus ring must stay clear. The overall length is about 4.7 mm more than the 116.8 mm listed for the lens; the
-difference is not resolved.
+shoulder seats against the mount; the model takes the aft end of the boss to be on the camera cover, at the
+back plane of the cased phone. The main barrel is 1.457 in / 37.01 mm in diameter at its rear end and 1.459 in
+/ 37.06 mm further forward. The focus ring, 0.455 in / 11.6 mm long, ends 0.175 in / 4.4 mm behind the front
+of the barrel, so it starts 105.5 mm from the aft end. The barrel is clampable from 12.7 mm to the focus ring,
+about 93 mm, and the focus ring must stay clear. The front glass is a clear aperture of 0.845 in / 21.5 mm at
+the bottom of a stepped recess. The focus ring moves the glass, and at the working focus of about 3.2 m the
+ring is fully forward and the glass is 0.5 in / 12.7 mm behind the front of the barrel, 108.8 mm from the aft
+end. The overall length is about 4.7 mm more than the 116.8 mm listed for the lens; the difference is not
+resolved.
 
 The lens is modeled in `src/schlieren/parts/lens.py`, for visualization only.
 
@@ -85,26 +82,28 @@ centering minimizes vignetting.
 The returned slit image at the cutoff is the aperture stop for the camera: every ray from the test region
 passes through it, then spreads again at the ±1.82° cone angle
 ([§3.2](01-context-and-layout.md#32-source-cone)). The values below are calculated, and are **provisional**
-where they rest on assumed values: a lens front about 42 mm behind the cutoff plane, a 10 mm lit slit image, a
-Main-camera pupil of about 3.7 mm (6 mm focal length at f/1.6), and a telephoto clear aperture near 30 mm.
+where they rest on assumed values: a barrel front about 42 mm behind the cutoff plane (the front glass is then
+about 55 mm behind it), a 10 mm lit slit image, a Main-camera pupil of about 3.7 mm (6 mm focal length at
+f/1.6). The telephoto's front clear aperture is measured at 0.845 in / 21.5 mm.
 
 | Quantity                                        | Value                   |
 | ----------------------------------------------- | ----------------------- |
-| Beam cone at the lens front                     | about 2.7 mm diameter   |
-| Beam footprint at the lens front                | about 2.7 × 12.7 mm     |
+| Beam cone at the front glass                    | about 3.5 mm diameter   |
+| Beam footprint at the front glass               | about 3.5 × 13.5 mm     |
 | Slit image at the phone, reduced 7× by the lens | about 1.4 mm long       |
 | Frame at 1×, 4K 16:9, through the lens          | about 9.9° × 6.1°       |
 | Mirror in the frame                             | 3.6° of the 6.1° height |
 
 The resulting tolerances on the camera and lens as one body:
 
-- centering on the beam: about ±8 mm along the slit direction and ±13 mm across it, before the reduced slit
-  image leaves the phone pupil; the lens front aperture allows a similar margin;
+- centering on the beam: about ±4 mm along the slit direction and ±7 mm across it, before the beam footprint
+  reaches the edge of the front aperture (calculated from the 21.5 mm clear aperture). The phone pupil
+  allows more, about ±8 mm and ±13 mm, before the reduced slit image leaves it;
 - pitch: about ±1.2°, the spare frame height either side of the mirror;
 - yaw: about ±3°.
 
-Pointing is therefore the governing adjustment, and centering is forgiving. Image quality still favors
-centering well inside the vignetting limit.
+Pointing is therefore the governing adjustment, and centering is moderately forgiving. Image quality still
+favors centering well inside the vignetting limit.
 
 ### 9.4 Support
 

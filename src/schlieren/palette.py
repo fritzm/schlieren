@@ -66,6 +66,9 @@ LED_YELLOW = (0.95, 0.9, 0.6)
 PHONE_BODY = (0.25, 0.27, 0.32)
 PHONE_CASE = (0.17, 0.17, 0.19)
 LENS_BLACK = (0.12, 0.12, 0.13)
+FLASH_SILVER = (0.55, 0.56, 0.59)  # The phone's rear flash, flush with the back glass.
+# The case's clear polycarbonate cover over the camera plateau: RGBA, highly transparent.
+CAMERA_COVER = (0.62, 0.74, 0.80, 0.15)
 # Telephoto lens body: lighter than LENS_BLACK so it stands apart from the printed parts.
 TELEPHOTO_BARREL = (0.27, 0.27, 0.3)
 FOCUS_RING_GRAY = (0.42, 0.42, 0.45)

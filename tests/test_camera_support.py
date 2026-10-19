@@ -148,7 +148,9 @@ class LensCradleTests(unittest.TestCase):
         self.assertAlmostEqual(OPTICAL_HEIGHT - phone.min.Z, 60.6, places=4)  # Measured, §9.1.
         self.assertAlmostEqual(-phone.min.X, 34.3, places=4)  # Measured, §9.1.
         self.assertGreater(phone.max.X, -phone.min.X)  # The body hangs outboard, toward +x.
-        self.assertLessEqual(phone.max.Y, lens.min.Y + CONTACT)  # Lens ahead of the phone back.
+        # The lens reaches through the camera opening to the camera glass: the ridge top, the case's rearmost
+        # point, stands the glass recess ahead of the lens aft end.
+        self.assertAlmostEqual(phone.max.Y - lens.min.Y, p.phone.camera_cover_recess, places=3)
         self.assertAlmostEqual(p.phone.cased_length, 155.53, places=2)
 
     def test_each_screw_tip_bears_on_its_pad_or_the_groove(self):

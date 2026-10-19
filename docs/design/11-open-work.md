@@ -14,8 +14,8 @@ Design areas marked **Provisional** in the sections above:
 - **Lens cradle and phone rest** ([§9](09-camera-telephoto.md#9-camera-and-telephoto-support)): retaining-band
   ring size on an assumed modulus ([§9.8](09-camera-telephoto.md#98-retaining-bands)); the lens alignment
   procedure, untested ([§9.9](09-camera-telephoto.md#99-lens-alignment)). The alignment tolerances rest on
-  assumed lens and camera values. The inside of the
-  phone case (camera lip height, back and front thickness, openings) is assumed
+  an assumed lens position behind the cutoff plane and an assumed camera pupil. The inside of the
+  phone case (camera ridge placement, cover counterbore clearance, openings) is assumed
   ([§9.1](09-camera-telephoto.md#91-camera)).
 - **Mirror cell** ([§10.5](10-mirror-cell.md#105-mirror-mounting),
   [§10.8](10-mirror-cell.md#108-mirror-safety-and-transport-retention)): RTV adhesion primer decision; safety
