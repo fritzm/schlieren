@@ -43,8 +43,9 @@ Three solids, and the assembly draws the flash and the camera glass rings in the
   model does not show the case's port openings, and the 1.2 mm round on the front rim's inner edge is assumed.
   OtterBox publishes no drawing, so the rest of the inside of the case is assumed.
 
-**Provisional**: the ridge's placement outside the opening's edge, the opening's corner radius growth, the
-cover's counterbore clearance, and the cover's top-face outline (it follows the plateau's flat top).
+The cover's counterbore clearance, the ridge's placement outside the opening's edge, and the growth of the
+opening's corner radius are assumed but do not affect the lens spacing, since the lens seats on the cover's
+measured outer face.
 """
 
 import math

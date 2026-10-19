@@ -2,7 +2,7 @@
 
 The camera and lens are chosen ([§9.1](#91-camera)–[9.2](#92-telephoto)). Their support is a lens cradle and a
 phone rest ([§9.4](#94-support)–[9.8](#98-retaining-bands)), with an alignment procedure
-([§9.9](#99-lens-alignment)). **Provisional:** the inside of the phone case and the alignment procedure
+([§9.9](#99-lens-alignment)). **Provisional:** the alignment procedure
 ([§11](11-open-work.md#11-provisional-areas-and-next-steps)).
 
 ### 9.1 Camera
@@ -36,9 +36,9 @@ the camera cover in detail. The case is an OtterBox Commuter, whose outside is t
 mm, with walls of 2.96 mm at the short edges and 2.77 mm at the long edges (calculated from the measured
 camera position). A clear adhesive polycarbonate cover supplied with the case sits on the camera plateau. The
 lens reaches through the opening in the case back and seats on the cover top, which is the back plane of the
-cased phone, and the cased phone is 14.35 mm thick behind it. **Provisional:** OtterBox publishes no drawing,
-so the inside of the case, the ridge round the camera opening, and the cover's counterbores are partly assumed
-(see the model's comments).
+cased phone, and the cased phone is 14.35 mm thick behind it. The model's comments give the case's details,
+including the ridge round the camera opening and the cover's counterbores; the lens seats on the cover's
+measured outer face, so the cover's inner details do not affect the spacing.
 
 Initial recording modes:
 

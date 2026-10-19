@@ -14,9 +14,7 @@ Design areas marked **Provisional** in the sections above:
 - **Lens cradle and phone rest** ([§9](09-camera-telephoto.md#9-camera-and-telephoto-support)): retaining-band
   ring size on an assumed modulus ([§9.8](09-camera-telephoto.md#98-retaining-bands)); the lens alignment
   procedure, untested ([§9.9](09-camera-telephoto.md#99-lens-alignment)). The alignment tolerances rest on
-  an assumed lens position behind the cutoff plane and an assumed camera pupil. The inside of the
-  phone case (camera ridge placement, cover counterbore clearance, openings) is assumed
-  ([§9.1](09-camera-telephoto.md#91-camera)).
+  an assumed lens position behind the cutoff plane and an assumed camera pupil.
 - **Mirror cell** ([§10.5](10-mirror-cell.md#105-mirror-mounting),
   [§10.8](10-mirror-cell.md#108-mirror-safety-and-transport-retention)): RTV adhesion primer decision; safety
   retainers; transport sandwich covers, foam, and 1/4-80 thumb screws.
@@ -28,9 +26,8 @@ Design areas marked **Provisional** in the sections above:
    notch geometry against the physical parts ([§6.4](06-light-source.md#64-led-board-mounting)). Confirm that
    the white module reaches focus; if not, add a thin cap-flange shim
    ([§6.7](06-light-source.md#67-focus-and-module-interchange)). Bench-test the heatsink temperature rise.
-2. Assemble the tabletop optical head.
-3. Bond the mirror into the moving plate ([§10.5](10-mirror-cell.md#105-mirror-mounting)) after an adhesion
+2. Bond the mirror into the moving plate ([§10.5](10-mirror-cell.md#105-mirror-mounting)) after an adhesion
    test.
-4. Test the lens alignment procedure ([§9.9](09-camera-telephoto.md#99-lens-alignment)).
-5. Design the mirror-cell safety retainers and settle the transport sandwich
+3. Test the lens alignment procedure ([§9.9](09-camera-telephoto.md#99-lens-alignment)).
+4. Design the mirror-cell safety retainers and settle the transport sandwich
    ([§10.8](10-mirror-cell.md#108-mirror-safety-and-transport-retention)).
