@@ -130,7 +130,7 @@ rather than burying an assumption in geometry.
 Use these instead of redefining them in a part module:
 
 - `schlieren/standards.py`: project-wide dimensions that more than one model depends on (`INCH`,
-  `OPTICAL_HEIGHT`, the TR50/M post and datum disc). Parameter classes take them as defaults.
+  `OPTICAL_HEIGHT`, the TR50/M post and datum shim). Parameter classes take them as defaults.
 - `schlieren/palette.py`: every viewer color, named. Do not put a color literal in a part module; add it to
   the palette (or reuse the matching entry).
 - `schlieren/cad.py`: primitive solids named by axis and extents (`box_between`, `floor_box`, `centered_box`,
@@ -147,7 +147,7 @@ Use these instead of redefining them in a part module:
   magnet, the FAS100, the 98625A950 insert, the 2006N292 spring, common M3 hardware). Parameter classes take
   them as defaults and add their own fabrication allowances; hardware used by one model stays with it.
 - `post_stack` in `parts/rail_shoe.py`: the post, rail shoe, shoe clamp hardware, and optional SM1RC/M ring
-  and side-slot screws that every fixture on a rail shows.
+  and side-channel screws that every fixture on a rail shows.
 - `parts/adjuster.py`: the FAS100, its brass insert, and its bearing magnet, as the slit head and cutoff
   carriage show them.
 

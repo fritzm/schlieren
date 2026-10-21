@@ -7,8 +7,8 @@ axis in an SM1RC/M on the common post and rail shoe
 
 The model is `src/schlieren/parts/slit_head.py` (`uv run slit-head`, with `--show` for the viewer assembly).
 
-The slit needs only about ±2 mm of centering travel, one adjustment axis, and discrete orientations, so it
-does not use the cutoff's carriage, plungers, guide rails, keeper frame, datum pins, or cassettes
+The slit needs only about ±2 mm of centering travel, with both adjustments along one direction, and no
+interchangeable elements, so a single flexure part serves where the cutoff uses a carriage and cassettes
 ([§8](08-cutoff.md#8-cutoff)).
 
 The stage-rotation figures below come from a first-order flexure model, not FEA.
@@ -48,7 +48,7 @@ plane (the carrier front faces) is the front of the head; every other front face
 overhanging blades cannot rub moving or fixed parts.
 
 The head's front faces the light source, so the LED image on the blades is in plain view for centering and
-focus ([§6.7](06-light-source.md#67-focus-and-module-interchange)). The spigot adapter, slip ring, and post
+focus ([§6.7](06-light-source.md#67-focus-and-module-interchange)). The spigot adapter, split ring, and post
 are on the mirror side of the blades. In this section "front" and "back" refer to the head, not to the rail
 direction.
 
@@ -80,8 +80,9 @@ rotation over the centering travel.
 ### 7.3 Centering stage
 
 - travel: ±2.0 mm about the as-printed position;
-- drive: Thorlabs FAS100 1/4"-80 adjuster, 0.3175 mm per turn (10 µm per about 11° of knob), in a McMaster
-  98625A950 brass insert in the frame top bar;
+- drive: Thorlabs FAS100 1/4 in-80 adjuster, 0.3175 mm per turn (10 µm per about 11° of knob), in a McMaster
+  98625A950 brass insert in the frame top bar, its ball tip bearing on a flat bearing insert
+  ([§8.3](08-cutoff.md#83-fine-adjustment)) set lengthwise in the upper platform connector;
 - preload: McMaster 2006N292 spring, coaxial with FAS100 #1, 16.5 mm long at mid travel (9 mm compression),
   about 4.4–6.9 N over the travel; located by printed guide pins inside the coil in pockets in the frame
   bottom bar and the lower platform connector;
@@ -103,7 +104,8 @@ is the only vertical aiming adjustment at the source.
 
 ### 7.4 Width stage
 
-- drive: a second FAS100 in a 98625A950 insert in the platform top bar; pushing closes the slit;
+- drive: a second FAS100 in a 98625A950 insert in the platform top bar, bearing on its own flat bearing insert
+  in the width-stage connector; pushing closes the slit;
 - preload: the stage's own flexures, printed so that FAS100 #2 always deflects them 0.8–1.6 mm (about 0.8–1.6
   N, comfortably above the stage's own weight in any orientation);
 - usable width adjustment: 0.8 mm;
@@ -173,6 +175,6 @@ Printed parts: the flexure head, the spigot adapter, and two clamp bars.
   the inside and it resists only the PLA flexure's restoring force, not a spring.
 - The spigot is printed at the SM1 tube nominal, which fits the SM1RC/M.
 
-Hardware: 2 × FAS100, 2 × 98625A950 inserts, 2 × N52 10 × 5 × 2 mm magnet bearing pads (one under each FAS100
-ball tip, [§8.3](08-cutoff.md#83-fine-adjustment)), 1 × 2006N292 spring, 8 × M3 × 12 mm socket-head screws, 8
-× M3 nuts, 8 × M3 flat washers.
+Hardware: 2 × FAS100, 2 × 98625A950 inserts, 2 × flat bearing inserts (N52 10 × 5 × 2 mm bar magnets; one
+under each FAS100 ball tip, [§8.3](08-cutoff.md#83-fine-adjustment)), 1 × 2006N292 spring, 8 × M3 × 12 mm
+socket-head screws, 8 × M3 nuts, 8 × M3 flat washers.

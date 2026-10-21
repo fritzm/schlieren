@@ -3,7 +3,7 @@
 Coordinates: a §3.4 rail frame, +x across the rail (right, seen from above with the mirror ahead), +y along it
 toward the mirror, z up; rail top is z=0. The post is at x=y=0. Both ears point toward +x: nut at +y, screw at
 -y. Envelope, hole layout, and fabrication allowances are fit-tested on printed shoes. No PLA lies between the
-post bottom and the metal datum disc.
+post bottom and the metal datum shim.
 """
 
 from dataclasses import dataclass
@@ -38,8 +38,8 @@ from schlieren.hardware import M3_CLEARANCE_DIAMETER, M3_NUT_ACROSS_FLATS, M3_NU
 from schlieren.palette import BLACK_ANODIZED, METAL, PRINTED_ORANGE, STEEL_GRAY
 from schlieren.parts.rail import build_rail
 from schlieren.standards import (
-    DATUM_DISC_DIAMETER,
-    DATUM_DISC_THICKNESS,
+    DATUM_SHIM_DIAMETER,
+    DATUM_SHIM_THICKNESS,
     NUT_POCKET_ACROSS_FLATS_CLEARANCE,
     OPTICAL_HEIGHT,
     POST_DIAMETER,
@@ -64,15 +64,15 @@ class RailShoeParameters:
     rail_width: float = 20.0
     rail_height: float = 20.0
     post_diameter: float = POST_DIAMETER
-    datum_disc_diameter: float = DATUM_DISC_DIAMETER
-    datum_disc_thickness: float = DATUM_DISC_THICKNESS
+    datum_shim_diameter: float = DATUM_SHIM_DIAMETER
+    datum_shim_thickness: float = DATUM_SHIM_THICKNESS
     clamp_screw_length: float = 12.0
     clamp_nut_across_flats: float = M3_NUT_ACROSS_FLATS
     clamp_nut_thickness: float = M3_NUT_THICKNESS
 
     # PLA fabrication allowances, set by fit test (not measured shrink compensation).
     rail_lateral_clearance_per_side: float = 0.20
-    datum_disc_diametral_clearance: float = 1.0
+    datum_shim_diametral_clearance: float = 1.0
     post_diametral_clearance: float = 0.10
     nut_across_flats_clearance: float = NUT_POCKET_ACROSS_FLATS_CLEARANCE
     nut_axial_clearance: float = 0.30
@@ -128,7 +128,7 @@ class RailShoeParameters:
 
     @property
     def datum_counterbore_diameter(self) -> float:
-        return self.datum_disc_diameter + self.datum_disc_diametral_clearance
+        return self.datum_shim_diameter + self.datum_shim_diametral_clearance
 
     @property
     def post_bore(self) -> float:
@@ -160,14 +160,14 @@ class RailShoeParameters:
 
     def validate(self) -> None:
         require_positive_dimensions(self)
-        if not self.datum_disc_thickness < self.datum_counterbore_depth < self.bridge_thickness:
+        if not self.datum_shim_thickness < self.datum_counterbore_depth < self.bridge_thickness:
             raise ValueError("Counterbore must clear the disc and leave a bridge roof")
         if self.datum_counterbore_diameter >= min(self.length, self.width):
             raise ValueError("Counterbore must leave seating lands and outer walls")
-        if self.rail_opening <= self.datum_disc_diameter:
-            raise ValueError("The datum disc must fit inside the rail opening")
+        if self.rail_opening <= self.datum_shim_diameter:
+            raise ValueError("The datum shim must fit inside the rail opening")
         if not self.rail_height / 2 + self.m5_clearance_diameter / 2 < self.skirt_depth < self.rail_height:
-            raise ValueError("Skirts must surround side-slot holes and clear the rail bottom")
+            raise ValueError("Skirts must surround side-channel holes and clear the rail bottom")
         if self.collar_outer_radius + self.collar_root_fillet >= min(self.width, self.length) / 2:
             raise ValueError("Collar root must fit on the bridge")
         if self.post_bore / 2 >= self.collar_outer_radius:
@@ -316,15 +316,15 @@ def reference_parts(p: RailShoeParameters | None = None) -> dict[str, Part]:
         "rail envelope": floor_box(
             p.rail_width, p.length + 2 * VIEWER_RAIL_OVERHANG, p.rail_height, z=-p.rail_height
         ),
-        "datum disc": z_cylinder(p.datum_disc_diameter, 0, 0, 0, p.datum_disc_thickness),
+        "datum shim": z_cylinder(p.datum_shim_diameter, 0, 0, 0, p.datum_shim_thickness),
         "TR50/M post envelope": z_cylinder(
-            p.post_diameter, 0, 0, p.datum_disc_thickness, p.datum_disc_thickness + POST_LENGTH
+            p.post_diameter, 0, 0, p.datum_shim_thickness, p.datum_shim_thickness + POST_LENGTH
         ),
     }
 
 
 def side_clamp_hardware(p: RailShoeParameters | None = None, y: float = 0.0) -> list[Part]:
-    """The M5 × 12 side-slot screws with flat washers, one on each skirt, entering toward the rail at y.
+    """The M5 × 12 side-channel screws with flat washers, one on each skirt, entering toward the rail at y.
 
     Each washer bears on its skirt's outer face and the screw on the washer; the screw axes are the side-hole
     axis, at mid rail height. Each is a labeled vendor model. The washers are from the general M5 assortment
@@ -367,14 +367,14 @@ def post_stack(
     side_screws: bool = False,
     p: RailShoeParameters | None = None,
     optical_height: float = OPTICAL_HEIGHT,
-    datum_thickness: float = DATUM_DISC_THICKNESS,
+    datum_thickness: float = DATUM_SHIM_THICKNESS,
 ) -> list[Part]:
     """The common post stack as shown in assemblies, for the post at rail station y, moved by loc.
 
-    Every fixture on a rail stands on this stack (§5): the TR50/M post on its datum disc and the printed rail
-    shoe clamping the post foot, with the shoe's M3 split-clamp screw and nut. The side-slot M5 screws and
+    Every fixture on a rail stands on this stack (§5): the TR50/M post on its datum shim and the printed rail
+    shoe clamping the post foot, with the shoe's M3 split-clamp screw and nut. The side-channel M5 screws and
     washers that fix the shoe to the rail are added by side_screws, for the assemblies that show them. The
-    slit head and cutoff carriage also hold their spigot in an SM1RC/M slip ring on the post top, centered on
+    slit head and cutoff carriage also hold their spigot in an SM1RC/M split ring on the post top, centered on
     the post axis at optical_height (ring); the light source's own SMR1/M plays that part.
 
     Returns labeled children in the frame of loc (the §3.4 rail frame when loc is omitted). The hardware is
@@ -396,8 +396,8 @@ def post_stack(
 
 
 def viewer_assembly(shoe: Shape, p: RailShoeParameters | None = None) -> Compound:
-    """Shoe on a generic 2020 rail segment, with the datum disc and the post stack's vendor post and hardware
-    (including the side-slot screws), all but the shoe grouped as reference parts."""
+    """Shoe on a generic 2020 rail segment, with the datum shim and the post stack's vendor post and hardware
+    (including the side-channel screws), all but the shoe grouped as reference parts."""
     p = p or RailShoeParameters()
     refs = reference_parts(p)
     stack = {part.label: part for part in post_stack(shoe=shoe, side_screws=True, p=p)}
@@ -406,7 +406,7 @@ def viewer_assembly(shoe: Shape, p: RailShoeParameters | None = None) -> Compoun
         "Reference parts",
         [
             labeled(build_rail(p.length + 2 * VIEWER_RAIL_OVERHANG), "Rail", STEEL_GRAY),
-            labeled(refs["datum disc"], "Datum disc", STEEL_GRAY),
+            labeled(refs["datum shim"], "Datum shim", STEEL_GRAY),
             *stack.values(),
         ],
     )

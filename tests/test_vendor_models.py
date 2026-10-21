@@ -115,7 +115,7 @@ MODELS = {
             v.MCMASTER_94459A797_LENGTH,
         ),
     ),
-    "McMaster 8681N11 corner bracket": (
+    "McMaster 8681N11 angle bracket": (
         "McMaster-8681N11.step",
         (v.MCMASTER_8681N11_WIDTH, v.MCMASTER_8681N11_LEG, v.MCMASTER_8681N11_LEG),
     ),

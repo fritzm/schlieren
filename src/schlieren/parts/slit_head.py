@@ -77,7 +77,7 @@ from schlieren.palette import (
 from schlieren.parts.adjuster import bearing_magnet, fas100_children, insert_98625a950
 from schlieren.parts.rail_shoe import REFERENCE_HARDWARE_LABEL, post_stack
 from schlieren.standards import (
-    DATUM_DISC_THICKNESS,
+    DATUM_SHIM_THICKNESS,
     INCH,
     MAGNET_POCKET_CLEARANCE,
     NUT_POCKET_ACROSS_FLATS_CLEARANCE,
@@ -99,7 +99,7 @@ LBF = 4.44822  # N
 class SlitHeadParameters:
     # Frozen project datum (§3.4) and post stack.
     optical_height: float = OPTICAL_HEIGHT
-    datum_thickness: float = DATUM_DISC_THICKNESS
+    datum_thickness: float = DATUM_SHIM_THICKNESS
     post_length: float = POST_LENGTH
     post_diameter: float = POST_DIAMETER
     # Thorlabs SM1RC/M (vendor STEP model): Ø1.21 in bore accepting Ø1.20 in SM1 tubes.
@@ -112,7 +112,7 @@ class SlitHeadParameters:
     spine_thickness: float = 1.016
     spine_width: float = 2.0  # Display only; fold width not measured.
     slit_width: float = 0.20  # Display/setup value in the likely 0.15-0.20 mm working region.
-    # Thorlabs FAS100 (drawing): 1/4"-80, 1.00 in thread from knob shoulder to ball tip.
+    # Thorlabs FAS100 (drawing): 1/4 in-80, 1.00 in thread from knob shoulder to ball tip.
     adjuster_thread_length: float = FAS100_THREAD_LENGTH
     adjuster_pitch: float = FAS100_PITCH
     adjuster_knob_diameter: float = 0.49 * INCH
@@ -122,7 +122,7 @@ class SlitHeadParameters:
     insert_min_material: float = INSERT_98625A950_MIN_MATERIAL
     insert_flange_diameter: float = INSERT_98625A950_FLANGE_DIAMETER
     insert_flange_thickness: float = INSERT_98625A950_FLANGE_THICKNESS
-    # N52 10 x 5 x 2 mm magnet bearing pads under each FAS100 ball tip (§8.3).
+    # N52 10 x 5 x 2 mm flat bearing inserts under each FAS100 ball tip (§8.3).
     magnet_length: float = MAGNET_LENGTH
     magnet_width: float = MAGNET_WIDTH
     magnet_thickness: float = MAGNET_THICKNESS
@@ -159,7 +159,7 @@ class SlitHeadParameters:
     side_gap: float = 2.0  # x gaps: width stage/platform posts, platform posts/frame.
     post_width: float = 5.0  # Platform side posts and the frame side post.
     bar_thickness: float = 8.5  # z; the bars that carry the inserts and the frame bars.
-    connector_width: float = 13.0  # x; each connector carries a magnet pad lengthwise.
+    connector_width: float = 13.0  # x; each connector carries a flat bearing insert lengthwise.
     # Centering stage (frame -> platform): one blade above the platform, one below it.
     centering_screw_x: float = -5.0  # FAS100 #1, the spring, and both platform connectors.
     centering_half_travel: float = 2.0
@@ -337,12 +337,12 @@ class SlitHeadParameters:
     # Adjusters.
     @property
     def centering_tip_z(self):
-        """FAS100 #1 ball tip on its magnet in the upper platform connector, at mid travel."""
+        """FAS100 #1 ball tip on its bearing insert in the upper platform connector, at mid travel."""
         return self.centering_blades[0][1] - self.centering_tip_well
 
     @property
     def width_tip_z(self):
-        """FAS100 #2 ball tip on its magnet in the width-stage connector, undeflected (as printed)."""
+        """FAS100 #2 ball tip on its bearing insert in the width-stage connector, undeflected (as printed)."""
         return self.width_blades[1][1] - self.width_tip_well
 
     # Clamp bars and their captive nuts.
@@ -486,11 +486,11 @@ class SlitHeadParameters:
         if w0 < -self.carrier_half_length or w1 >= self.platform_post_inner - 10.0:
             raise ValueError("Width-stage connector must sit on its carrier, left of its blades")
         if self.connector_width < self.magnet_length + self.magnet_pocket_clearance + 2.0:
-            raise ValueError("Connectors must hold the magnet pads")
+            raise ValueError("Connectors must hold the flat bearing inserts")
         if self.centering_tip_well + self.magnet_thickness > self.centering_gap + self.bar_thickness - 2.0:
-            raise ValueError("Upper platform connector needs a floor under the centering magnet")
+            raise ValueError("Upper platform connector needs a floor under the centering bearing insert")
         if self.width_tip_well + self.magnet_thickness > self.width_blade_spacing:
-            raise ValueError("Width-stage magnet must seat in the connector")
+            raise ValueError("Width-stage bearing insert must seat in the connector")
         # Each FAS100 must keep thread through its whole insert over all travel. Insert thread top: the flange
         # face for outboard flanges, the body end for FAS100 #1's inboard flange.
         reaches = (
@@ -545,7 +545,7 @@ def _magnet_pocket(p, x, z_top, well=0.0):
         seat_top - p.magnet_thickness,
         z_top + 1,
     )
-    if well:  # Open the well wide enough for the 1/4"-80 thread.
+    if well:  # Open the well wide enough for the 1/4 in-80 thread.
         thread = p.insert_bore - 0.5
         pocket += box_between(
             x - length / 2,
@@ -727,7 +727,7 @@ def head_location(p, rotation=0.0):
 def build_slit_head_assembly(p=None, rotation=0.0, include_support=True, side_screws=False):
     """Head, adapter, bars, blades, and adjusters on the slit post; rotation 0 is a horizontal slit.
 
-    side_screws adds the rail shoe's side-slot screws and washers to the support."""
+    side_screws adds the rail shoe's side-channel screws and washers to the support."""
     p = p or SlitHeadParameters()
     p.validate()
     loc = head_location(p, rotation)
@@ -793,7 +793,7 @@ def build_slit_head_assembly(p=None, rotation=0.0, include_support=True, side_sc
         )
         children.append(labeled(insert, f"{name} insert", BRASS, loc))
         magnet = bearing_magnet(x, p.axis_y, tip_z, p.magnet_length, p.magnet_width, p.magnet_thickness)
-        children.append(labeled(magnet, f"{name} magnet", STEEL, loc))
+        children.append(labeled(magnet, f"{name} bearing insert", STEEL, loc))
     sx, s0, s1 = p.centering_screw_x, p.frame_spring_seat_z, p.platform_spring_seat_z
     spring = compression_spring(
         p.spring_outer_diameter, p.spring_wire_diameter, s1 - s0, p.spring_display_coils

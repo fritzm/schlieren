@@ -46,7 +46,7 @@ def bearing_magnet(
     width: float = MAGNET_WIDTH,
     thickness: float = MAGNET_THICKNESS,
 ) -> Part:
-    """The magnet pad under a ball tip at (x, y, z_tip): its face on z_tip, its body toward -z.
+    """The flat bearing insert under a ball tip at (x, y, z_tip): its face on z_tip, its body toward -z.
 
     The length lies along x and the width along y.
     """
@@ -63,7 +63,7 @@ def insert_98625a950(
     flange_diameter: float = INSERT_98625A950_FLANGE_DIAMETER,
     flange_thickness: float = INSERT_98625A950_FLANGE_THICKNESS,
 ) -> Compound:
-    """The 1/4"-80 insert on the axis +z through (x, y), with its plain 1/4 in bore.
+    """The 1/4 in-80 insert on the axis +z through (x, y), with its plain 1/4 in bore.
 
     The body spans z from body_start to body_start + body_length. The flange is against its start face when
     flange_side is -1 (the flange below the body) and against its end face when it is +1.

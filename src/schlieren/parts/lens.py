@@ -46,7 +46,7 @@ class LensParameters:
     barrel_length: float = 4.285 * INCH
     focus_ring_length: float = 0.455 * INCH
     front_lip_length: float = 0.175 * INCH
-    # A thin circumferential groove round the main barrel, measured along it from the shoulder.
+    # A thin circumferential groove around the main barrel, measured along it from the shoulder.
     barrel_groove_position: float = 1.3 * INCH
     barrel_groove_width: float = 0.3  # Assumed.
     barrel_groove_depth: float = 0.3  # Radial; assumed.
@@ -164,11 +164,11 @@ def build_lens_body(p: LensParameters | None = None) -> Compound:
     body = fillet(root, p.barrel_root_fillet)
     body = chamfer(_shoulder_edges(body, p, p.boss_length), p.shoulder_rear_chamfer)
     body = body - y_cylinder(p.boss_bore_diameter, 0, 0, -CUT_OVERRUN, p.bore_depth)
-    # The channel round the barrel that holds the focus ring.
+    # The channel around the barrel that holds the focus ring.
     y0, y1 = p.focus_ring_start, p.focus_ring_start + p.focus_ring_length
     outer = y_cylinder(p.barrel_diameter + 2 * CUT_OVERRUN, 0, 0, y0, y1)
     body = body - (outer - y_cylinder(p.focus_ring_bore_diameter, 0, 0, y0, y1))
-    # The thin groove round the barrel.
+    # The thin groove around the barrel.
     groove_y = p.barrel_start + p.barrel_groove_position
     groove_y0, groove_y1 = groove_y - p.barrel_groove_width / 2, groove_y + p.barrel_groove_width / 2
     ring = y_cylinder(p.barrel_diameter + 2 * CUT_OVERRUN, 0, 0, groove_y0, groove_y1)

@@ -3,7 +3,7 @@
 <p align="center">
   <img src="figures/frame.png" width="500" style="max-width: 90%"
        alt="Tabletop frame: two 2020 rails pivoted on the plywood front pivot plate under their pivot lugs and
-       yaw straps, each with a rear foot block">
+       yaw straps, each with a rear rail-support block">
   <br>
   <em>Fig. 1. Tabletop frame: rails, front pivot plate with pivot lugs and yaw straps, and rear foot
     blocks</em>
@@ -18,7 +18,6 @@ The model is `src/schlieren/parts/frame.py`.
 - two rails used
 - nominal 6 mm European-style slot
 
-There is no rear crossrail.
 
 Measured slot geometry of the extrusion:
 
@@ -47,8 +46,7 @@ is the one at negative x. The pivot line is 25 mm behind the mirror-facing edge,
 - right pivot: (+47.50, 125.00) mm;
 - total pivot separation: 95 mm.
 
-The nominal rail half-angle implied by the 95 mm pivot separation and approximately 3.2 m mirror distance is
-about 0.850°, or about 1.70° total chief-ray separation.
+The nominal rail half-angle is about 0.850° ([§3.3](01-context-and-layout.md#33-sourceimager-separation)).
 
 Each yaw-clamp station is 90 mm aft of its pivot along the nominal rail axis, giving yaw-strap centers at
 approximately:
@@ -66,25 +64,25 @@ Each fixed yaw strap is perpendicular to its rail at the nominal rail angle. The
 
 <p align="center">
   <img src="figures/frame-pivot-plate.svg" width="640" style="max-width: 95%"
-       alt="Front pivot plate drilling layout seen from above: the two pivot holes and four yaw-bolt holes,
-       dimensioned in x from the plate centerline and in y from the aft edge, with the mirror-facing edge at
-       the top">
+       alt="Drilling layout of the front pivot plate seen from above: the two pivot holes and four yaw-bolt
+       holes, dimensioned in x from the plate centerline and in y from the aft edge, with the mirror-facing
+       edge at the top">
   <br>
-  <em>Fig. 2. Front pivot plate drilling layout, seen from above, in plate coordinates</em>
+  <em>Fig. 2. Drilling layout of the front pivot plate, seen from above, in plate coordinates</em>
 </p>
 
-The four fixed yaw bolts pass through approximately 5.5 mm round clearance holes; the plywood is not slotted.
-The straps stay fixed to the pivot plate while the 20 mm rails rotate beneath them. With 40 mm yaw-bolt
-spacing, the rail has approximately 7.5 mm nominal edge-to-M5-shank clearance per side and retains about 2.8
-mm clearance at ±3° rail yaw from nominal for the 90 mm pivot-to-clamp distance. Rail-to-bolt contact does not
-occur until roughly ±4.7° from nominal, so the fixed-hole geometry provides ample adjustment range.
+The four fixed yaw bolts pass through approximately 5.5 mm round clearance holes. The straps stay fixed to the
+pivot plate while the 20 mm rails rotate beneath them. With 40 mm yaw-bolt spacing, the rail has approximately
+7.5 mm nominal edge-to-M5-shank clearance per side and retains about 2.8 mm clearance at ±3° rail yaw from
+nominal for the 90 mm pivot-to-clamp distance. Rail-to-bolt contact does not occur until roughly ±4.7° from
+nominal, so the fixed-hole geometry provides ample adjustment range.
 
 A front Sorbothane support foot is centered at approximately (0, 125) mm, directly between the two rail
 pivots, keeping the support point on the pivot line and clear of the pivot and yaw hardware.
 
 1/2 in Baltic-birch sheet stock is shared across the tabletop frame and mirror cell: it supplies the front
-pivot plate, the two rear rail-support/foot blocks, the mirror-cell cell-adjuster plate, and the mirror-cell
-base plate.
+pivot plate, the two rear rail-support blocks, the mirror-cell stationary plate, and the mirror-cell base
+plate.
 
 ### 4.3 Pivot and yaw hardware
 
@@ -102,7 +100,7 @@ Per rail, from the bottom up:
 socket head → oversized washer → plywood pivot plate → 20 mm spacer → 4 mm joining plate → oversized washer →
 M5 nyloc
 
-The socket heads are beneath the plywood and the nylocs on top, matching the yaw-lock screws.
+The socket heads are beneath the plywood and the nylocs on top, matching the yaw bolts.
 
 Hardware:
 
@@ -111,15 +109,17 @@ Hardware:
 - McMaster 91116A350, M5 oversized washer, 15 mm OD
 - McMaster 93625A225, M5 nylon-insert locknut
 
-The pivot screws pass through approximately 5.5 mm clearance holes in the plywood.
+The pivot bolts pass through approximately 5.5 mm clearance holes in the plywood. The 20 mm spacer holds the
+pivot lug at the rail top, where the lug lies along the rail with the pivot bolt through its front hole; its
+other two holes fix it to the rail by M5 × 8 socket-head screws from the general M5 assortment into T-nuts in
+the rail top slot. **Provisional:** the lug-screw length.
 
-#### Yaw lock
+#### Yaw clamp
 
-One 3-hole joining plate spans transversely across each rail. The two outer holes are used, giving 40 mm fixed
-bolt-center spacing. The strap is fixed to the plywood by two round-hole through-bolts, one on each side of
-the rail; the rail itself rotates beneath the strap. The plywood has no slotted yaw holes.
+One 3-hole joining plate spans transversely across each rail as its yaw strap ([§4.2](#42-front-pivot-plate)).
+Its two outer holes take the yaw bolts, one on each side of the rail; the rail rotates beneath the strap.
 
-Each yaw screw stack, from the bottom up:
+Each yaw-bolt stack, from the bottom up:
 
 socket head → oversized washer → plywood pivot plate → (alongside the rail) → 4 mm yaw strap → oversized
 washer → M5 thumb nut
@@ -127,32 +127,27 @@ washer → M5 thumb nut
 The thumb nuts are on top of the straps, where they are accessible with the frame standing on its feet.
 
 A strip of McMaster 9852N37 adhesive-backed 1/32 in (0.79 mm) EPDM on the underside of each strap, where it
-bears on the rail top, adds friction to the yaw lock. The strip spans the strap width and stays between the
+bears on the rail top, adds friction to the yaw clamp. The strip spans the strap width and stays between the
 bolt holes (about 30 mm long, clear of the holes at ±20 mm).
 
-Each strap center is 90 mm aft of its rail pivot along the nominal rail axis, with the strap perpendicular to
-the nominal rail direction ([§4.2](#42-front-pivot-plate)). Yaw is adjusted and locked at the front pivot
-plate by loosening the two thumb nuts, rotating the rail beneath the fixed strap, and retightening. The
-bolt/rail clearance supports at least approximately ±3° adjustment about nominal with useful remaining
-clearance.
+Yaw is adjusted and locked at the front pivot plate by loosening the two thumb nuts, rotating the rail beneath
+the fixed strap, and retightening.
 
 Hardware:
 
-- McMaster 92290A265, M5 × 50 partially threaded 316 SS socket-head screws — same fastener as the rail pivots
+- McMaster 92290A265, M5 × 50 partially threaded 316 SS socket-head screws — same part as the pivot bolts
 - McMaster 91116A350 oversized M5 washers
 - McMaster 92815A202 M5 low-profile knurled thumb nuts
 - McMaster 9852N37 1/32 in EPDM friction strips, cut from the same sheet as the cassette clamp-bar pads
 
-The yaw screws pass up alongside the 20 mm rail, not through it, and span the approximately 1/2 in (12.7 mm)
+The yaw bolts pass up alongside the 20 mm rail, not through it, and span the approximately 1/2 in (12.7 mm)
 Baltic-birch pivot plate, the full 20 mm rail height, the EPDM strip, the 4 mm yaw strap, washers, and the
-thumb-nut engagement. The M5 × 50 yaw-clamp screw deliberately reuses the pivot-screw part rather than
-introducing a separate low-profile screw.
+thumb-nut engagement.
 
 ### 4.4 Rear support and feet
 
-Each rail has a removable 75 × 50 × 12.7 mm (3 × 2 × 1/2 in nominal) Baltic-birch rear foot block, cut from
-the same 1/2 in sheet stock used elsewhere in the frame and mirror cell. The 75 mm dimension runs along the
-rail and the 20 mm rail is centered across the 50 mm block width.
+Each rail has a removable 75 × 50 × 12.7 mm (3 × 2 × 1/2 in nominal) Baltic-birch rear rail-support block. The
+75 mm dimension runs along the rail and the 20 mm rail is centered across the 50 mm block width.
 
 Each block attaches to the rail bottom slot with two M5 socket-head screws, two flat washers under each head,
 and roll-in/drop-in M5 T-nuts. The two screw holes lie on the rail centerline and are 50 mm apart,
@@ -166,20 +161,20 @@ leaves only about 0.15 mm, so the screw bottoms before the block clamps if the p
 screw reaches only about 0.65 mm past the slot lip, too little to engage the T-nut; no standard length lies
 between.
 
-Each rear-foot screw stack, from the bottom up:
+Each block's screw stack, from the bottom up:
 
-socket head → two flat washers → plywood foot block → M5 T-nut in the rail bottom slot
+socket head → two flat washers → plywood rail-support block → M5 T-nut in the rail bottom slot
 
 A Sorbothane foot is centered on the underside of each block, directly beneath the rail centerline and midway
 between the two attachment screws. The 1-1/4 in / 31.75 mm diameter foot therefore does not obscure either
 attachment screw or washer, allowing the complete plywood/foot assembly to be removed from and reinstalled on
 the rail without disturbing the Sorbothane foot. The blocks and feet support the rear of each rail but do not
-provide yaw lock.
+clamp its yaw.
 
 The complete frame is therefore supported on the table/bench top at three points:
 
 - one centered foot beneath the front pivot plate;
-- one foot beneath each rear support block.
+- one foot beneath each rear rail-support block.
 
 Feet: McMaster 8215K2, 1-1/4 in OD × 5/8 in high, 30 OO Sorbothane, with a stiffer McMaster 8215K6 (same size)
 as an alternative depending on vibration isolation needs. Moderate static compression of the front foot is

@@ -20,7 +20,7 @@ text { font-family: Helvetica, Arial, sans-serif; fill: #000; }
 <rect class="hidden" x="191.008" y="38.000" width="49.784" height="177.800"/>
 <text x="215.900" y="50.000" font-size="2.7" text-anchor="middle">sliding plate (underside)</text>
 <rect class="hidden" x="69.850" y="114.200" width="292.100" height="12.700"/>
-<text x="215.900" y="110.200" font-size="2.7" text-anchor="middle">cell-adjuster plate</text>
+<text x="215.900" y="110.200" font-size="2.7" text-anchor="middle">stationary plate</text>
 <rect class="hidden" x="69.850" y="126.900" width="33.274" height="76.200"/>
 <text x="86.487" y="198.100" font-size="2.7" text-anchor="middle">bracket</text>
 <rect class="hidden" x="328.676" y="126.900" width="33.274" height="76.200"/>

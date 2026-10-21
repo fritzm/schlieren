@@ -305,7 +305,7 @@ class CarriageTests(unittest.TestCase):
             xe = sign * p.body_width / 2
             self.assertFalse(driven.is_inside((xe - sign * 0.1, (y0 + y1) / 2, bottom + 0.1)))
             self.assertTrue(driven.is_inside((xe - sign * c * 0.75, (y0 + y1) / 2, bottom + c * 0.75)))
-        # The spring plunger (mirrored) is chamfered the same way, and round its cup's feet and pocket
+        # The spring plunger (mirrored) is chamfered the same way, and around its cup's feet and pocket
         # opening.
         spring = self.parts["Spring plunger"]
         self.assertFalse(spring.is_inside((15, -y1 + 0.1, bottom + 0.1)))
@@ -367,9 +367,9 @@ class CarriageTests(unittest.TestCase):
                     self.assertFalse(
                         part.is_inside((wall + sign * (r - 0.05), y, z_face + direction * (r - 0.05)))
                     )
-                    # Clear of the keeper opening edge and the track floor.
+                    # Clear of the keeper opening edge and the guide-rail floor.
                     self.assertFalse(part.is_inside((wall + sign * (r + 0.1), y, z_face + direction * 0.3)))
-        self.assertLess(p.body_width / 2 + p.ear_root_fillet, p.track_inner_x)
+        self.assertLess(p.body_width / 2 + p.ear_root_fillet, p.guide_rail_inner_x)
 
     def test_thumb_tab(self):
         p = self.p
@@ -579,8 +579,8 @@ class CarriageTests(unittest.TestCase):
         for fx, fy in p.fasteners:
             self.assertFalse(keeper.is_inside((fx + 2.5, fy, p.keeper_screw_seat_z + 0.1)))
             self.assertTrue(keeper.is_inside((fx + 2.5, fy, p.keeper_screw_seat_z - 0.1)))
-        # First-order estimate (spans simply supported between screws) at the §8.4 max-compression wedge load
-        # split over two ears: inside the ear play over working travel and the loading pose.
+        # First-order estimate (spans simply supported between screws) at the §8.4 max-compression ear
+        # reaction split over two ears: inside the ear play over working travel and the loading pose.
         play = p.guide_axial_clearance - p.ear_lower_clearance
         for travel, retract in ((-5, 0), (0, 0), (5, 0), (0, 6)):
             self.assertLess(p.keeper_side_lift(18.7 / 2, travel, retract), play / 2)
@@ -602,8 +602,8 @@ class CarriageTests(unittest.TestCase):
         self.assertEqual(len(p.fasteners), 8)
         for x, y in p.side_fasteners:
             self.assertAlmostEqual(abs(y), p.ear_center_y)
-            # Clearance hole stays outboard of the guide track wall; the lug carries the captive nut.
-            self.assertGreaterEqual(abs(x) - p.screw_clearance / 2, p.track_outer_x + 1.0)
+            # Clearance hole stays outboard of the guide rail wall; the lug carries the captive nut.
+            self.assertGreaterEqual(abs(x) - p.screw_clearance / 2, p.guide_rail_outer_x + 1.0)
             sign = 1 if x > 0 else -1
             for name in ("Base plate", "Guide frame", "Keeper frame"):
                 part = self.parts[name]
@@ -630,7 +630,7 @@ class CarriageTests(unittest.TestCase):
     def test_track_end_stops_and_keeper_screws(self):
         p = self.p
         spring_stop, driven_stop = p.ear_stops_y
-        x = (p.track_inner_x + p.track_outer_x) / 2
+        x = (p.guide_rail_inner_x + p.guide_rail_outer_x) / 2
         for y in (spring_stop - 0.1, driven_stop + 0.1):
             self.assertTrue(self.fixed.is_inside((x, y, p.floor_z + 1)))
         for y in (spring_stop + 0.1, driven_stop - 0.1):
@@ -653,11 +653,11 @@ class CarriageTests(unittest.TestCase):
         for travel in (-5, 0, 5):
             solids = children_by_label(build_carriage(travel=travel, include_hardware=True))
             printed = [solids[n] for n in self.parts]
-            magnet = solids["Magnet pad"]
+            magnet = solids["Flat bearing insert"]
             # The ball tip touches the pad's outboard face; the pad sits in the driven-plunger pocket.
             self.assertLess(intersect(solids["FAS100"], magnet).volume, 1e-6)
             self.assertLess(solids["FAS100"].distance_to(magnet), 1e-3)
-            for name in ("FAS100", "98625A950 bushing", "Magnet pad"):
+            for name in ("FAS100", "98625A950 bushing", "Flat bearing insert"):
                 for part in printed:
                     self.assertLess(overlap_volume(solids[name], part), 1e-3, (travel, name))
 

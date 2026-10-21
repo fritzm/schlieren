@@ -9,17 +9,18 @@ models and their mounting frames are in `vendor_cad.py`.
 from schlieren.standards import INCH
 from schlieren.vendor_cad import MCMASTER_91292A114_HEAD_HEIGHT, MCMASTER_91828A211_HEIGHT
 
-# N52 bar magnet, Amazon B0DMCY4FN1 (10 mm L x 5 mm W x 2 mm H): the hard bearing pad under each adjuster tip.
+# N52 bar magnet, Amazon B0DMCY4FN1 (10 mm L x 5 mm W x 2 mm H): the flat bearing insert under each adjuster
+# tip.
 MAGNET_LENGTH = 10.0
 MAGNET_WIDTH = 5.0
 MAGNET_THICKNESS = 2.0
 
-# Thorlabs FAS100 fine adjustment screw: 1/4"-80, 1.00 in of thread from the knob shoulder to the ball tip.
+# Thorlabs FAS100 fine adjustment screw: 1/4 in-80, 1.00 in of thread from the knob shoulder to the ball tip.
 FAS100_THREAD_DIAMETER = 0.25 * INCH
 FAS100_THREAD_LENGTH = 1.00 * INCH
 FAS100_PITCH = INCH / 80
 
-# McMaster 98625A950 1/4"-80 brass insert (manufacturer drawing, §8.3).
+# McMaster 98625A950 1/4 in-80 brass insert (manufacturer drawing, §8.3).
 INSERT_98625A950_BODY_DIAMETER = 0.313 * INCH
 INSERT_98625A950_LENGTH = 0.313 * INCH  # Overall: the conservative thread-engagement envelope.
 INSERT_98625A950_BODY_LENGTH = 0.298 * INCH  # Under the flange.

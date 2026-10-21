@@ -16,7 +16,12 @@ from schlieren.cli._common import (
     show,
     write_text,
 )
-from schlieren.parts.frame import FrameParameters, build_foot_block, build_frame_assembly, build_pivot_plate
+from schlieren.parts.frame import (
+    FrameParameters,
+    build_frame_assembly,
+    build_pivot_plate,
+    build_rail_support_block,
+)
 from schlieren.parts.frame_drawing import pivot_plate_drawing_svg
 
 DEFAULT_FIGURE = Path("docs/design/figures/frame.png")
@@ -49,16 +54,16 @@ def main() -> None:
     print("Pivot plate holes (pivot frame: +x right, +y toward the mirror from the aft edge), mm:")
     for name, (x, y) in p.plate_holes().items():
         print(f"  {name:<16} ({x:+7.2f}, {y:6.2f})")
-    print(f"Pivot screw beyond its nyloc {p.pivot_screw_protrusion:.2f} mm")
-    print(f"Yaw screw above its strap washer {p.yaw_screw_length_above_strap_washer:.2f} mm")
+    print(f"Pivot bolt beyond its nyloc {p.pivot_bolt_protrusion:.2f} mm")
+    print(f"Yaw bolt above its strap washer {p.yaw_bolt_length_above_strap_washer:.2f} mm")
     print(
-        f"Foot screw {p.foot_screw_slot_entry:.2f} mm into the rail slot, "
-        f"{p.foot_screw_slot_margin:.2f} mm short of the slot floor"
+        f"Block screw {p.block_screw_slot_entry:.2f} mm into the rail slot, "
+        f"{p.block_screw_slot_margin:.2f} mm short of the slot floor"
     )
     print(f"Rail top {-p.table:.2f} mm above the table (feet uncompressed)")
 
     export_models(
-        {"frame_pivot_plate": build_pivot_plate(p), "frame_foot_block": build_foot_block(p)},
+        {"frame_pivot_plate": build_pivot_plate(p), "frame_rail_support_block": build_rail_support_block(p)},
         args.output,
         kinds=("step",),
     )

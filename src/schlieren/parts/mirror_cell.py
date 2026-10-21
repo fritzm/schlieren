@@ -1,12 +1,12 @@
 """Mirror cell, design §10: three plywood plates, three Kozak fine-adjustment stations, the mirror.
 
-The cell-adjuster plate (1/2 in) and the base plate (1/2 in) are joined by two corner brackets; the 3/4 in
-moving mirror plate, a truncated hexagon with a Ø8-1/8 in aperture, carries the mirror and is tilted against
-the fixed plate by three adjusters 120° apart. At each station a Kozak TB250-80-625 bushing is bonded in the
-moving plate with its flange on the mirror-facing face, and a Kozak TS250-80-2500 screw threads through it,
-through a compression spring captured between two seat washers, and through the oversize hole in the fixed
-plate. Its KB250-80 knob bears on a McMaster 91131A028 spherical washer pair whose female half sits in a
-shallow socket in the rear face of the fixed plate, so the spring holds the knob against the washer.
+The stationary plate (1/2 in) and the base plate (1/2 in) are joined by two angle brackets; the 3/4 in mirror
+plate, a truncated hexagon with a Ø8-1/8 in aperture, carries the mirror and is tilted against the stationary
+plate by three adjusters 120° apart. At each station a Kozak TB250-80-625 bushing is bonded in the mirror
+plate with its flange on the mirror-facing face, and a Kozak TS250-80-2500 screw threads through it, through a
+compression spring captured between two seat washers, and through the oversize hole in the stationary plate.
+Its KB250-80 knob bears on a McMaster 91131A028 spherical washer pair whose female half sits in a shallow
+socket in the rear face of the stationary plate, so the spring holds the knob against the washer.
 
 The plates, with their holes, counterbores, and sockets, are modeled in detail, as are the Kozak parts, the
 spherical washers, the brackets, and the bracket fasteners (vendor models; the screw and locknut models are
@@ -117,25 +117,25 @@ STATIONS = {"top": 90.0, "left": 210.0, "right": 330.0}  # Adjuster axes, degree
 class MirrorCellParameters:
     # §10.1 plates.
     plate_width: float = 11.5 * INCH
-    fixed_plate_height: float = 11.0 * INCH
-    fixed_plate_thickness: float = 0.5 * INCH
+    stationary_plate_height: float = 11.0 * INCH
+    stationary_plate_thickness: float = 0.5 * INCH
     base_depth: float = (
         7.0 * INCH
     )  # Trimmed from the rear of an 11.0 in blank to just cover the sliding plate.
     base_thickness: float = 0.5 * INCH
-    fixed_plate_rear_from_front: float = (
+    stationary_plate_rear_from_front: float = (
         4.0 * INCH
-    )  # Rear face of the fixed plate, aft of the base front edge.
-    moving_plate_thickness: float = 0.75 * INCH
+    )  # Rear face of the stationary plate, aft of the base front edge.
+    mirror_plate_thickness: float = 0.75 * INCH
     plate_gap: float = 0.5 * INCH  # Wood face to wood face at the neutral mirror position.
     hex_vertex_diameter: float = 11.0 * INCH  # Before the lower vertex is clipped.
     adjuster_radius: float = 4.75 * INCH
     aperture_diameter: float = 8.125 * INCH
-    base_clearance: float = 0.375 * INCH  # Trimmed lower edge of the moving plate above the base top.
+    base_clearance: float = 0.375 * INCH  # Trimmed lower edge of the mirror plate above the base top.
 
     # §10.2-§10.4 holes and sockets.
     bushing_bore: float = 8.0
-    fixed_hole_diameter: float = 5 / 16 * INCH
+    stationary_hole_diameter: float = 5 / 16 * INCH
     seat_counterbore_diameter: float = 5 / 8 * INCH  # Forstner cutter.
     seat_counterbore_depth: float = 1 / 32 * INCH
     # Provisional: the cutter is chosen against the measured washer OD (§10.4).
@@ -171,7 +171,7 @@ class MirrorCellParameters:
     qr_notch_width: float = 10.0
     qr_notch_depth: float = 4.0
 
-    # §10.9 plate screws: McMaster 92125A196, M4 × 0.7 × 18 mm, 90° flat head (catalog head Ø8 mm), two
+    # §10.9 plate screws: McMaster 92125A196, M4 × 0.7 × 18 mm, 90° flat-head screws (catalog head Ø8 mm), two
     # stations 1.875 in from the nearer plate end and ±0.500 in from the centerline. Provisional: the base's
     # Ø4.5 mm clearance hole, the 0.2 mm the head sits below the surface, and the depth of the tapped holes
     # (drawn at the nominal Ø4 mm thread, not the 3.3 mm tap drill).
@@ -197,12 +197,13 @@ class MirrorCellParameters:
         return side * (self.plate_width / 2 - MCMASTER_8681N11_WIDTH / 2)
 
     def upright_hole_z(self) -> list[float]:
-        """Heights above the base top of the bracket's upright-leg holes, which go through the fixed plate."""
+        """Heights above the base top of the bracket's upright-leg holes, which go through the stationary
+        plate."""
         return list(MCMASTER_8681N11_HOLE_OFFSETS)
 
     def base_hole_y(self) -> list[float]:
         """y of the bracket's base-leg holes, which go through the base plate."""
-        return [self.fixed_plate_front_y - offset for offset in MCMASTER_8681N11_HOLE_OFFSETS]
+        return [self.stationary_plate_front_y - offset for offset in MCMASTER_8681N11_HOLE_OFFSETS]
 
     def qr_screw_positions(self) -> dict[tuple[str, str], tuple[float, float]]:
         """(x, y) of the four plate screws, by (station, side)."""
@@ -231,20 +232,20 @@ class MirrorCellParameters:
         return self.base_clearance + self.apothem
 
     @property
-    def fixed_plate_rear_y(self) -> float:
-        return self.fixed_plate_rear_from_front
+    def stationary_plate_rear_y(self) -> float:
+        return self.stationary_plate_rear_from_front
 
     @property
-    def fixed_plate_front_y(self) -> float:
-        return self.fixed_plate_rear_y - self.fixed_plate_thickness
+    def stationary_plate_front_y(self) -> float:
+        return self.stationary_plate_rear_y - self.stationary_plate_thickness
 
     @property
-    def moving_plate_rear_y(self) -> float:
-        return self.fixed_plate_front_y - self.plate_gap
+    def mirror_plate_rear_y(self) -> float:
+        return self.stationary_plate_front_y - self.plate_gap
 
     @property
-    def moving_plate_front_y(self) -> float:
-        return self.moving_plate_rear_y - self.moving_plate_thickness
+    def mirror_plate_front_y(self) -> float:
+        return self.mirror_plate_rear_y - self.mirror_plate_thickness
 
     @property
     def mirror_sag(self) -> float:
@@ -256,7 +257,7 @@ class MirrorCellParameters:
     def mirror_front_y(self) -> float:
         """The mirror's back is flush with the rear face of the plate: both rest on the bench during the RTV
         cure."""
-        return self.moving_plate_rear_y - self.mirror_edge_thickness
+        return self.mirror_plate_rear_y - self.mirror_edge_thickness
 
     @property
     def rtv_gap(self) -> float:
@@ -269,7 +270,7 @@ class MirrorCellParameters:
     @property
     def washer_back_y(self) -> float:
         """Flat back of the female washer half, on the socket floor."""
-        return self.fixed_plate_rear_y - self.socket_depth
+        return self.stationary_plate_rear_y - self.socket_depth
 
     @property
     def washer_front_y(self) -> float:
@@ -297,17 +298,17 @@ class MirrorCellParameters:
 
     def validate(self) -> None:
         checks = (
-            (self.moving_plate_front_y > 0, "The moving plate must be aft of the base front edge"),
-            (self.fixed_plate_rear_y < self.base_depth, "The fixed plate must end inside the base"),
+            (self.mirror_plate_front_y > 0, "The mirror plate must be aft of the base front edge"),
+            (self.stationary_plate_rear_y < self.base_depth, "The stationary plate must end inside the base"),
             (self.qr_plate_length <= self.base_depth, "The quick-release plate must fit under the base"),
             (
-                self.mirror_center_z + self.hex_circumradius < self.fixed_plate_height,
-                "The moving plate must stay below the top of the fixed plate",
+                self.mirror_center_z + self.hex_circumradius < self.stationary_plate_height,
+                "The mirror plate must stay below the top of the stationary plate",
             ),
             (self.aperture_diameter > self.mirror_diameter, "The aperture must be larger than the mirror"),
             (
-                self.mirror_edge_thickness <= self.moving_plate_thickness,
-                "The mirror's edge must not be thicker than the moving plate",
+                self.mirror_edge_thickness <= self.mirror_plate_thickness,
+                "The mirror's edge must not be thicker than the mirror plate",
             ),
             (
                 self.seat_counterbore_depth < self.seat_washer_thickness,
@@ -315,12 +316,12 @@ class MirrorCellParameters:
             ),
             (self.seat_washer_id > self.bushing_bore, "The seat washer must clear the bushing bore"),
             (
-                self.socket_depth < self.fixed_plate_thickness - self.seat_counterbore_depth,
-                "The washer socket must leave the fixed plate a floor",
+                self.socket_depth < self.stationary_plate_thickness - self.seat_counterbore_depth,
+                "The washer socket must leave the stationary plate a floor",
             ),
             (
-                self.moving_plate_thickness >= KOZAK_TB250_LENGTH,
-                "The bushing must fit within the moving plate's thickness",
+                self.mirror_plate_thickness >= KOZAK_TB250_LENGTH,
+                "The bushing must fit within the mirror plate's thickness",
             ),
         )
         for ok, message in checks:
@@ -328,7 +329,7 @@ class MirrorCellParameters:
                 raise ValueError(message)
 
 
-def moving_plate_outline(p: MirrorCellParameters) -> list[tuple[float, float]]:
+def mirror_plate_outline(p: MirrorCellParameters) -> list[tuple[float, float]]:
     """(x, z) vertices of the truncated hexagon, about the mirror center; one vertex up, the lower one
     clipped."""
     radius, apothem = p.hex_circumradius, p.apothem
@@ -356,17 +357,17 @@ def _plate(outline: list[tuple[float, float]], thickness: float, rear_y: float) 
     return Pos(0, rear_y, 0) * (Rot(X=90) * prism)
 
 
-def build_moving_plate(p: MirrorCellParameters | None = None) -> Compound:
+def build_mirror_plate(p: MirrorCellParameters | None = None) -> Compound:
     p = p or MirrorCellParameters()
     cz = p.mirror_center_z
-    outline = [(x, z + cz) for x, z in moving_plate_outline(p)]
-    plate = _plate(outline, p.moving_plate_thickness, p.moving_plate_rear_y)
+    outline = [(x, z + cz) for x, z in mirror_plate_outline(p)]
+    plate = _plate(outline, p.mirror_plate_thickness, p.mirror_plate_rear_y)
     plate -= y_cylinder(
         p.aperture_diameter,
         0,
         cz,
-        p.moving_plate_front_y - 1,
-        p.moving_plate_front_y + p.moving_plate_thickness + 1,
+        p.mirror_plate_front_y - 1,
+        p.mirror_plate_front_y + p.mirror_plate_thickness + 1,
     )
     for name in STATIONS:
         x, z = p.station_center(name)
@@ -374,42 +375,47 @@ def build_moving_plate(p: MirrorCellParameters | None = None) -> Compound:
             p.bushing_bore,
             x,
             z,
-            p.moving_plate_front_y - 1,
-            p.moving_plate_front_y + p.moving_plate_thickness + 1,
+            p.mirror_plate_front_y - 1,
+            p.mirror_plate_front_y + p.mirror_plate_thickness + 1,
         )
         # Spring seat registration counterbore in the rear face.
         plate -= y_cylinder(
             p.seat_counterbore_diameter,
             x,
             z,
-            p.moving_plate_rear_y - p.seat_counterbore_depth,
-            p.moving_plate_rear_y + 1,
+            p.mirror_plate_rear_y - p.seat_counterbore_depth,
+            p.mirror_plate_rear_y + 1,
         )
     return plate
 
 
-def build_fixed_plate(p: MirrorCellParameters | None = None) -> Compound:
-    """The cell-adjuster plate: spring-seat counterbores in the front face, spherical-washer sockets in the
+def build_stationary_plate(p: MirrorCellParameters | None = None) -> Compound:
+    """The stationary plate: spring-seat counterbores in the front face, spherical-washer sockets in the
     rear."""
     p = p or MirrorCellParameters()
     half = p.plate_width / 2
-    outline = [(-half, 0.0), (half, 0.0), (half, p.fixed_plate_height), (-half, p.fixed_plate_height)]
-    plate = _plate(outline, p.fixed_plate_thickness, p.fixed_plate_rear_y)
+    outline = [
+        (-half, 0.0),
+        (half, 0.0),
+        (half, p.stationary_plate_height),
+        (-half, p.stationary_plate_height),
+    ]
+    plate = _plate(outline, p.stationary_plate_thickness, p.stationary_plate_rear_y)
     for name in STATIONS:
         x, z = p.station_center(name)
         plate -= y_cylinder(
-            p.fixed_hole_diameter,
+            p.stationary_hole_diameter,
             x,
             z,
-            p.fixed_plate_front_y - 1,
-            p.fixed_plate_front_y + p.fixed_plate_thickness + 1,
+            p.stationary_plate_front_y - 1,
+            p.stationary_plate_front_y + p.stationary_plate_thickness + 1,
         )
         plate -= y_cylinder(
             p.seat_counterbore_diameter,
             x,
             z,
-            p.fixed_plate_front_y - 1,
-            p.fixed_plate_front_y + p.seat_counterbore_depth,
+            p.stationary_plate_front_y - 1,
+            p.stationary_plate_front_y + p.seat_counterbore_depth,
         )
         plate -= y_cylinder(
             p.socket_diameter, x, z, p.washer_back_y, p.washer_back_y + p.socket_depth + CUT_OVERRUN
@@ -420,8 +426,8 @@ def build_fixed_plate(p: MirrorCellParameters | None = None) -> Compound:
                 p.bracket_hole_diameter,
                 p.bracket_center_x(side),
                 z,
-                p.fixed_plate_front_y - 1,
-                p.fixed_plate_front_y + p.fixed_plate_thickness + 1,
+                p.stationary_plate_front_y - 1,
+                p.stationary_plate_front_y + p.stationary_plate_thickness + 1,
             )
     return plate
 
@@ -498,7 +504,7 @@ def build_quick_release_plate(p: MirrorCellParameters | None = None) -> Compound
 
 
 def build_mirror(p: MirrorCellParameters | None = None) -> Compound:
-    """Concave front toward -y, back flush with the rear face of the moving plate."""
+    """Concave front toward -y, back flush with the rear face of the mirror plate."""
     p = p or MirrorCellParameters()
     front = p.mirror_front_y
     blank = y_cylinder(p.mirror_diameter, 0, p.mirror_center_z, front, front + p.mirror_edge_thickness)
@@ -546,14 +552,14 @@ def _bracket_fasteners(p: MirrorCellParameters, name: str, side: int) -> list[Pa
     """Screws, washers, and locknuts for one bracket: heads on the bracket, nuts on the far side of the
     plywood.
 
-    The upright leg's screws point toward +y through the fixed plate, the base leg's toward -z through the
-    base.
+    The upright leg's screws point toward +y through the stationary plate, the base leg's toward -z through
+    the base.
     """
     screw, washer = mcmaster_98164a527(), mcmaster_96659a134()
     nut, insert = mcmaster_90099a030()
     x = p.bracket_center_x(side)
     washer_t = MCMASTER_96659A134_THICKNESS
-    upright_face = p.fixed_plate_front_y - MCMASTER_8681N11_THICKNESS  # Front face of the upright leg.
+    upright_face = p.stationary_plate_front_y - MCMASTER_8681N11_THICKNESS  # Front face of the upright leg.
     base_face = MCMASTER_8681N11_THICKNESS  # Top face of the base leg.
     stacks = []  # (label, screw seat, washer seat, nut seat), each a Location.
     for i, z in enumerate(p.upright_hole_z(), 1):
@@ -563,8 +569,8 @@ def _bracket_fasteners(p: MirrorCellParameters, name: str, side: int) -> list[Pa
             (
                 f"{name} upright {i}",
                 Location((x, upright_face, z)) * along,
-                Location((x, p.fixed_plate_rear_y, z)) * back,
-                Location((x, p.fixed_plate_rear_y + washer_t, z)) * back,
+                Location((x, p.stationary_plate_rear_y, z)) * back,
+                Location((x, p.stationary_plate_rear_y + washer_t, z)) * back,
             )
         )
     for i, y in enumerate(p.base_hole_y(), 1):
@@ -593,16 +599,16 @@ def build_mirror_cell_assembly(p: MirrorCellParameters | None = None) -> Compoun
     p.validate()
     children = [
         labeled(build_base_plate(p), "Base plate", PLYWOOD),
-        labeled(build_fixed_plate(p), "Cell-adjuster plate", PLYWOOD),
-        labeled(build_moving_plate(p), "Moving mirror plate", PLYWOOD),
+        labeled(build_stationary_plate(p), "Stationary plate", PLYWOOD),
+        labeled(build_mirror_plate(p), "Mirror plate", PLYWOOD),
         labeled(build_mirror(p), "Mirror", MIRROR_GLASS),
         labeled(build_quick_release_plate(p), "Quick-release plate", QR_PLATE_DARK),
     ]
     bracket = mcmaster_8681n11()
     for name, side in BRACKETS.items():
         # Flush with the side edge of the plates; the base leg points forward and the upright leg rises on the
-        # fixed plate's front face.
-        loc = Location((p.bracket_center_x(side), p.fixed_plate_front_y, 0)) * Rot(Z=180)
+        # stationary plate's front face.
+        loc = Location((p.bracket_center_x(side), p.stationary_plate_front_y, 0)) * Rot(Z=180)
         children.append(labeled(bracket, f"Bracket {name}", BRACKET_ALUMINUM, loc))
         children += _bracket_fasteners(p, name, side)
     for i in range(p.rtv_pad_count):
@@ -616,10 +622,10 @@ def build_mirror_cell_assembly(p: MirrorCellParameters | None = None) -> Compoun
     bushing, knob = kozak_tb250_80_625(), kozak_kb250_80()
     female, male = mcmaster_91131a028()
     seat_y = {
-        "moving": (p.moving_plate_rear_y - p.seat_counterbore_depth, "Spring seat washer (moving plate)"),
-        "fixed": (
-            p.fixed_plate_front_y - p.seat_washer_thickness + p.seat_counterbore_depth,
-            "Spring seat washer (fixed plate)",
+        "mirror": (p.mirror_plate_rear_y - p.seat_counterbore_depth, "Spring seat washer (mirror plate)"),
+        "stationary": (
+            p.stationary_plate_front_y - p.seat_washer_thickness + p.seat_counterbore_depth,
+            "Spring seat washer (stationary plate)",
         ),
     }
     for name in STATIONS:
@@ -631,7 +637,7 @@ def build_mirror_cell_assembly(p: MirrorCellParameters | None = None) -> Compoun
                 bushing,
                 f"Bushing {name}",
                 BUSHING_BRASS,
-                Location((x, p.moving_plate_front_y - KOZAK_TB250_FLANGE_THICKNESS, z)),
+                Location((x, p.mirror_plate_front_y - KOZAK_TB250_FLANGE_THICKNESS, z)),
             ),
             labeled(knob, f"Knob {name}", KNOB_SILVER, Location((x, p.washer_front_y, z))),
             labeled(
@@ -639,7 +645,7 @@ def build_mirror_cell_assembly(p: MirrorCellParameters | None = None) -> Compoun
             ),
             labeled(male, f"Spherical washer, male {name}", BLACK_OXIDE, Location((x, p.washer_back_y, z))),
         ]
-        spring_y0 = p.moving_plate_rear_y + (p.seat_washer_thickness - p.seat_counterbore_depth)
+        spring_y0 = p.mirror_plate_rear_y + (p.seat_washer_thickness - p.seat_counterbore_depth)
         spring = build_spring(p, x, spring_y0, z)
         children.append(labeled(spring, f"Compression spring {name}", HARDWARE_GRAY))
         for y0, label in seat_y.values():
@@ -660,7 +666,7 @@ ADJUSTER_HARDWARE_LABELS = (
     "Compression spring",
     "Spring seat washer",
 )
-SECTIONED_LABELS = ("Base plate", "Cell-adjuster plate", "Moving mirror plate", "Mirror")
+SECTIONED_LABELS = ("Base plate", "Stationary plate", "Mirror plate", "Mirror")
 
 
 def adjuster_section(cell: Compound, p: MirrorCellParameters, name: str) -> Compound:

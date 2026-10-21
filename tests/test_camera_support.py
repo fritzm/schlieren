@@ -76,8 +76,8 @@ def parts_by_name(assembly):
                 name = group
             elif label.startswith("Clamp"):
                 name = f"{group} clamp {label.split()[1]}"
-            elif label.endswith("magnet"):
-                name = f"{where} {_other_side(where, label.split()[0].lower())} magnet"
+            elif label.endswith("bearing insert"):
+                name = f"{where} {_other_side(where, label.split()[0].lower())} bearing insert"
             else:
                 name = label
         else:
@@ -155,11 +155,11 @@ class LensCradleTests(unittest.TestCase):
 
     def test_each_screw_tip_bears_on_its_pad_or_the_groove(self):
         for station in MAGNET_PADS:
-            screw, pad = self.parts[f"{station} screw"], self.parts[f"{station} magnet"]
+            screw, pad = self.parts[f"{station} screw"], self.parts[f"{station} bearing insert"]
             with self.subTest(pad=station):
                 self.assertLess(screw.distance_to(pad), CONTACT)
                 self.assertLess(intersect(screw, pad).volume, CONTACT)
-        self.assertNotIn("Aft left magnet", self.parts)
+        self.assertNotIn("Aft left bearing insert", self.parts)
         screw = self.parts["Aft left screw"]
         for rod in ("Groove rod -1", "Groove rod +1"):
             with self.subTest(rod=rod):
@@ -170,12 +170,14 @@ class LensCradleTests(unittest.TestCase):
         p = self.p
         self.assertEqual(p.screw_angle, 45.0)
         for station in MAGNET_PADS:
-            center = self.parts[f"{station} magnet"].center()
+            center = self.parts[f"{station} bearing insert"].center()
             # Pads are tangent to a circle about the axis: equal offsets across and below it.
             with self.subTest(pad=station):
                 self.assertAlmostEqual(abs(center.X), OPTICAL_HEIGHT - center.Z, places=3)
         # Pads lie with their long side across the rail, the direction they slide most.
-        self.assertAlmostEqual(self.parts["Fore left magnet"].bounding_box().size.Y, p.magnet_width, places=4)
+        self.assertAlmostEqual(
+            self.parts["Fore left bearing insert"].bounding_box().size.Y, p.magnet_width, places=4
+        )
 
     def test_four_adjusters_with_inserts_inside_the_yoke_bosses(self):
         p = self.p
@@ -198,7 +200,7 @@ class LensCradleTests(unittest.TestCase):
                 along = max(box.size.X, box.size.Z)
                 self.assertGreater(along, MCMASTER_94459A797_FLANGE_DIAMETER)  # Inclined, not axis-aligned.
                 self.assertFalse(cradle.is_inside(center))
-                for offset in (-0.4, 0.0):  # Material right round the insert body, deeper than the flange.
+                for offset in (-0.4, 0.0):  # Material right around the insert body, deeper than the flange.
                     on_axis = center + toward_axis * (offset * MCMASTER_94459A797_LENGTH)
                     for dy in (-3.4, 3.4):
                         self.assertTrue(cradle.is_inside(on_axis + Vector(0, dy, 0)))
@@ -331,7 +333,7 @@ class LensCradleTests(unittest.TestCase):
                             dx * (across / 2 + 0.5), dy * (along / 2 + 0.5), -p.pad_wall_height - 0.2
                         )
                         self.assertFalse(collar.is_inside(above))
-                    bearing = self.parts[f"{where} {name} magnet"] if not rods else None
+                    bearing = self.parts[f"{where} {name} bearing insert"] if not rods else None
                     if bearing is not None:
                         self.assertLess(intersect(bearing, collar).volume, 0.01)
         for rod in ("Groove rod -1", "Groove rod +1"):
@@ -383,7 +385,7 @@ class LensCradleTests(unittest.TestCase):
     def test_retaining_bands_are_endless_loops_on_the_barrel_and_a_peg(self):
         p = self.p
         angle = band_leg_angle(p)
-        self.assertGreater(angle, 60.0)  # Steep legs: most of the cord tension acts downward.
+        self.assertGreater(angle, 60.0)  # Steep legs: most of the band tension acts downward.
         # Calculated: tension in each leg for the hold-down force, the two legs sharing it.
         self.assertLess(p.band_hold_down / (2 * sin(radians(angle))), 3.2)
         path = band_path(p)
@@ -397,13 +399,13 @@ class LensCradleTests(unittest.TestCase):
             with self.subTest(band=where):
                 self.assertTrue(band.is_valid)
                 self.assertEqual(len(band.solids()), 1)
-                cord = band.bounding_box()
-                self.assertAlmostEqual(cord.size.Y, p.band_cord_diameter, places=4)
+                band_box = band.bounding_box()
+                self.assertAlmostEqual(band_box.size.Y, p.band_section_diameter, places=4)
                 # Beside the yoke, on the side toward the other collar, on a plain section of the barrel.
                 direction = p.toward_other(station)
-                self.assertGreater((cord.center().Y - station) * direction, p.yoke_thickness / 2 + 3.0)
-                self.assertGreater(cord.min.Y, p.barrel_start)
-                self.assertLess(cord.max.Y, p.focus_ring_start)
+                self.assertGreater((band_box.center().Y - station) * direction, p.yoke_thickness / 2 + 3.0)
+                self.assertGreater(band_box.min.Y, p.barrel_start)
+                self.assertLess(band_box.max.Y, p.focus_ring_start)
                 self.assertGreater(collar.distance_to(band), 3.0)
                 # Lying on the barrel, and on the neck of the peg, under its lip.
                 self.assertLess(band.distance_to(lens), 0.01)
@@ -412,7 +414,7 @@ class LensCradleTests(unittest.TestCase):
                 self.assertLess(intersect(band, yoke).volume, 0.01)
                 base = p.horn_base(station)
                 lip_start = base[1] + direction * p.horn_stem_length
-                self.assertLess((cord.max.Y - lip_start) * direction, 0.0)
+                self.assertLess((band_box.max.Y - lip_start) * direction, 0.0)
                 # The peg: a stem and a lip, on the centre of the crossbar face, along the lens.
                 for along, inside in (
                     (3.0, True),
@@ -653,7 +655,7 @@ class LensCradleTests(unittest.TestCase):
         own = set(self.parts)
         parts = self.parts_with_cutoff
         printed = ("Cradle shoe", "Aft yoke", "Fore yoke", "Phone rest", "Aft collar", "Fore collar")
-        let_in = (" screw", " magnet", " rod")  # Threaded into, or let into, a printed part.
+        let_in = (" screw", " bearing insert", " rod")  # Threaded into, or let into, a printed part.
         optics = {"Lens body", "Focus ring"}
         for a, b in near_pairs_among(parts.values()):
             labels = (a.label, b.label)

@@ -33,9 +33,9 @@ below the optical axis, past the shoe top (about 52.4 mm below), so the plate ba
 mm from the post axis): calculated clearance 2.1 mm to the shoe and 10.7 mm to the post body, at every
 rotation. The shoulder clears the post top by 5.1 mm.
 
-No SM1 tube, printed split clamp, retaining ring, or printed SM1 thread is used. The SM1RC/M provides the
-rotational bearing and lock: when loosened, the carriage rotates on its spigot. Nothing retains the spigot
-axially while the ring is loose, so support the carriage when rotating it.
+The SM1RC/M provides the rotational bearing and lock directly on the spigot: when loosened, the carriage
+rotates on its spigot. Nothing retains the spigot axially while the ring is loose, so support the carriage
+when rotating it.
 
 Required carriage rotation:
 
@@ -49,7 +49,7 @@ Define nominal zero as:
 - fine adjuster pointing upward.
 
 The cassette-loading side of the carriage faces the mirror, so cassettes are loaded and retracted from the
-forward side, away from the telephoto. The spigot, slip ring, and post are therefore aft of the base plate;
+forward side, away from the telephoto. The spigot, split ring, and post are therefore aft of the base plate;
 the ring's rear face, 22.2 mm behind the plate back, is the rearmost part of the station on the optical axis
 and is what the telephoto front must clear.
 
@@ -78,54 +78,48 @@ The carriage uses:
 - 1 × McMaster 98625A950 brass 1/4 in-80 insert
 - 1 × McMaster 2006N292 compression spring
 
-Insert geometry is taken exactly from the McMaster-Carr 98625A950 drawing, not from a generic 1/4 in-80 insert
-model. The drawing gives: internal thread 1/4 in-80; body outside diameter 0.313 in (7.950 mm); overall axial
-length 0.313 in (7.950 mm); under-flange/body length 0.298 in (7.569 mm); flange outside diameter 0.352 in
-(8.941 mm); flange thickness 0.010 in (0.254 mm); specified drill-bit size 0.313 in (7.950 mm); and minimum
-material thickness 0.298 in (7.569 mm). The 0.352 in dimension is the flange OD, not the bore or insert-body
-OD.
+Insert geometry is from the McMaster 98625A950 drawing: internal thread 1/4 in-80; body outside diameter 0.313
+in (7.950 mm); overall axial length 0.313 in (7.950 mm); under-flange/body length 0.298 in (7.569 mm); flange
+outside diameter 0.352 in (8.941 mm); flange thickness 0.010 in (0.254 mm); specified drill-bit size 0.313 in
+(7.950 mm); and minimum material thickness 0.298 in (7.569 mm).
 
 The insert bore is nominally 0.313 in (7.950 mm), matching the drawing. The printed bore is a pilot, finished
-after printing with a 5/16 in (0.3125 in) drill rather than relying on FDM accuracy; on the slit head this
-gave a good press fit ([§7.7](07-source-slit.md#77-fabrication-and-fit)). The 9.3 mm insert support exceeds
-the drawing's 0.298 in (7.569 mm) minimum material thickness, leaving 1.7 mm of PLA beyond the end of the
-insert body (1.6 mm past the entry chamfer) and 3 mm of keeper crown over the bore. The spring plunger loads
-the FAS100 tip, so the screw pushes the insert outboard, toward the knob. The flange is therefore on the inner
-(cassette-side) face of the adjuster block, with the body running outboard: the reaction bears the flange
-against the block instead of relying on the press fit. The flange stands 0.254 mm proud of the flat block
-face; the plungers stop about 9 mm short of it. The insert is pressed in from the cassette side before the
-plungers are installed, with the flange bottoming on the face.
+after printing with a 5/16 in (0.3125 in) drill rather than relying on FDM accuracy, to a press fit
+([§7.7](07-source-slit.md#77-fabrication-and-fit)). The 9.3 mm insert support exceeds the drawing's 0.298 in
+(7.569 mm) minimum material thickness, leaving 1.7 mm of PLA beyond the end of the insert body (1.6 mm past
+the entry chamfer) and 3 mm of keeper crown over the bore. The spring plunger loads the FAS100 tip, so the
+screw pushes the insert outboard, toward the knob. The flange is therefore on the inner (cassette-side) face
+of the adjuster block, with the body running outboard: the reaction bears the flange against the block instead
+of relying on the press fit. The flange stands 0.254 mm proud of the flat block face; the plungers stop about
+9 mm short of it. The insert is pressed in from the cassette side before the plungers are installed, with the
+flange bottoming on the face.
 
 The adjuster axis is 8.77 mm above the plate back: the 8.94 mm flange clears the deck by 0.3 mm, so the flange
 seat is a plain face and the plate is not notched. The spring axis ([§8.5](#85-spring-seating-and-retraction))
 is the same line, so both plungers load the cassette along one axis.
 
-FAS100 / insert travel envelope for CAD: the FAS100 uses a 1.000 in (25.4 mm) long 1/4 in-80 adjuster screw.
+FAS100 / insert travel envelope for CAD: the FAS100 uses a 1.00 in (25.4 mm) long 1/4 in-80 adjuster screw.
 The 80 TPI pitch gives 0.0125 in (0.3175 mm) axial motion per revolution. Using the insert's 0.313 in overall
 axial envelope as a conservative full-engagement allowance leaves approximately 0.687 in (17.45 mm) of
 theoretical screw motion. That is a geometric clearance estimate, not a published FAS100 travel specification.
 The carriage's working translation is ±5 mm / 10 mm total, leaving useful adjuster margin before either end
 stop.
 
-The FAS100 ball tip does not bear directly on printed PLA. The driven plunger carries a small hard bearing
-insert made from a nickel-plated rectangular NdFeB magnet:
-
-- Amazon B0DMCY4FN1
-- N52 Bar Magnet - 10 mm L × 5 mm W × 2 mm H
-- one magnet in the driven plunger
-
-The magnet is used as a hard, wear-resistant plated bearing surface; its magnetic function is incidental. It
-sits in a close-fitting printed pocket with its rear face fully supported by PLA, with a small CA or epoxy
-tack for retention. The FAS100 ball contacts the broad plated face rather than bare PLA.
+The FAS100 ball tip does not bear directly on printed PLA. The driven plunger carries a flat bearing insert in
+a close-fitting printed pocket: a nickel-plated N52 NdFeB bar magnet, 10 × 5 × 2 mm (Amazon B0DMCY4FN1). The
+plated face is a hard, wear-resistant bearing surface, and the magnet is functional: its attraction to the
+FAS100 ball tip helps retain the driven plunger on the adjuster screw during cassette changes, when no
+cassette is loading the plunger against the screw. The bearing insert has its rear face fully supported by
+PLA, with a small cyanoacrylate (CA) or epoxy tack for retention. The FAS100 ball contacts the broad plated
+face rather than bare PLA. The slit head ([§7](07-source-slit.md#7-source-slit)) and the lens cradle
+([§9.5](09-camera-telephoto.md#95-lens-cradle)) use the same bearing insert; in the cradle the magnet's pull
+on the steel screw tips likewise adds some preload ([§9.8](09-camera-telephoto.md#98-retaining-bands)).
 
 The plunger top is held near 12.0 mm by the cassette clamp-bar relief, which leaves only 0.6 mm of roof over
 the pocket (top at 11.37 mm). A local crown on the driven plunger over the pocket, 5 mm long from the outer
 face and 1.5 mm wider than the pocket on each side, restores a 1.3 mm roof (top at 12.67 mm). It is at the
 outboard end, clear of the clamp bars; it is blended into the plunger top by a 0.4 mm root fillet on its sides
 and inboard end.
-
-The magnet pocket, with its crown roof and fillet, holds the magnet and the FAS100 ball bears on it smoothly.
-The insert's press fit and its flange seat on the flat block face are good.
 
 ### 8.4 Cassette seating
 
@@ -143,12 +137,12 @@ sets the cassette's standoff from the datum face.
 
 Mount each pin through a through-hole in the printed carriage with the domed brass head on the cassette side.
 The holes are modeled Ø1.75 mm: the measured 0.050 in (1.27 mm) shank, plus a 0.38 mm diametral allowance for
-the undersize of printed holes, plus 0.1 mm fit clearance; the holes take the shanks as a slip fit, so the CA
-is their only retention. If a shank binds, finish the hole with a #54 (0.055 in) drill. The hole fit only
-locates the shank; the head sets the datum. Seat the underside of the head firmly against the carriage datum
-face so datum height is established mechanically rather than by adhesive thickness. Wick a small amount of CA
-around the shank from the back for retention, then flush-cut and dress the projecting shank at the back of the
-carriage. Keep CA out from beneath the head/contact surface.
+the undersize of printed holes, plus 0.1 mm fit clearance; the holes take the shanks as a slip fit, so CA
+(below) is their only retention. If a shank binds, finish the hole with a #54 (0.055 in) drill. The hole fit
+only locates the shank; the head sets the datum. Seat the underside of the head firmly against the carriage
+datum face so datum height is established mechanically rather than by adhesive thickness. Wick a small amount
+of CA around the shank from the back for retention, then flush-cut and dress the projecting shank at the back
+of the carriage. Keep CA out from beneath the head/contact surface.
 
 The three pin heads form a broad triangular support pattern around the optical aperture. The cassette rear
 face is the sliding datum surface and provides unobstructed swept tracks over the three domed contacts
@@ -156,56 +150,58 @@ throughout the fine-adjust travel. The pin coordinates, set in the carriage CAD,
 of the swept track of the cassette's rear M3 clamp-screw countersinks over the full travel, so the datum
 tracks stay on uninterrupted printed rear-face material at every cassette position.
 
-The plunger bodies are constrained to the intended translation axis by ears/tabs riding in slotted guiding
-rails. The guide slots prevent unwanted lateral movement or rotation while permitting the required axial
-plunger travel.
+The plunger bodies are constrained to the intended translation axis by ears/tabs riding in guide slots in the
+carriage. The slots prevent unwanted lateral movement or rotation while permitting the required axial plunger
+travel.
 
 The ears run with only 0.15 mm of clearance below and 0.25 mm above, so their exposed edges are broken against
 binding: a 0.4 mm chamfer on the bottom edges, which take the printed first-layer squash, a 0.5 mm fillet on
 the top edges, and 0.6 mm fillets on the outer vertical corners (larger than the two edge breaks they meet).
 Where each ear leaves the plunger body wall, a 0.8 mm concave fillet on both the top and the underside
 relieves the stress: the underside root is on the tension side under the seating reaction (about 10 N per ear,
-a few MPa nominal). It lies at x = 29.0–29.8 mm, clear of the track floor (x ≥ 32.3 mm) and the keeper opening
-edge (x = 33 mm).
+a few MPa nominal). It lies at x = 29.0–29.8 mm in the carriage frame (origin on the optical axis, y along the
+travel, +y toward the FAS100), clear of the guide-rail floor (x ≥ 32.3 mm) and the keeper opening edge (x = 33
+mm).
 
-The plunger bodies themselves run 0.3 mm above the base plate deck, so their underside perimeter carries a 0.4
+The plunger bodies themselves run 0.3 mm above the base-plate deck, so their underside perimeter carries a 0.4
 mm chamfer, a lead-in over deck seams and a relief for first-layer squash. On the spring plunger it continues
-round the feet of the spring cup, including the edges of the pocket's opening toward the deck; the
+around the feet of the spring cup, including the edges of the pocket's opening toward the deck; the
 cassette-side bevels and lips, which generate the seating force, are left as designed.
 
-The plungers need an assembly path into their guides: both longitudinal ends of the guide path are occupied,
-by the FAS100 adjuster support on one side and the spring end wall on the other. The guide tracks are
-therefore open from the cassette-loading side; the plungers drop into them, and a separate printed keeper
-frame closes only the guide-ear regions.
+The plungers need an assembly path into their guide slots: both longitudinal ends of each guide rail are
+occupied, by the FAS100 adjuster support on one side and the spring end wall on the other. The guide rails are
+therefore open from the cassette-loading side; the plungers drop onto them, and a separate printed keeper
+frame closes only the guide-ear regions, completing the slots.
 
 The keeper is a perimeter frame, not a solid lid: the central upper aperture must remain open for cassette
-insertion and removal. Its side members span the plunger guide tracks and retain the guide ears against upward
-escape while the printed track walls carry the lateral guidance loads. The frame may be locally scalloped or
-notched where the FAS100 adjuster axis intersects its envelope, provided the material directly over the swept
-guide-ear paths and the load paths to the fasteners remain intact. The keeper's spring-end member also carries
-the roof of the end-wall spring cup ([§8.5](#85-spring-seating-and-retraction)).
+insertion and removal. Its side members span the plunger guide rails, completing the slots, and retain the
+guide ears against upward escape while the printed rail walls carry the lateral guidance loads. The frame may
+be locally scalloped or notched where the FAS100 adjuster axis intersects its envelope, provided the material
+directly over the swept guide-ear paths and the load paths to the fasteners remain intact. The keeper's
+spring-end member also carries the roof of the end-wall spring cup
+([§8.5](#85-spring-seating-and-retraction)).
 
-Keeper retention is mechanical, with eight fasteners per carriage. Each is the existing common McMaster
-91292A114 M3 × 0.5 × 12 mm socket-head screw with a McMaster 91828A211 full-height M3 × 0.5 hex nut (5.5 mm
-across flats × 2.4 mm high), captive in a hex pocket opening from the plate back. Screw heads and nuts bear
-directly on the PLA, without washers; tighten only to a light snug, since the joint needs little clamp and a
-firm hex-key torque can crush the bearing face.
+Keeper retention is mechanical, with eight fasteners per carriage. Each is the common McMaster 91292A114 M3 ×
+0.5 × 12 mm socket-head screw with a McMaster 91828A211 full-height M3 × 0.5 hex nut (5.5 mm across flats ×
+2.4 mm high), captive in a hex pocket opening from the plate back. Screw heads and nuts bear directly on the
+PLA, without washers; tighten only to a light snug, since the joint needs little clamp and a firm hex-key
+torque can crush the bearing face.
 
-- Four end screws, at (±38.5, −53) and (±38.5, +52) mm in the carriage frame (y along the travel, +y toward
-  the FAS100). Each sits on solid fill closing its guide track from 1 mm beyond the outermost ear position to
-  the plate end. The fill is also the plungers' end stop: 1 mm past full loading retraction for the spring
-  plunger and past +5 mm travel for the driven plunger. These positions keep each nut pocket at least 1 mm
-  inside the rotation envelope ([§8.1](#81-spigot-and-rotation-interface)).
+- Four end screws, at (±38.5, −53) and (±38.5, +52) mm in the carriage frame. Each sits on solid fill closing
+  its guide slot from 1 mm beyond the outermost ear position to the plate end. The fill is also the plungers'
+  end stop: 1 mm past full loading retraction for the spring plunger and past +5 mm travel for the driven
+  plunger. These positions keep each nut pocket at least 1 mm inside the rotation envelope
+  ([§8.1](#81-spigot-and-rotation-interface)).
 - Four side screws, at (±42, ±37) mm, beside the middle of each plunger's ear travel. Each sits in a Ø10 mm
-  round lug that widens the base, frame, and keeper locally to 94 mm, clipped at the guide-track wall.
+  round lug that widens the base, frame, and keeper locally to 94 mm, clipped at the guide-rail wall.
 
-The side screws carry the ear wedge reactions (below) into the frame close to where they arise. A first-order
-beam estimate, with each keeper side member simply supported between adjacent screws, gives at most about 0.07
-mm of upward keeper deflection at the ears at the maximum-compression load (with a PLA modulus of about 3000
-MPa assumed). That is within the 0.25 mm free play between the ears and the keeper; with only the four end
-screws it would be about 1.5–2 mm. The keeper side members are 3.0 mm thick; a printed keeper holds under the
-ear reactions without spreading. A keeper with 5.0 mm side members fits the same screws if more stiffness is
-wanted: its counterbores are deeper, so the head seat height is unchanged.
+The side screws carry the upward ear reactions from the bevel wedge action (sized below) into the frame close
+to where they arise. A first-order beam estimate, with each keeper side member simply supported between
+adjacent screws, gives at most about 0.07 mm of upward keeper deflection at the ears at the
+maximum-compression load (with a PLA modulus of about 3000 MPa assumed). That is within the 0.25 mm free play
+between the ears and the keeper; with only the four end screws it would be about 1.5–2 mm. The keeper side
+members are 3.0 mm thick. A keeper with 5.0 mm side members fits the same screws if more stiffness is wanted:
+its counterbores are deeper, so the head seat height is unchanged.
 
 The screw heads sit in an approximately 0.5 mm-deep recess in the keeper, and the captive hex pockets are
 approximately 2.5 mm deep. This leaves approximately 1.5 mm of PLA above each nut pocket and gives nearly full
@@ -213,16 +209,13 @@ use of the 12 mm screw length, with only slight nominal screw projection beyond 
 broad printed lands, so the fasteners clamp it against the carriage rather than suspending it between isolated
 points.
 
-The vertical guide stack is: 4.0 mm carriage back plate; 2.0 mm rise from the plate front to the lower
-guide-ear running surface; 3.0 mm plunger guide ears in a 3.4 mm guide channel; and a 3.0 mm keeper frame.
-
-The guide stack gives smooth plunger travel over the full range in both directions, and the ears slide freely
-in their channel; the captive nut pockets, keeper screw-head recesses, and datum pins all seat well.
+The vertical guide stack is: 4.0 mm base plate; 2.0 mm rise from the plate front to the lower
+guide-ear running surface; 3.0 mm plunger guide ears in a 3.4 mm guide slot; and a 3.0 mm keeper frame.
 
 Use a very light film of plastic-safe lubricant on the PLA-on-PLA sliding interfaces, particularly the plunger
 ears/tabs in their guide slots and any other plunger sliding faces. The lubricant is McMaster 1418K51 clear
-silicone grease, NLGI 1. Smooth/dress the printed sliding surfaces first, apply only a trace amount, cycle the
-mechanism, and wipe away visible excess so the lubricant acts as a thin boundary film rather than a
+silicone grease, NLGI Grade 1. Smooth/dress the printed sliding surfaces first, apply only a trace amount,
+cycle the mechanism, and wipe away visible excess so the lubricant acts as a thin boundary film rather than a
 grease-packed slide. Keep lubricant away from CA/epoxy/RTV bonding surfaces and apply it only after nearby
 adhesive work is complete.
 
@@ -236,14 +229,11 @@ cassette plane gives approximately 9.7–12.0 N upward reaction per plunger at f
 15.1–18.7 N per plunger at maximum normal compression. These reactions are carried upward through the plunger
 ears into the keeper frame; about 20 N per plunger is the working-load scale before safety margin.
 
-A printed cassette seats flat on the datum pins and is retained firmly by the plungers on the 27.5° bevels.
-
 ### 8.5 Spring seating and retraction
 
 The spring plunger is preloaded by the McMaster 2006N292 compression spring ([§8.3](#83-fine-adjustment)),
 acting between the frame's spring end wall and the plunger's outboard face on the adjuster axis, 8.77 mm above
-the plate back. No guide rod, retract handle, or penetration of the end wall is used; a guide rod through the
-end wall would project below the axis past the rail top at nominal zero.
+the plate back.
 
 Each spring end sits in a printed cup, 3 mm deep, sized to the measured 0.272 in (6.91 mm) coil OD plus 1.0 mm
 diametral clearance:
@@ -261,14 +251,14 @@ diametral clearance:
 The cup roof is 1.2 mm over the coil and the side walls 1.8 mm, so the feet keep a 1.0 mm flat inside the 0.4
 mm underside chamfer ([§8.4](#84-cassette-seating)).
 
-The spring's free length is about 4–4.6 times its mean coil diameter, and both ends sit on parallel faces
-because the plunger is guided. That is below the roughly 5.3 critical ratio for buckling with fixed ends, so
-the cups need only locate the ends rather than guide the full length. The spring itself does not guide the
-plunger; the slotted carriage guides constrain plunger translation and rotation.
-
 The spring has a free length of approximately 25.5 mm. The carriage is designed around a 16.5 mm spring length
 at the fiducial / mid-travel cassette position, corresponding to approximately 9 mm spring compression from
 free length.
+
+The spring's free length is about 4–4.6 times its mean coil diameter, and both ends sit on parallel faces
+because the plunger is guided. That is below the roughly 5.3 critical ratio for buckling with fixed ends, so
+the cups need only locate the ends rather than guide the full length. The spring itself does not guide the
+plunger; the carriage's guide slots constrain plunger translation and rotation.
 
 Normal supported plunger travel is ±5 mm about the fiducial position, for 10 mm total working travel. The
 corresponding spring-length range is approximately:
@@ -277,10 +267,10 @@ corresponding spring-length range is approximately:
 - 16.5 mm at fiducial / mid travel;
 - 11.5 mm at the most-compressed end of normal travel.
 
-Loading retraction is a further 6 mm from fiducial (10.5 mm spring length), leaving 4.5 mm between the cups.
-Any additional compression capacity is treated as design margin rather than normal commanded travel. The
-spring plunger's ears reach the end of their track before the spring is compressed solid, so the track end
-stop, not the spring, limits retraction.
+Loading retraction is 6 mm from fiducial, 1 mm beyond normal travel (10.5 mm spring length), leaving 4.5 mm
+between the cups. Any additional compression capacity is treated as design margin rather than normal commanded
+travel. The spring plunger's ears reach the end of their slot before the spring is compressed solid, so the
+slot end stop, not the spring, limits retraction.
 
 Retraction for cassette loading uses a thumb tab on the spring plunger's front face at its outboard end:
 
@@ -322,16 +312,16 @@ Cassette variants, all built on the common blank:
   <em>Fig. 9. Cassette blank with its two clamp bars and hardware</em>
 </p>
 
-The standard cassette blank carries one opposed pair of integral filament cleats on the front / non-datum
-face, rather than making cleats a special cassette variant: two cleats, one on each side of the 24 mm optical
+The common cassette blank carries one opposed pair of integral filament cleats on the front / non-datum face,
+rather than making cleats a special cassette variant: two cleats, one on each side of the 24 mm optical
 aperture, at (±25, 0) mm on an aperture centerline, outboard of the razor blades and clamp bars. The cleats
 are slightly conical, Ø3.5 mm at the cassette face widening to Ø5 mm toward the top and rising 3 mm, so
 filament tension drives fine wire or thread down against the cassette front face. The tops are rounded to
 avoid damaging fine wire. Route a filament in an S path, around opposite sides of the two cleats; the free
 span then crosses approximately through the aperture centerline. Small angular error from finite cleat
 diameter or wrapping is acceptable because the SM1RC/M rotates the complete tube/cassette assembly. This makes
-the same universal cassette blank usable for blade, filter, Photofoil, wire, and thread experiments while
-keeping the rear datum face unobstructed.
+the same common cassette blank usable for blade, filter, Photofoil, wire, and thread experiments while keeping
+the rear datum face unobstructed.
 
 ### 8.7 Cassette clamp bars
 
@@ -379,14 +369,14 @@ rear-entry 90° countersinks matched to the 92125A133 head (Ø6.2 mm at the face
 diametral allowance), and each bar end provides a washer bearing land at least 7.2 mm across. The screw head
 finishes flush with or slightly below the rear/datum face so it cannot contact the carriage datum pins or
 interfere with cassette sliding. The fasteners, bars, nuts, cleats, and projecting screw ends are clear of the
-24 mm optical aperture and carriage interfaces. The holes and countersinks are features of the universal
-cassette blank, not blade-specific geometry.
+24 mm optical aperture and carriage interfaces. The holes and countersinks are features of the common cassette
+blank, not blade-specific geometry.
 
 Because the clamp fasteners do not pass through the optical element, the screw length is not sized from a
 blade-thickness stack. The 14 mm length gives full nut engagement and holds razor blades under the 4 mm bars,
-with the head seated flush in its countersink. The screws are vertical and the lips act at the cassette edges,
-so the screw length does not bear on the lips; the bar ends, which reach the bevel zone, are relieved to clear
-them.
+with the head seated flush in its countersink. The screws are perpendicular to the cassette face and the lips
+act at the cassette edges, so the screw length does not bear on the lips; the bar ends, which reach the bevel
+zone, are relieved to clear them.
 
 ### 8.8 Fine wire
 
@@ -397,11 +387,11 @@ diameters below are bare-conductor diameters; enamel makes the finished optical 
 | ------------------ | --------------------- | ----------------------- | ---------------------------------------------------------- |
 | 44 AWG magnet wire | 0.0020 in             | 0.0508 mm               | fine / high-sensitivity filament                           |
 | 34 AWG magnet wire | 0.0063 in             | 0.160 mm                | intermediate filament, near the expected slit-image width  |
-| 30 AWG magnet wire | 0.0100 in             | 0.255 mm                | coarse filament for stronger gradients / deeper dark field |
+| 30 AWG magnet wire | 0.0100 in             | 0.254 mm                | coarse filament for stronger gradients / deeper dark field |
 
 Exact finished outside diameter is not critical for the qualitative instrument.
 
-The universal cassette cleat pair described in [§8.6](#86-common-cassette-standard) is the quick-change
+The common cassette blank's cleat pair, described in [§8.6](#86-common-cassette-standard) is the quick-change
 mounting for these wires and for dark sewing thread or other fibers. Apply only modest tension, particularly
 to 44 AWG wire; the conical cleats seat the filament against the cassette face, and the S-wrap places the free
 span approximately on the aperture centerline.

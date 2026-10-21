@@ -9,10 +9,10 @@ INCH = 25.4  # mm.
 # Frozen project datum (§3.4): the optical axis above the rail top.
 OPTICAL_HEIGHT = 72.35
 
-# The common post stack (§5): a Thorlabs TR50/M post standing on a 0.010 in datum disc on the rail top. TR50/M
+# The common post stack (§5): a Thorlabs TR50/M post standing on a 0.010 in datum shim on the rail top. TR50/M
 # is metric-primary; its STEP model is rounded to inches (1.969 in, 0.499 in), so these nominals are exact.
-DATUM_DISC_THICKNESS = 0.010 * INCH
-DATUM_DISC_DIAMETER = 0.75 * INCH
+DATUM_SHIM_THICKNESS = 0.010 * INCH
+DATUM_SHIM_DIAMETER = 0.75 * INCH
 POST_LENGTH = 50.0
 POST_DIAMETER = 12.7
 

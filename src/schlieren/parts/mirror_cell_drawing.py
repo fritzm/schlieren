@@ -5,7 +5,7 @@ The sheet is 11 × 17 in (tabloid), landscape. Hole positions are dimensioned as
 from the plate centerline and y from the front edge.
 
 The sheet is drawn with the front edge at the bottom, so +y runs up the sheet toward the rear and +x to the
-right, as seen from above. The footprints of the sliding plate, the cell-adjuster plate, and the brackets are
+right, as seen from above. The footprints of the sliding plate, the stationary plate, and the brackets are
 drawn dashed as an aid to checking the layout.
 """
 
@@ -155,8 +155,8 @@ def base_plate_drawing_svg(p: MirrorCellParameters | None = None) -> str:
     footprint(
         -qr_half, qr_half, 0.0, p.qr_plate_length, "sliding plate (underside)", 0.0, p.qr_plate_length - 12
     )
-    fixed_front, fixed_rear = p.fixed_plate_front_y, p.fixed_plate_rear_y
-    footprint(-width / 2, width / 2, fixed_front, fixed_rear, "cell-adjuster plate", 0.0, fixed_rear + 4)
+    fixed_front, fixed_rear = p.stationary_plate_front_y, p.stationary_plate_rear_y
+    footprint(-width / 2, width / 2, fixed_front, fixed_rear, "stationary plate", 0.0, fixed_rear + 4)
     for sign in BRACKETS.values():
         x = p.bracket_center_x(sign)
         half = MCMASTER_8681N11_WIDTH / 2

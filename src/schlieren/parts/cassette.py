@@ -1,8 +1,8 @@
 """Preliminary common cassette blank, design §8.6.
 
 XY is the cassette plane; z=0 is the rear sliding datum. The front is +Z. Bevel dimensions match the
-provisional carriage, not a physically qualified fit. Integral cleats and rear countersinks are universal; two
-removable clamp bars and hardware references are available as an assembly.
+provisional carriage, not a physically qualified fit. Integral cleats and rear countersinks are on every
+cassette; two removable clamp bars and hardware references are available as an assembly.
 """
 
 from dataclasses import dataclass

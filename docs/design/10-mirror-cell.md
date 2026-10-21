@@ -1,52 +1,52 @@
 ## 10. Mirror cell
 
+The model is `src/schlieren/parts/mirror_cell.py`.
+
 ### 10.1 Plates and basic architecture
 
-The mirror-cell is constructed from three Baltic birch plywood plates:
+The mirror cell is constructed from three Baltic-birch plywood plates:
 
 - base plate: 11.5 in wide × 7.0 in front-to-back × 1/2 in;
-- cell-adjuster plate: 11.5 in wide × 11.0 in high × 1/2 in;
-- moving mirror plate: 3/4 in cut to the truncated-hex geometry below.
+- stationary plate: 11.5 in wide × 11.0 in high × 1/2 in;
+- mirror plate: 3/4 in cut to the truncated-hex geometry below.
 
-The base plate provides the structural/tripod-support base and is joined to the cell-adjuster plate by
-structural brackets described in [§10.7](#107-structural-brackets). The cell-adjuster plate carries three
-fine-adjustment stations ([§10.2](#102-three-adjuster-stations)) which couple it to the moving mirror plate.
-The 3/4 in moving mirror plate carries the 203 mm mirror and moves relative to the fixed cell-adjuster plate.
+The base plate provides the structural/tripod-support base and is joined to the stationary plate by angle
+brackets described in [§10.7](#107-angle-brackets). The stationary plate carries three fine-adjustment
+stations ([§10.2](#102-three-adjuster-stations)) which couple it to the mirror plate. The 3/4 in mirror plate
+carries the 203 mm mirror and moves relative to the stationary plate.
 
 <p align="center">
   <img src="figures/mirror-cell.png" width="500" style="max-width: 90%"
-       alt="Mirror cell seen from the front: the base plate, the cell-adjuster plate, the moving mirror plate
-       with its 203 mm mirror and three adjuster tips, and the two corner brackets with their screws">
+       alt="Mirror cell seen from the front: the base plate, the stationary plate, the mirror plate
+       with its 203 mm mirror and three adjuster tips, and the two angle brackets with their screws">
   <br>
-  <em>Fig. 11. Mirror cell from the mirror side: base plate, cell-adjuster plate, moving mirror plate and
-    mirror, and corner brackets</em>
+  <em>Fig. 11. Mirror cell from the mirror side: base plate, stationary plate, mirror plate and
+    mirror, and angle brackets</em>
 </p>
 
-The cell-adjuster plate is centered left/right on the 11.5 in-wide base. The rear face of the 1/2 in fixed
-cell-adjuster plate is 4.000 in aft of the front edge of the 7.0 in-deep base, leaving 3.0 in of base behind
-it. Two McMaster 8681N11 structural angle brackets face forward, toward the moving mirror plate; their
-measured forward footprint is approximately 3.5 in from the fixed-plate rear face, leaving approximately 0.5
-in of base margin at the front edge. This orientation places the brackets on the mirror side of the fixed
-plate so they directly resist the forward overturning moment of the mirror assembly.
+The stationary plate is centered left/right on the 11.5 in-wide base. The rear face of the 1/2 in stationary
+plate is 4.000 in aft of the front edge of the 7.0 in-deep base, leaving 3.0 in of base behind it. Two
+McMaster 8681N11 angle brackets face forward, toward the mirror plate; their measured forward footprint is
+approximately 3.5 in from the stationary-plate rear face, leaving approximately 0.5 in of base margin at the
+front edge. This orientation places the brackets on the mirror side of the stationary plate so they directly
+resist the forward overturning moment of the mirror assembly.
 
-Using measured masses of 1.56 kg for the approximately 18 mm-thick mirror, 840 g for the assembled fixed +
-moving plates and adjuster hardware, about 318 g for the 11.5 × 7.0 × 1/2 in base plate, and 79 g each for the
-two aluminum brackets, the estimated completed mirror-cell fore/aft center of gravity is approximately 3.0 in
-/ 76 mm aft of the front edge of the base. A working uncertainty of approximately ±0.2 in / ±5 mm is
+Using measured masses of 1.56 kg for the approximately 18 mm-thick mirror, 840 g for the assembled stationary
+and mirror plates and adjuster hardware, about 318 g for the 11.5 × 7.0 × 1/2 in base plate, and 79 g each for
+the two aluminum brackets, the estimated completed mirror-cell fore/aft center of gravity is approximately 3.0
+in / 76 mm aft of the front edge of the base. A working uncertainty of approximately ±0.2 in / ±5 mm is
 conservative. This places the expected center of gravity approximately 1.0 in / 25 mm forward of the rear face
-of the fixed cell-adjuster plate. The 130 g CAMVATE removable quick-release plate is centered 0.5 in / 12.7 mm
-aft of this location, a small offset that has little effect; final balance is trimmed using the quick-release
-system's generous fore/aft sliding travel.
+of the stationary plate.
 
 The cell uses:
 
 - three fine-adjustment stations arranged at 120° intervals;
 - compression-spring preload at each station;
 - spherical washer interfaces for angular accommodation and gravity-load transfer;
-- tripod interface through the CAMVATE 577/501/504-style quick-release system and the Sunwayfoto LB-68R
+- tripod interface through the CAMVATE 577/501/504-compatible quick-release system and the Sunwayfoto LB-68R
   leveling base.
 
-The moving mirror plate geometry is:
+The mirror-plate geometry is:
 
 - start from a regular hexagon 11.000 in / 279.4 mm vertex-to-vertex, oriented with one vertex upward;
 - the corresponding normal flat radius / apothem is 4.7631 in / 120.98 mm;
@@ -56,23 +56,19 @@ The moving mirror plate geometry is:
 - the mirror aperture is 8-1/8 in / 206.38 mm diameter, providing approximately 1/16 in radial clearance
   around the nominal 203 mm mirror;
 - clip the unused bottom hex vertex with a horizontal chord whose midpoint is 4.7631 in / 120.98 mm below the
-  mirror center, matching the original hex apothem. This removes approximately 0.7369 in / 18.72 mm of the
-  original lower tip and produces a new lower edge approximately 2.553 in / 64.8 mm long;
-- the resulting trimmed moving-plate height is approximately 10.263 in / 260.7 mm from the new lower edge to
-  the top vertex.
+  mirror center, matching the hexagon's apothem. This removes approximately 0.7369 in / 18.72 mm of the lower
+  vertex and produces a lower edge approximately 2.553 in / 64.8 mm long;
+- the resulting trimmed mirror-plate height is approximately 10.263 in / 260.7 mm from the truncated lower
+  edge to the top vertex.
 
-The nominal clearance from the bottom trimmed edge of the moving mirror plate to the top surface of the base
-plate is 3/8 in / 9.53 mm. This places the mirror center approximately 5.138 in / 130.51 mm above the base
-top. The top moving-plate vertex then lies approximately 10.638 in / 270.21 mm above the base top, leaving
-approximately 0.362 in / 9.2 mm of fixed-plate height above it within the 11.0 in-high cell-adjuster plate.
+The nominal clearance from the bottom trimmed edge of the mirror plate to the top surface of the base plate is
+3/8 in / 9.53 mm. This places the mirror center approximately 5.138 in / 130.51 mm above the base top. The top
+mirror-plate vertex then lies approximately 10.638 in / 270.21 mm above the base top, leaving approximately
+0.362 in / 9.2 mm of stationary-plate height above it within the 11.0 in-high stationary plate.
 
 This truncated-hex geometry preserves the same approximately 0.701 in / 17.8 mm radial plywood width between
-the 8-1/8 in mirror aperture and the new bottom edge as exists between the aperture and each original hex
+the 8-1/8 in mirror aperture and the truncated bottom edge as exists between the aperture and each hexagon
 flat. It therefore improves base clearance without introducing a uniquely narrow section.
-
-The moving mirror plate uses 3/4 in Baltic-birch sheet. The 1/2 in Baltic-birch stock is shared with the
-tabletop frame and is used for the cell-adjuster plate, base plate, front pivot plate, and rear
-rail-support/foot blocks.
 
 ### 10.2 Three adjuster stations
 
@@ -88,8 +84,8 @@ Use one adjuster, one bushing, and one knob at each of the three stations.
 
 <p align="center">
   <img src="figures/mirror-cell-adjuster.png" width="500" style="max-width: 90%"
-       alt="Section through one adjuster station: knob, spherical washer pair, cell-adjuster plate, spring
-       between its seat washers, moving plate with bushing, and the adjuster screw">
+       alt="Section through one adjuster station: knob, spherical washer pair, stationary plate, spring
+       between its seat washers, mirror plate with bushing, and the adjuster screw">
   <br>
   <em>Fig. 12. Adjuster station, plywood and mirror cut away: knob, spherical washer pair, spring and seat
     washers, bushing, and adjuster screw</em>
@@ -102,12 +98,11 @@ is no separate spring pocket or spring bore in the plywood.
 
 #### Adjuster-bushing mounting
 
-Each Kozak TB250-80-625 bushing is bonded directly into the 3/4 in moving mirror plate. No separate metal
-bushing carrier is used.
+Each Kozak TB250-80-625 bushing is bonded directly into the 3/4 in mirror plate.
 
 Mounting details:
 
-- the bushing's narrow flange is on the mirror-facing / outboard face of the moving mirror plate, opposite the
+- the bushing's narrow flange is on the mirror-facing / outboard face of the mirror plate, opposite the
   inter-plate spring space; spring/adjuster load therefore tends to seat the flange against the plywood rather
   than pull it away;
 - drill the bushing bore 8.0 mm through the Baltic birch, preferably in a drill press with a sharp brad-point
@@ -142,18 +137,18 @@ Each of the three springs is captured between two seat washers, producing:
 
 The counterbores register the washers; they are not spring pockets.
 
-The nominal wood-face-to-wood-face interplate gap is 0.500 in / 12.7 mm at the neutral mirror position.
+The nominal wood-face-to-wood-face inter-plate gap is 0.500 in / 12.7 mm at the neutral mirror position.
 
 The spring-seat washer counterbores are:
 
 - diameter: 5/8 in (Forstner cutter);
 - nominal depth: 1/32 in / 0.03125 in / 0.794 mm;
-- use the same nominal depth for all three seats in the moving mirror plate and all three corresponding seats
-  in the fixed cell-adjuster plate.
+- use the same nominal depth for all three seats in the mirror plate and all three corresponding seats in the
+  stationary plate.
 
 The McMaster 98017A199 washers are approximately 0.028–0.036 in thick, so the 1/32 in recess places them
 approximately flush with the plywood surfaces across their thickness tolerance. With the 0.750 in-free-length
-McMaster 2022N186 springs and the 0.500 in nominal interplate gap, the springs operate at approximately 0.250
+McMaster 2022N186 springs and the 0.500 in nominal inter-plate gap, the springs operate at approximately 0.250
 in nominal compression before small washer-thickness and adjustment-position variations.
 
 ### 10.4 Spherical washer interfaces
@@ -168,8 +163,7 @@ Total:
 - 3 spherical-washer counterbores
 
 These sockets participate in the mirror-cell gravity load path. The washer OD bears against the counterbore
-wall, transferring gravity load from the 3/4 in moving mirror plate/adjuster assembly to the fixed 1/2 in
-cell-adjuster plate.
+wall, transferring gravity load from the 3/4 in mirror plate/adjuster assembly to the 1/2 in stationary plate.
 
 Target depth:
 
@@ -180,14 +174,14 @@ selected against measured washer OD rather than assuming a nominal oversize wood
 
 #### Stationary-plate adjuster through-hole
 
-At each adjuster station, use a 1/8 in / 3.175 mm initial alignment guide hole through the fixed 1/2 in
-cell-adjuster plate. This guide hole establishes a common center for the spring-seat counterbore on the
-mirror-facing face, the spherical-washer socket on the rear face, and the final adjuster clearance hole.
+At each adjuster station, use a 1/8 in / 3.175 mm initial alignment guide hole through the 1/2 in stationary
+plate. This guide hole establishes a common center for the spring-seat counterbore on the mirror-facing face,
+the spherical-washer socket on the rear face, and the final adjuster clearance hole.
 
 After machining both counterbores, enlarge the guide hole to a final 5/16 in / 0.3125 in / 7.94 mm
 through-hole. This is intentionally oversized relative to the 1/4 in Kozak TS250-80-2500 adjuster so the
-plywood does not become the angular bearing as the moving mirror plate tilts. A 5/16 in hole provides 0.03125
-in radial clearance around a 0.250 in adjuster. Across a conservative full 0.500 in plate thickness, a 3°
+plywood does not become the angular bearing as the mirror plate tilts. A 5/16 in hole provides 0.03125 in
+radial clearance around a 0.250 in adjuster. Across a conservative full 0.500 in plate thickness, a 3°
 adjuster-axis tilt produces approximately 0.0262 in lateral displacement (0.500 × tan 3°), so the clearance
 accommodates approximately the full ±3° angular capability of the McMaster 91131A028 spherical-washer
 interface. The actual effective constraining thickness is somewhat less because of the shallow counterbores.
@@ -215,13 +209,13 @@ friction and stick-slip as the mirror plate tilts during fine adjustment.
 
 Keep the outside diameter and lower/load-transfer surfaces dry so the lower washer half continues to bear
 directly against the close-fit CA-hardened plywood counterbore. Keep grease away from plywood,
-adhesive-bonding areas, and RTV bonding surfaces. The grease is Dynatex NLGI #2 white lithium grease.
+adhesive-bonding areas, and RTV bonding surfaces. The grease is Dynatex NLGI Grade 2 white lithium grease.
 
 ### 10.5 Mirror mounting
 
-The 203 mm mirror is carried within the 3/4 in moving mirror-plate aperture. Its back surface is flush with
-the rear face of the plate, since both rest on the cure surface ([§10.6](#106-rtv-glue-up-cure-surface))
-during bonding; its front surface is therefore recessed about 1 mm below the front face of the plate.
+The 203 mm mirror is carried within the 3/4 in mirror-plate aperture. Its back surface is flush with the rear
+face of the plate, since both rest on the cure surface ([§10.6](#106-rtv-glue-up-cure-surface)) during
+bonding; its front surface is therefore recessed about 1 mm below the front face of the plate.
 
 Six DOWSIL 737 RTV pads are placed radially between:
 
@@ -244,7 +238,7 @@ For mirror-plate glue-up and bench-top cure, use a non-stick polyethylene-family
 assembly.
 
 - approximately 12 × 12 in UHMW sheet
-- large enough for the moving mirror plate (about 279 × 261 mm)
+- large enough for the mirror plate (about 279 × 261 mm)
 - flat, clean, dry
 - no release spray required
 
@@ -252,22 +246,21 @@ This protects the workbench from accidental RTV creep or squeeze-out.
 
 The release sheet is a shop supply rather than part of the finished instrument.
 
-### 10.7 Structural brackets
+### 10.7 Angle brackets
 
-Hardware joining the 1/2 in cell-adjuster plate to the 1/2 in base plate:
+Hardware joining the 1/2 in stationary plate to the 1/2 in base plate:
 
-- 2 × McMaster 8681N11 3 in-long aluminum corner brackets (3 in legs, 1/4 in thick, Ø8.33 mm holes);
+- 2 × McMaster 8681N11 3 in-long aluminum angle brackets (3 in legs, 1/4 in thick, Ø8.33 mm holes);
 - 8 × McMaster 98164A527, 5/16 in-18 × 1-3/8 in 316 stainless button-head hex-drive screws;
 - 8 × McMaster 90099A030 5/16 in-18 18-8 stainless heavy-profile nylon-insert locknuts;
 - 8 × McMaster 96659A134 5/16 in stainless washers.
 
 Each bracket is flush with a side edge of the plates, with its base leg on the base top extending forward and
-its upright leg against the front face of the cell-adjuster plate. Each leg has two holes, centered across the
+its upright leg against the front face of the stationary plate. Each leg has two holes, centered across the
 leg, 0.75 in and 2.25 in from the outer corner. The screws are pushed through from the bracket side, with the
 button heads on the bracket's inner faces; the washers and locknuts are on the opposite faces of the plywood,
-the rear face of the cell-adjuster plate and the underside of the base. Each bracket therefore takes four
-screws, two through the plate and two through the base, eight in all. The plywood holes match the bracket
-holes.
+the rear face of the stationary plate and the underside of the base. Each bracket therefore takes four screws,
+two through the plate and two through the base, eight in all. The plywood holes match the bracket holes.
 
 The button heads (Ø0.547 in × 0.166 in) are low enough that the heads of the two holes nearest the inside
 corner clear each other by more than 6 mm, so all four holes are used. The washer and locknut stacks are on
@@ -275,7 +268,7 @@ the far sides of the plywood and cannot meet.
 
 The 1-3/8 in screw suits the 1/2 in plywood + 1/4 in bracket + washer + 7/16 in locknut stack of about 1.25
 in: the thread projects approximately 0.12 in, about 2 threads, beyond the locknut, preserving full locknut
-engagement without excessive overhang under the base or behind the cell-adjuster plate.
+engagement without excessive overhang under the base or behind the stationary plate.
 
 The bracket attachments are through-bolted rather than relying on wood screws. The locknut stacks under the
 base lie near its side edges, well outside the quick-release screw pattern on the underside
@@ -288,16 +281,15 @@ Front safety retention is intentionally non-stressing:
 - loose retainers/fingers prevent escape of the mirror;
 - they apply no deliberate optical preload;
 - any surface that could touch glass should be soft/non-marring; adhesive-backed F1 felt (McMaster 8334K15) is
-  the provisional facing.
+  the facing.
 
 #### Transport sandwich
 
-For shipping or travel the cell is disassembled and the moving mirror plate, with its mirror and bonded
-bushings, is held between two covers. The adjusters, springs, and seat washers are removed.
+For shipping or travel the cell is disassembled and the mirror plate, with its mirror and bonded bushings, is
+held between two covers. The adjusters, springs, and seat washers are removed.
 
-- Each cover is thin hardboard (masonite or similar) cut to the profile of the moving mirror plate, with a
-  clearance hole at each of the three adjuster-bushing centers. There is one cover on the front and one on the
-  rear.
+- Each cover is thin hardboard (masonite or similar) cut to the profile of the mirror plate, with a clearance
+  hole at each of the three adjuster-bushing centers. There is one cover on the front and one on the rear.
 - The mirror's back surface is flush with the rear face of the plate ([§10.5](#105-mirror-mounting)), so the
   rear cover carries a full-face sheet of thin closed-cell foam, which bears evenly on the glass and the
   plywood.
@@ -310,7 +302,7 @@ bushings, is held between two covers. The adjusters, springs, and seat washers a
   covers the 1 mm recess plus a light compression; it sets the preload and is chosen so the glass is held
   without stressing it.
 - Low-profile thumb screws thread into the adjuster bushings from the front and from the back, with full
-  thread engagement, to clamp the sandwich. The bushing thread is 1/4-80, which common thumb screws do not
+  thread engagement, to clamp the sandwich. The bushing thread is 1/4 in-80, which common thumb screws do not
   match. The intended screw is a short Kozak TS250-80 adjuster (available from 5/16 in) with a KB250-80 knob,
   which threads onto the screw end and can be removed. Lengths of about 5/8 in for the front and 3/4 in for
   the rear suit a 1/8 in cover and a few millimeters of foam; the engaged lengths from the two sides together
@@ -322,23 +314,24 @@ bushings, is held between two covers. The adjusters, springs, and seat washers a
 - The covers restrain the mirror axially only; lateral restraint is by the RTV pads. The sandwich is then
   wrapped in bubble wrap or boxed.
 
-**Provisional:** the safety retainers are not yet designed. For the transport sandwich: the cover material and
-thickness (the covers are clamped at 120.65 mm radius, while the foam ring bears at about 100 mm, so the
-covers must be stiff enough between the clamp points, possibly 1/4 in); the foam material and thickness; the
-ring's width against the clear aperture; the thumb-screw lengths and their availability (the Kozak catalog
-pages showed the short screws and the knob as sold out); and the optical tissue.
+**Provisional:** the safety retainers are not yet designed, including the felt facing. For the transport
+sandwich: the cover material and thickness (the covers are clamped at 120.65 mm radius, while the foam ring
+bears at about 100 mm, so the covers must be stiff enough between the clamp points, possibly 1/4 in); the foam
+material and thickness; the ring's width against the clear aperture; the thumb-screw lengths and their
+availability; and the optical tissue.
 
 ### 10.9 Tripod interface
 
 The mirror cell mounts on the tripod through a CAMVATE Manfrotto-type quick-release assembly with sliding
 plate (Amazon B0B2WBC921) on a Sunwayfoto LB-68R leveling base, whose top mounting stud is 3/8 in-16. The
-receiver stays on the LB-68R; the removable 501PL/577/504-compatible sliding plate stays attached to the
+receiver stays on the LB-68R; the removable 577/501/504-compatible sliding plate stays attached to the
 underside of the 1/2 in Baltic-birch mirror-cell base.
 
-The sliding plate is 7.00 in / 177.8 mm long, mounted flush with the front and rear edges of the 7.0 in-deep
-base, so it spans 0–7.00 in / 0–177.8 mm aft of the front edge and its geometric center lies 3.50 in / 88.9 mm
-aft of that edge. This is 0.5 in / 12.7 mm aft of the estimated mirror-cell center of gravity
-([§10.1](#101-plates-and-basic-architecture)), which the quick-release system's sliding adjustment can trim.
+The 130 g sliding plate is 7.00 in / 177.8 mm long, mounted flush with the front and rear edges of the 7.0
+in-deep base, so it spans 0–7.00 in / 0–177.8 mm aft of the front edge and its geometric center lies 3.50 in /
+88.9 mm aft of that edge. This is 0.5 in / 12.7 mm aft of the estimated mirror-cell center of gravity
+([§10.1](#101-plates-and-basic-architecture)), a small offset that the quick-release system's fore/aft sliding
+travel trims during final balancing.
 
 The plate is attached by four McMaster 92125A196 M4 × 0.7 × 18 mm 90° flat-head screws:
 
@@ -371,10 +364,10 @@ marked through the base holes with the plate held against the underside, and tap
 
 <p align="center">
   <img src="figures/mirror-cell-base-plate.svg" width="640" style="max-width: 95%"
-       alt="Mirror-cell base plate drilling layout seen from above: four countersunk quick-release screw holes
-       and four bracket-screw holes, dimensioned in x from the plate centerline and in y from the front edge,
-       with the front edge at the bottom">
+       alt="Drilling layout of the mirror-cell base plate seen from above: four countersunk quick-release
+       screw holes and four bracket-screw holes, dimensioned in x from the plate centerline and in y from the
+       front edge, with the front edge at the bottom">
   <br>
-  <em>Fig. 14. Base plate drilling layout, seen from above, in cell coordinates (front edge at the
+  <em>Fig. 14. Drilling layout of the base plate, seen from above, in cell coordinates (front edge at the
     bottom)</em>
 </p>

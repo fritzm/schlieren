@@ -307,7 +307,7 @@ def thorlabs_sm1d12() -> tuple[Compound, Compound]:
 
 @cache
 def thorlabs_sm1rc_m() -> Compound:
-    """Thorlabs SM1RC/M slip ring; axis +Y through the origin, faces at y=0 and y=thickness, post seat -Z.
+    """Thorlabs SM1RC/M split ring; axis +Y through the origin, faces at y=0 and y=thickness, post seat -Z.
 
     The M4 locking screw across the clamp split is at +Z. The text engraved in the y=0 face is filled.
     """
@@ -316,7 +316,7 @@ def thorlabs_sm1rc_m() -> Compound:
 
 @cache
 def thorlabs_fas100() -> Compound:
-    """Thorlabs FAS100 1/4"-80 adjuster; ball-tip apex at the origin, axis +Z toward the knob."""
+    """Thorlabs FAS100 1/4 in-80 adjuster; ball-tip apex at the origin, axis +Z toward the knob."""
     y, z = FAS100_AXIS_YZ
     to_tip = Pos(-FAS100_TIP_X, -y, -z)
     return _moved("Thorlabs-FAS100.step", Rot(Y=90) * to_tip)
@@ -429,7 +429,7 @@ def mcmaster_91131a028() -> tuple[Compound, Compound]:
 
 @cache
 def mcmaster_8681n11() -> Compound:
-    """McMaster 8681N11 3 in corner bracket; width along x centered on the origin, outer corner on the y and z
+    """McMaster 8681N11 3 in angle bracket; width along x centered on the origin, outer corner on the y and z
     axes.
 
     One leg lies along +y and the other along +z, both starting at the outer corner (y=z=0).

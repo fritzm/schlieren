@@ -123,7 +123,7 @@ class RailShoeTests(unittest.TestCase):
             [child.label for child in groups["Reference parts"].children],
             [
                 "Rail",
-                "Datum disc",
+                "Datum shim",
                 "TR50 M post",
                 "Shoe clamp screw",
                 "Shoe clamp nut",
@@ -176,12 +176,12 @@ class RailShoeTests(unittest.TestCase):
         for label in ("Shoe clamp screw", "Shoe clamp nut"):
             self.assertLess(intersect(self.shoe, parts[label]).volume, 1e-6)
 
-    def test_viewer_post_is_vendor_model_seated_on_datum_disc(self):
+    def test_viewer_post_is_vendor_model_seated_on_datum_shim(self):
         p = self.p
         references = viewer_assembly(self.shoe, p).children[1]
         post = {child.label: child for child in references.children}["TR50 M post"]
         body = max(post.solids(), key=lambda s: s.volume).bounding_box()  # Not the stud.
-        self.assertAlmostEqual(body.min.Z, p.datum_disc_thickness, places=5)
+        self.assertAlmostEqual(body.min.Z, p.datum_shim_thickness, places=5)
         self.assertAlmostEqual(body.size.X, p.post_diameter, delta=TR50_MODEL_ROUNDING)
         self.assertAlmostEqual(body.center().X, 0, places=5)
         self.assertAlmostEqual(body.center().Y, 0, places=5)

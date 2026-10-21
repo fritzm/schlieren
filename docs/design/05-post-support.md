@@ -33,7 +33,7 @@ The common shoe is a printed PLA U-shaped saddle that:
 - leaves the rail top available as the datum surface;
 - carries a vertical 12.7 mm through-bore for the TR50/M post.
 
-The post passes through the printed shoe and bottoms on a McMaster 2895T62 0.010 in stainless datum disc
+The post passes through the printed shoe and bottoms on a McMaster 2895T62 0.010 in stainless datum shim
 resting on the rail top. The printed PLA does not establish the precision optical height.
 
 The post bore incorporates a single-split clamping collar so that the post can be locked against rotational
@@ -47,7 +47,7 @@ movement while remaining fully seated on the metal datum:
 - free-fitting 12.7 mm post bore before clamping.
 
 The clamp provides rotational and lateral retention; post height is still established solely by the post
-bottoming on the metal datum disc. The model, with its PLA fit allowances, is
+bottoming on the metal datum shim. The model, with its PLA fit allowances, is
 `src/schlieren/parts/rail_shoe.py`.
 
 <p align="center">
@@ -69,7 +69,7 @@ M3 socket-head screw → clearance through one ear → captured M3 hex nut in th
   ([§8.4](08-cutoff.md#84-cassette-seating)) and the slit head ([§7](07-source-slit.md#7-source-slit)).
 - McMaster 91828A211 — full-height M3 × 0.5 18-8 stainless hex nut; 5.5 mm across flats × 2.4 mm high, DIN
   934. The same nut serves the keeper frame, the cassette clamp bars
-       ([§8.7](08-cutoff.md#87-cassette-clamp-bars)), and the slit head.
+  ([§8.7](08-cutoff.md#87-cassette-clamp-bars)), and the slit head.
 - No washer, nyloc, or threaded insert.
 
 Ear thickness and the approximately 1–2 mm relaxed split gap are designed around the 12 mm screw length.

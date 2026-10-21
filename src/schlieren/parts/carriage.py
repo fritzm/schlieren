@@ -75,7 +75,7 @@ from schlieren.parts.adjuster import bearing_magnet, fas100_children, insert_986
 from schlieren.parts.cassette import build_cassette_assembly
 from schlieren.parts.rail_shoe import REFERENCE_HARDWARE_LABEL, RailShoeParameters, post_stack
 from schlieren.standards import (
-    DATUM_DISC_THICKNESS,
+    DATUM_SHIM_THICKNESS,
     INCH,
     MAGNET_POCKET_CLEARANCE,
     NUT_POCKET_ACROSS_FLATS_CLEARANCE,
@@ -99,7 +99,7 @@ class CarriageParameters:
     plate_thickness: float = 4.0
     # Post stack (§5) and Thorlabs SM1RC/M (vendor STEP model): Ø1.21 in bore accepting Ø1.20 in SM1 tubes.
     optical_height: float = OPTICAL_HEIGHT
-    datum_thickness: float = DATUM_DISC_THICKNESS
+    datum_thickness: float = DATUM_SHIM_THICKNESS
     post_length: float = POST_LENGTH
     post_diameter: float = POST_DIAMETER
     ring_thickness: float = SM1RC_M_THICKNESS
@@ -119,37 +119,38 @@ class CarriageParameters:
     ear_thickness: float = 3.0
     guide_axial_clearance: float = 0.4
     keeper_thickness: float = 3.0
-    # Side members carry the plunger-ear wedge reactions between the screws. 3 mm with the side screws; a 5 mm
-    # keeper is the fallback if the print shows too much lift (`uv run carriage --keeper-side-thickness 5`).
+    # Side members carry the upward ear reactions from the bevel wedge action between the screws. 3 mm with
+    # the side screws; a 5 mm keeper is the fallback if the print shows too much lift
+    # (`uv run carriage --keeper-side-thickness 5`).
     keeper_side_thickness: float = 3.0
     ear_lower_clearance: float = 0.15
     # Edge breaks on the ears' exposed edges, against binding on first-layer squash and layer ridges in the
-    # guide channel; the root edges, buried in the body, are left square. The corner radius exceeds both.
+    # guide slot; the root edges, buried in the body, are left square. The corner radius exceeds both.
     ear_bottom_chamfer: float = 0.4
     ear_top_fillet: float = 0.5
     ear_corner_fillet: float = 0.6
-    # Stress relief where each ear leaves the body wall, top and underside; clear of the track floor and
+    # Stress relief where each ear leaves the body wall, top and underside; clear of the guide-rail floor and
     # keeper.
     ear_root_fillet: float = 0.8
     body_deck_clearance: float = 0.3  # Provisional PLA running clearance.
     # Chamfer on the underside perimeter, which runs 0.3 mm above the deck: a lead-in over deck seams and a
-    # relief for first-layer squash. On the spring plunger it runs round the cup's feet and pocket as well.
+    # relief for first-layer squash. On the spring plunger it runs around the cup's feet and pocket as well.
     body_bottom_chamfer: float = 0.4
     body_width: float = 58.0
     body_length: float = 10.0
     body_top: float = 12.0
     ear_outer_x: float = 37.0
-    track_inner_x: float = 32.3  # Clear the full 64 mm cassette swept footprint.
-    track_outer_x: float = 38.0
+    guide_rail_inner_x: float = 32.3  # Clear the full 64 mm cassette swept footprint.
+    guide_rail_outer_x: float = 38.0
     keeper_opening_width: float = 66.0
     keeper_end_member_width: float = 5.0
     fastener_edge_margin: float = 4.5
-    # The guide tracks are filled solid beyond the plunger ears' outermost positions, giving an end stop and a
+    # The guide slots are filled solid beyond the plunger ears' outermost positions, giving an end stop and a
     # solid seat for the keeper screws, which sit inboard of the plate ends to stay inside the rotation
     # envelope.
-    ear_stop_gap: float = 1.0  # Track end stop beyond the outermost ear position.
+    ear_stop_gap: float = 1.0  # Slot end stop beyond the outermost ear position.
     fastener_stop_margin: float = (
-        4.0  # Screw axis beyond the track end stop; keeps the nut pocket in the fill.
+        4.0  # Screw axis beyond the slot end stop; keeps the nut pocket in the fill.
     )
     envelope_nut_wall: float = 1.0  # Minimum PLA between a nut pocket and the rotation envelope.
     # Side keeper screws beside each plunger's ear travel, in round lugs that widen the plate locally.
@@ -446,12 +447,12 @@ class CarriageParameters:
             self.ear_bottom_chamfer, self.ear_top_fillet
         ):
             raise ValueError("Ear corner fillet must exceed the bottom chamfer and top fillet")
-        if not 0 < self.ear_root_fillet < self.track_inner_x - self.body_width / 2:
-            raise ValueError("Ear root fillet must clear the track floor")
+        if not 0 < self.ear_root_fillet < self.guide_rail_inner_x - self.body_width / 2:
+            raise ValueError("Ear root fillet must clear the guide-rail floor")
         if self.ear_bottom_chamfer + self.ear_top_fillet >= self.ear_thickness - 1.0:
             raise ValueError("Ear edge breaks must leave a flat bearing land")
-        if not self.body_width / 2 <= self.track_inner_x < self.ear_outer_x < self.track_outer_x:
-            raise ValueError("Guide ears must fit the open tracks")
+        if not self.body_width / 2 <= self.guide_rail_inner_x < self.ear_outer_x < self.guide_rail_outer_x:
+            raise ValueError("Guide ears must fit the open guide rails")
         if not self.cassette_size < self.keeper_opening_width < 2 * self.ear_outer_x:
             raise ValueError("Keeper must clear cassette and overlap ears")
         if self.spring_cup_top > self.support_top:
@@ -466,9 +467,9 @@ class CarriageParameters:
             if (x * x + y * y) ** 0.5 + nut_radius + self.envelope_nut_wall > self.rotation_envelope_radius:
                 raise ValueError("Keeper fasteners must stay inside the rotation envelope")
         if self.fastener_stop_margin < nut_radius + 0.5:
-            raise ValueError("Nut pockets must lie within the track fill")
-        if self.side_fastener_x - self.screw_clearance / 2 < self.track_outer_x + 1.0:
-            raise ValueError("Side keeper screws must clear the plunger guide tracks")
+            raise ValueError("Nut pockets must lie within the guide-slot fill")
+        if self.side_fastener_x - self.screw_clearance / 2 < self.guide_rail_outer_x + 1.0:
+            raise ValueError("Side keeper screws must clear the plunger guide rails")
         if self.side_fastener_x + self.side_lug_radius <= self.plate_width / 2:
             raise ValueError("Side lugs must widen the plate around the side screws")
         if self.side_lug_radius < nut_radius + 1.5:
@@ -494,21 +495,21 @@ def _build_fixed_body(p=None):
     p.validate()
     base = floor_box(p.plate_width, p.plate_length, p.plate_thickness, y=p.plate_center_y)
     for sign in (-1, 1):
-        floor_width = p.track_outer_x - p.track_inner_x
+        floor_width = p.guide_rail_outer_x - p.guide_rail_inner_x
         base += floor_box(
             floor_width,
             p.plate_length,
             p.guide_floor_rise,
-            x=sign * (p.track_outer_x + p.track_inner_x) / 2,
+            x=sign * (p.guide_rail_outer_x + p.guide_rail_inner_x) / 2,
             y=p.plate_center_y,
             z=p.plate_thickness,
         )
-        land_width = p.plate_width / 2 - p.track_outer_x
+        land_width = p.plate_width / 2 - p.guide_rail_outer_x
         base += floor_box(
             land_width,
             p.plate_length,
             p.keeper_z - p.plate_thickness,
-            x=sign * (p.track_outer_x + land_width / 2),
+            x=sign * (p.guide_rail_outer_x + land_width / 2),
             y=p.plate_center_y,
             z=p.plate_thickness,
         )
@@ -523,10 +524,10 @@ def _build_fixed_body(p=None):
     base += _side_lugs(p, 0, p.keeper_z)
     spring_stop, driven_stop = p.ear_stops_y
     for sign in (-1, 1):
-        x = sign * (p.track_inner_x + p.track_outer_x) / 2
+        x = sign * (p.guide_rail_inner_x + p.guide_rail_outer_x) / 2
         for y0, y1 in ((p.plate_ymin, spring_stop), (driven_stop, p.plate_ymax)):
             base += floor_box(
-                p.track_outer_x - p.track_inner_x,
+                p.guide_rail_outer_x - p.guide_rail_inner_x,
                 y1 - y0,
                 p.keeper_z - p.plate_thickness,
                 x=x,
@@ -592,7 +593,7 @@ def support_location(p=None, rotation=0.0):
     at x=y=0) -> local carriage frame, with the carriage rotated by `rotation` degrees about the optical axis.
 
     The cassette-loading side (+Z) faces the mirror, so rail +y is local +Z and rail +x is local -X; the
-    spigot, slip ring, and post are aft of the plate. Rotation 0 is the nominal zero of §8.1: fine adjuster
+    spigot, split ring, and post are aft of the plate. Rotation 0 is the nominal zero of §8.1: fine adjuster
     (+Y) up.
     """
     p = p or CarriageParameters()
@@ -600,16 +601,16 @@ def support_location(p=None, rotation=0.0):
 
 
 def _side_lugs(p, z, height):
-    """Round lugs around the side keeper screws, kept outboard of the guide-track walls."""
+    """Round lugs around the side keeper screws, kept outboard of the guide-rail walls."""
     lugs = None
     outer = p.side_fastener_x + p.side_lug_radius
     for x, y in p.side_fasteners:
         sign = 1 if x > 0 else -1
         lug = z_cylinder(2 * p.side_lug_radius, x, y, z, z + height) & floor_box(
-            outer - p.track_outer_x,
+            outer - p.guide_rail_outer_x,
             2 * p.side_lug_radius,
             height,
-            x=sign * (p.track_outer_x + outer) / 2,
+            x=sign * (p.guide_rail_outer_x + outer) / 2,
             y=y,
             z=z,
         )
@@ -828,7 +829,7 @@ def build_plunger(p=None, *, spring=False):
         # Spring cup outboard; thumb tab on the front face, pushed outboard from above the cassette to
         # retract.
         body += _spring_cup(p, outer_y, bottom)
-        # The cup continues the underside, so the chamfer runs round the cup's feet and pocket opening too.
+        # The cup continues the underside, so the chamfer runs around the cup's feet and pocket opening too.
         body = break_underside(body)
         body += _thumb_tab(p, outer_y)
         # Root fillets on the thumb side and both ends of the tab; its spring-facing face is the outer face.
@@ -917,8 +918,8 @@ def build_carriage(
     """Five independently selectable printed parts; retraction only at fiducial.
 
     `include_support` adds the SM1RC/M, TR50/M post, and rail shoe as references; `include_hardware` adds the
-    FAS100 (vendor model), its 98625A950 bushing, the magnet bearing pad, and the 2006N292 spring (a display
-    helix); `side_screws` adds the shoe's side-slot screws and washers to the support; `include_cassette`
+    FAS100 (vendor model), its 98625A950 bushing, the flat bearing insert, and the 2006N292 spring (a display
+    helix); `side_screws` adds the shoe's side-channel screws and washers to the support; `include_cassette`
     seats the cassette assembly (§8.6) on the datum pins and travels with the driven plunger.
 
     Spring solid height is unverified: the loading pose checks printed geometry, not whether the purchased
@@ -997,7 +998,7 @@ def _datum_pins(p):
 
 
 def _adjuster_hardware(p, travel):
-    """FAS100, bushing, and magnet pad as labeled children; the ball tip bears on the pad face."""
+    """FAS100, bushing, and flat bearing insert as labeled children; the ball tip bears on the pad face."""
     tip_y = p.magnet_contact_y + travel
     # Vendor model axis +Z toward the knob, turned to +Y (outboard, toward the insert).
     fas100_loc = Pos(0, tip_y, p.adjuster_axis_z) * Rot(X=-90)
@@ -1015,5 +1016,5 @@ def _adjuster_hardware(p, travel):
     return [
         *fas100_children(fas100_loc),
         labeled(bushing, "98625A950 bushing", BRASS, along_y_axis),
-        labeled(magnet, "Magnet pad", STEEL, fas100_loc),
+        labeled(magnet, "Flat bearing insert", STEEL, fas100_loc),
     ]

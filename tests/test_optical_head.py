@@ -11,10 +11,10 @@ from schlieren.parts.optical_head import (
     build_optical_head,
     build_source_fixtures,
 )
-from schlieren.standards import DATUM_DISC_THICKNESS, POST_LENGTH
+from schlieren.standards import DATUM_SHIM_THICKNESS, POST_LENGTH
 from schlieren.testing import loose_box, near_pairs, slow
 
-POST_TOP = DATUM_DISC_THICKNESS + POST_LENGTH  # Datum disc plus TR50/M, above the rail top (§3.4).
+POST_TOP = DATUM_SHIM_THICKNESS + POST_LENGTH  # Datum shim plus TR50/M, above the rail top (§3.4).
 TR50_MODEL_ROUNDING = 0.03  # The TR50/M STEP model is rounded to inches.
 INTERFERENCE_TOLERANCE = 1e-3  # mm^3.
 MIN_CLEARANCE = 1.0  # mm, between any source-side and imaging-side part.
@@ -98,7 +98,7 @@ class OpticalHeadTests(unittest.TestCase):
         self.assertAlmostEqual(moved.phone_back_station - base.phone_back_station, 17.5)
         self.assertAlmostEqual(moved.slit_post_station, base.slit_post_station)
 
-    def test_lens_front_keeps_the_assumed_gap_to_the_slip_ring(self):
+    def test_lens_front_keeps_the_assumed_gap_to_the_split_ring(self):
         (lens,) = by_label(self.imaging, "Lens body")
         (ring,) = by_label(self.imaging, "SM1RC M ring")
         gap = ring.bounding_box().min.Y - lens.bounding_box().max.Y

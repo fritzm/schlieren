@@ -32,7 +32,7 @@ from schlieren.parts.light_source_holes import (
     HoleLayoutParameters,
 )
 from schlieren.parts.rail_shoe import REFERENCE_HARDWARE_LABEL, post_stack
-from schlieren.standards import DATUM_DISC_THICKNESS, INCH, OPTICAL_HEIGHT, POST_DIAMETER, POST_LENGTH
+from schlieren.standards import DATUM_SHIM_THICKNESS, INCH, OPTICAL_HEIGHT, POST_DIAMETER, POST_LENGTH
 from schlieren.validation import require_positive_dimensions
 from schlieren.vendor_cad import (
     MCMASTER_91292A111_HEAD_HEIGHT,
@@ -92,7 +92,7 @@ MODULES = (GREEN, WHITE)
 class LightSourceParameters:
     # Frozen project datum (§3.4).
     optical_height: float = OPTICAL_HEIGHT
-    datum_thickness: float = DATUM_DISC_THICKNESS
+    datum_thickness: float = DATUM_SHIM_THICKNESS
     # Thorlabs TR50/M: metric-primary; its STEP model is rounded to inches (1.969 in, 0.499 in), so the metric
     # nominal values are exact.
     post_length: float = POST_LENGTH
@@ -277,7 +277,7 @@ def build_light_source_assembly(p=None, board=GREEN, engagement=None, side_screw
     """Purchased parts in rail-top coordinates; the post is centered at the SMR1/M midplane.
 
     The post, the printed rail shoe under it, and the shoe's vendor hardware are grouped as
-    REFERENCE_HARDWARE_LABEL; side_screws adds the shoe's side-slot screws to that group.
+    REFERENCE_HARDWARE_LABEL; side_screws adds the shoe's side-channel screws to that group.
     """
     p = p or LightSourceParameters()
     p.validate()

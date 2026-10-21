@@ -35,7 +35,7 @@ From the LED to the slit:
        alt="Light source with the SMR1/M, SM1V05, SM1L03, and iris cut along the optical axis, and the
        heatsink, cap, star board with LED, and condenser lens shown whole">
   <br>
-  <em>Fig. 5. Light source cutaway, showing internal position of LED module and condensing lens</em>
+  <em>Fig. 5. Light-source cutaway, showing internal position of LED module and condensing lens</em>
 </p>
 
 The ACL2520U-A convex vertex sits about 0.7 mm inside the SM1V05 open end, so the SM1L03 spacer is required
@@ -51,7 +51,7 @@ mm iris-to-slit spacing.
 ### 6.2 LED modules
 
 There are two interchangeable LED modules, each a self-contained threaded assembly. The LEDs chosen are on
-industry standard 20mm "star" MCPCB carriers. Each carrier is mounted on an identical threaded SM1 threaded
+industry-standard 20 mm "star" MCPCB carriers. Each carrier is mounted on an identical threaded SM1
 cap, so the SM1 thread and cap flange are the interchange standard.
 
 | Module | Emitter                             | Board                                    | Initial operating current (mA) |
@@ -72,18 +72,17 @@ Interfaces:
 - The cap flange is the repeatable axial stop on the SMR1/M face; the module's rotational position at the stop
   does not matter.
 - The SM1 thread centers the emitter on the condenser axis; no vertical calibration is required.
-- Heatsink fastening: three M3 × 6 mm socket-head screws (**provisional** length) through the CN40 base, their
-  heads in open cells between four pins, into M3 holes tapped through the cap. Positions are in
-  [§6.4](#64-led-board-mounting).
+- Heatsink fastening: three M3 × 6 mm socket-head screws through the CN40 base, their heads in open cells
+  between four pins, into M3 holes tapped through the cap. Positions are in [§6.4](#64-led-board-mounting).
+  **Provisional:** the screw length.
 - Leads drop past the star board's flat edges through two Ø2.0 mm holes in the cap and the heatsink base, 11.0
   mm from the axis (inside the thread relief), and out between the pin columns. The pigtail wire measures
   about 1.7 mm over its insulation.
-- Fabrication is drilling and tapping of purchased aluminum parts only. Every hole in the cap and the heatsink
-  base is a through hole, so plain plug taps are enough.
+- Fabrication is drilling and tapping of purchased aluminum parts only ([§6.4](#64-led-board-mounting)).
 
 Clearances:
 
-- The heatsink's lowest point is 2.1 mm above the TR50/M post top at any rotation (22.10 mm axis offset minus
+- The heatsink's lowest point is 2.1 mm above the TR50/M post top at any rotation (22.1 mm axis offset minus
   20 mm maximum radius).
 - The heatsink front face is 2.79 mm (0.110 in) behind the SMR1/M face (the cap flange thickness).
 - The SMR1/M thread bore leaves about 3 mm of radial room around a 20 mm board for leads.
@@ -99,9 +98,8 @@ At about 2 W (white module at 700 mA) the expected rise is roughly 14 °C above 
 dissipates about 1.1 W. The rating is the manufacturer's pins-up test; the module runs with pins horizontal,
 which pin fins tolerate well. **Provisional:** bench-test the temperature rise at 700 mA before relying on it.
 
-The heatsink is round so that it clears the post at every rotation while the module is threaded in
-([§6.2](#62-led-modules)); a larger or non-round heatsink would sweep its corners below the post top during
-threading.
+The heatsink is round, with a radius under the 22.1 mm axis offset, so that it clears the post top at every
+rotation while the module is threaded in ([§6.2](#62-led-modules)).
 
 ### 6.4 LED board mounting
 
@@ -118,10 +116,8 @@ Fastening standard:
 - M2 × 0.4
 - McMaster 92095A452, M2 × 5 mm screws
 - tapped directly into the front (threaded) face of the SM1CP2M cap, in through holes
-- 1.6 mm tap drill, drilled through
-- M2 × 0.4 HSS plug tap; a through hole needs no bottoming tap
-
-The 5 mm screws are shorter than the 5.33 mm cap, so they stop short of the heatsink face.
+- 1.6 mm tap drill
+- M2 × 0.4 HSS plug tap
 
 Use the cap's center-drill mark as the layout datum for the board hole pattern. Transfer each carrier board's
 hole geometry from the physical board rather than assuming it from the other module. Slightly oversized board
@@ -167,8 +163,9 @@ the frame of the pin lattice; the cap and the heatsink are drilled to the same c
   under the star, a small loss of its thermal contact.
 - M2 holes: in the two opposite corner notches of the star on the x axis (the 0.375 in notch center radius).
   They are covered by the solid heatsink base, so they do not meet the pins.
-- Lead holes: on the axis through the midpoints of two opposite flat edges of the star, tangent to each edge
-  at 11.0 mm radius. Each is 1.1 mm from the nearest pins, in the 4.1 mm channel between pin columns.
+- Lead holes: on the axis through the midpoints of two opposite flat edges of the star, centered at 11.0 mm
+  radius and tangent to each edge. Each is 1.1 mm from the nearest pins, in the 4.1 mm channel between pin
+  columns.
 - The smallest wall between holes in the cap, measured to the thread major radius, is 4.9 mm. The lead holes'
   outer edges, at 12.0 mm radius, leave about 0.55 mm to the cap's thread relief, the straight shank
   beneath the threads, which measures Ø0.988 in (12.55 mm radius) and is the boss's minimum radius.

@@ -9,9 +9,9 @@ from schlieren.cad import children_by_label, intersect, leaves
 from schlieren.parts.frame import (
     SIDES,
     FrameParameters,
-    build_foot_block,
     build_frame_assembly,
     build_pivot_plate,
+    build_rail_support_block,
 )
 from schlieren.parts.frame_drawing import pivot_plate_drawing_svg
 from schlieren.testing import near_pairs_among, shared, slow, svg_attr
@@ -36,8 +36,8 @@ class FrameTests(unittest.TestCase):
         return build_pivot_plate(cls.p)
 
     @shared
-    def foot_block(cls):
-        return build_foot_block(cls.p)
+    def rail_support_block(cls):
+        return build_rail_support_block(cls.p)
 
     @shared
     def yawed(cls):
@@ -102,9 +102,9 @@ class FrameTests(unittest.TestCase):
         hole = pi * (p.m5_clearance_diameter / 2) ** 2 * p.plywood_thickness
         self.assertAlmostEqual(plate.volume, solid - 6 * hole, delta=0.01)
 
-    def test_foot_block_envelope_and_screw_holes(self):
+    def test_rail_support_block_envelope_and_screw_holes(self):
         p = self.p
-        block = self.foot_block
+        block = self.rail_support_block
         box = block.bounding_box()
         self.assertAlmostEqual(box.size.X, 50.0, places=5)
         self.assertAlmostEqual(box.size.Y, 75.0, places=5)
@@ -113,7 +113,7 @@ class FrameTests(unittest.TestCase):
             self.assertFalse(block.is_inside((0, y, -p.plywood_thickness / 2)))
         self.assertTrue(block.is_inside((0, 0, -p.plywood_thickness / 2)))
         # Each screw center is 12.5 mm from its nearest block end.
-        self.assertAlmostEqual(p.foot_block_length / 2 - p.foot_screw_spacing / 2, 12.5)
+        self.assertAlmostEqual(p.rail_support_block_length / 2 - p.block_screw_spacing / 2, 12.5)
 
     def test_rails_are_400_mm_with_tops_on_the_datum(self):
         for name in SIDES:
@@ -128,7 +128,7 @@ class FrameTests(unittest.TestCase):
     def test_rails_diverge_aft_and_frame_is_mirror_symmetric(self):
         left = self.rail_parts(self.frame, "Left")
         right = self.rail_parts(self.frame, "Right")
-        for label in ("Rail", "Pivot lug", "Foot block", "Foot"):
+        for label in ("Rail", "Pivot lug", "Rail-support block", "Foot"):
             with self.subTest(part=label):
                 a, b = left[label].center(), right[label].center()
                 self.assertAlmostEqual(a.X, -b.X, places=4)
@@ -139,7 +139,7 @@ class FrameTests(unittest.TestCase):
         # The foot follows the chief ray aft from the pivot, against the rail's +y.
         dx, dy = self.p.rail_direction(1)
         self.assertGreater(dy, 0.0)
-        self.assertAlmostEqual(foot_x, 47.5 - self.p.foot_block_center * dx, places=4)
+        self.assertAlmostEqual(foot_x, 47.5 - self.p.rail_support_block_center * dx, places=4)
         self.assertLess(right["Foot"].center().Y, 0.0)  # Aft of the plate.
 
     def test_three_feet_stand_on_one_plane_below_everything(self):
@@ -158,7 +158,7 @@ class FrameTests(unittest.TestCase):
     def test_rear_foot_sits_between_its_screws_under_the_rail(self):
         for name in SIDES:
             parts = self.rail_parts(self.frame, name)
-            foot, block = parts["Foot"], parts["Foot block"]
+            foot, block = parts["Foot"], parts["Rail-support block"]
             self.assertAlmostEqual(foot.center().X, block.center().X, places=4)
             self.assertAlmostEqual(foot.center().Y, block.center().Y, places=4)
             self.assertAlmostEqual(foot.center().X, parts["Rail"].center().X, delta=3.0)
@@ -169,7 +169,7 @@ class FrameTests(unittest.TestCase):
             screws = [
                 part
                 for label, part in parts.items()
-                if label.startswith("Foot screw") and "washer" not in label
+                if label.startswith("Block screw") and "washer" not in label
             ]
             self.assertEqual(len(screws), 2)
             for screw in screws:
@@ -177,26 +177,26 @@ class FrameTests(unittest.TestCase):
                 # Head bearing face on the washers; the tip reaches the length of the vendor screw above it.
                 self.assertAlmostEqual(
                     box.min.Z + MCMASTER_92290A_HEAD_HEIGHT,
-                    self.p.plate_bottom - self.p.foot_washer_stack,
+                    self.p.plate_bottom - self.p.block_washer_stack,
                     places=4,
                 )
                 self.assertAlmostEqual(
                     box.max.Z,
-                    self.p.plate_bottom - self.p.foot_washer_stack + self.p.foot_screw_length,
+                    self.p.plate_bottom - self.p.block_washer_stack + self.p.block_screw_length,
                     places=4,
                 )
 
     def test_screw_stacks_have_thread_to_spare(self):
         p = self.p
-        self.assertGreater(p.pivot_screw_protrusion, 0)
-        self.assertGreater(p.yaw_screw_length_above_strap_washer, MCMASTER_92815A202_HEIGHT)
-        self.assertGreater(p.foot_screw_slot_entry, p.rail_slot_lip_thickness)
-        self.assertAlmostEqual(p.foot_screw_slot_entry, 5.3)
-        self.assertAlmostEqual(p.foot_screw_slot_margin, 1.15)
+        self.assertGreater(p.pivot_bolt_protrusion, 0)
+        self.assertGreater(p.yaw_bolt_length_above_strap_washer, MCMASTER_92815A202_HEIGHT)
+        self.assertGreater(p.block_screw_slot_entry, p.rail_slot_lip_thickness)
+        self.assertAlmostEqual(p.block_screw_slot_entry, 5.3)
+        self.assertAlmostEqual(p.block_screw_slot_margin, 1.15)
         with self.assertRaises(ValueError):
-            replace(p, foot_washers_per_screw=0).validate()
+            replace(p, block_washers_per_screw=0).validate()
         with self.assertRaises(ValueError):
-            replace(p, foot_screw_length=25.0).validate()
+            replace(p, block_screw_length=25.0).validate()
 
     def test_pivot_lug_end_hole_is_on_the_pivot_axis_at_any_yaw(self):
         p = self.p
@@ -213,7 +213,7 @@ class FrameTests(unittest.TestCase):
 
     def test_yaw_bolt_clearance_to_rail(self):
         nominal = min(
-            self.rail_parts(self.frame, name)["Rail"].distance_to(self.fixed[f"{name} {where} yaw screw"])
+            self.rail_parts(self.frame, name)["Rail"].distance_to(self.fixed[f"{name} {where} yaw bolt"])
             for name in SIDES
             for where in ("inner", "outer")
         )
@@ -221,7 +221,7 @@ class FrameTests(unittest.TestCase):
         for yaw in (-MAX_YAW, MAX_YAW):
             frame = self.yawed[yaw]
             closest = min(
-                self.rail_parts(frame, name)["Rail"].distance_to(self.fixed[f"{name} {where} yaw screw"])
+                self.rail_parts(frame, name)["Rail"].distance_to(self.fixed[f"{name} {where} yaw bolt"])
                 for name in SIDES
                 for where in ("inner", "outer")
             )
@@ -233,8 +233,8 @@ class FrameTests(unittest.TestCase):
         for yaw in (-MAX_YAW, 0.0, MAX_YAW):
             parts = leaves(self.yawed[yaw])
             for a, b in near_pairs_among(parts):
-                # A screw passes through its unthreaded nut model; catalog hardware is trusted to fit.
-                if a.label.endswith(" screw") and b.label.endswith(" nut"):
+                # A screw or bolt passes through its unthreaded nut model; catalog hardware is trusted to fit.
+                if a.label.endswith((" screw", " bolt")) and b.label.endswith(" nut"):
                     continue
                 with self.subTest(yaw=yaw, pair=(a.label, b.label)):
                     self.assertLess(intersect(a, b).volume, INTERFERENCE_TOLERANCE)
@@ -253,8 +253,8 @@ class FrameTests(unittest.TestCase):
                 self.assertAlmostEqual(box.size.Z, MCMASTER_92815A202_HEIGHT, places=3)
                 self.assertAlmostEqual(box.center().X, x, delta=0.01)
                 self.assertAlmostEqual(box.center().Y, y, delta=0.01)
-                # The screw reaches through the nut.
-                self.assertGreater(self.fixed[f"{label} screw"].bounding_box().max.Z, box.max.Z)
+                # The bolt reaches through the nut.
+                self.assertGreater(self.fixed[f"{label} bolt"].bounding_box().max.Z, box.max.Z)
 
     def test_feet_are_vendor_models_stuck_to_the_plywood(self):
         p = self.p
@@ -302,8 +302,8 @@ class FrameTests(unittest.TestCase):
         )
         straps = [label for label in self.fixed if label.endswith("yaw strap")]
         self.assertEqual(straps, ["Left yaw strap", "Right yaw strap"])
-        self.assertEqual(sum(label.endswith("yaw screw") for label in self.fixed), 4)
-        self.assertEqual(sum(label.endswith("pivot screw") for label in self.fixed), 2)
+        self.assertEqual(sum(label.endswith("yaw bolt") for label in self.fixed), 4)
+        self.assertEqual(sum(label.endswith("pivot bolt") for label in self.fixed), 2)
 
 
 if __name__ == "__main__":

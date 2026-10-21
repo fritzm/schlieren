@@ -12,11 +12,11 @@ from schlieren.parts.mirror_cell import (
     STATIONS,
     MirrorCellParameters,
     build_base_plate,
-    build_fixed_plate,
     build_mirror_cell_assembly,
-    build_moving_plate,
+    build_mirror_plate,
     build_quick_release_plate,
-    moving_plate_outline,
+    build_stationary_plate,
+    mirror_plate_outline,
 )
 from schlieren.parts.mirror_cell_drawing import base_plate_drawing_svg, base_plate_holes
 from schlieren.testing import boxes_overlap, near_pairs_among, shared, slow, svg_attr
@@ -43,12 +43,12 @@ class MirrorCellTests(unittest.TestCase):
         return build_base_plate(cls.p)
 
     @shared
-    def fixed_plate(cls):
-        return build_fixed_plate(cls.p)
+    def stationary_plate(cls):
+        return build_stationary_plate(cls.p)
 
     @shared
-    def moving_plate(cls):
-        return build_moving_plate(cls.p)
+    def mirror_plate(cls):
+        return build_mirror_plate(cls.p)
 
     @classmethod
     def setUpClass(cls):
@@ -69,14 +69,14 @@ class MirrorCellTests(unittest.TestCase):
         self.assertAlmostEqual(base.size.Z, 0.5 * INCH, delta=TOLERANCE)
         self.assertAlmostEqual(base.min.Y, 0.0, delta=TOLERANCE)
         self.assertAlmostEqual(base.max.Z, 0.0, delta=TOLERANCE)
-        fixed = self.box("Cell-adjuster plate")
-        self.assertAlmostEqual(fixed.size.X, 11.5 * INCH, delta=TOLERANCE)
-        self.assertAlmostEqual(fixed.size.Z, 11.0 * INCH, delta=TOLERANCE)
-        self.assertAlmostEqual(fixed.size.Y, 0.5 * INCH, delta=TOLERANCE)
-        self.assertAlmostEqual(fixed.max.Y, 4.0 * INCH, delta=TOLERANCE)
-        self.assertAlmostEqual(self.box("Moving mirror plate").size.Y, 0.75 * INCH, delta=TOLERANCE)
+        stationary = self.box("Stationary plate")
+        self.assertAlmostEqual(stationary.size.X, 11.5 * INCH, delta=TOLERANCE)
+        self.assertAlmostEqual(stationary.size.Z, 11.0 * INCH, delta=TOLERANCE)
+        self.assertAlmostEqual(stationary.size.Y, 0.5 * INCH, delta=TOLERANCE)
+        self.assertAlmostEqual(stationary.max.Y, 4.0 * INCH, delta=TOLERANCE)
+        self.assertAlmostEqual(self.box("Mirror plate").size.Y, 0.75 * INCH, delta=TOLERANCE)
         self.assertAlmostEqual(
-            p.base_depth - fixed.max.Y, 3.0 * INCH, delta=TOLERANCE
+            p.base_depth - stationary.max.Y, 3.0 * INCH, delta=TOLERANCE
         )  # Base behind the plate.
 
     def test_quick_release_plate_is_flush_at_the_front_and_against_the_base_underside(self):
@@ -208,20 +208,20 @@ class MirrorCellTests(unittest.TestCase):
         for value in ("47.625", "130.175", "+12.7", "-12.7", "69.85", "31.75"):
             self.assertIn(value, figures)
 
-    def test_interplate_gap_is_half_an_inch(self):
-        gap = self.box("Cell-adjuster plate").min.Y - self.box("Moving mirror plate").max.Y
+    def test_inter_plate_gap_is_half_an_inch(self):
+        gap = self.box("Stationary plate").min.Y - self.box("Mirror plate").max.Y
         self.assertAlmostEqual(gap, 0.5 * INCH, delta=TOLERANCE)
 
-    def test_moving_plate_is_the_truncated_hexagon(self):
+    def test_mirror_plate_is_the_truncated_hexagon(self):
         p = self.p
-        plate = self.box("Moving mirror plate")
+        plate = self.box("Mirror plate")
         self.assertAlmostEqual(p.apothem, 4.7631 * INCH, delta=1e-3 * INCH)
         self.assertAlmostEqual(plate.max.Z - plate.min.Z, 10.263 * INCH, delta=2e-3 * INCH)
         self.assertAlmostEqual(plate.min.Z, 3 / 8 * INCH, delta=TOLERANCE)  # Clear of the base top.
         self.assertAlmostEqual(plate.max.Z, 10.638 * INCH, delta=1e-3 * INCH)
         self.assertAlmostEqual(p.mirror_center_z, 5.138 * INCH, delta=1e-3 * INCH)
         self.assertAlmostEqual(plate.size.X, 2 * p.apothem, delta=TOLERANCE)
-        outline = moving_plate_outline(p)
+        outline = mirror_plate_outline(p)
         chord = [v for v in outline if abs(v[1] + p.apothem) < TOLERANCE]
         self.assertAlmostEqual(abs(chord[0][0] - chord[1][0]), 2.553 * INCH, delta=2e-3 * INCH)
 
@@ -235,7 +235,7 @@ class MirrorCellTests(unittest.TestCase):
         self.assertEqual(sum(label.startswith("RTV pad") for label in self.parts), 6)
 
     def test_mirror_back_is_flush_with_the_plate_rear_face(self):
-        mirror, plate = self.box("Mirror"), self.box("Moving mirror plate")
+        mirror, plate = self.box("Mirror"), self.box("Mirror plate")
         self.assertAlmostEqual(mirror.max.Y, plate.max.Y, delta=TOLERANCE)
         self.assertAlmostEqual(
             plate.min.Y - mirror.min.Y, -(19.05 - 18.0), delta=TOLERANCE
@@ -254,7 +254,7 @@ class MirrorCellTests(unittest.TestCase):
 
     def test_hex_vertices_carry_the_adjuster_holes(self):
         p = self.p
-        top_vertex = max(z for _, z in moving_plate_outline(p))
+        top_vertex = max(z for _, z in mirror_plate_outline(p))
         self.assertAlmostEqual(top_vertex, p.hex_circumradius, delta=TOLERANCE)
         self.assertLess(p.adjuster_radius, p.hex_circumradius)
 
@@ -270,10 +270,10 @@ class MirrorCellTests(unittest.TestCase):
             bushing = self.box(f"Bushing {name}")
             # The flange stands on the face and the barrel runs into the plate.
             self.assertAlmostEqual(
-                bushing.min.Y, p.moving_plate_front_y - KOZAK_TB250_FLANGE_THICKNESS, delta=TOLERANCE
+                bushing.min.Y, p.mirror_plate_front_y - KOZAK_TB250_FLANGE_THICKNESS, delta=TOLERANCE
             )
             self.assertAlmostEqual(bushing.size.Y, KOZAK_TB250_LENGTH, delta=TOLERANCE)
-            self.assertLess(bushing.max.Y, p.moving_plate_rear_y)
+            self.assertLess(bushing.max.Y, p.mirror_plate_rear_y)
 
     def test_knob_bears_on_the_spherical_washer_in_its_socket(self):
         p = self.p
@@ -281,7 +281,7 @@ class MirrorCellTests(unittest.TestCase):
             female = self.box(f"Spherical washer, female {name}")
             male = self.box(f"Spherical washer, male {name}")
             knob = self.box(f"Knob {name}")
-            self.assertAlmostEqual(female.min.Y, p.fixed_plate_rear_y - 1 / 16 * INCH, delta=TOLERANCE)
+            self.assertAlmostEqual(female.min.Y, p.stationary_plate_rear_y - 1 / 16 * INCH, delta=TOLERANCE)
             self.assertAlmostEqual(male.max.Y - female.min.Y, MCMASTER_91131A028_HEIGHT, delta=TOLERANCE)
             self.assertAlmostEqual(knob.min.Y, male.max.Y, delta=TOLERANCE)
 
@@ -293,7 +293,7 @@ class MirrorCellTests(unittest.TestCase):
             self.assertAlmostEqual(
                 self.box(f"Adjuster screw {name}").max.Y - p.screw_tip_y, KOZAK_TS250_LENGTH, delta=TOLERANCE
             )
-        self.assertLess(p.screw_tip_y, p.moving_plate_front_y)
+        self.assertLess(p.screw_tip_y, p.mirror_plate_front_y)
 
     def test_spring_spans_the_gap_between_the_seat_washers(self):
         p = self.p
@@ -302,14 +302,14 @@ class MirrorCellTests(unittest.TestCase):
             spring = self.box(f"Compression spring {name}")
             self.assertAlmostEqual(spring.size.Y, p.spring_length, delta=HELIX_TOLERANCE)
             self.assertAlmostEqual(spring.size.X, 0.5 * INCH, delta=HELIX_TOLERANCE)
-            moving = self.box(f"Spring seat washer (moving plate) {name}")
-            fixed = self.box(f"Spring seat washer (fixed plate) {name}")
-            self.assertAlmostEqual(spring.min.Y, moving.max.Y, delta=HELIX_TOLERANCE)
-            self.assertAlmostEqual(spring.max.Y, fixed.min.Y, delta=HELIX_TOLERANCE)
+            mirror_seat = self.box(f"Spring seat washer (mirror plate) {name}")
+            stationary_seat = self.box(f"Spring seat washer (stationary plate) {name}")
+            self.assertAlmostEqual(spring.min.Y, mirror_seat.max.Y, delta=HELIX_TOLERANCE)
+            self.assertAlmostEqual(spring.max.Y, stationary_seat.min.Y, delta=HELIX_TOLERANCE)
 
-    def test_fixed_plate_holes_and_counterbores(self):
+    def test_stationary_plate_holes_and_counterbores(self):
         p = self.p
-        plate = self.fixed_plate
+        plate = self.stationary_plate
 
         def void(x, z, y0, diameter, length, margin):
             """Volume of plate inside a cylinder along +y, `margin` smaller than the diameter and length."""
@@ -320,9 +320,9 @@ class MirrorCellTests(unittest.TestCase):
 
         for name in STATIONS:
             x, z = p.station_center(name)
-            front, rear = p.fixed_plate_front_y, p.fixed_plate_rear_y
+            front, rear = p.stationary_plate_front_y, p.stationary_plate_rear_y
             self.assertLess(
-                void(x, z, front, p.fixed_hole_diameter, p.fixed_plate_thickness, 0.01), TOLERANCE
+                void(x, z, front, p.stationary_hole_diameter, p.stationary_plate_thickness, 0.01), TOLERANCE
             )
             self.assertLess(
                 void(x, z, front, p.seat_counterbore_diameter, p.seat_counterbore_depth, 0.01), TOLERANCE
@@ -332,19 +332,19 @@ class MirrorCellTests(unittest.TestCase):
             )
             # Controls: a hole 0.5 mm larger than the cut is not empty.
             self.assertGreater(
-                void(x, z, front, p.fixed_hole_diameter + 1.0, p.fixed_plate_thickness, 0.0), 1.0
+                void(x, z, front, p.stationary_hole_diameter + 1.0, p.stationary_plate_thickness, 0.0), 1.0
             )
 
-    def test_moving_plate_has_three_bores_and_the_aperture(self):
+    def test_mirror_plate_has_three_bores_and_the_aperture(self):
         p = self.p
-        plate = self.moving_plate
+        plate = self.mirror_plate
         bores = [f for f in plate.faces() if f.geom_type.name == "CYLINDER"]
         radii = sorted(round(f.radius, 3) for f in bores)
         self.assertEqual(radii.count(round(p.bushing_bore / 2, 3)), 3)
         self.assertEqual(radii.count(round(p.aperture_diameter / 2, 3)), 1)
         self.assertEqual(radii.count(round(p.seat_counterbore_diameter / 2, 3)), 3)
 
-    def test_brackets_are_flush_with_the_plate_edges_and_seated_on_base_and_fixed_plate(self):
+    def test_brackets_are_flush_with_the_plate_edges_and_seated_on_base_and_stationary_plate(self):
         p = self.p
         for name, side in (("left", -1), ("right", 1)):
             bracket = self.box(f"Bracket {name}")
@@ -354,12 +354,12 @@ class MirrorCellTests(unittest.TestCase):
             )
             self.assertAlmostEqual(bracket.min.Z, 0.0, delta=TOLERANCE)  # Base leg on the base top.
             self.assertAlmostEqual(
-                bracket.max.Y, p.fixed_plate_front_y, delta=TOLERANCE
+                bracket.max.Y, p.stationary_plate_front_y, delta=TOLERANCE
             )  # Upright on the plate.
             self.assertAlmostEqual(bracket.size.Z, 3.0 * INCH, delta=TOLERANCE)
-            self.assertAlmostEqual(p.fixed_plate_front_y - bracket.min.Y, 3.0 * INCH, delta=TOLERANCE)
+            self.assertAlmostEqual(p.stationary_plate_front_y - bracket.min.Y, 3.0 * INCH, delta=TOLERANCE)
 
-    def test_brackets_are_clear_of_the_adjuster_stations_and_the_moving_plate(self):
+    def test_brackets_are_clear_of_the_adjuster_stations_and_the_mirror_plate(self):
         for name in STATIONS:
             for side in ("left", "right"):
                 self.assertFalse(
@@ -371,7 +371,7 @@ class MirrorCellTests(unittest.TestCase):
                 )
         for side in ("left", "right"):
             # The base leg's top (6.35 mm) is 3.2 mm under the plate's trimmed lower edge.
-            clearance = self.parts["Moving mirror plate"].distance_to(self.parts[f"Bracket {side}"])
+            clearance = self.parts["Mirror plate"].distance_to(self.parts[f"Bracket {side}"])
             self.assertGreater(clearance, 3.0)
 
     def test_each_bracket_has_two_upright_and_two_base_screws_with_a_washer_and_locknut(self):
@@ -419,7 +419,7 @@ class MirrorCellTests(unittest.TestCase):
 
     def test_plywood_has_the_bracket_holes(self):
         p = self.p
-        base, fixed = self.base_plate, self.fixed_plate
+        base, stationary = self.base_plate, self.stationary_plate
         radius = p.bracket_hole_diameter / 2 - 0.01
         for side in (-1, 1):
             x = p.bracket_center_x(side)
@@ -427,10 +427,10 @@ class MirrorCellTests(unittest.TestCase):
                 probe = Pos(x, y, -p.base_thickness / 2) * Cylinder(radius, p.base_thickness)
                 self.assertLess(intersect(probe, base).volume, TOLERANCE)
             for z in p.upright_hole_z():
-                probe = along_y((x, p.fixed_plate_front_y, z)) * Cylinder(
-                    radius, p.fixed_plate_thickness, align=ON_FLOOR
+                probe = along_y((x, p.stationary_plate_front_y, z)) * Cylinder(
+                    radius, p.stationary_plate_thickness, align=ON_FLOOR
                 )
-                self.assertLess(intersect(probe, fixed).volume, TOLERANCE)
+                self.assertLess(intersect(probe, stationary).volume, TOLERANCE)
 
     @slow
     def test_no_assembly_parts_interfere(self):

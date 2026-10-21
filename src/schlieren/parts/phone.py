@@ -31,7 +31,7 @@ Three solids, and the assembly draws the flash and the camera glass rings in the
   1.750 x 1.475 in (44.45 x 37.47 mm) at the ridge top; the corner radius grows by the mean growth of the
   half-dimensions (assumed). It clears the plateau and the flash.
 
-  A protective ridge stands outside the opening's edge, round the opening: 0.050 in (1.27 mm) high, 0.085 in
+  A protective ridge stands outside the opening's edge, around the opening: 0.050 in (1.27 mm) high, 0.085 in
   (2.16 mm) wide at its foot on the flat back, and with a flat top 0.040 in (1.02 mm) wide (all measured).
   Its foot and top are measured from the flared inner edge, so the outer wall slopes between the two widths.
   Where the outer wall comes within the case's back edge round (along the camera-side edge and the near end),
@@ -142,7 +142,7 @@ class PhoneParameters:
     case_depth: float = 0.540 * INCH  # Flat back of the case to its front.
     case_back_thickness: float = 0.125 * INCH  # Of the back plate, at the flat back.
 
-    # Case. The camera ridge is a band round the camera opening, outside its edge (assumed), of this height,
+    # Case. The camera ridge is a band around the camera opening, outside its edge (assumed), of this height,
     # width at its foot on the flat back, and flat top width (all measured). The lens reaches through the
     # opening to the camera glass, so the ridge does not set the back plane; it must stand above the camera
     # cover, which is proud of the flat back.
@@ -299,7 +299,7 @@ def _bare_outline(p: PhoneParameters, y: float) -> Face:
     """The bare phone's outline in the plane y, with Apple's corner profile at all four corners."""
     x0, x1 = p.x_near, p.x_near + p.length
     z0, z1 = p.z_lower, p.z_upper
-    corners = (  # In order round the outline: corner, inward signs along x and z, and the traversal order.
+    corners = (  # In order around the outline: corner, inward signs along x and z, and the traversal order.
         (x1, z0, -1, 1, False),
         (x1, z1, -1, -1, True),
         (x0, z1, 1, -1, False),
@@ -367,7 +367,7 @@ def _filleted_plateau(p: PhoneParameters) -> Compound:
     """The plateau with its concave fillet, clipped to the body's outline.
 
     The fillet is a circular arc tangent to the back glass at the foot and meeting the top face at the
-    drawing's inset, swept round the plateau's outline. The foot sits within the glass edge's round on two
+    drawing's inset, swept around the plateau's outline. The foot sits within the glass edge's round on two
     sides, so the sweep is trimmed to the outline.
     """
     y_glass = p.back_glass_y
@@ -467,7 +467,7 @@ def build_camera_cover(p: PhoneParameters | None = None) -> Shape:
 
 @cache
 def build_case(p: PhoneParameters | None = None) -> Compound:
-    """The case: a shell round the bare phone with the front window and camera opening."""
+    """The case: a shell around the bare phone with the front window and camera opening."""
     p = p or PhoneParameters()
     p.validate()
     x0, x1 = p.x_near - p.case_end_wall, p.x_near + p.length + p.case_end_wall
