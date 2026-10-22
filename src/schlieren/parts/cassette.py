@@ -1,8 +1,8 @@
 """Preliminary common cassette blank, design §8.6.
 
 XY is the cassette plane; z=0 is the rear sliding datum. The front is +Z. Bevel dimensions match the
-provisional carriage, not a physically qualified fit. Integral cleats and rear countersinks are on every
-cassette; two removable clamp bars and hardware references are available as an assembly.
+carriage (§8.4). Integral cleats and rear countersinks are on every cassette; two removable clamp bars and
+hardware references are available as an assembly.
 """
 
 from dataclasses import dataclass
@@ -32,14 +32,14 @@ class CassetteParameters:
     size: float = 64.0
     thickness: float = 5.0
     aperture_diameter: float = 24.0
-    bevel_depth: float = 1.25  # Provisional axial depth on front edges only.
-    bevel_angle: float = 27.5  # Provisional angle measured from cassette plane.
-    cleat_x: float = 25.0  # Provisional opposed pair on aperture X centerline.
+    bevel_depth: float = 1.25  # Axial depth on front edges only.
+    bevel_angle: float = 27.5  # Angle measured from cassette plane.
+    cleat_x: float = 25.0  # Opposed pair on aperture X centerline.
     cleat_base_diameter: float = 3.5
     cleat_top_diameter: float = 5.0
     cleat_height: float = 3.0  # Above the nominal 5 mm cassette body.
     cleat_top_round: float = 0.5
-    clamp_hole_x: float = 27.0  # Provisional; outside measured 38.99 mm blade length.
+    clamp_hole_x: float = 27.0  # Outside measured 38.99 mm blade length.
     clamp_hole_y: float = 12.0  # Bars must bridge around the optical aperture.
     screw_diameter: float = 3.0
     screw_diametral_clearance: float = 0.4

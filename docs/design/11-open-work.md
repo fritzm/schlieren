@@ -13,7 +13,9 @@ Design areas marked **Provisional** in the sections above:
   geometry; heatsink temperature rise at 700 mA; white-module long-gap focus margin.
 - **Lens cradle and phone rest** ([§9](09-camera-telephoto.md#9-camera-and-telephoto-support)): retaining-band
   size on an assumed modulus ([§9.8](09-camera-telephoto.md#98-retaining-bands)); the lens alignment
-  procedure, untested ([§9.9](09-camera-telephoto.md#99-lens-alignment)). The alignment tolerances
+  procedure, untested, and the finger room for the aft thumb nuts beside the phone
+  ([§9.9](09-camera-telephoto.md#99-lens-alignment)); the unresolved 4.7 mm difference between the measured
+  and listed lens length ([§9.2](09-camera-telephoto.md#92-telephoto)). The alignment tolerances
   ([§9.3](09-camera-telephoto.md#93-alignment-requirements)) rest on an assumed lens position behind the
   cutoff plane and an assumed camera pupil.
 - **Mirror cell** ([§10.5](10-mirror-cell.md#105-mirror-mounting),
@@ -29,7 +31,8 @@ Design areas marked **Provisional** in the sections above:
    heatsink temperature rise.
 2. Bond the mirror into the mirror plate ([§10.5](10-mirror-cell.md#105-mirror-mounting)) after an adhesion
    test.
-3. Test the lens alignment procedure ([§9.9](09-camera-telephoto.md#99-lens-alignment)), then write a
-   consolidated setup and alignment procedure for the apparatus.
+3. Test the lens alignment procedure ([§9.9](09-camera-telephoto.md#99-lens-alignment)), including the aft
+   thumb-nut finger room on the real phone, then write a consolidated setup and alignment procedure for the
+   apparatus.
 4. Design the mirror-cell safety retainers and settle the transport sandwich
    ([§10.8](10-mirror-cell.md#108-mirror-safety-and-transport-retention)).

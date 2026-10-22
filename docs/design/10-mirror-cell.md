@@ -107,8 +107,8 @@ Mounting details:
   than pull it away;
 - drill the bushing bore 8.0 mm through the Baltic birch, preferably in a drill press with a sharp brad-point
   bit and sacrificial backing to minimize breakout;
-- the 0.625 in-long bushing barrel is fully contained within the 3/4 in plate and is bonded over its available
-  cylindrical length;
+- the bushing's 15.6 mm barrel (0.625 in overall including the flange) is fully contained within the 3/4 in
+  plate, its rear end 3.4 mm below the rear face, and is bonded over its full cylindrical length;
 - use WEST SYSTEM G/flex 650 epoxy for the wood-to-metal structural bond;
 - bond directly to clean, fresh Baltic-birch bore surfaces; do not CA-harden or pre-seal the bushing bore;
 - degrease and lightly abrade the outside of the bushing barrel before bonding without materially reducing its
@@ -306,8 +306,8 @@ held between two covers. The adjusters, springs, and seat washers are removed.
   match. The intended screw is a short Kozak TS250-80 adjuster (available from 5/16 in) with a KB250-80 knob,
   which threads onto the screw end and can be removed. Lengths of about 5/8 in for the front and 3/4 in for
   the rear suit a 1/8 in cover and a few millimeters of foam; the engaged lengths from the two sides together
-  must stay below the 15.6 mm barrel length, and the barrel's rear end is 3.2 mm below the rear face of the
-  plate.
+  must stay below the 0.625 in / 15.9 mm bushing length, and the barrel's rear end is 3.4 mm below the rear
+  face of the plate.
 - Threaded rods that pass through the bushing bores without engaging their threads, with thumb nuts on both
   sides of the covers, would also work. They are less preferred: care is needed not to damage the fine bushing
   threads.

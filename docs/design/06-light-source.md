@@ -121,8 +121,8 @@ Fastening standard:
 
 Use the cap's center-drill mark as the layout datum for the board hole pattern. Transfer each carrier board's
 hole geometry from the physical board rather than assuming it from the other module. Slightly oversized board
-holes permit final centering of the emitter on the cap axis: a 0.3 mm emitter offset moves the slit image
-about 2 mm, so center each board by watching its image on the slit blades before final tightening.
+holes permit final centering of the emitter on the cap axis: a 0.3 mm emitter offset moves the emitter image
+on the slit about 2 mm, so center each board by watching its image on the slit blades before final tightening.
 
 A thin insulating washer goes under each screw head, keeping the metal head off exposed board contacts and
 spreading its clamp over the board beside the notch:
@@ -205,9 +205,9 @@ The condenser images the LED emitter onto the source slit (about 6.6× magnifica
 sees the iris uniformly filled at the LED radiance, which gives a uniformly illuminated mirror. The LED image
 should cover the illuminated slit length; the domes enlarge the apparent emitters by about 1.4–1.5×.
 
-Defocus in either direction underfills the ±1.8° cone: iris-edge rays then trace back beyond the emitter edge,
-darkening the mirror edge and shortening the uniformly lit slit length. With the LED at the condenser focus
-(12 mm, collimated) the emitter cannot fill the cone even at the slit center.
+Defocus in either direction underfills the ±1.82° cone: iris-edge rays then trace back beyond the emitter
+edge, darkening the mirror edge and shortening the uniformly lit slit length. With the LED at the condenser
+focus (12 mm, collimated) the emitter cannot fill the cone even at the slit center.
 
 Using ACL2520U-A catalog values (EFL 20.1 mm, BFL 12.0 mm; object-side principal plane about 8.1 mm inside the
 plano face) and about 153 mm from the convex vertex to the slit, the optimum emitter-to-plano-face gap is
@@ -241,10 +241,10 @@ mark per module on the SM1V05 is optional.
 Focus margin about the 15.04 mm optimum gap is about 1.1 mm (long-gap side) and 1.8 mm (short-gap side) for
 the green module, and only about 0.93 mm and 2.1 mm for the white module. The white module's long-gap travel
 is limited by the SM1V05 minimum engagement. **Provisional:** the white module's reduced margin is to be
-confirmed on the build. If it cannot reach a sharp slit image, space its cap flange off the SMR1/M face with a
-thin shim (about 0.1 mm restores 1.0 mm of margin). The shim moves the whole module away from the lens and
-keeps the flange as the axial stop; a shim under the star board would instead shorten the gap and make the
-shortfall worse.
+confirmed on the build. If it cannot reach a sharp emitter image on the slit, space its cap flange off the
+SMR1/M face with a thin shim; about 0.1 mm brings the long-gap margin to about 1.0 mm. The shim moves the
+whole module away from the lens and keeps the flange as the axial stop; a shim under the star board would
+instead shorten the gap and make the shortfall worse.
 
 Module interchange:
 

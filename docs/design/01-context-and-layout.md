@@ -124,10 +124,10 @@ $$
 \theta=\tan^{-1}(101.5/3200)\approx1.82^\circ
 $$
 
-The intended illumination cone is approximately ±1.8° to ±2.0°, corresponding to approximately NA =
-0.032–0.035 in air. Slight mirror overfill is preferred to underfill.
+The intended illumination cone is approximately ±1.82° (the mirror's half-angle, just filling it) to ±2.0°,
+corresponding to approximately NA = 0.032–0.035 in air. Slight mirror overfill is preferred to underfill.
 
-Useful nominal beam diameters for a ±1.8° cone are:
+Useful nominal beam diameters for the ±1.82° cone are:
 
 | Distance from source slit | Approx. beam diameter |
 | ------------------------- | --------------------- |

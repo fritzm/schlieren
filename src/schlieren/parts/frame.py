@@ -95,8 +95,8 @@ class FrameParameters:
     block_screw_spacing: float = 50.0
     block_screw_length: float = MCMASTER_92290A242_LENGTH
     # Two washers under each head set how far the screw enters the rail slot. With one, an M5 × 20 stops only
-    # 0.15 mm short of the measured slot floor and bottoms if the plywood runs thin; an M5 × 16 reaches barely
-    # past the slot lip to the T-nut. No standard length lies between.
+    # 0.15 mm short of the measured slot floor and bottoms if the plywood runs thin; with two, an M5 × 16
+    # stays 0.35 mm short of clearing the slot lip to the T-nut. No standard length lies between.
     block_washers_per_screw: int = 2
     foot_diameter: float = MCMASTER_8215K2_DIAMETER
     foot_height: float = MCMASTER_8215K2_HEIGHT

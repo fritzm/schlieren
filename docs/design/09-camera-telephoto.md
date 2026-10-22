@@ -59,15 +59,16 @@ Measured sections, from the aft end forward:
 | shoulder                   | 0.40 in / 10.2 mm   | 1.26 in / 32.0 mm |
 | main barrel                | 4.285 in / 108.8 mm | about 37.0 mm     |
 
-The overall length is 4.785 in / 121.5 mm, about 4.7 mm more than the 116.8 mm listed for the lens; the
-difference is not resolved. The boss threads into the lens mount on the phone case, and the shoulder seats
-against the mount; the model takes the aft end of the boss to be on the camera cover, at the back plane of the
-cased phone. The main barrel is 1.457 in / 37.01 mm in diameter at its rear end and 1.459 in / 37.06 mm
-further forward. The focus ring, 0.455 in / 11.6 mm long, ends 0.175 in / 4.4 mm behind the front of the
-barrel, so it starts 105.5 mm from the aft end. The barrel is clampable from 12.7 mm to the focus ring, about
-93 mm, and the focus ring must stay clear. The front glass is a clear aperture of 0.845 in / 21.5 mm at the
-bottom of a stepped recess. The focus ring moves the glass, and at the working focus of about 3.2 m the ring
-is fully forward and the glass is 0.5 in / 12.7 mm behind the front of the barrel, 108.8 mm from the aft end.
+The overall length is 4.785 in / 121.5 mm, about 4.7 mm more than the 116.8 mm listed for the lens.
+**Provisional:** the difference is not resolved; the model uses the measured length. The boss threads into the
+lens mount on the phone case, and the shoulder seats against the mount; the model takes the aft end of the
+boss to be on the camera cover, at the back plane of the cased phone. The main barrel is 1.457 in / 37.01 mm
+in diameter at its rear end and 1.459 in / 37.06 mm further forward. The focus ring, 0.455 in / 11.6 mm long,
+ends 0.175 in / 4.4 mm behind the front of the barrel, so it starts 105.5 mm from the aft end. The barrel is
+clampable from 12.7 mm to the focus ring, about 93 mm, and the focus ring must stay clear. The front glass is
+a clear aperture of 0.845 in / 21.5 mm at the bottom of a stepped recess. The focus ring moves the glass, and
+at the working focus of about 3.2 m the ring is fully forward and the glass is 0.5 in / 12.7 mm behind the
+front of the barrel, 108.8 mm from the aft end.
 
 The lens is modeled in `src/schlieren/parts/lens.py`, for visualization only.
 
@@ -79,9 +80,12 @@ centering minimizes vignetting.
 The returned slit image at the cutoff is the aperture stop for the camera: every ray from the test region
 passes through it, then spreads again at the ±1.82° cone angle
 ([§3.2](01-context-and-layout.md#32-source-cone)). The values below are calculated. **Provisional:** they rest
-on assumed values, namely a barrel front about 42 mm behind the cutoff plane (the front glass is then about 55
-mm behind it), a 10 mm lit slit image, and a Main-camera pupil of about 3.7 mm (6 mm focal length at f/1.6).
-The telephoto's front clear aperture is measured at 0.845 in / 21.5 mm.
+on assumed values, namely a barrel front about 42 mm behind the cutoff plane (a 10 mm gap to the cutoff split
+ring's rear face, which lies about 32 mm behind the cassette front face; the front glass is then about 55 mm
+behind the plane), a 10 mm lit slit image, and a Main-camera pupil of about 3.7 mm (6 mm focal length at
+f/1.6). The telephoto's front clear aperture is measured at 0.845 in / 21.5 mm. The distance is not critical:
+the cone footprint grows by only about 0.06 mm per mm of distance, so a 10 mm shorter gap would add about 0.3
+mm to the along-slit centering margin.
 
 | Quantity                                        | Value                   |
 | ----------------------------------------------- | ----------------------- |
@@ -109,7 +113,8 @@ The phone and the lens threaded onto its case are one rigid body. The lens barre
 mount. Two separate rail fixtures carry them:
 
 - the lens cradle, specific to the lens, holds the barrel at both stations on four adjusting screws
-  ([§9.5](#95-lens-cradle)) and is held down by two retaining bands ([§9.8](#98-retaining-bands));
+  ([§9.5](#95-lens-cradle)), with two retaining bands holding the collars down on them
+  ([§9.8](#98-retaining-bands));
 - the phone rest, specific to the phone, supports the phone's lower edge at one point
   ([§9.6](#96-phone-rest)). A different phone needs only this part redesigned.
 
@@ -356,9 +361,9 @@ The sequence:
 1. Fit both collars and the phone on the lens at their stations, set the four thumb nuts to equal exposed
    screw length (mid-travel), and note their positions. Put the cradle shoe on the rail with its clamp screws
    loose.
-2. Slide the shoe along the rail to put the lens front at the planned gap from the split ring's rear face,
-   then snug the clamp screws. The groove at the aft left screw fixes the lens fore/aft on the cradle, so
-   nothing later moves it.
+2. Slide the shoe along the rail to put the lens front at the 10 mm gap assumed in
+   [§9.3](#93-alignment-requirements) from the split ring's rear face, then snug the clamp screws. The groove
+   at the aft left screw fixes the lens fore/aft on the cradle, so nothing later moves it.
 3. Center the barrel at each collar mechanically, aft first, and re-measure the other collar after each
    change. Height: from the shoe deck, beside the yoke, up to the barrel top, whose target is 72.35 + 18.5 − 5
    = about 85.85 mm (the deck top is 5 mm above the rail top; the barrel diameters of 37.01 and 37.06 mm
@@ -376,5 +381,5 @@ The sequence:
 
 - Each station's range is only about ±4 mm, so a larger offset is taken up by moving the shoe on the rail, not
   with the screws.
-- The aft thumb nuts must stay clear of the phone while they are turned; the model leaves finger room, to be
-  checked on the real phone.
+- The aft thumb nuts must stay clear of the phone while they are turned; the model leaves finger room.
+  **Provisional:** check the finger room on the real phone.

@@ -157,9 +157,9 @@ through approximately 5.5 mm clearance holes in the plywood.
 
 The two washers set the screw's depth in the slot. With two nominal 1.0 mm washers and the 12.7 mm block, a 20
 mm screw enters the rail slot by about 5.3 mm, about 1.15 mm short of the 6.45 mm slot floor. A single washer
-leaves only about 0.15 mm, so the screw bottoms before the block clamps if the plywood runs thin; a 16 mm
-screw reaches only about 0.65 mm past the slot lip, too little to engage the T-nut; no standard length lies
-between.
+leaves only about 0.15 mm, so the screw bottoms before the block clamps if the plywood runs thin. A 16 mm
+screw enters by only about 1.3 mm, about 0.35 mm short of clearing the 1.65 mm slot lip to reach the T-nut; no
+standard length lies between.
 
 Each block's screw stack, from the bottom up:
 

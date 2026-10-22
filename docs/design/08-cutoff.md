@@ -2,10 +2,10 @@
 
 The cutoff sits at the returned slit-image plane on the imaging rail. It is a rotating carriage
 ([§8.1](#81-spigot-and-rotation-interface)–[8.5](#85-spring-seating-and-retraction)) holding interchangeable
-64 mm cassettes ([§8.6](#86-common-cassette-standard)–[8.7](#87-cassette-clamp-bars)), which carry the cutoff
-element: a knife edge, a fine wire ([§8.8](#88-fine-wire)), or a color filter
-([§8.9](#89-color-filter-material)). The carriage model is `src/schlieren/parts/carriage.py`; the cassette
-blank and clamp bars are modeled in `src/schlieren/parts/cassette.py`.
+64 mm cassettes ([§8.6](#86-common-cassette)–[8.7](#87-cassette-clamp-bars)), which carry the cutoff element:
+a knife edge, a fine wire ([§8.8](#88-fine-wire)), or a color filter ([§8.9](#89-color-filter-material)). The
+carriage model is `src/schlieren/parts/carriage.py`; the cassette blank and clamp bars are modeled in
+`src/schlieren/parts/cassette.py`.
 
 <p align="center">
   <img src="figures/cutoff.png" width="500" style="max-width: 90%"
@@ -284,7 +284,7 @@ Retraction for cassette loading uses a thumb tab on the spring plunger's front f
 The tab is kept low, close to the plane of the guide ears, so that pushing on it does not twist the plunger
 and jam the ears.
 
-### 8.6 Common cassette standard
+### 8.6 Common cassette
 
 Cassette envelope:
 
@@ -314,19 +314,19 @@ Cassette variants, all built on the common blank:
 
 The common cassette blank carries one opposed pair of integral filament cleats on the front / non-datum face,
 rather than making cleats a special cassette variant: two cleats, one on each side of the 24 mm optical
-aperture, at (±25, 0) mm on an aperture centerline, outboard of the razor blades and clamp bars. The cleats
-are slightly conical, Ø3.5 mm at the cassette face widening to Ø5 mm toward the top and rising 3 mm, so
-filament tension drives fine wire or thread down against the cassette front face. The tops are rounded to
-avoid damaging fine wire. Route a filament in an S path, around opposite sides of the two cleats; the free
-span then crosses approximately through the aperture centerline. Small angular error from finite cleat
-diameter or wrapping is acceptable because the SM1RC/M rotates the complete tube/cassette assembly. This makes
-the same common cassette blank usable for blade, filter, Photofoil, wire, and thread experiments while keeping
-the rear datum face unobstructed.
+aperture, at (±25, 0) mm on an aperture centerline, beyond the ends of the razor blades and between the clamp
+bars. The cleats are slightly conical, Ø3.5 mm at the cassette face widening to Ø5 mm toward the top and
+rising 3 mm, so filament tension drives fine wire or thread down against the cassette front face. The tops are
+rounded to avoid damaging fine wire. Route a filament in an S path, around opposite sides of the two cleats;
+the free span then crosses approximately through the aperture centerline. Small angular error from finite
+cleat diameter or wrapping is acceptable because the SM1RC/M rotates the complete carriage. This makes the
+same common cassette blank usable for blade, filter, Photofoil, wire, and thread experiments while keeping the
+rear datum face unobstructed.
 
 ### 8.7 Cassette clamp bars
 
 These bars and their hardware are the clamping standard for the cassettes
-([§8.6](#86-common-cassette-standard)); the slit head uses its own smaller bars
+([§8.6](#86-common-cassette)); the slit head uses its own smaller bars
 ([§7.5](07-source-slit.md#75-blade-clamping)).
 
 Common clamp bars:
@@ -391,7 +391,7 @@ diameters below are bare-conductor diameters; enamel makes the finished optical 
 
 Exact finished outside diameter is not critical for the qualitative instrument.
 
-The common cassette blank's cleat pair, described in [§8.6](#86-common-cassette-standard) is the quick-change
+The common cassette blank's cleat pair, described in [§8.6](#86-common-cassette) is the quick-change
 mounting for these wires and for dark sewing thread or other fibers. Apply only modest tension, particularly
 to 44 AWG wire; the conical cleats seat the filament against the cassette face, and the S-wrap places the free
 span approximately on the aperture centerline.

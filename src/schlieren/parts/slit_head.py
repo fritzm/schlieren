@@ -201,7 +201,7 @@ class SlitHeadParameters:
     # Adapter back to ring face, set by a shoulder on the spigot that the ring seats against; keeps the
     # adapter plate clear of the post at every rotation.
     ring_gap: float = 3.5
-    spigot_shoulder_diameter: float = 34.0  # Bears on the SM1RC/M face outside its Ø30.6 mm bore.
+    spigot_shoulder_diameter: float = 34.0  # Bears on the SM1RC/M face outside its Ø30.7 mm bore.
     post_clearance: float = 2.0  # Minimum, rotating parts to post and rail shoe over the working range.
     # PLA material, typical values (provisional).
     pla_modulus: float = PLA_MODULUS

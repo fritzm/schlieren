@@ -138,7 +138,7 @@ A separate printed spigot adapter is bolted to the frame back with four M3 × 12
 counterbored from the head front into M3 nuts captured in the adapter back. The adapter is a flat plate, held
 1.0 mm off the moving stages by two McMaster 93475A210 M3 flat washers (0.4–0.6 mm each) stacked on each screw
 between frame and plate. It carries a hollow Ø30.48 mm (SM1 tube OD) spigot with a Ø24 mm light bore, clamped
-by the SM1RC/M split ring (Ø30.6 mm bore, 10.16 mm thick, M4 locking screw across the split).
+by the SM1RC/M split ring (Ø30.7 mm bore, 10.16 mm thick, M4 locking screw across the split).
 
 A Ø34 mm shoulder on the spigot is the ring's axial stop: the ring seats against it, which places the adapter
 plate 3.5 mm in front of the ring face and 2.2 mm clear of the post at every rotation. Do not clamp the ring
