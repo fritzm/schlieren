@@ -41,7 +41,7 @@ solely on as-printed PLA dimensions.
 
 PLA softens at about 55–60 °C and creeps under sustained load, so printed parts must not see direct sun or a
 closed vehicle, and sustained loads on them are kept low: clamp screws are tightened to a light snug. The LED
-heatsinks rise only about 14 °C above ambient ([§6.3](06-light-source.md#63-common-heatsink)).
+heatsinks are calculated to rise about 14 °C above ambient ([§6.3](06-light-source.md#63-common-heatsink)).
 
 The following are out of scope:
 

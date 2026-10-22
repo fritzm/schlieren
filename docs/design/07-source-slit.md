@@ -93,9 +93,7 @@ Measured spring OD: 0.272 in / 6.91 mm (calipers). Spring pockets are Ø7.91 mm 
 
 Spring installation: the pockets are closed on all sides except the 3.5 mm flexure gap, and the 16.5 mm cavity
 is shorter than the 25.5 mm free length, so the spring has no clear insertion path. It is installed by
-compressing it fully and working it into the pockets by hand. If that proves unreliable, the fallback is a
-bottom access bore through the frame bottom bar closed by a screwed cap carrying the lower guide pin (not
-modeled).
+compressing it fully and working it into the pockets by hand.
 
 Sensitivity: the iris is about 150 mm before the slit, so moving the slit by d turns the illumination cone by
 d/150; at the mirror the beam moves about 21 × d. The ±2 mm travel therefore steers the beam about ±42 mm at

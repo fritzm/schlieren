@@ -169,8 +169,8 @@ Target depth:
 
 - approximately 1/16 in / 1.6 mm
 
-The diameter should be a close free fit, not a loose retention pocket. Final cutter diameter should be
-selected against measured washer OD rather than assuming a nominal oversize woodworking dimension.
+Each socket is cut with a 1/2 in Forstner bit and lightly dressed with a file to a close free fit on the
+washer OD, not a loose retention pocket.
 
 #### Stationary-plate adjuster through-hole
 
@@ -192,12 +192,12 @@ and load-transfer interface.
 
 #### CA conditioning
 
-After machining each spherical-washer socket:
+After cutting and fitting each spherical-washer socket:
 
 1. wick a small amount of McMaster 1818A45 / Loctite 4061 low-viscosity CA into the exposed Baltic-birch
    fibers;
 2. allow it to cure fully;
-3. lightly dress the socket back to the required free fit.
+3. if the hardened socket is tight, lightly dress it back to the free fit.
 
 The CA hardens the wood; it is not used to glue the washer in place.
 

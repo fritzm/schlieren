@@ -138,7 +138,7 @@ class MirrorCellParameters:
     stationary_hole_diameter: float = 5 / 16 * INCH
     seat_counterbore_diameter: float = 5 / 8 * INCH  # Forstner cutter.
     seat_counterbore_depth: float = 1 / 32 * INCH
-    # Provisional: the cutter is chosen against the measured washer OD (§10.4).
+    # Close free fit: 1/2 in Forstner, lightly dressed with a file (§10.4); a nominal allowance.
     socket_diametral_clearance: float = 0.2
     socket_depth: float = 1 / 16 * INCH
 
