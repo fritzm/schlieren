@@ -20,7 +20,7 @@ carries the 203 mm mirror and moves relative to the stationary plate.
        alt="Mirror cell seen from the front: the base plate, the stationary plate, the mirror plate
        with its 203 mm mirror and three adjuster tips, and the two angle brackets with their screws">
   <br>
-  <em>Fig. 11. Mirror cell from the mirror side: base plate, stationary plate, mirror plate and
+  <em>Fig. 12. Mirror cell from the mirror side: base plate, stationary plate, mirror plate and
     mirror, and angle brackets</em>
 </p>
 
@@ -87,7 +87,7 @@ Use one adjuster, one bushing, and one knob at each of the three stations.
        alt="Section through one adjuster station: knob, spherical washer pair, stationary plate, spring
        between its seat washers, mirror plate with bushing, and the adjuster screw">
   <br>
-  <em>Fig. 12. Adjuster station, plywood and mirror cut away: knob, spherical washer pair, spring and seat
+  <em>Fig. 13. Adjuster station, plywood and mirror cut away: knob, spherical washer pair, spring and seat
     washers, bushing, and adjuster screw</em>
 </p>
 
@@ -358,7 +358,7 @@ marked through the base holes with the plate held against the underside, and tap
        alt="Mirror cell seen from below and the front: the sliding plate against the underside of the base,
        with the bracket locknuts near the base edges">
   <br>
-  <em>Fig. 13. Mirror cell from below: the quick-release sliding plate on the underside of the base, and the
+  <em>Fig. 14. Mirror cell from below: the quick-release sliding plate on the underside of the base, and the
     bracket locknuts</em>
 </p>
 
@@ -368,6 +368,6 @@ marked through the base holes with the plate held against the underside, and tap
        screw holes and four bracket-screw holes, dimensioned in x from the plate centerline and in y from the
        front edge, with the front edge at the bottom">
   <br>
-  <em>Fig. 14. Drilling layout of the base plate, seen from above, in cell coordinates (front edge at the
+  <em>Fig. 15. Drilling layout of the base plate, seen from above, in cell coordinates (front edge at the
     bottom)</em>
 </p>

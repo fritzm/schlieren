@@ -9,8 +9,10 @@ Design areas marked **Provisional** in the sections above:
 - **Tabletop frame** ([§4.3](04-frame.md#43-pivot-and-yaw-hardware)): pivot-lug screw length.
 - **Light source** ([§6.2](06-light-source.md#62-led-modules), [§6.3](06-light-source.md#63-common-heatsink),
   [§6.4](06-light-source.md#64-led-board-mounting),
-  [§6.7](06-light-source.md#67-focus-and-module-interchange)): M3 heatsink-screw length; Convoy star notch
-  geometry; heatsink temperature rise at 700 mA; white-module long-gap focus margin.
+  [§6.7](06-light-source.md#67-focus-and-module-interchange),
+  [§6.8](06-light-source.md#68-cap-and-heatsink-drilling-fixture)): M3 heatsink-screw length; drilling-fixture
+  bushing bores and printed accuracy; Convoy star notch geometry; heatsink temperature rise at 700 mA;
+  white-module long-gap focus margin.
 - **Lens cradle and phone rest** ([§9](09-camera-telephoto.md#9-camera-and-telephoto-support)): retaining-band
   size on an assumed modulus ([§9.8](09-camera-telephoto.md#98-retaining-bands)); the lens alignment
   procedure, untested, and the finger room for the aft thumb nuts beside the phone
@@ -24,7 +26,9 @@ Design areas marked **Provisional** in the sections above:
 
 ### 11.2 Next steps
 
-1. Fabricate both threaded LED modules: drill and tap the caps and heatsinks, center each board, and set focus
+1. Print the drilling fixture and its bore coupon
+   ([§6.8](06-light-source.md#68-cap-and-heatsink-drilling-fixture)). Fabricate both threaded LED modules:
+   drill and tap the caps and heatsinks, center each board, and set focus
    on the slit blades; check the Convoy star notch geometry against the physical parts
    ([§6.4](06-light-source.md#64-led-board-mounting)). Confirm that the white module reaches focus; if not,
    add a thin cap-flange shim ([§6.7](06-light-source.md#67-focus-and-module-interchange)). Bench-test the

@@ -24,7 +24,7 @@ FRAGMENTS := $(sort $(wildcard docs/design/[0-9][0-9]-*.md))
 FIGURES := $(addprefix $(FIG)/,\
   rail-shoe.png cassette.png cutoff.png camera-support.png slit-head.png \
   frame.png frame-pivot-plate.svg \
-  light-source.png light-source-section.png light-source-holes.svg \
+  light-source.png light-source-section.png light-source-holes.svg led-drill-fixture.png \
   mirror-cell.png mirror-cell-below.png mirror-cell-adjuster.png mirror-cell-base-plate.svg)
 
 DOC := exports/docs/schlieren-design.md
@@ -83,6 +83,10 @@ $(FIG)/light-source.png: $(CLI)/light_source.py $(wildcard $(PARTS)/light_source
     $(PARTS)/rail.py $(CORE)
 	uv run light-source --figure
 $(foreach f,light-source-section.png light-source-holes.svg,$(eval $(call extra,$(FIG)/$(f),$(FIG)/light-source.png)))
+
+$(FIG)/led-drill-fixture.png: $(CLI)/led_drill_fixture.py $(PARTS)/led_drill_fixture.py $(PARTS)/light_source.py \
+    $(PARTS)/light_source_holes.py $(PARTS)/rail_shoe.py $(PARTS)/rail.py $(CORE)
+	uv run led-drill-fixture --figure
 
 $(FIG)/mirror-cell.png: $(CLI)/mirror_cell.py $(PARTS)/mirror_cell.py $(PARTS)/mirror_cell_drawing.py \
     $(PARTS)/frame_drawing.py $(PARTS)/frame.py $(PARTS)/rail.py $(CORE)

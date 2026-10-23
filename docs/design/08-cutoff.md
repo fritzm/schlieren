@@ -13,7 +13,7 @@ carriage model is `src/schlieren/parts/carriage.py`; the cassette blank and clam
        with its eight retaining screws, driven and spring plungers, FAS100 adjuster, and cassette with clamp
        bars">
   <br>
-  <em>Fig. 8. Cutoff carriage with a seated cassette: guide frame, keeper frame and its retaining screws,
+  <em>Fig. 9. Cutoff carriage with a seated cassette: guide frame, keeper frame and its retaining screws,
     driven and spring plungers, and the FAS100 fine adjuster</em>
 </p>
 
@@ -309,7 +309,7 @@ Cassette variants, all built on the common blank:
   <img src="figures/cassette.png" width="400" style="max-width: 90%"
        alt="Assembled cassette: 64 mm base with 24 mm aperture, two clamp bars with screws, washers and nuts">
   <br>
-  <em>Fig. 9. Cassette blank with its two clamp bars and hardware</em>
+  <em>Fig. 10. Cassette blank with its two clamp bars and hardware</em>
 </p>
 
 The common cassette blank carries one opposed pair of integral filament cleats on the front / non-datum face,

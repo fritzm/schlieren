@@ -149,6 +149,37 @@ MCMASTER_92095A453_HEAD_DIAMETER = 3.5
 # Ø5.0 mm OD, Ø2.2 mm ID.
 MCMASTER_91545A410_THICKNESS = 0.4
 MCMASTER_91545A410_DIAMETER = 5.0
+# McMaster 96990A132 (1.6 mm ID, Ø4), 96990A147 (2.5 mm ID, Ø5), and 96990A139 (2.0 mm ID, Ø5) metric press-fit
+# drill bushings, 6 mm long: axis +Z through the origin, centered on the length, with the internal chamfer on
+# the +Z end (the drill-entry end) and the press-in lead taper on the same end.
+MCMASTER_96990A132_DIAMETER = 4.0
+MCMASTER_96990A132_BORE = 1.6
+MCMASTER_96990A147_DIAMETER = 5.0
+MCMASTER_96990A147_BORE = 2.5
+MCMASTER_96990A139_DIAMETER = 5.0
+MCMASTER_96990A139_BORE = 2.0
+MCMASTER_969_LENGTH = 6.0  # All three bushings.
+# McMaster 97171A310 model (M3 × 0.5 brass flanged heat-set insert, no threads): axis +Y through the origin, the
+# flange (underside at y=2.87 mm, face at 3.40 mm) toward +Y, the 5.74 mm knurled body toward -Y to y=-2.87 mm;
+# 6.27 mm overall. The catalog gives Ø5.5 × 0.53 mm for the flange and 5.7 mm installed length.
+MCMASTER_97171A310_FLANGE_Y = 2.87
+MCMASTER_97171A310_FLANGE_DIAMETER = 5.538  # Measured on the model; the catalog gives Ø5.5 mm.
+MCMASTER_97171A310_OVERALL = 6.27
+# McMaster 92356A589 model (5/16"-18 × 1-1/4" square-neck carriage bolt, no threads): axis +Z through the
+# origin, domed head at +Z, under-head face at z=13.64 mm, thread end at z=-18.11 mm; 0.32" square neck 0.19"
+# long under the head.
+MCMASTER_92356A589_UNDER_HEAD_Z = 13.64
+MCMASTER_92356A589_LENGTH = 1.25 * INCH  # Under the head.
+MCMASTER_92356A589_HEAD_HEIGHT = 0.176 * INCH
+MCMASTER_92356A589_HEAD_DIAMETER = 0.719 * INCH
+MCMASTER_92356A589_NECK_WIDTH = 0.32 * INCH
+MCMASTER_92356A589_NECK_LENGTH = 0.19 * INCH
+MCMASTER_92356A589_DIAMETER = 5 / 16 * INCH
+# McMaster 95150A180 model (5/16"-18 flanged knurled-head thumb nut, no threads): axis +X through the origin,
+# collar bearing face at x=5.159 mm, knurled head toward -X; 10.32 mm (13/32") overall, 5/8" head, 17/32" collar.
+MCMASTER_95150A180_BEARING_X = 5.159
+MCMASTER_95150A180_HEIGHT = 13 / 32 * INCH
+MCMASTER_95150A180_HEAD_DIAMETER = 5 / 8 * INCH
 # McMaster 91585A351 (Ø3 × 10 mm) and 91585A457 (Ø4 × 20 mm) dowel pins: axis +X through the origin, centered
 # on the length; chamfered ends.
 MCMASTER_91585A351_DIAMETER = 3.0
@@ -537,6 +568,52 @@ def mcmaster_91545a410() -> Compound:
     """McMaster 91545A410 M2 nylon washer; axis +Z through the origin, one face at z=0, the other at
     +thickness."""
     return _moved("McMaster-91545A410.step", Pos(0, 0, MCMASTER_91545A410_THICKNESS / 2))
+
+
+def _drill_bushing(filename: str) -> Compound:
+    return _moved(filename, Pos(0, 0, MCMASTER_969_LENGTH / 2))
+
+
+@cache
+def mcmaster_96990a132() -> Compound:
+    """McMaster 96990A132 drill bushing (1.6 mm ID); axis +Z through the origin, from z=0 to 6 mm, internal
+    chamfer at z=6 mm."""
+    return _drill_bushing("McMaster-96990A132.step")
+
+
+@cache
+def mcmaster_96990a147() -> Compound:
+    """McMaster 96990A147 drill bushing (2.5 mm ID); axis +Z through the origin, from z=0 to 6 mm, internal
+    chamfer at z=6 mm."""
+    return _drill_bushing("McMaster-96990A147.step")
+
+
+@cache
+def mcmaster_96990a139() -> Compound:
+    """McMaster 96990A139 drill bushing (2.0 mm ID); axis +Z through the origin, from z=0 to 6 mm, internal
+    chamfer at z=6 mm."""
+    return _drill_bushing("McMaster-96990A139.step")
+
+
+@cache
+def mcmaster_97171a310() -> Compound:
+    """McMaster 97171A310 M3 brass flanged heat-set insert; axis +Z through the origin, the flange's bearing
+    face at z=0 with the flange toward +Z and the body toward -Z."""
+    return _moved("McMaster-97171A310.step", Rot(X=90) * Pos(0, -MCMASTER_97171A310_FLANGE_Y, 0))
+
+
+@cache
+def mcmaster_92356a589() -> Compound:
+    """McMaster 92356A589 5/16"-18 × 1-1/4" carriage bolt; axis +Z through the origin, under-head face at z=0,
+    head toward -Z, thread toward +Z."""
+    return _moved("McMaster-92356A589.step", Pos(0, 0, MCMASTER_92356A589_UNDER_HEAD_Z) * Rot(X=180))
+
+
+@cache
+def mcmaster_95150a180() -> Compound:
+    """McMaster 95150A180 5/16"-18 flanged knurled-head thumb nut; axis +Z through the origin, collar bearing
+    face at z=0, head toward +Z."""
+    return _moved("McMaster-95150A180.step", Pos(0, 0, MCMASTER_95150A180_BEARING_X) * Rot(Y=90))
 
 
 @cache

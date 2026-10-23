@@ -124,7 +124,7 @@ mount. Two separate rail fixtures carry them:
        inclined screws in a yoke bolted to the cradle shoe, a retaining band around the barrel beside each
        yoke, and the phone hanging from the lens with its lower edge on the rest arm">
   <br>
-  <em>Fig. 10. Lens cradle and phone rest on the imaging rail, with the phone and the lens</em>
+  <em>Fig. 11. Lens cradle and phone rest on the imaging rail, with the phone and the lens</em>
 </p>
 
 The body is located by six contacts and no more, so adjusting one station does not strain the lens mount:

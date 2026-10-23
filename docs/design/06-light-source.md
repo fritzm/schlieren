@@ -78,7 +78,8 @@ Interfaces:
 - Leads drop past the star board's flat edges through two Ø2.0 mm holes in the cap and the heatsink base, 11.0
   mm from the axis (inside the thread relief), and out between the pin columns. The pigtail wire measures
   about 1.7 mm over its insulation.
-- Fabrication is drilling and tapping of purchased aluminum parts only ([§6.4](#64-led-board-mounting)).
+- Fabrication is drilling and tapping of purchased aluminum parts only ([§6.4](#64-led-board-mounting)), drilled
+  through the printed fixture of [§6.8](#68-cap-and-heatsink-drilling-fixture).
 
 Clearances:
 
@@ -255,3 +256,120 @@ Module interchange:
 
 In transport, the condenser/iris assembly is protected from dust and scratches by a Thorlabs SM1CP1 internally
 threaded end cap and an SM1EC2 snap-on dust cap.
+
+### 6.8 Cap and heatsink drilling fixture
+
+The §6.4 hole layout is drilled through a fixture of three printed parts and seven press-fit steel drill
+bushings, so the hole positions come from the fixture and not from how a drill press is set up by eye. Two
+requirements set the accuracy needed, about 0.1 mm on position:
+
+- The 2.0 mm lead holes in the cap and the heatsink base must line up through the bolted joint, for a pigtail
+  wire about 1.7 mm over its insulation.
+- A 0.3 mm emitter offset moves the emitter image about 2 mm on the slit ([§6.4](#64-led-board-mounting)), so
+  the M2 board holes must not shift the star far from the axis.
+
+<p align="center">
+  <img src="figures/led-drill-fixture.png" width="560" style="max-width: 95%"
+       alt="Two printed drilling setups side by side: the short cap nest with its bushing plate, and the tall
+       heatsink nest, open at the sides, with its bushing plate">
+  <br>
+  <em>Fig. 7. Drilling fixture: bushing plate on the cap nest (left) and on the heatsink nest (right)</em>
+</p>
+
+`src/schlieren/parts/led_drill_fixture.py` models the fixture; `uv run led-drill-fixture` exports the STL
+files and the figure.
+
+#### Parts
+
+One **bushing plate** serves both parts, so the leads, and the M3 holes that fix the cap-to-heatsink rotation,
+are drilled from the same coordinates. A **cap nest** and a **heatsink nest** each locate one part under it.
+All are printed in PLA.
+
+Bushings, McMaster metric press-fit drill bushings (hardened steel, 6 mm long, chamfered on one end); each bore
+is the drill that makes the cap's hole ([§6.4](#64-led-board-mounting)):
+
+| Hole           | Count | Bore (mm) | Outside diameter (mm) | SKU       |
+| -------------- | ----- | --------- | --------------------- | --------- |
+| M2 tap drill   | 2     | 1.6       | 4                     | 96990A132 |
+| M3 tap drill   | 3     | 2.5       | 5                     | 96990A147 |
+| Lead hole      | 2     | 2.0       | 5                     | 96990A139 |
+
+- The plate is 54 mm square and 6 mm thick, the bushing length, so the bushings sit flush on both faces. Its
+  bores are at the layout coordinates, in the frame seen looking down at the part's LED-side face (+x right,
+  +y up). The smallest web between bores is 2.9 mm.
+- Under the plate, a registration ring (Ø45.0 mm outside, Ø41.0 mm inside, 2.5 mm high) fits the Ø45.2 mm bore
+  in the top of either nest, with a key tab on +x that fits a slot in the nest. The tab allows one orientation
+  only. The plate seats on the nest's top face and is held by four M3 × 12 mm screws, through its corner
+  clearance holes into M3 heat-set inserts in the nest's corners. The inserts are McMaster 97171A310 brass
+  flanged inserts (5.7 mm installed length, Ø5.5 mm flange 0.53 mm thick), set in Ø4.0 mm holes with the
+  flange recessed flush with the nest's top face. The socket heads stand 3 mm above the plate's top face, 31 mm
+  from the axis; the plate has no counterbores.
+- The nests share the 54 mm square outline and the plate bore. The plate's bushing ends stand 2.0 mm off the
+  part's LED-side face, which leaves room for chips.
+- A Ø10 mm boss, 1.5 mm tall, under the center of the plate carries a Ø10 mm disc of the 1/32 in
+  adhesive-backed EPDM sheet (McMaster 9852N37; the sheet is in the cassette allocation). Seated, the disc
+  presses on the part's face with about 0.3 mm of compression. It holds the cap on its support ring and the
+  heatsink on its pin tips against the bit grabbing, and is 2.3 mm clear of the nearest bushing.
+- The plate is printed ring-up, so the bores are vertical.
+
+Cap nest:
+
+- A Ø30.68 mm pocket (0.20 mm diametral clearance on the Ø30.48 mm flange) holds the cap boss-up. The flange
+  back face stands on a support ring around a Ø25 mm relief window through the floor; the holes reach 12.0 mm
+  from the axis, so the exits and chips clear the support.
+- An M3 clamp screw, in a heat-set insert on the −y side at the flange mid-thickness, pushes the cap against
+  the opposite wall of the pocket and keeps it from turning if the drill grabs. A notch in the −y face thins
+  the wall there to 7.7 mm, so the 12 mm screw protrudes about 4 mm into the pocket.
+
+Heatsink nest:
+
+- The heatsink stands pins down, on the floor, and is drilled from its flat base face. A cross-shaped rib 3.8
+  mm wide and 8 mm tall stands in the two open channels through the center of the pin lattice, which are 4.1
+  mm wide, 0.15 mm of clearance each side. The rib fixes the position and rotation in the lattice frame, the
+  frame the layout is defined in; the Ø40 mm base diameter has a +0/−0.5 mm tolerance and is not used.
+- The plate seats 2.0 mm above the 40 mm height of the heatsink. The lead and M3 drills exit well above the
+  rib. Four side windows show the pins and the rib.
+
+#### Mounting on the drill press
+
+The nests mount on the base of a Dremel 220 drill press, which has four diagonal slots, 3/8 in wide and 7/32 in
+deep, running from 3/4 in (the apex of the slot's inner rounded end) to 2-1/4 in (the keyhole) from the spindle
+axis. Each nest has two ears, 8 mm thick, on its ±x faces, and sits turned 45° on the base so that its x axis
+lies along one diagonal pair of base slots. A 2 mm fillet where each ear meets the face, along its top edge and
+its ends and blended at the corners, spreads the clamping load at the root.
+
+- A 5/16-18 × 1-1/4 in square-neck carriage bolt (McMaster 92356A589) rides in each base slot, head under the
+  base and its 0.32 in square neck in the slot, which keeps it from turning. It goes in from the top, the head
+  tipped through the slot's 5/8 in keyhole, or from underneath.
+- The bolt passes through a slot in the ear that runs along the face (y), 40 mm from the axis, and a 5/16 in SAE
+  washer and a flanged knurled thumb nut (McMaster 95150A180, 5/8 in head) clamp the ear from the top. The
+  thumb nut clears the nest face by 5 mm.
+- The fixture moves in x along the base slots (±10.5 mm) and in y along the ear slots (±12 mm), enough to bring
+  any bushing under the spindle. Over that travel the bolt neck stays between 25 and 55 mm from the spindle
+  axis, inside the slot.
+- A 1/8 in UHMW sheet under the nest, with clearance slots for the bolts, protects the base where the bits exit
+  away from its center hole. The bolt length allows for it.
+
+To move between holes, loosen the thumb nuts, lower the bit into the next bushing and hold it there, and tighten
+the thumb nuts; the bushing sets the fixture's position.
+
+#### Drilling
+
+Both parts are drilled through the plate from the LED-side face.
+
+- Cap: all seven holes, through. Then tap the M3 and M2 holes by hand ([§6.4](#64-led-board-mounting)).
+- Heatsink: the three M3 positions with the 2.5 mm bushings as pilots, then opened to the Ø3.3 clearance with
+  the larger bit following the pilot; and the two lead holes. The M2 bushing positions are not used.
+
+Because one plate drills both parts, an error in the plate's bore positions shifts the holes in both parts the
+same way, which keeps the two sets of lead holes in line.
+
+**Provisional:**
+
+- The printed bore size for the bushings. The plate bores are designed at the bushing outside diameter, which
+  printed holes of this size are likely to undercut, and the bushings are pressed in; print the bore coupon
+  (`led_drill_bore_coupon`, bores drawn 0.00 to 0.20 mm over the outside diameter in 0.05 mm steps, for both
+  outside diameters) to find the bore that gives a press fit, and set the bore oversize.
+- The positional accuracy of the printed plate. The assumed 0.1 mm is to be checked by measuring the holes
+  drilled in the first cap against the layout.
+- The fit of the heatsink rib in the pin channels, and the height of the heatsink setup on the drill press.

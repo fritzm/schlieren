@@ -79,6 +79,38 @@ MODELS = {
         "McMaster-91545A410.step",
         (v.MCMASTER_91545A410_DIAMETER, v.MCMASTER_91545A410_DIAMETER, v.MCMASTER_91545A410_THICKNESS),
     ),
+    "McMaster 96990A132 drill bushing": (
+        "McMaster-96990A132.step",
+        (v.MCMASTER_96990A132_DIAMETER, v.MCMASTER_96990A132_DIAMETER, v.MCMASTER_969_LENGTH),
+    ),
+    "McMaster 96990A147 drill bushing": (
+        "McMaster-96990A147.step",
+        (v.MCMASTER_96990A147_DIAMETER, v.MCMASTER_96990A147_DIAMETER, v.MCMASTER_969_LENGTH),
+    ),
+    "McMaster 96990A139 drill bushing": (
+        "McMaster-96990A139.step",
+        (v.MCMASTER_96990A139_DIAMETER, v.MCMASTER_96990A139_DIAMETER, v.MCMASTER_969_LENGTH),
+    ),
+    "McMaster 97171A310 heat-set insert": (
+        "McMaster-97171A310.step",
+        (
+            v.MCMASTER_97171A310_FLANGE_DIAMETER,
+            v.MCMASTER_97171A310_FLANGE_DIAMETER,
+            v.MCMASTER_97171A310_OVERALL,
+        ),
+    ),
+    "McMaster 92356A589 carriage bolt": (
+        "McMaster-92356A589.step",
+        (
+            v.MCMASTER_92356A589_HEAD_DIAMETER,
+            v.MCMASTER_92356A589_HEAD_DIAMETER,
+            v.MCMASTER_92356A589_LENGTH + v.MCMASTER_92356A589_HEAD_HEIGHT,
+        ),
+    ),
+    "McMaster 95150A180 thumb nut": (
+        "McMaster-95150A180.step",
+        (v.MCMASTER_95150A180_HEAD_DIAMETER, v.MCMASTER_95150A180_HEAD_DIAMETER, v.MCMASTER_95150A180_HEIGHT),
+    ),
     "McMaster 93475A240 washer": (
         "McMaster-93475A240.step",
         (v.MCMASTER_93475A240_DIAMETER, v.MCMASTER_93475A240_DIAMETER, v.MCMASTER_93475A240_THICKNESS),

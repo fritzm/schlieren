@@ -59,7 +59,7 @@ Envelope: about 80 × 88 × 13 mm, excluding knobs and adapter.
        alt="Flexure slit head from the light-source side: frame, platform and width stage, two blade clamp
        bars, the two FAS100 adjusters, and the spigot adapter, on its SM1RC/M post and rail shoe">
   <br>
-  <em>Fig. 7. Flexure slit head on its post and rail shoe, seen from the light-source side: blades and clamp
+  <em>Fig. 8. Flexure slit head on its post and rail shoe, seen from the light-source side: blades and clamp
     bars, FAS100 centering and width adjusters</em>
 </p>
 
