@@ -49,7 +49,6 @@ PRINTED_COLORS = (
 PRINTED_BLACK_PLA = (0.1, 0.1, 0.11)  # The filament the parts are printed in.
 
 # Metals, continued.
-STEEL_GRAY = (0.6, 0.6, 0.6)  # Frame hardware and reference rails; a touch neutral against STEEL.
 STAINLESS = (0.72, 0.73, 0.75)
 BUSHING_BRASS = (0.75, 0.62, 0.3)
 KNOB_SILVER = (0.78, 0.78, 0.8)

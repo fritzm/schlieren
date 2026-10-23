@@ -140,11 +140,11 @@ MCMASTER_91292A114_HEAD_HEIGHT = 3.0
 MCMASTER_91292A111_LENGTH = 6.0  # Nominal: under the head.
 MCMASTER_91292A111_HEAD_HEIGHT = 3.0
 MCMASTER_91292A111_HEAD_DIAMETER = 5.5
-# McMaster 92095A452 model (M2 × 5 button head, no threads): axis +Z through the origin, Ø2 mm plain shank
-# from z=-2.5 mm to the head's bearing face at z=2.5 mm, Ø3.5 mm button head of 1.3 mm above it.
-MCMASTER_92095A452_LENGTH = 5.0  # Nominal: under the head.
-MCMASTER_92095A452_HEAD_HEIGHT = 1.3
-MCMASTER_92095A452_HEAD_DIAMETER = 3.5
+# McMaster 92095A453 model (M2 × 6 button head, no threads): axis +Z through the origin, Ø2 mm plain shank
+# from z=-3.0 mm to the head's bearing face at z=3.0 mm, Ø3.5 mm button head of 1.3 mm above it.
+MCMASTER_92095A453_LENGTH = 6.0  # Nominal: under the head.
+MCMASTER_92095A453_HEAD_HEIGHT = 1.3
+MCMASTER_92095A453_HEAD_DIAMETER = 3.5
 # McMaster 91545A410 model (M2 nylon washer): axis +Z through the origin, centered on its 0.4 mm thickness;
 # Ø5.0 mm OD, Ø2.2 mm ID.
 MCMASTER_91545A410_THICKNESS = 0.4
@@ -523,13 +523,13 @@ def mcmaster_91292a111() -> Compound:
 
 
 @cache
-def mcmaster_92095a452() -> Compound:
-    """McMaster 92095A452 M2 × 0.4 × 5 mm 18-8 stainless button head screw (unthreaded model).
+def mcmaster_92095a453() -> Compound:
+    """McMaster 92095A453 M2 × 0.4 × 6 mm 18-8 stainless button head screw (unthreaded model).
 
     Axis +Z through the origin, the head's bearing face at z=0 with the head toward -Z and the shank toward
     +Z.
     """
-    return _moved("McMaster-92095A452.step", Pos(0, 0, MCMASTER_92095A452_LENGTH / 2) * Rot(X=180))
+    return _moved("McMaster-92095A453.step", Pos(0, 0, MCMASTER_92095A453_LENGTH / 2) * Rot(X=180))
 
 
 @cache

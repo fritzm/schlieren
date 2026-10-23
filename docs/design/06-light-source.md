@@ -114,7 +114,7 @@ Both boards are about 20 mm across (NewEnergy 0.783 in / 19.9 mm, catalog).
 Fastening standard:
 
 - M2 × 0.4
-- McMaster 92095A452, M2 × 5 mm screws
+- McMaster 92095A453, M2 × 6 mm screws
 - tapped directly into the front (threaded) face of the SM1CP2M cap, in through holes
 - 1.6 mm tap drill
 - M2 × 0.4 HSS plug tap
@@ -136,8 +136,8 @@ A thin layer of thermal compound is used between board and cap.
 
 All holes in the cap and in the heatsink base are **through holes**, drilled from one face. Plain plug taps
 (M3 × 0.5, M2 × 0.4) cut full threads through them; no bottoming tap is required. No screw reaches the far
-face of the cap: the M2 screws are 5 mm under the head and the M3 screws engage about 3 mm past the 3.0 mm
-heatsink base.
+face of the cap: the M2 screws are 6 mm under the head, about 4 mm of it in the cap past the board and washer,
+and the M3 screws engage about 3 mm past the 3.0 mm heatsink base.
 
 <p align="center">
   <img src="figures/light-source-holes.svg" width="640" style="max-width: 95%"

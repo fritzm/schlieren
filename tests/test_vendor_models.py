@@ -67,12 +67,12 @@ MODELS = {
             v.MCMASTER_91292A111_LENGTH + v.MCMASTER_91292A111_HEAD_HEIGHT,
         ),
     ),
-    "McMaster 92095A452 button-head screw": (
-        "McMaster-92095A452.step",
+    "McMaster 92095A453 button-head screw": (
+        "McMaster-92095A453.step",
         (
-            v.MCMASTER_92095A452_HEAD_DIAMETER,
-            v.MCMASTER_92095A452_HEAD_DIAMETER,
-            v.MCMASTER_92095A452_LENGTH + v.MCMASTER_92095A452_HEAD_HEIGHT,
+            v.MCMASTER_92095A453_HEAD_DIAMETER,
+            v.MCMASTER_92095A453_HEAD_DIAMETER,
+            v.MCMASTER_92095A453_LENGTH + v.MCMASTER_92095A453_HEAD_HEIGHT,
         ),
     ),
     "McMaster 91545A410 nylon washer": (

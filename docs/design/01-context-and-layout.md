@@ -5,7 +5,8 @@
 Revision: Oct 21, 2026
 
 This document describes the design of the apparatus, and is maintained authoritatively as Markdown fragments
-in the project repo on GitHub at <https://github.com/fritzm/schlieren/tree/main/docs/design>.
+in the project repo on GitHub at <https://github.com/fritzm/schlieren/tree/main/docs/design>.  It serves as
+durable context for AI assistants to reason about the design, as well as being a human-readable guide.
 
 ## Conventions
 
@@ -17,7 +18,7 @@ in the project repo on GitHub at <https://github.com/fritzm/schlieren/tree/main/
 - Measured values, manufacturer specifications, and calculated values are identified as such where the
   distinction matters; a measured value takes precedence over a catalog value.
 - Quantities, vendors, part numbers beyond those needed to define the design, procurement state, and the CAD
-  state of printed parts are recorded in the BOM (`bom/bom.csv`), not here.
+  state of printed parts are recorded in the associated BOM at (`bom/bom.csv`), not here.
 
 ## 1. Project context and design constraints
 
@@ -40,8 +41,7 @@ metal posts, optical hardware, shim stock, mechanical stops, or adjustment mecha
 solely on as-printed PLA dimensions.
 
 PLA softens at about 55–60 °C and creeps under sustained load, so printed parts must not see direct sun or a
-closed vehicle, and sustained loads on them are kept low: clamp screws are tightened to a light snug. The LED
-heatsinks are calculated to rise about 14 °C above ambient ([§6.3](06-light-source.md#63-common-heatsink)).
+closed vehicle, and sustained loads on them are kept low: clamp screws are tightened to a light snug.
 
 The following are out of scope:
 
@@ -49,10 +49,9 @@ The following are out of scope:
 - cutting stainless-steel stock or sheet to custom shape or length.
 
 Use off-the-shelf metal parts, vendor-supplied finished dimensions, plywood, thin foil, or printed PLA.
-Drilling and tapping purchased aluminum parts with ordinary shop tools is within scope.
+Drilling and tapping aluminum parts is within scope.
 
-A table saw, drill press, and small hand router are available and are expected to be used for accurate working
-of Baltic-birch plywood panels (thanks, Bret!).
+A miter saw, drill press, and small hand router are available for working of plywood panels (thanks, Bret!).
 
 ## 2. System overview and physical layout
 
@@ -73,17 +72,17 @@ The source rail contains, in optical order:
 1. light source (interchangeable threaded LED/heatsink modules, condenser, and adjustable iris)
 2. source-slit flexure head
 
-The slit is the effective optical source. The LED primarily illuminates that slit through the condenser and
-therefore does not itself require the same precision vertical positioning as the slit.
+The slit is the effective optical source. The LEDs primarily illuminates that slit through the condenser and
+therefore do not themselves require the same precision vertical positioning as the slit.
 
 The imaging rail contains:
 
 1. cutoff carriage at the returned slit-image plane;
-2. lens cradle, which supports and aligns the telephoto lens;
-3. phone rest, under the iPhone hanging from the lens.
+2. lens cradle, which supports and aligns a telephoto lens;
+3. phone rest, under an iPhone hanging from the lens.
 
-The spherical mirror forms an image of the source slit back near the optical head. Refractive-index gradients
-in the test region near the mirror deflect portions of this return beam relative to the cutoff, producing
+A spherical mirror forms an image of the source slit back near the optical head. Refractive-index gradients in
+the test region near the mirror deflect portions of this return beam relative to the cutoff, producing
 schlieren contrast.
 
 Several source-side and imaging-side fixtures deliberately share common mechanics. The light source, source
@@ -96,10 +95,10 @@ SM1RC/M SM1 split rings. The slit uses a flexure head with fine centering and sl
 allowing knife-edge, wire, and color-filter experiments without changing the supporting mechanism
 ([§8](08-cutoff.md#8-cutoff)).
 
-The mirror cell uses a three-point, approximately 120°-spaced fine-adjustment architecture with compression
-springs and spherical washer interfaces ([§10](10-mirror-cell.md#10-mirror-cell)). The mirror is compliantly
-supported in the mirror plate by six radial silicone pads, which are cast and cured in place between the
-mirror edge and the inner surface of the plywood aperture.
+The mirror cell uses a three-point fine-adjustment architecture with compression springs and spherical washer
+interfaces ([§10](10-mirror-cell.md#10-mirror-cell)). The mirror is compliantly supported in a plywood mirror
+plate by six radial silicone pads, which are cast and cured in place between the mirror edge and the inner
+surface of the mirror plate aperture.
 
 ## 3. System-level geometry
 
@@ -143,10 +142,10 @@ near 2f, at approximately the mirror center of curvature.
 The two rail pivot centers are separated by 95 mm at the mirror-facing front plate. At 3.2 m this gives
 approximately 1.70° total chief-ray separation.
 
-Each rail points toward the mirror and follows its own chief ray. Sliding a fixture along a rail is therefore
-predominantly an axial adjustment.
+Each rail points directly toward the mirror and follows its own chief ray. Sliding a fixture along a rail is
+therefore predominantly an axial adjustment.
 
-The source slit and cutoff need not occupy exactly the same longitudinal coordinate. Near 2f,
+The source slit and cutoff need not occupy exactly the same axial position. Near 2f,
 
 $$
 \frac{ds_i}{ds_o}\approx -1
@@ -154,7 +153,7 @@ $$
 
 so small source-slit displacement produces approximately equal and opposite conjugate-image displacement.
 
-A useful starting point is about 30–40 mm total slit/cutoff longitudinal staggering, obtained by placing them
+A useful starting point is about 30–40 mm total slit/cutoff axial staggering, obtained by placing them
 approximately ±15–20 mm around nominal 2f. This is an experimental setup adjustment rather than a
 fabrication-critical dimension.
 
@@ -165,7 +164,7 @@ The common optical axis is 72.35 mm above the top surface of the 2020 extrusion.
 For optical-head CAD:
 
 - take the rail-top surface as z = 0;
-- do not reference optical height to the tabletop or support feet;
+- do not reference optical height to the tabletop or support fixtures;
 - small whole-frame pitch/roll errors can be corrected at the mirror.
 
 The optical head uses three coordinate frames with common senses:
@@ -174,7 +173,7 @@ The optical head uses three coordinate frames with common senses:
 - +x to the right when looking down from above with the mirror ahead;
 - +z up, with the rail top at z = 0.
 
-The frames are right-handed and differ only in where their y axes lie:
+These frames are right-handed and differ only in where their y axes lie:
 
 - pivot frame: y along the centerline of the front pivot plate, with the origin at the midpoint of its aft
   edge ([§4.2](04-frame.md#42-front-pivot-plate));
@@ -196,9 +195,8 @@ The common post stack is:
 
 - 0.010 in / 0.254 mm metal datum shim;
 - 50 mm Thorlabs TR50/M post;
-- 22.1 mm post-top-to-optical-axis offset for the SM1 optical holders (Thorlabs SMR1/M: 0.870 in / 22.098 mm
-  exact);
-- total nominal height: 72.35 mm (72.352 mm with the exact SMR1/M offset; the datum is 72.35 mm).
+- 22.1 mm post-top-to-optical-axis offset for Thorlabs SM1 optical holders (0.870 in / 22.098 mm exact);
+- total nominal height: 72.35 mm (72.352 mm with the exact Thorlabs offset; the datum is 72.35 mm).
 
 The datum shims are McMaster 2895T62 discs, 3/4 in OD × 0.010 in ±0.0005 in thick, full-hard 18-8 stainless
 steel, minimum Rockwell C40, one under each common post fixture. The shims provide a consistent metal seating

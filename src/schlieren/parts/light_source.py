@@ -38,12 +38,12 @@ from schlieren.vendor_cad import (
     MCMASTER_91292A111_HEAD_HEIGHT,
     MCMASTER_91292A111_LENGTH,
     MCMASTER_91545A410_THICKNESS,
-    MCMASTER_92095A452_HEAD_HEIGHT,
-    MCMASTER_92095A452_LENGTH,
+    MCMASTER_92095A453_HEAD_HEIGHT,
+    MCMASTER_92095A453_LENGTH,
     alpha_cn40_40b,
     mcmaster_91292a111,
     mcmaster_91545a410,
-    mcmaster_92095a452,
+    mcmaster_92095a453,
     thorlabs_acl2520u_a,
     thorlabs_sm1cp2m,
     thorlabs_sm1d12,
@@ -133,9 +133,9 @@ class LightSourceParameters:
     # McMaster 91292A111 M3 × 6 mm socket-head heatsink screws; **provisional** length (§6.2).
     heatsink_screw_length: float = MCMASTER_91292A111_LENGTH
     heatsink_screw_head_height: float = MCMASTER_91292A111_HEAD_HEIGHT
-    # McMaster 92095A452 M2 × 5 mm button-head board screws, each on a 91545A410 nylon washer (§6.4).
-    board_screw_length: float = MCMASTER_92095A452_LENGTH
-    board_screw_head_height: float = MCMASTER_92095A452_HEAD_HEIGHT
+    # McMaster 92095A453 M2 × 6 mm button-head board screws, each on a 91545A410 nylon washer (§6.4).
+    board_screw_length: float = MCMASTER_92095A453_LENGTH
+    board_screw_head_height: float = MCMASTER_92095A453_HEAD_HEIGHT
     board_washer_thickness: float = MCMASTER_91545A410_THICKNESS
     # Estimates and allowances.
     solder_thickness: float = 0.07  # Estimated LED-to-star solder layer.
@@ -346,7 +346,7 @@ def build_light_source_assembly(p=None, board=GREEN, engagement=None, side_screw
         ],
         "m2": [
             (mcmaster_91545a410(), BOARD_WASHER_LABEL, NYLON, washer_top, toward_cap),
-            (mcmaster_92095a452(), BOARD_SCREW_LABEL, METAL, washer_top, toward_cap),
+            (mcmaster_92095a453(), BOARD_SCREW_LABEL, METAL, washer_top, toward_cap),
         ],
     }
     counts = dict.fromkeys(hardware, 0)

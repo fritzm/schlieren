@@ -1,4 +1,4 @@
-"""Common rail shoe; design §§3–5 (§5.3).
+"""Common rail shoe; design §§3–5 (§5.2).
 
 Coordinates: a §3.4 rail frame, +x across the rail (right, seen from above with the mirror ahead), +y along it
 toward the mirror, z up; rail top is z=0. The post is at x=y=0. Both ears point toward +x: nut at +y, screw at
@@ -35,7 +35,7 @@ from schlieren.cad import (
     z_cylinder,
 )
 from schlieren.hardware import M3_CLEARANCE_DIAMETER, M3_NUT_ACROSS_FLATS, M3_NUT_THICKNESS
-from schlieren.palette import BLACK_ANODIZED, METAL, PRINTED_ORANGE, STEEL_GRAY
+from schlieren.palette import BLACK_ANODIZED, METAL, PRINTED_ORANGE
 from schlieren.parts.rail import build_rail
 from schlieren.standards import (
     DATUM_SHIM_DIAMETER,
@@ -328,15 +328,15 @@ def side_clamp_hardware(p: RailShoeParameters | None = None, y: float = 0.0) -> 
 
     Each washer bears on its skirt's outer face and the screw on the washer; the screw axes are the side-hole
     axis, at mid rail height. Each is a labeled vendor model. The washers are from the general M5 assortment
-    (§5.3); the 93475A240 model stands in for them.
+    (§5.2); the 93475A240 model stands in for them.
     """
     p = p or RailShoeParameters()
     parts = []
     for name, side in (("left", -1), ("right", 1)):
         axis = Pos(side * p.width / 2, y, -p.rail_height / 2) * Rot(Y=-90 * side)
         seat = axis * Pos(0, 0, -MCMASTER_93475A240_THICKNESS)
-        parts.append(labeled(mcmaster_93475a240(), f"Side screw washer {name}", STEEL_GRAY, seat))
-        parts.append(labeled(mcmaster_92290a228(), f"Side screw {name}", STEEL_GRAY, seat))
+        parts.append(labeled(mcmaster_93475a240(), f"Side screw washer {name}", METAL, seat))
+        parts.append(labeled(mcmaster_92290a228(), f"Side screw {name}", METAL, seat))
     return parts
 
 
@@ -348,8 +348,8 @@ def split_clamp_hardware(p: RailShoeParameters | None = None) -> list[Part]:
     nut_seat = p.clamp_nut_outer_y - p.nut_pocket_depth  # The pocket bottom, which carries the clamp load.
     nut = Pos(0, 0, nut_seat) * Rot(Z=90) * mcmaster_91828a211()  # Corners along x, as pocketed.
     return [
-        labeled(screw, "Clamp screw", STEEL_GRAY, along_axis),
-        labeled(nut, "Clamp nut", STEEL_GRAY, along_axis),
+        labeled(screw, "Clamp screw", METAL, along_axis),
+        labeled(nut, "Clamp nut", METAL, along_axis),
     ]
 
 
@@ -405,8 +405,8 @@ def viewer_assembly(shoe: Shape, p: RailShoeParameters | None = None) -> Compoun
     rparts = assembly(
         "Reference parts",
         [
-            labeled(build_rail(p.length + 2 * VIEWER_RAIL_OVERHANG), "Rail", STEEL_GRAY),
-            labeled(refs["datum shim"], "Datum shim", STEEL_GRAY),
+            labeled(build_rail(p.length + 2 * VIEWER_RAIL_OVERHANG), "Rail", BLACK_ANODIZED),
+            labeled(refs["datum shim"], "Datum shim", METAL),
             *stack.values(),
         ],
     )

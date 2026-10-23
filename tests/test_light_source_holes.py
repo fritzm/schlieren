@@ -8,14 +8,15 @@ from itertools import combinations
 
 from build123d import GeomType
 
-from schlieren.parts.light_source import LightSourceParameters
+from schlieren.parts.light_source import MODULES, LightSourceParameters
 from schlieren.parts.light_source_drawing import drilling_templates_svg, layout_drawing_svg
 from schlieren.parts.light_source_holes import HoleLayoutParameters
 from schlieren.testing import svg_attr
 from schlieren.vendor_cad import alpha_cn40_40b
 
 NS = "{http://www.w3.org/2000/svg}"
-M2_SCREW_LENGTH = 5.0  # McMaster 92095A452, under the head.
+M2_SCREW_LENGTH = 6.0  # McMaster 92095A453, under the head.
+M2_WASHER_THICKNESS = 0.4  # McMaster 91545A410, under each screw head.
 M3_SCREW_LENGTH = 6.0  # §6.2, provisional.
 HEATSINK_BASE = 3.0  # CN40 flat base; the M3 screws pass through it first.
 
@@ -105,7 +106,8 @@ class HoleLayoutTest(unittest.TestCase):
     def test_screws_stay_inside_the_cap(self):
         """All holes are through holes, and no screw is long enough to reach the far face."""
         cap = LightSourceParameters().cap_overall
-        self.assertLess(M2_SCREW_LENGTH, cap)
+        for board in MODULES:
+            self.assertLess(M2_SCREW_LENGTH - M2_WASHER_THICKNESS - board.thickness, cap, board.name)
         self.assertLess(M3_SCREW_LENGTH - HEATSINK_BASE, cap)
 
     def test_every_hole_stays_inside_the_cap_thread_relief(self):

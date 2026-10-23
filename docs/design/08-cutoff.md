@@ -362,7 +362,7 @@ washer between the nut and printed bar. Do not use prevailing-torque/nyloc nuts 
 | ---------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Flat-head screw              | [92125A133](https://www.mcmaster.com/92125A133/) | M3 × 0.5 × 14 mm, fully threaded 18-8 stainless, 90° countersunk head; 6 mm head diameter, 1.7 mm head height, 2 mm hex drive                     |
 | Flat washer                  | [93475A210](https://www.mcmaster.com/93475A210/) | 18-8 stainless, 3.2 mm ID × 7 mm OD × 0.4–0.6 mm thick; DIN 125 / ISO 7089                                                                        |
-| Ordinary full-height hex nut | [91828A211](https://www.mcmaster.com/91828A211/) | M3 × 0.5, 18-8 stainless, 5.5 mm across flats × 2.4 mm high; DIN 934 (the common split-clamp nut, [§5.3](05-post-support.md#53-common-rail-shoe)) |
+| Ordinary full-height hex nut | [91828A211](https://www.mcmaster.com/91828A211/) | M3 × 0.5, 18-8 stainless, 5.5 mm across flats × 2.4 mm high; DIN 934 (the common split-clamp nut, [§5.2](05-post-support.md#52-common-rail-shoe)) |
 
 The clamp bars are 4 mm printed PLA. The cassette blank has four Ø3.4 mm screw holes at (±27, ±12) mm with
 rear-entry 90° countersinks matched to the 92125A133 head (Ø6.2 mm at the face: 6 mm head plus 0.2 mm

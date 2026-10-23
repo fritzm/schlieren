@@ -57,6 +57,7 @@ img {{ zoom: {PDF_FIGURE_SCALE}; }}
 p {{ margin: 0 0 0.75em; orphans: 3; widows: 3; }}
 ul, ol {{ margin: 0 0 0.75em; padding-left: 1.9em; }}
 li {{ margin-bottom: 0.2em; break-inside: avoid; }}
+ul:not(:has(> li:nth-child(7))), ol:not(:has(> li:nth-child(7))) {{ break-inside: avoid; }}  /* short lists stay whole */
 table {{ border-collapse: collapse; margin: 0 0 1em; break-inside: avoid; }}
 th, td {{ border: 0.5pt solid #888; padding: 0.3em 0.65em; text-align: left; vertical-align: top; }}
 th {{ background: #eee; }}

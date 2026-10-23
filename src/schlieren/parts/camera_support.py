@@ -151,7 +151,7 @@ class CameraSupportParameters:
     collar_end_fillet: float = 1.0  # Outer edges around the ring ends, for the fingers.
     collar_root_fillet: float = 2.0  # Inside corners, ear and pad platforms to the ring.
     collar_round_fillet: float = 1.0  # Other outside corners of the ear and pad platforms.
-    # Split clamp, the common M3 hardware of 5.3: the screw passes a thin ear into a captured nut in the
+    # Split clamp, the common M3 hardware of 5.2: the screw passes a thin ear into a captured nut in the
     # other, as on the common rail shoe (whose split and ear thicknesses it takes).
     clamp_screw_above_ring: float = 4.25  # Screw axis above the ring top; the head clears the root fillet.
     ear_top_above_ring: float = 8.75
@@ -192,7 +192,7 @@ class CameraSupportParameters:
     yoke_root_fillet: float = 5.0  # Column to crossbar underside, inside corner.
     yoke_blend_fillet: float = 4.0  # Crossbar underside to arm back, and arm face to crossbar top.
     yoke_corner_fillet: float = 2.0  # Outboard corners of the arm.
-    # Lower clamp sections (saddle, skirts, side-channel holes) take the common rail shoe's dimensions, §5.3.
+    # Lower clamp sections (saddle, skirts, side-channel holes) take the common rail shoe's dimensions, §5.2.
     rail_shoe: RailShoeParameters = field(default_factory=RailShoeParameters)
     cradle_clamp_spacing: float = 36.0  # Between the two pairs of rail clamp screws on the cradle shoe.
     # Yoke-to-shoe joint: each yoke is printed separately and bolted up through the shoe deck with one
@@ -821,7 +821,7 @@ def _straddle(
     yoke_stations: tuple[float, ...] = (),
     square_sides: tuple[int, ...] = (),
 ) -> Shape:
-    """Saddle straddling the rail from y0 to y1, as the common rail shoe's lower section (§5.3).
+    """Saddle straddling the rail from y0 to y1, as the common rail shoe's lower section (§5.2).
 
     Same rail opening, side walls, skirt depth, deck thickness, and rounded outside corners; an M5 clearance
     hole crosses the skirts at each clamp_ys station, at rail mid-height, for the side-channel screws. At each

@@ -17,10 +17,10 @@ FRM-015,Tabletop frame,2,272 pcs M5 socket screws assortment kit 12.9 steel blac
 FRM-016,Tabletop frame,3,244 pcs M5 socket screws assortment kit 304 SS,,Amazon,B0DJP7ZLVC,3,each,In hand,§4.1,
 FRM-017,Tabletop frame,,Rubber/EPDM sheet,Yaw strap friction strips,McMaster,9852N37,,sheet,In hand,§4.3,"Two strips (one per yaw strap), cut from the CAS-002 sheet; no separate purchase."
 SUP-001,Optical supports,3,"Ø12.7 mm optical post, 50 mm, SS",,Thorlabs,TR50/M,4,each,In hand,§5.1,"Three installed (condenser, slit, cutoff stations); fourth in-hand post is spare after the threaded LED module decision."
-SUP-002,Optical supports,3,"Shim discs, 3/4 in OD x 0.010 ±0.0005 in, SS",Post seats,McMaster,2895T62,5,pack,In hand,§5.3,
-SUP-003,Optical supports,3,"M3 × 12 mm socket head screw, 18-8 SS",Collar clamp screws,McMaster,91292A114,100,pack,In hand,§5.3,Finalized 12 mm length.
-SUP-004,Optical supports,3,"M3 × 0.5 hex nut, 18-8 SS, 5.5 mm AF × 2.4 mm high",Collar clamp nuts,McMaster,91828A211,100,pack,In hand,§5.3,Full-height DIN 934 nut; captured in printed pocket.
-SUP-005,Optical supports,3,PLA printed post shoes,,,,,,CAD ready,§5.3,
+SUP-002,Optical supports,3,"Shim discs, 3/4 in OD x 0.010 ±0.0005 in, SS",Post seats,McMaster,2895T62,5,pack,In hand,§5.2,
+SUP-003,Optical supports,3,"M3 × 12 mm socket head screw, 18-8 SS",Collar clamp screws,McMaster,91292A114,100,pack,In hand,§5.2,Finalized 12 mm length.
+SUP-004,Optical supports,3,"M3 × 0.5 hex nut, 18-8 SS, 5.5 mm AF × 2.4 mm high",Collar clamp nuts,McMaster,91828A211,100,pack,In hand,§5.2,Full-height DIN 934 nut; captured in printed pocket.
+SUP-005,Optical supports,3,PLA printed post shoes,,,,,,CAD ready,§5.2,
 LGT-001,Light source,1,"Aspheric Condenser Lens, Ø25 mm, f=20.1 mm, NA=0.60, ARC: 350-700 nm",,Thorlabs,ACL2520U-A,1,each,In hand,§6.1,
 LGT-002,Light source,1,"Ø1"" Adjustable lens tube, 0.31"" travel range",,Thorlabs,SM1V05,1,each,In hand,§6.1,
 LGT-003,Light source,1,"SM1 lens tube, 0.30"" thread depth",Spacing between lens and iris,Thorlabs,SM1L03,1,each,In hand,§6.1,
@@ -30,7 +30,6 @@ LGT-006,Light source,1,Internally SM1-threaded end cap,Transport cover for the c
 LGT-007,Light source,1,Snap-on plastic dust cap for SM1 lens tube,Transport cover for the condenser/iris assembly,Thorlabs,SM1EC2,5,pack,In hand,§6.7,One of the pack of five is used; the rest are spare.
 LGT-008,Light source,1,Nichia 519A R9080 5000K,White LED,Convoy,519A R9080 5000K,3,each,In hand,§6.2,
 LGT-009,Light source,1,OSRAM LST1-01F06-GRN1-00,Green LED,Digikey,1672-1132-ND,2,each,In hand,§6.2,
-LGT-011,Light source,4,M2 × 5 mm button head hex-drive screw 18-8 SS,"LED board mounting screws, tapped into SM1CP2M cap",McMaster,92095A452,25,pack,In hand,§6.4,
 LGT-012,Light source,4,M2 nylon washers,LED insulating washers,McMaster,91545A410,,pack,In hand,§6.4,
 LGT-013,Light source,1,"ALIENTEK DP100 DC Power Supply Variable, 30V 5A",LED CC/CV power supply,Amazon,B0CWRG6YFM,1,each,In hand,§6.5,
 LGT-014,Light source,2,"Cable Assembly, Micro-Fit 3.0 P-S 2ckt 150 mm",LED pigtails,Mouser,538-214758-1021,2,each,In hand,§6.5,
@@ -39,7 +38,7 @@ LGT-016,Light source,1,Banana plug set 1 blk 1 red,DP100 connection,Mouser,565-1
 LGT-017,Light source,2,"SM1 end cap, external threads, with center drill mark, anodized aluminum","LED carrier: board on front face, threads into condenser SMR1/M",Thorlabs,SM1CP2M,1,each,In hand,§6.2,"One per LED module. Drill/tap, all through holes (§6.4): M2 board holes, M3 heatsink holes, lead pass-through holes at r = 11.0 mm."
 LGT-018,Light source,2,"Alpha CN40-40B natural-convection pin-fin heatsink, Ø40 × 40 mm, black anodized",LED module heatsink,Luxeon Star LEDs,CN40-40B,3,each,In hand,§6.3,One per LED module; bolted to SM1CP2M rear. Drill base for M3 screws in open pin cells and for leads. Three ordered and received; one spare.
 LGT-019,Light source,6,"M3 × 0.5 × 6 mm socket head screw, 18-8 SS",Heatsink-to-cap fasteners,McMaster,91292A111,100,pack,In hand,"§§6.2, 6.4",Three per module. Provisional length (3 mm base + ~3 mm thread into the through-tapped cap; shorter than the cap thickness). Same series as the common 12 mm screw.
-LGT-020,Light source,4,M2 × 6 mm button head hex-drive screw 18-8 SS,"LED board mounting screws, tapped into SM1CP2M cap",McMaster,92095A453,25,pack,On order,§6.4,Longer alternative to LGT-011 (5 mm found a bit short).
+LGT-020,Light source,4,M2 × 6 mm button head hex-drive screw 18-8 SS,"LED board mounting screws, tapped into SM1CP2M cap",McMaster,92095A453,25,pack,In hand,§6.4,6 mm length fits better than the 5 mm screw UNU-012.
 LGT-021,Light source,4,"Nylon plastic washer for M2, 2.2 mm ID × 5.0 mm OD, off-white",LED insulating washers,McMaster,95610A110,100,pack,On order,§6.4,Alternative to LGT-012.
 SLT-001,Source slit,1,"Slip ring for SM1 lens tubes, M4 Tap",Slit-head rotation mount; clamps the adapter spigot,Thorlabs,SM1RC/M,2,each,In hand,§7.6,Second of the two in hand (CAR-002 holds the other).
 SLT-002,Source slit,2,"Fine adjustment screw with knob, 1/4""-80, 1.00"" long",Slit centering and slit-width adjusters,Thorlabs,FAS100,3,each,In hand,§§7.3–7.4,"Shared stock with CAR-005: three in hand, two here, one in the cutoff carriage; no spare."
@@ -141,3 +140,4 @@ UNU-008,Unused,,"1/4"" thin washers",Existing spare stock; former C2564 tripod-i
 UNU-009,Unused,,"5/16""-18 × 1-3/8"" hex-drive flat-head screw, 316 SS",Existing alternate bracket screw stock,McMaster,90585A997,5,pack,In hand,,Former baseline bracket screw; retained as in-hand alternate stock after the change to button-head screws (MIR-026).
 UNU-010,Unused,,"M4 × 0.7 × 16 mm 90° flat-head hex-drive screw, 18-8 stainless",Existing spare stock; short-length alternative quick-release plate screw,McMaster,92125A194,100,pack,In hand,,Not allocated: the quick-release plate takes the 18 mm screw (MIR-024); this pack is spare.
 UNU-011,Unused,,Heat-set installation tip,,McMaster,92160A327,1,each,In hand,,"No longer allocated; replaced by the SHP-027 tip set (8915N111), whose adapter is verified on the Hakko iron."
+UNU-012,Unused,,M2 × 5 mm button head hex-drive screw 18-8 SS,"Existing spare stock; former LED board mounting screws, tapped into SM1CP2M cap",McMaster,92095A452,25,pack,In hand,,No longer allocated: 5 mm was a bit short; replaced by LGT-020 (92095A453 M2 × 6 mm).

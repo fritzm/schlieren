@@ -21,7 +21,7 @@ from math import atan, cos, degrees, pi, sin
 from build123d import Compound, Location, Part, Pos, Rot, Shape
 
 from schlieren.cad import CUT_OVERRUN, assembly, box_between, floor_box, labeled, place, z_cylinder
-from schlieren.palette import BLACK_ANODIZED, BLACK_OXIDE, METAL, PLYWOOD, RUBBER, SORBOTHANE, STEEL_GRAY
+from schlieren.palette import BLACK_ANODIZED, BLACK_OXIDE, METAL, PLYWOOD, RUBBER, SORBOTHANE
 from schlieren.parts.rail import RailProfile, build_rail
 from schlieren.standards import INCH
 from schlieren.validation import require_positive_dimensions
@@ -320,24 +320,20 @@ def _rail_assembly(p: FrameParameters) -> Compound:
     ]
     for index, y in enumerate((lug_center, lug_center - p.joining_plate_hole_pitch), start=1):
         head_down = Pos(0, y, p.joining_plate_thickness) * Rot(X=180)
-        parts.append(
-            labeled(m5_socket_screw(p.lug_screw_length), f"Lug screw {index}", STEEL_GRAY, head_down)
-        )
+        parts.append(labeled(m5_socket_screw(p.lug_screw_length), f"Lug screw {index}", METAL, head_down))
     for index, offset in enumerate((-p.block_screw_spacing / 2, p.block_screw_spacing / 2), start=1):
         y = block_y + offset
         under_head = block_bottom - p.block_washer_stack
         for layer in range(p.block_washers_per_screw):
             z = under_head + layer * M5_WASHER_THICKNESS
             parts.append(
-                labeled(
-                    mcmaster_93475a240(), f"Block screw {index} washer {layer + 1}", STEEL_GRAY, Pos(0, y, z)
-                )
+                labeled(mcmaster_93475a240(), f"Block screw {index} washer {layer + 1}", METAL, Pos(0, y, z))
             )
         parts.append(
             labeled(
                 m5_socket_screw(p.block_screw_length),
                 f"Block screw {index}",
-                STEEL_GRAY,
+                METAL,
                 Pos(0, y, under_head),
             )
         )
@@ -363,9 +359,9 @@ def _plate_assembly(p: FrameParameters) -> Compound:
     def stack(label: str, x: float, y: float, top: float, nut: Shape) -> None:
         """Bolt up through the plate at (x, y), with washers under the plate and on the surface at top."""
         for part, name, z, color in (
-            (mcmaster_92290a265(), "bolt", under_head, STEEL_GRAY),
-            (mcmaster_91116a350(), "lower washer", under_head, STEEL_GRAY),
-            (mcmaster_91116a350(), "upper washer", top, STEEL_GRAY),
+            (mcmaster_92290a265(), "bolt", under_head, METAL),
+            (mcmaster_91116a350(), "lower washer", under_head, METAL),
+            (mcmaster_91116a350(), "upper washer", top, METAL),
             (nut, "nut", top + p.oversize_washer_thickness, BLACK_OXIDE),
         ):
             parts.append(labeled(part, f"{label} {name}", color, Pos(x, y, z)))
@@ -373,7 +369,7 @@ def _plate_assembly(p: FrameParameters) -> Compound:
     for name, side in SIDES.items():
         x, y = p.pivot_center(side)
         stack(f"{name} pivot", x, y, p.joining_plate_thickness, mcmaster_93625a225())
-        parts.append(labeled(spacer, f"{name} pivot spacer", STEEL_GRAY, Pos(x, y, p.plate_top)))
+        parts.append(labeled(spacer, f"{name} pivot spacer", METAL, Pos(x, y, p.plate_top)))
 
         # The strap lies across the nominal rail axis and stays there when the rail is yawed.
         x, y = p.strap_center(side)
