@@ -1,7 +1,8 @@
 ## 4. Tabletop optical frame
 
 The tabletop frame provides a portable adjustable base to support the optical head fixtures. It is a weight-
-and budget-conscious alternative to an optical bench or plate.  The model is `src/schlieren/parts/frame.py`.
+and budget-conscious alternative to an optical bench or breadboard.  The model is
+`src/schlieren/parts/frame.py`.
 
 <p align="center">
   <img src="figures/frame.png" width="500" style="max-width: 90%"
@@ -21,6 +22,11 @@ and budget-conscious alternative to an optical bench or plate.  The model is `sr
 
 Ordinary attachments use M5 × 0.8 socket-head hardware with flat washers in standard metric lengths and
 roll-in/drop-in M5 T-nuts (Amazon B0DP6JBX4Y).
+
+Sighting toward the mirror, the source rail is on the left (negative x in the pivot frame) and the imaging
+rail is to the right. This is dictated by fact that the iPhone extends well to the right of its camera axis
+when sighting along that axis toward the mirror ([§9.1](09-camera-telephoto.md#91-camera)); placing that
+overhang toward the outside of the optical head keeps the phone clear of the source rail and its fixtures.
 
 ### 4.2 Front pivot plate
 
@@ -42,9 +48,9 @@ approximately:
 - left strap center: (-48.84, 35.01) mm;
 - right strap center: (+48.84, 35.01) mm.
 
-The nominal rail half-angle is about 0.850° ([§3.3](01-context-and-layout.md#33-sourceimager-separation)), and
-each fixed yaw strap is perpendicular to its rail at its nominal angle. This puts the clamp bolt locations (at
-the two outer holes of each 3-hole joining plate) at approximately:
+The nominal rail half-angle is about 0.85° ([§3.3](01-context-and-layout.md#33-sourceimager-separation)), and
+each of the fixed yaw clamp straps is perpendicular to its rail at that nominal angle. This puts the clamp
+bolt locations (at the two outer holes of each 3-hole joining plate) at approximately:
 
 - left outer: (-68.83, 35.31) mm;
 - left inner: (-28.84, 34.71) mm;
@@ -88,10 +94,9 @@ socket head → oversized washer → plywood pivot plate → 20 mm spacer → 4 
 M5 nyloc
 
 The socket heads are beneath the plywood and the nylocs on top, matching the yaw clamp bolts. The pivot bolts
-pass through approximately 5.5 mm clearance holes in the plywood. The 20 mm spacer holds the pivot lug at the
-rail top, where the lug lies along the rail with the pivot bolt through its front hole; its other two holes
-fix it to the rail by M5 × 8 socket-head screws from the general M5 assortment into T-nuts in the rail top
-slot.
+pass through 5.5 mm clearance holes in the plywood. The 20 mm spacer holds the pivot lug at the rail top,
+where the lug lies along the rail with the pivot bolt through its front hole; its other two holes fix it to
+the rail by M5 × 8 socket-head screws from the general M5 assortment into T-nuts in the rail top slot.
 
 Hardware:
 
@@ -131,17 +136,16 @@ Hardware:
 Each rail has a removable 75 × 50 mm Baltic-birch rear rail-support block. The 75 mm dimension runs along the
 rail and the 20 mm rail is centered across the 50 mm block width.
 
-Each block attaches to the rail bottom slot with two M5 socket-head screws, two flat washers under each head,
-and roll-in/drop-in M5 T-nuts. The two screw holes lie on the rail centerline and are 50 mm apart,
-symmetrically placed about the block center; with the 75 mm block length, each screw center is 12.5 mm from
-its nearest end. The screws and washers are from the general M5 assortment; the screws are 20 mm long, and
-pass through 5.5 mm clearance holes in the plywood. The doubled washers provide some margin against the
-standard 20 mm screws bottoming out against the rail slot floor in the face of minor plywood thickness and
-rail manufacturing variations.
+Each block attaches to the rail bottom slot with two M5 socket-head screws into roll-in/drop-in M5 T-nuts. The
+two screw holes lie on the rail centerline and are 50 mm apart, symmetrically placed about the block center;
+with the 75 mm block length, each screw center is 12.5 mm from its nearest end.
 
 Each block's screw stack, from the bottom up:
 
 socket head → two flat washers → plywood rail-support block → M5 T-nut in the rail bottom slot
+
+The doubled washers provide some margin for a standard 20 mm screw to avoid bottoming out against the rail
+slot floor in the face of minor plywood thickness and rail manufacturing variations.
 
 A Sorbothane foot is centered on the underside of each block, directly beneath the rail centerline and midway
 between the two attachment screws.  The complete frame is therefore supported on the table/bench top at three

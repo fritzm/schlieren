@@ -40,16 +40,13 @@ Near-term 3D printing is PLA only. Critical optical heights and precision datums
 metal posts, optical hardware, shim stock, mechanical stops, or adjustment mechanisms rather than relying
 solely on as-printed PLA dimensions.
 
-PLA softens at about 55–60 °C and creeps under sustained load, so printed parts must not see direct sun or a
-closed vehicle, and sustained loads on them are kept low: clamp screws are tightened to a light snug.
-
 The following are out of scope:
 
 - custom machined parts requiring a mill or lathe;
 - cutting stainless-steel stock or sheet to custom shape or length.
 
 Use off-the-shelf metal parts, vendor-supplied finished dimensions, plywood, thin foil, or printed PLA.
-Drilling and tapping aluminum parts is within scope.
+Drilling and tapping of aluminum parts is within scope.
 
 A miter saw, drill press, and small hand router are available for working of plywood panels (thanks, Bret!).
 
@@ -72,10 +69,8 @@ The source rail contains, in optical order:
 1. light source (interchangeable threaded LED/heatsink modules, condenser, and adjustable iris)
 2. source-slit flexure head
 
-The slit is the effective optical source. The LEDs primarily illuminates that slit through the condenser and
-therefore do not themselves require the same precision vertical positioning as the slit.
-
-The imaging rail contains:
+The slit is the effective optical source. An attached LED primarily illuminates that slit through the
+condenser. The imaging rail contains:
 
 1. cutoff carriage at the returned slit-image plane;
 2. lens cradle, which supports and aligns a telephoto lens;
@@ -86,10 +81,10 @@ the test region near the mirror deflect portions of this return beam relative to
 schlieren contrast.
 
 Several source-side and imaging-side fixtures deliberately share common mechanics. The light source, source
-slit, and cutoff each stand on a common Thorlabs TR50/M optical post and printed rail shoe
+slit, and cutoff each stand on common Thorlabs TR50/M optical posts and printed rail shoes
 ([§5](05-post-support.md#5-common-rail-mounted-post-support)).
 
-The source slit and the cutoff both rotate about the optical axis on printed fixtures mounted in Thorlabs
+The source slit and the cutoff both rotate about their optical axes on printed fixtures mounted in Thorlabs
 SM1RC/M SM1 split rings. The slit uses a flexure head with fine centering and slit-width adjustment
 ([§7](07-source-slit.md#7-source-slit)); the cutoff uses a carriage that accepts interchangeable cassettes,
 allowing knife-edge, wire, and color-filter experiments without changing the supporting mechanism
@@ -159,13 +154,20 @@ fabrication-critical dimension.
 
 ### 3.4 Common optical-axis datum
 
-The common optical axis is 72.35 mm above the top surface of the 2020 extrusion.
+The common optical axis is 72.35 mm above the top surface of the 2020 extrusion, set by the components of
+the post stack:
+
+- 0.010 in / 0.254 mm metal datum shim resting on the rail;
+- 50 mm Thorlabs TR50/M post;
+- 22.1 mm post-top-to-optical-axis offset for Thorlabs SM1 optical holders (0.870 in / 22.098 mm exact);
+- total nominal height: 72.35 mm (72.352 mm with the exact Thorlabs offset; the datum is 72.35 mm).
+
+### 3.5 Coordinate frames
 
 For optical-head CAD:
 
 - take the rail-top surface as z = 0;
-- do not reference optical height to the tabletop or support fixtures;
-- small whole-frame pitch/roll errors can be corrected at the mirror.
+- do not reference optical height to the tabletop or support fixtures.
 
 The optical head uses three coordinate frames with common senses:
 
@@ -180,24 +182,8 @@ These frames are right-handed and differ only in where their y axes lie:
 - source rail frame: y along the source rail centerline;
 - imaging rail frame: y along the imaging rail centerline.
 
-The imaging rail is the right rail, at positive x in the pivot frame, and the source rail is the left. The
-phone extends well to the right of its camera axis when sighting along that axis toward the mirror
-([§9.1](09-camera-telephoto.md#91-camera)), so this places its overhang on the outer side of the imaging rail,
-clear of the source rail and its fixtures.
-
 Each rail frame yaws with its rail, about 0.85° from the pivot frame at nominal
 ([§4.2](04-frame.md#42-front-pivot-plate)). Its origin is on the rail top at the rail's pivot axis; a fixture
 is described with its own rail station at y = 0. In a rail frame the optical axis is at x = 0, z = 72.35 mm,
 and pitch, yaw, and roll are rotations about x, z, and y respectively. A rotating fixture may define a local
 frame, stated where it is used.
-
-The common post stack is:
-
-- 0.010 in / 0.254 mm metal datum shim;
-- 50 mm Thorlabs TR50/M post;
-- 22.1 mm post-top-to-optical-axis offset for Thorlabs SM1 optical holders (0.870 in / 22.098 mm exact);
-- total nominal height: 72.35 mm (72.352 mm with the exact Thorlabs offset; the datum is 72.35 mm).
-
-The datum shims are McMaster 2895T62 discs, 3/4 in OD × 0.010 in ±0.0005 in thick, full-hard 18-8 stainless
-steel, minimum Rockwell C40, one under each common post fixture. The shims provide a consistent metal seating
-surface for the posts across the central slot in the 2020 rail.
