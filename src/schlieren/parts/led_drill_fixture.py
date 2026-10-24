@@ -591,7 +591,7 @@ def build_fixture_assembly(p: DrillFixtureParameters | None = None, kind: str = 
             ),
             labeled(mcmaster_91292a114(), CLAMP_SCREW_LABEL, METAL, Pos(0, face, z) * Rot(X=-90)),
         ]
-    for i, hole in enumerate(p.holes(kind), start=1):
+    for i, hole in enumerate(p.layout.holes(), start=1):
         bushing = BUSHINGS[hole.kind]
         children.append(labeled(bushing.model(), f"{BUSHING_LABEL} {i}", STEEL, Pos(hole.x, hole.y, top)))
     for i, angle in enumerate(EAR_ANGLES, start=1):

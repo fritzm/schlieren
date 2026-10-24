@@ -184,7 +184,7 @@ class DrillFixtureTest(unittest.TestCase):
         for kind in NEST_KINDS:
             children = children_by_label(self.assemblies[kind])
             bushings = [k for k in children if k.startswith(BUSHING_LABEL)]
-            self.assertEqual(len(bushings), len(self.p.holes(kind)))
+            self.assertEqual(len(bushings), len(self.p.layout.holes()))
 
     def test_bushings_stand_in_their_bores(self):
         for kind in NEST_KINDS:
@@ -225,7 +225,7 @@ class DrillFixtureTest(unittest.TestCase):
     def test_vendor_bushings_are_chamfered_end_up_in_their_bores(self):
         for kind in NEST_KINDS:
             top = self.p.nest_top(kind)
-            for i, hole in enumerate(self.p.holes(kind), start=1):
+            for i, hole in enumerate(self.p.layout.holes(), start=1):
                 bushing = self.with_parts[kind][f"{BUSHING_LABEL} {i}"]
                 spec = BUSHINGS[hole.kind]
                 box = bushing.bounding_box()

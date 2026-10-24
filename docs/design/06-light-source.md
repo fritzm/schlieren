@@ -359,7 +359,8 @@ Both parts are drilled through the plate from the LED-side face.
 
 - Cap: all seven holes, through. Then tap the M3 and M2 holes by hand ([§6.4](#64-led-board-mounting)).
 - Heatsink: the three M3 positions with the 2.5 mm bushings as pilots, then opened to the Ø3.3 clearance with
-  the larger bit following the pilot; and the two lead holes. The M2 bushing positions are not used.
+  the larger bit following the pilot; and the two lead holes. The plate carries all seven bushings for both
+  parts, but the M2 positions are not drilled in the heatsink.
 
 Because one plate drills both parts, an error in the plate's bore positions shifts the holes in both parts the
 same way, which keeps the two sets of lead holes in line.
