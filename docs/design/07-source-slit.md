@@ -145,7 +145,7 @@ plate 3.5 mm in front of the ring face and 2.2 mm clear of the post at every rot
 away from the shoulder.
 
 The SM1RC/M keeps the 22.1 mm post-top-to-axis dimension
-([§5.1](05-post-support.md#51-post)). Loosening the ring rotates the whole head about the
+([§5.1](05-post-support.md#51-post-and-shim)). Loosening the ring rotates the whole head about the
 optical axis:
 
 - rotation 0: horizontal slit, vertical centering, knobs up;

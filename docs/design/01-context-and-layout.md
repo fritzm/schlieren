@@ -120,7 +120,7 @@ Useful nominal beam diameters for the ±1.82° cone are:
 The mirror's approximately f/7.9 focal ratio should not be confused with this source cone. The source operates
 near 2f, at approximately the mirror center of curvature.
 
-### 3.3 Source/imager separation
+### 3.3 Source/imager offset
 
 The two rail pivot centers are separated by 95 mm at the mirror-facing front plate. At 3.2 m this gives
 approximately 1.70° total chief-ray separation.
@@ -135,6 +135,7 @@ $$
 $$
 
 so small source-slit displacement produces approximately equal and opposite conjugate-image displacement.
+This can be an aid in avoiding mechanical interference between fixtures on opposite rails.
 
 A useful starting point is about 30–40 mm total slit/cutoff axial staggering, obtained by placing them
 approximately ±15–20 mm around nominal 2f. This is an experimental setup adjustment rather than a

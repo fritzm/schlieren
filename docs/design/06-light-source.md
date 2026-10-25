@@ -263,7 +263,7 @@ threaded end cap and an SM1EC2 snap-on dust cap.
 
 ### 6.8 Cap and heatsink drilling fixture
 
-The §6.4 hole layout is drilled through a fixture of three printed parts and seven press-fit steel drill
+The hole layout ([§6.4](#64-led-board-mounting)) is drilled through a fixture of three printed parts and seven press-fit steel drill
 bushings, so the hole positions come from the fixture and not from how a drill press is set up by eye. Two
 requirements set the accuracy needed, about 0.1 mm on position:
 

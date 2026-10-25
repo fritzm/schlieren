@@ -48,7 +48,7 @@ approximately:
 - left strap center: (-48.84, 35.01) mm;
 - right strap center: (+48.84, 35.01) mm.
 
-The nominal rail half-angle is about 0.85° ([§3.3](01-context-and-layout.md#33-sourceimager-separation)), and
+The nominal rail half-angle is about 0.85° ([§3.3](01-context-and-layout.md#33-sourceimager-offset)), and
 each of the fixed yaw clamp straps is perpendicular to its rail at that nominal angle. This puts the clamp
 bolt locations (at the two outer holes of each 3-hole joining plate) at approximately:
 
