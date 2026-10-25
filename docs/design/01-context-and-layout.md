@@ -66,34 +66,22 @@ rail follows one optical chief ray:
 
 The source rail contains, in optical order:
 
-1. light source (interchangeable threaded LED/heatsink modules, condenser, and adjustable iris)
+1. light source (with interchangeable threaded LED/heatsink modules, condenser lens, and adjustable iris)
 2. source-slit flexure head
 
-The slit is the effective optical source. An attached LED primarily illuminates that slit through the
-condenser. The imaging rail contains:
+The slit is the effective optical source, with the LED illuminating it through the condenser and iris. The
+imaging rail contains, in optical order:
 
 1. cutoff carriage at the returned slit-image plane;
 2. lens cradle, which supports and aligns a telephoto lens;
-3. phone rest, under an iPhone hanging from the lens.
+3. phone rest, which supports an iPhone hanging from the lens as a camera.
 
-A spherical mirror forms an image of the source slit back near the optical head. Refractive-index gradients in
-the test region near the mirror deflect portions of this return beam relative to the cutoff, producing
-schlieren contrast.
+A spherical mirror in a separate tripod-mountable cell forms an image of the source slit back near
+the optical head. Refractive-index gradients in the test region near the mirror deflect portions of this
+return beam relative to the cutoff, producing schlieren contrast.
 
-Several source-side and imaging-side fixtures deliberately share common mechanics. The light source, source
-slit, and cutoff each stand on common Thorlabs TR50/M optical posts and printed rail shoes
-([§5](05-post-support.md#5-common-rail-mounted-post-support)).
-
-The source slit and the cutoff both rotate about their optical axes on printed fixtures mounted in Thorlabs
-SM1RC/M SM1 split rings. The slit uses a flexure head with fine centering and slit-width adjustment
-([§7](07-source-slit.md#7-source-slit)); the cutoff uses a carriage that accepts interchangeable cassettes,
-allowing knife-edge, wire, and color-filter experiments without changing the supporting mechanism
-([§8](08-cutoff.md#8-cutoff)).
-
-The mirror cell uses a three-point fine-adjustment architecture with compression springs and spherical washer
-interfaces ([§10](10-mirror-cell.md#10-mirror-cell)). The mirror is compliantly supported in a plywood mirror
-plate by six radial silicone pads, which are cast and cured in place between the mirror edge and the inner
-surface of the mirror plate aperture.
+The mirror cell is fabricated from Baltic-birch plywood panels, and uses a three-point fine-adjustment
+architecture with compression springs and spherical washer interfaces.
 
 ## 3. System-level geometry
 

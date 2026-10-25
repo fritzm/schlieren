@@ -8,15 +8,21 @@ from itertools import combinations
 
 from build123d import GeomType
 
-from schlieren.parts.light_source import MODULES, LightSourceParameters
+from schlieren.cad import intersect, z_cylinder
+from schlieren.parts.light_source import MODULES, LightSourceParameters, build_star_board
 from schlieren.parts.light_source_drawing import drilling_templates_svg, layout_drawing_svg
 from schlieren.parts.light_source_holes import HoleLayoutParameters
 from schlieren.testing import svg_attr
-from schlieren.vendor_cad import alpha_cn40_40b
+from schlieren.vendor_cad import MCMASTER_92095A453_HEAD_DIAMETER, alpha_cn40_40b
 
 NS = "{http://www.w3.org/2000/svg}"
 M2_SCREW_LENGTH = 6.0  # McMaster 92095A453, under the head.
 M2_WASHER_THICKNESS = 0.4  # McMaster 91545A410, under each screw head.
+M2_MIN_CENTERING_PLAY = (
+    0.3  # Shank to the notch's closed end: a 0.3 mm emitter offset moves the slit image 2 mm.
+)
+M2_MIN_HEAD_BEARING = 1.5  # mm², star board under the screw head.
+M2_MIN_WASHER_BEARING = 8.0  # mm², star board under the washer.
 M3_SCREW_LENGTH = 6.0  # §6.2, provisional.
 HEATSINK_BASE = 3.0  # CN40 flat base; the M3 screws pass through it first.
 
@@ -92,11 +98,27 @@ class HoleLayoutTest(unittest.TestCase):
             )
             self.assertGreater(wall, 0, (a.name, b.name))
 
-    def test_m2_screws_sit_in_star_notches(self):
-        """The M2 screw center is the notch center, on a corner of the star."""
+    def test_m2_screws_sit_inboard_of_the_notch_centers(self):
+        """The screws are on a corner's axis, closer in than the notch arcs' centers."""
         for name in ("m2-1", "m2-2"):
-            self.assertAlmostEqual(math.hypot(*self.holes[name].position), self.p.notch_center_radius)
+            self.assertAlmostEqual(math.hypot(*self.holes[name].position), self.p.m2_radius)
             self.assertAlmostEqual(self.holes[name].y, 0.0)
+        self.assertLess(self.p.m2_radius, self.p.notch_center_radius)
+
+    def test_m2_shank_keeps_centering_play_in_the_notch(self):
+        for board in MODULES:
+            play = self.p.m2_radius - self.p.m2_thread_major / 2 - board.notch_end_radius
+            self.assertGreaterEqual(play, M2_MIN_CENTERING_PLAY, board.name)
+
+    def test_m2_head_and_washer_bear_on_the_board(self):
+        for board in MODULES:
+            star = build_star_board(board)
+            for diameter, minimum in (
+                (MCMASTER_92095A453_HEAD_DIAMETER, M2_MIN_HEAD_BEARING),
+                (self.p.m2_washer_diameter, M2_MIN_WASHER_BEARING),
+            ):
+                disc = z_cylinder(diameter, self.p.m2_radius, 0, -1, board.thickness + 1)
+                self.assertGreaterEqual(intersect(star, disc).volume / board.thickness, minimum, board.name)
 
     def test_leads_sit_just_outside_the_star_flats(self):
         for name in ("lead-1", "lead-2"):

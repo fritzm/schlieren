@@ -65,7 +65,6 @@ def main() -> None:
     export_models(
         {"frame_pivot_plate": build_pivot_plate(p), "frame_rail_support_block": build_rail_support_block(p)},
         args.output,
-        kinds=("step",),
     )
     drawings = [args.output / "drawings" / "frame_pivot_plate.svg"]
     if args.figure:

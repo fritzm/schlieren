@@ -8,8 +8,8 @@ Every hole is a through hole: the cap is only 0.210 in thick, and the screws are
 of them can reach the far face. Through holes also let plain plug taps finish a full thread.
 
 The M3 screws bolt the heatsink to the cap, with their socket heads between four pins each. The M2 screws hold
-the star board in two opposite notches. The two lead holes sit just outside the board's flat edges, between
-pin columns, and pass the LED leads through the cap and the heatsink base.
+the star board in two opposite notches, inboard of the notch centers. The two lead holes sit just outside the
+board's flat edges, between pin columns, and pass the LED leads through the cap and the heatsink base.
 """
 
 from dataclasses import dataclass
@@ -18,14 +18,19 @@ from math import hypot
 
 from schlieren.hardware import M3_CLEARANCE_DIAMETER, M3_SOCKET_HEAD_DIAMETER
 from schlieren.standards import INCH
+from schlieren.vendor_cad import MCMASTER_91545A410_DIAMETER
 
 Point = tuple[float, float]
 
 # Star-board outline, NewEnergy LST1-01F06 drawing: a hexagon with a U-notch at each corner. Used as a
 # representative outline for both boards; transfer hole geometry from the physical boards, not from this.
 STAR_NOTCH_COUNT = 6
-STAR_NOTCH_WIDTH = 0.125 * INCH
+STAR_NOTCH_WIDTH = 0.125 * INCH  # The closed end is an arc of this diameter (a 1/8 in drill fits it).
 STAR_NOTCH_CENTER_RADIUS = 0.375 * INCH
+# The M2 screws sit inboard of the notch's arc center. The notch's closed end is at r = 7.93 to 7.98 mm on the
+# measured boards (§6.4), so the Ø2 shank keeps at least 0.3 mm of play for centering the emitter, while the
+# washer's outer edge moves in from the cap's thread relief.
+M2_SCREW_RADIUS = 9.30
 
 
 @dataclass(frozen=True)
@@ -56,6 +61,9 @@ class HoleLayoutParameters:
     star_across_flats: float = 20.0
     notch_center_radius: float = STAR_NOTCH_CENTER_RADIUS
     notch_width: float = STAR_NOTCH_WIDTH
+    # Board screws: center radius on the x axis, and the nylon washer under each head.
+    m2_radius: float = M2_SCREW_RADIUS
+    m2_washer_diameter: float = MCMASTER_91545A410_DIAMETER
     # Tapped holes in the cap, with the thread major diameter bounding the material around each.
     m3_tap_drill: float = 2.5
     m3_thread_major: float = 3.0
@@ -73,6 +81,7 @@ class HoleLayoutParameters:
     min_pin_gap: float = 1.0  # Lead hole edge to pin edge.
     min_head_gap: float = 0.5  # Socket-head edge to pin edge.
     min_relief_wall: float = 0.4  # Lead hole edge to the thread relief.
+    min_washer_relief_gap: float = 0.5  # M2 washer edge to the thread relief.
 
     @property
     def pin_radius(self) -> float:
@@ -91,8 +100,8 @@ class HoleLayoutParameters:
             Hole("m3-1", "m3", pitch, pitch),
             Hole("m3-2", "m3", -pitch, pitch),
             Hole("m3-3", "m3", pitch, -pitch),
-            Hole("m2-1", "m2", self.notch_center_radius, 0.0),
-            Hole("m2-2", "m2", -self.notch_center_radius, 0.0),
+            Hole("m2-1", "m2", self.m2_radius, 0.0),
+            Hole("m2-2", "m2", -self.m2_radius, 0.0),
             Hole("lead-1", "lead", 0.0, self.lead_radius),
             Hole("lead-2", "lead", 0.0, -self.lead_radius),
         ]
@@ -133,6 +142,7 @@ class HoleLayoutParameters:
                 for px, py in pins
             ),
             "lead_to_relief": self.cap_relief_radius - max(hypot(*h.position) + lead_radius for h in leads),
+            "washer_to_relief": self.cap_relief_radius - self.m2_radius - self.m2_washer_diameter / 2,
             "lead_to_star_edge": min(hypot(*h.position) - lead_radius for h in leads)
             - self.star_across_flats / 2,
         }
@@ -144,6 +154,7 @@ class HoleLayoutParameters:
             "lead_to_pin": self.min_pin_gap,
             "head_to_pin": self.min_head_gap,
             "lead_to_relief": self.min_relief_wall,
+            "washer_to_relief": self.min_washer_relief_gap,
             "lead_to_star_edge": 0.0,
         }
         short = [

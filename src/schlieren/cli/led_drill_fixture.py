@@ -44,7 +44,6 @@ def main() -> None:
             "led_drill_bore_coupon": build_bore_coupon(p),
         },
         args.output,
-        kinds=("stl",),
     )
     if args.figure:
         render(build_fixtures_side_by_side(p), args.figure, FIGURE_VIEW_DIRECTION)

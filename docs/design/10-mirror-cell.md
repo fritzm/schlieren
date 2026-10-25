@@ -213,6 +213,9 @@ adhesive-bonding areas, and RTV bonding surfaces. The grease is Dynatex NLGI Gra
 
 ### 10.5 Mirror mounting
 
+The mirror is compliantly supported in a plywood mirror plate by six radial silicone pads, which are cast and
+cured in place between the mirror edge and the inner surface of the mirror plate aperture.
+
 The 203 mm mirror is carried within the 3/4 in mirror-plate aperture. Its back surface is flush with the rear
 face of the plate, since both rest on the cure surface ([§10.6](#106-rtv-glue-up-cure-surface)) during
 bonding; its front surface is therefore recessed about 1 mm below the front face of the plate.

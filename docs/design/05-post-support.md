@@ -11,6 +11,16 @@ commercial optomechanical and 2020 rail ecosystems. The model is `src/schlieren/
   <em>Fig. 3. Common rail shoe on rail with TR50/M post</em>
 </p>
 
+Several source-side and imaging-side fixtures deliberately share common mechanics. The light source, source
+slit, and cutoff each stand on common Thorlabs TR50/M optical posts and printed rail shoes
+([§5](05-post-support.md#5-common-rail-mounted-post-support)).
+
+The source slit and the cutoff both rotate about their optical axes on printed fixtures mounted in Thorlabs
+SM1RC/M SM1 split rings. The slit uses a flexure head with fine centering and slit-width adjustment
+([§7](07-source-slit.md#7-source-slit)); the cutoff uses a carriage that accepts interchangeable cassettes,
+allowing knife-edge, wire, and color-filter experiments without changing the supporting mechanism
+([§8](08-cutoff.md#8-cutoff)).
+
 ### 5.1 Post and shim
 
 The chosen optical post is the Thorlabs TR50/M.  These are 303 stainless steel, 12.7 mm diameter, 50 mm long

@@ -75,8 +75,8 @@ text { font-family: Helvetica, Arial, sans-serif; fill: #000; }
 <circle class="head" cx="56.900" cy="42.900" r="2.750"/>
 <circle class="thread" cx="56.900" cy="42.900" r="1.500"/>
 <circle class="m3" data-hole="m3-3" cx="56.900" cy="42.900" r="1.250"/>
-<circle class="m2" data-hole="m2-1" cx="59.525" cy="36.000" r="0.800"/>
-<circle class="m2" data-hole="m2-2" cx="40.475" cy="36.000" r="0.800"/>
+<circle class="m2" data-hole="m2-1" cx="59.300" cy="36.000" r="0.800"/>
+<circle class="m2" data-hole="m2-2" cx="40.700" cy="36.000" r="0.800"/>
 <circle class="lead" data-hole="lead-1" cx="50.000" cy="25.000" r="1.000"/>
 <circle class="lead" data-hole="lead-2" cx="50.000" cy="47.000" r="1.000"/>
 <line class="leader" x1="56.900" y1="29.100" x2="79.000" y2="19.000"/>
@@ -85,10 +85,10 @@ text { font-family: Helvetica, Arial, sans-serif; fill: #000; }
 <text x="20.000" y="19.510" font-size="1.7" text-anchor="end">M3 (-6.90, +6.90)</text>
 <line class="leader" x1="56.900" y1="42.900" x2="79.000" y2="53.000"/>
 <text x="80.000" y="53.510" font-size="1.7" text-anchor="start">M3 (+6.90, -6.90)</text>
-<line class="leader" x1="59.525" y1="36.000" x2="79.000" y2="33.000"/>
-<text x="80.000" y="33.510" font-size="1.7" text-anchor="start">M2 (+9.525, +0.0)</text>
-<line class="leader" x1="40.475" y1="36.000" x2="21.000" y2="33.000"/>
-<text x="20.000" y="33.510" font-size="1.7" text-anchor="end">M2 (-9.525, +0.0)</text>
+<line class="leader" x1="59.300" y1="36.000" x2="79.000" y2="33.000"/>
+<text x="80.000" y="33.510" font-size="1.7" text-anchor="start">M2 (+9.300, +0.0)</text>
+<line class="leader" x1="40.700" y1="36.000" x2="21.000" y2="33.000"/>
+<text x="20.000" y="33.510" font-size="1.7" text-anchor="end">M2 (-9.300, +0.0)</text>
 <line class="leader" x1="50.000" y1="25.000" x2="63.000" y2="9.000"/>
 <text x="64.000" y="9.510" font-size="1.7" text-anchor="start">lead Ø2 (+0.0, +11.0)</text>
 <line class="leader" x1="50.000" y1="47.000" x2="63.000" y2="63.000"/>

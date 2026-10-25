@@ -155,24 +155,26 @@ the frame of the pin lattice; the cap and the heatsink are drilled to the same c
 | Hole      | Position                                       | In the cap               | In the heatsink base |
 | --------- | ---------------------------------------------- | ------------------------ | -------------------- |
 | M3, three | (+6.90, +6.90), (−6.90, +6.90), (+6.90, −6.90) | Ø2.5 tap drill, M3 × 0.5 | Ø3.3 clearance       |
-| M2, two   | (±9.525, 0)                                    | Ø1.6 tap drill, M2 × 0.4 | none                 |
+| M2, two   | (±9.30, 0)                                     | Ø1.6 tap drill, M2 × 0.4 | none                 |
 | Lead, two | (0, ±11.0)                                     | Ø2.0                     | Ø2.0                 |
 
 - M3 holes: each is the center of a cell of the pin lattice, 4.88 mm from each of four pins, so the Ø5.5 mm
   socket head lands between the pins with 0.73 mm to spare and the key reaches it. Three screws hold the
   heatsink without a rocking axis; the fourth cell is free but unused. Roughly 70% of each hole's area lies
   under the star, a small loss of its thermal contact.
-- M2 holes: in the two opposite corner notches of the star on the x axis (the 0.375 in notch center radius).
-  They are covered by the solid heatsink base, so they do not meet the pins.
+- M2 holes: in the two opposite corner notches of the star on the x axis, 0.225 mm inboard of the center of the
+  notch's 1/8 in arc (0.375 in from the axis). Each notch is that arc flaring to a mouth 0.138 in wide on the
+  NewEnergy star and at most 0.150 in on the Convoy. Measured across opposite notches, the closed ends are at
+  r = 7.98 mm (NewEnergy) and 7.93 mm (Convoy), so the Ø2 shank keeps at least 0.32 mm of play in x for
+  centering the emitter. Moving in puts the head's edge 0.4 mm onto the notch's closed end, and the washer's
+  outer edge at r = 11.8 mm, 0.75 mm from the cap's thread relief. The holes are covered by the solid
+  heatsink base, so they do not meet the pins.
 - Lead holes: on the axis through the midpoints of two opposite flat edges of the star, centered at 11.0 mm
   radius and tangent to each edge. Each is 1.1 mm from the nearest pins, in the 4.1 mm channel between pin
   columns.
 - The smallest wall between holes in the cap, measured to the thread major radius, is 4.9 mm. The lead holes'
   outer edges, at 12.0 mm radius, leave about 0.55 mm to the cap's thread relief, the straight shank
   beneath the threads, which measures Ø0.988 in (12.55 mm radius) and is the boss's minimum radius.
-
-**Provisional:** the Convoy star's notch geometry, which is taken from the NewEnergy drawing and must be
-checked against the physical board.
 
 Full-scale drilling templates for both parts, to print at 100% on white Avery 5263 laser labels (first row)
 and stick on, come from `uv run light-source --templates`: the cap template goes on the LED-side face with its
@@ -202,9 +204,11 @@ The supply side should present recessed/socket contacts.
 
 ### 6.6 Condenser optics
 
-The condenser images the LED emitter onto the source slit (about 6.6× magnification). Each slit point then
-sees the iris uniformly filled at the LED radiance, which gives a uniformly illuminated mirror. The LED image
-should cover the illuminated slit length; the domes enlarge the apparent emitters by about 1.4–1.5×.
+The condenser images the LED emitter onto the source slit (about 6.6× magnification). Each slit point receives
+light from its conjugate emitter point through the full iris aperture, so its cone is uniformly filled in angle
+and every slit point illuminates the whole mirror uniformly. Emitter structure appears as intensity variation
+along the slit, not as structure in the mirror illumination. The LED image should cover the illuminated slit
+length; the domes enlarge the apparent emitters by about 1.4–1.5×.
 
 Defocus in either direction underfills the ±1.82° cone: iris-edge rays then trace back beyond the emitter
 edge, darkening the mirror edge and shortening the uniformly lit slit length. With the LED at the condenser
@@ -276,7 +280,7 @@ requirements set the accuracy needed, about 0.1 mm on position:
   <em>Fig. 7. Drilling fixture: bushing plate on the cap nest (left) and on the heatsink nest (right)</em>
 </p>
 
-`src/schlieren/parts/led_drill_fixture.py` models the fixture; `uv run led-drill-fixture` exports the STL
+`src/schlieren/parts/led_drill_fixture.py` models the fixture; `uv run led-drill-fixture` exports the STEP and STL
 files and the figure.
 
 #### Parts
@@ -285,8 +289,8 @@ One **bushing plate** serves both parts, so the leads, and the M3 holes that fix
 are drilled from the same coordinates. A **cap nest** and a **heatsink nest** each locate one part under it.
 All are printed in PLA.
 
-Bushings, McMaster metric press-fit drill bushings (hardened steel, 6 mm long, chamfered on one end); each bore
-is the drill that makes the cap's hole ([§6.4](#64-led-board-mounting)):
+Bushings, McMaster metric press-fit drill bushings (hardened steel, 6 mm long, chamfered on one end); each
+bore is the drill that makes the cap's hole ([§6.4](#64-led-board-mounting)):
 
 | Hole           | Count | Bore (mm) | Outside diameter (mm) | SKU       |
 | -------------- | ----- | --------- | --------------------- | --------- |
@@ -296,14 +300,14 @@ is the drill that makes the cap's hole ([§6.4](#64-led-board-mounting)):
 
 - The plate is 54 mm square and 6 mm thick, the bushing length, so the bushings sit flush on both faces. Its
   bores are at the layout coordinates, in the frame seen looking down at the part's LED-side face (+x right,
-  +y up). The smallest web between bores is 2.9 mm.
+  +y up). The smallest web between bores is 2.8 mm.
 - Under the plate, a registration ring (Ø45.0 mm outside, Ø41.0 mm inside, 2.5 mm high) fits the Ø45.2 mm bore
   in the top of either nest, with a key tab on +x that fits a slot in the nest. The tab allows one orientation
   only. The plate seats on the nest's top face and is held by four M3 × 12 mm screws, through its corner
   clearance holes into M3 heat-set inserts in the nest's corners. The inserts are McMaster 97171A310 brass
   flanged inserts (5.7 mm installed length, Ø5.5 mm flange 0.53 mm thick), set in Ø4.0 mm holes with the
-  flange recessed flush with the nest's top face. The socket heads stand 3 mm above the plate's top face, 31 mm
-  from the axis; the plate has no counterbores.
+  flange recessed flush with the nest's top face. The socket heads stand 3 mm above the plate's top face, 31
+  mm from the axis; the plate has no counterbores.
 - The nests share the 54 mm square outline and the plate bore. The plate's bushing ends stand 2.0 mm off the
   part's LED-side face, which leaves room for chips.
 - A Ø10 mm boss, 1.5 mm tall, under the center of the plate carries a Ø10 mm disc of the 1/32 in
@@ -332,23 +336,23 @@ Heatsink nest:
 
 #### Mounting on the drill press
 
-The nests mount on the base of a Dremel 220 drill press, which has four diagonal slots, 3/8 in wide and 7/32 in
-deep, running from 3/4 in (the apex of the slot's inner rounded end) to 2-1/4 in (the keyhole) from the spindle
-axis. Each nest has two ears, 8 mm thick, on its ±x faces, and sits turned 45° on the base so that its x axis
-lies along one diagonal pair of base slots. A 2 mm fillet where each ear meets the face, along its top edge and
-its ends and blended at the corners, spreads the clamping load at the root.
+The nests mount on the base of a Dremel 220 drill press, which has four diagonal slots, 3/8 in wide and 7/32
+in deep, running from 3/4 in (the apex of the slot's inner rounded end) to 2-1/4 in (the keyhole) from the
+spindle axis. Each nest has two ears, 8 mm thick, on its ±x faces, and sits turned 45° on the base so that its
+x axis lies along one diagonal pair of base slots. A 2 mm fillet where each ear meets the face, along its top
+edge and its ends and blended at the corners, spreads the clamping load at the root.
 
 - A 5/16-18 × 1-1/4 in square-neck carriage bolt (McMaster 92356A589) rides in each base slot, head under the
   base and its 0.32 in square neck in the slot, which keeps it from turning. It goes in from the top, the head
   tipped through the slot's 5/8 in keyhole, or from underneath.
-- The bolt passes through a slot in the ear that runs along the face (y), 40 mm from the axis, and a 5/16 in SAE
-  washer and a flanged knurled thumb nut (McMaster 95150A180, 5/8 in head) clamp the ear from the top. The
+- The bolt passes through a slot in the ear that runs along the face (y), 40 mm from the axis, and a 5/16 in
+  SAE washer and a flanged knurled thumb nut (McMaster 95150A180, 5/8 in head) clamp the ear from the top. The
   thumb nut clears the nest face by 5 mm.
-- The fixture moves in x along the base slots (±10.5 mm) and in y along the ear slots (±12 mm), enough to bring
-  any bushing under the spindle. Over that travel the bolt neck stays between 25 and 55 mm from the spindle
-  axis, inside the slot.
-- A 1/8 in UHMW sheet under the nest, with clearance slots for the bolts, protects the base where the bits exit
-  away from its center hole. The bolt length allows for it.
+- The fixture moves in x along the base slots (±10.5 mm) and in y along the ear slots (±12 mm), enough to
+  bring any bushing under the spindle. Over that travel the bolt neck stays between 25 and 55 mm from the
+  spindle axis, inside the slot.
+- A 1/8 in UHMW sheet under the nest, with clearance slots for the bolts, protects the base where the bits
+  exit away from its center hole. The bolt length allows for it.
 
 To move between holes, loosen the thumb nuts, lower the bit into the next bushing and hold it there, and tighten
 the thumb nuts; the bushing sets the fixture's position.

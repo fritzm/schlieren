@@ -19,14 +19,13 @@ in docs/reference/.
 
 from dataclasses import dataclass
 from functools import cache
-from math import isfinite
+from math import cos, isfinite, radians
 
-from build123d import Circle, Compound, Pos, Rectangle, RegularPolygon, Rot, Sphere, extrude
+from build123d import Circle, Compound, Polygon, Pos, RegularPolygon, Rot, Sphere, extrude
 
 from schlieren.cad import CUT_OVERRUN, assembly, centered_box, floor_box, labeled, y_cylinder, z_cylinder
 from schlieren.palette import BLACK_ANODIZED, GLASS, LED_YELLOW, METAL, NYLON, SOLDER_MASK_WHITE
 from schlieren.parts.light_source_holes import (
-    STAR_NOTCH_CENTER_RADIUS,
     STAR_NOTCH_COUNT,
     STAR_NOTCH_WIDTH,
     HoleLayoutParameters,
@@ -75,6 +74,18 @@ class LEDBoard:
     package_base: float
     dome_diameter: float
     package_height: float
+    # Measured with calipers (inches): across two opposite notches' closed ends, mean of three readings, and
+    # the notch mouth where it meets the board's edge. The notch is a STAR_NOTCH_WIDTH arc flaring to the mouth.
+    notch_span_in: float
+    notch_mouth_in: float
+
+    @property
+    def notch_end_radius(self):
+        return self.notch_span_in * INCH / 2
+
+    @property
+    def notch_mouth_width(self):
+        return self.notch_mouth_in * INCH
 
     @property
     def thickness(self):
@@ -82,9 +93,29 @@ class LEDBoard:
 
 
 GREEN = LEDBoard(
-    "Green OSRAM OSLON SSL 120 / NewEnergy star", 0.0625, 0.783 * INCH, 0.45, 3.0, 0.53, 2.15, 1.754
+    "Green OSRAM OSLON SSL 120 / NewEnergy star",
+    0.0625,
+    0.783 * INCH,
+    0.45,
+    3.0,
+    0.53,
+    2.15,
+    1.754,
+    notch_span_in=(0.630 + 0.628 + 0.628) / 3,
+    notch_mouth_in=0.138,
 )
-WHITE = LEDBoard("White Nichia 519A / Convoy 20 mm star", 0.0590, 20.0, 0.75, 3.5, 0.77, 3.1, 2.35)
+WHITE = LEDBoard(
+    "White Nichia 519A / Convoy 20 mm star",
+    0.0590,
+    20.0,
+    0.75,
+    3.5,
+    0.77,
+    3.1,
+    2.35,
+    notch_span_in=(0.624 + 0.626 + 0.624) / 3,
+    notch_mouth_in=0.150,  # At most; the corners are rounded, so the mouth is hard to locate.
+)
 MODULES = (GREEN, WHITE)
 
 
@@ -227,11 +258,25 @@ class LightSourceParameters:
 
 
 def build_star_board(board):
-    """Representative star board; back face on z=0, +z toward the lens, outline diameter across the flats."""
+    """Representative star board; back face on z=0, +z toward the lens, outline diameter across the flats.
+
+    Each notch is the STAR_NOTCH_WIDTH arc at the measured closed-end radius, its sides flaring in straight
+    lines to the measured mouth width at the hexagon corner. The Convoy's rounded corners are not drawn."""
     outline = RegularPolygon(board.outline_diameter / 2, STAR_NOTCH_COUNT, major_radius=False)
+    arc_radius = STAR_NOTCH_WIDTH / 2
+    arc_center = board.notch_end_radius + arc_radius
+    corner = board.outline_diameter / 2 / cos(radians(180 / STAR_NOTCH_COUNT))
     reach = board.outline_diameter  # Open each notch out past the hexagon corner.
-    notch = Pos(STAR_NOTCH_CENTER_RADIUS, 0) * Circle(STAR_NOTCH_WIDTH / 2)
-    notch += Pos(STAR_NOTCH_CENTER_RADIUS + reach / 2, 0) * Rectangle(reach, STAR_NOTCH_WIDTH)
+    flare = (board.notch_mouth_width / 2 - arc_radius) / (corner - arc_center)  # Half-width per mm outward.
+    reach_half = arc_radius + flare * (reach - arc_center)
+    notch = Pos(arc_center, 0) * Circle(arc_radius)
+    notch += Polygon(
+        (arc_center, arc_radius),
+        (reach, reach_half),
+        (reach, -reach_half),
+        (arc_center, -arc_radius),
+        align=None,
+    )
     for i in range(STAR_NOTCH_COUNT):
         outline -= Rot(Z=i * 360 / STAR_NOTCH_COUNT) * notch
     return extrude(outline, board.thickness)  # ty: ignore[invalid-argument-type]
