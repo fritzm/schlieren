@@ -59,9 +59,8 @@ Measured sections, from the aft end forward:
 | shoulder                   | 0.40 in / 10.2 mm   | 1.26 in / 32.0 mm |
 | main barrel                | 4.285 in / 108.8 mm | about 37.0 mm     |
 
-The overall length is 4.785 in / 121.5 mm, about 4.7 mm more than the 116.8 mm listed for the lens.
-**Provisional:** the difference is not resolved; the model uses the measured length. The boss threads into the
-lens mount on the phone case, and the shoulder seats against the mount; the model takes the aft end of the
+The overall length is 4.785 in / 121.5 mm, the sum of the sections; a direct end-to-end measurement agrees
+within 0.3 mm. The boss threads into the lens mount on the phone case, and the shoulder seats against the mount; the model takes the aft end of the
 boss to be on the camera cover, at the back plane of the cased phone. The main barrel is 1.457 in / 37.01 mm
 in diameter at its rear end and 1.459 in / 37.06 mm further forward. The focus ring, 0.455 in / 11.6 mm long,
 ends 0.175 in / 4.4 mm behind the front of the barrel, so it starts 105.5 mm from the aft end. The barrel is
@@ -69,6 +68,13 @@ clampable from 12.7 mm to the focus ring, about 93 mm, and the focus ring must s
 a clear aperture of 0.845 in / 21.5 mm at the bottom of a stepped recess. The focus ring moves the glass, and
 at the working focus of about 3.2 m the ring is fully forward and the glass is 0.5 in / 12.7 mm behind the
 front of the barrel, 108.8 mm from the aft end.
+
+Optically the lens is a Galilean telescope of 7× angular magnification: the image through it is upright and the
+exit pupil is virtual (observed). The front glass is the aperture stop, so the exit beam is about 3.1 mm in
+diameter (calculated, 21.5 mm / 7), and the exit pupil lies inside the barrel, in front of the rear glass. There
+is no field stop; the rear glass limits the field, and off-axis rays are clipped gradually. The rear glass has a
+measured clear aperture of 0.471 in / 11.96 mm. With the lens seated in its clamp, the center of the rear glass
+is 0.125 in / 3.18 mm from the camera cover.
 
 The lens is modeled in `src/schlieren/parts/lens.py`, for visualization only.
 
@@ -105,6 +111,17 @@ The resulting tolerances on the camera and lens as one body:
 
 Pointing is therefore the governing adjustment, and centering is moderately forgiving. Image quality still
 favors centering well inside the vignetting limit.
+
+The rear glass ([§9.2](#92-telephoto)) also limits the field. A ray at image-space angle φ (about 7× the
+object-space angle) crosses the rear glass about D tan φ from the axis, where D is the distance from the rear
+glass to the Main camera's entrance pupil, and the bundle through the pupil is clipped once D tan φ plus its
+footprint radius of about 1.9 mm reaches the 6 mm glass radius (calculated). The mirror region (±1.8°) stays
+clear up to D of about 18 mm, the frame half-height (±3.05°) up to about 10 mm, and the frame half-width
+(±4.95°) up to about 6 mm, beyond which the left and right edges and corners darken. **Provisional:** D is the
+3.18 mm seat offset plus the depth of the camera's entrance pupil behind the cover's outer face, which is not
+yet known; about 6–8 mm is assumed. A flat-field photograph through the lens would give D from the position of
+the vignetting edge. At D of 8 mm, the mirror edge leaves about 2 mm of decentering between the phone and the
+lens axis.
 
 ### 9.4 Support
 
@@ -375,8 +392,3 @@ The sequence:
    strip sliding between them with light drag. A lower-edge height different from the model is taken up by
    shimming the rod seat.
 6. Record the final thumb-nut positions, so that refitting the lens needs only a check.
-
-- Each station's range is only about ±4 mm, so a larger offset is taken up by moving the shoe on the rail, not
-  with the screws.
-- The aft thumb nuts must stay clear of the phone while they are turned; the model leaves finger room.
-  **Provisional:** check the finger room on the real phone.

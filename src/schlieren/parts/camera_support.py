@@ -277,7 +277,7 @@ class CameraSupportParameters:
 
     @property
     def lens_length(self) -> float:
-        """Overall, from the aft end of the thread boss; §9.2 also lists about 116.8 mm."""
+        """Overall, from the aft end of the thread boss."""
         return self.lens.length
 
     @property

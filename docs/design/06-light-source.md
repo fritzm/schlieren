@@ -370,12 +370,6 @@ Both parts are drilled through the plate from the LED-side face.
 Because one plate drills both parts, an error in the plate's bore positions shifts the holes in both parts the
 same way, which keeps the two sets of lead holes in line.
 
-**Provisional:**
-
-- The printed bore size for the bushings. The plate bores are designed at the bushing outside diameter, which
-  printed holes of this size are likely to undercut, and the bushings are pressed in; print the bore coupon
-  (`led_drill_bore_coupon`, bores drawn 0.00 to 0.20 mm over the outside diameter in 0.05 mm steps, for both
-  outside diameters) to find the bore that gives a press fit, and set the bore oversize.
-- The positional accuracy of the printed plate. The assumed 0.1 mm is to be checked by measuring the holes
-  drilled in the first cap against the layout.
-- The fit of the heatsink rib in the pin channels, and the height of the heatsink setup on the drill press.
+The plate bores are drawn over the bushing outside diameter to allow for printed holes undercutting: 0.10 mm
+diametral for the 5 mm bushings, and 0.125 mm for the 4 mm bushing. Both give a press fit, found with the bore
+coupon (`led_drill_bore_coupon`, 0.00 to 0.20 mm over in 0.05 mm steps).

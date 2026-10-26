@@ -173,8 +173,11 @@ class DrillFixtureParameters:
     # Fabrication allowances.
     slip_clearance_diametral: float = 0.20  # Ring in bore, cap in pocket.
     key_clearance_width: float = 0.20  # Slot over tab.
-    # **Provisional**: printed bores are designed at the bushing's outside diameter; calibrate with the coupon.
-    bushing_bore_oversize: float = 0.0
+    # Diametral oversize of the printed bore over the bushing's outside diameter, from the bore coupon. The
+    # 5 mm bushings (M3 and lead) press-fit at +0.10. The 4 mm bushing (M2) was a little loose at +0.15 and a
+    # little tight at +0.10, so it sits at the midpoint; the printed plate confirmed the fit.
+    bushing_bore_oversize_5mm: float = 0.10
+    bushing_bore_oversize_4mm: float = 0.125
     # Cap nest.
     floor_thickness: float = 3.0
     clamp_notch_depth: float = 4.0  # Into the -y face, thinning the wall for the clamp screw.
@@ -401,7 +404,12 @@ class DrillFixtureParameters:
         return [h for h in self.layout.holes() if h.kind in HEATSINK_KINDS]
 
     def bore_diameter(self, hole: Hole) -> float:
-        return BUSHINGS[hole.kind].outer_diameter + self.bushing_bore_oversize
+        return BUSHINGS[hole.kind].outer_diameter + self.bushing_bore_oversize(hole.kind)
+
+    def bushing_bore_oversize(self, kind: str) -> float:
+        if kind == "m2":
+            return self.bushing_bore_oversize_4mm
+        return self.bushing_bore_oversize_5mm
 
     def web(self) -> float:
         """Smallest plate material between two neighboring bushing bores."""

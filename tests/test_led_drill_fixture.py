@@ -74,10 +74,10 @@ class DrillFixtureTest(unittest.TestCase):
         self.assertAlmostEqual(box.min.Z, -self.p.ring_height)
 
     def test_plate_bores_sit_on_the_layout_and_take_the_bushings(self):
-        """Each bore is empty at its layout coordinates and exactly the bushing's outside diameter wide."""
+        """Each bore is empty at its layout coordinates and as wide as the calibrated bore."""
         mid = BUSHINGS["lead"].length / 2
         for hole in self.p.layout.holes():
-            radius = (BUSHINGS[hole.kind].outer_diameter + self.p.bushing_bore_oversize) / 2
+            radius = self.p.bore_diameter(hole) / 2
             self.assertFalse(self.plate.is_inside((hole.x, hole.y, mid)), hole.name)
             for angle in (0, 90, 180, 270):
                 dx, dy = math.cos(math.radians(angle)), math.sin(math.radians(angle))
@@ -426,9 +426,9 @@ class DrillFixtureTest(unittest.TestCase):
         self.assertEqual(radii, expected)
 
     def test_oversize_changes_the_printed_bores(self):
-        p = replace(self.p, bushing_bore_oversize=0.1)
+        p = replace(self.p, bushing_bore_oversize_5mm=0.2)
         radii = cylinder_radii(build_bushing_plate(p))
-        self.assertIn(round((BUSHINGS["m3"].outer_diameter + 0.1) / 2, 4), radii)
+        self.assertIn(round((BUSHINGS["m3"].outer_diameter + 0.2) / 2, 4), radii)
 
     def test_rejects_a_bushing_that_does_not_match_the_cap_drill(self):
         p = replace(self.p, layout=replace(self.p.layout, m2_tap_drill=1.7))

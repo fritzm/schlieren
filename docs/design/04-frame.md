@@ -30,27 +30,28 @@ overhang toward the outside of the optical head keeps the phone clear of the sou
 
 ### 4.2 Front pivot plate
 
-The front pivot plate is a 180 × 150 mm Baltic-birch rectangle with no structural cutouts. The 180 mm
-dimension is transverse to the rails and the 150 mm dimension is fore/aft.
+The front pivot plate is a 180 × 150 mm Baltic-birch rectangle; the 180 mm dimension is transverse to the
+rails and the 150 mm dimension is fore/aft.
 
-Plate coordinates are the pivot frame ([§3.4](01-context-and-layout.md#34-common-optical-axis-datum)): the
+Plate coordinates are the pivot frame ([§3.4](01-context-and-layout.md#35-coordinate-frames)): the
 origin is at the midpoint of the aft edge, +y runs toward the mirror along the plate centerline, and +x runs
 to the right seen from above with the mirror ahead. The mirror-facing edge is at y = 150 mm, and the left rail
-is the one at negative x. The pivot line is 25 mm behind the mirror-facing edge, giving pivot centers at:
+is the one at negative x.
+
+The pivot line is 25 mm behind the mirror-facing edge, giving pivot centers at:
 
 - left pivot: (-47.50, 125.00) mm;
 - right pivot: (+47.50, 125.00) mm;
 - total pivot separation: 95 mm.
 
-Each yaw-clamp station is 90 mm aft of its pivot along the nominal rail axis, giving yaw-strap centers at
-approximately:
+Each yaw-clamp station is 90 mm aft of its pivot along its rail axis.  At the nominal 0.85° splay, this gives
+yaw-strap centers at approximately:
 
 - left strap center: (-48.84, 35.01) mm;
 - right strap center: (+48.84, 35.01) mm.
 
-The nominal rail half-angle is about 0.85° ([§3.3](01-context-and-layout.md#33-sourceimager-offset)), and
-each of the fixed yaw clamp straps is perpendicular to its rail at that nominal angle. This puts the clamp
-bolt locations (at the two outer holes of each 3-hole joining plate) at approximately:
+Each of the fixed yaw clamp straps is perpendicular to its rail. At the nominal 0.85° splay, this gives clamp
+bolt locations at approximately:
 
 - left outer: (-68.83, 35.31) mm;
 - left inner: (-28.84, 34.71) mm;
