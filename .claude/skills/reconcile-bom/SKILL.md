@@ -1,6 +1,8 @@
 ---
-name: reconcile-bom description: Reconcile edits made in a local copy of the BOM workbook (.xlsx) into
-bom/bom.csv by reviewing a row-by-row diff, never by blind overwrite, then regenerate the versioned workbook.
+name: reconcile-bom
+description: >-
+  Reconcile edits made in a local copy of the BOM workbook (.xlsx) into
+  bom/bom.csv by reviewing a row-by-row diff, never by blind overwrite, then regenerate the versioned workbook.
 disable-model-invocation: true
 ---
 

@@ -171,24 +171,6 @@ Preserve inherently imperial interfaces in their conventional form when useful, 
 
 Convert deliberately at the model boundary rather than mixing implicit units.
 
-## Module layout
-
-```text
-src/schlieren/
-    standards.py   # project-wide dimensions
-    hardware.py    # catalog dimensions of shared purchased hardware
-    palette.py     # viewer colors
-    validation.py  # shared parameter-class checks
-    bom.py         # BOM schema and row checks, shared by the workbook builder, reconciler, and tests
-    cad.py         # primitive solids, axis planes, assembly helpers
-    vendor_cad.py  # vendor STEP models placed in documented mounting frames
-    render.py      # offscreen figure rendering
-    testing.py     # test helpers: @slow, @shared, bounding-box prefilters, svg_attr
-    parts/         # one module per mechanical subsystem
-    cli/           # command-line entry points, registered in pyproject.toml [project.scripts]
-        _common.py # shared options and export/drawing/figure/viewer steps
-```
-
 ## Tests
 
 Add tests where they provide useful protection against accidental geometry changes.
