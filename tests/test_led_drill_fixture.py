@@ -156,6 +156,28 @@ class DrillFixtureTest(unittest.TestCase):
         self.assertAlmostEqual(p.channel_width - p.rib_width, p.rib_clearance_width)
         self.assertAlmostEqual(p.rib_clears_pins(), p.rib_clearance_width / 2, places=6)
 
+    def test_heatsink_windows_print_without_supports(self):
+        """Vertical sides, 45° corners, and a flat top no wider than the setting: no wide bridge anywhere."""
+        p = self.p
+        nest = self.nests[HEATSINK]
+        top = p.window_top_z(HEATSINK)
+        c, half = p.window_chamfer, p.window_width / 2
+
+        def at(axis, across, z):
+            wall = p.body_side / 2 - 1.0
+            return (wall, across, z) if axis == "x" else (across, wall, z)
+
+        for axis in ("x", "y"):
+            self.assertFalse(nest.is_inside(at(axis, 0.0, top - 0.5)))  # Open under the flat top.
+            self.assertFalse(
+                nest.is_inside(at(axis, half - 0.5, top - c - 0.5))
+            )  # Open on the vertical side.
+            self.assertTrue(nest.is_inside(at(axis, half - 0.5, top - 0.5)))  # Solid in the cut-off corner.
+            self.assertTrue(nest.is_inside(at(axis, half + 0.5, top - c - 0.5)))  # Solid beside the window.
+            self.assertTrue(nest.is_inside(at(axis, 0.0, top + 0.5)))  # Solid above the window.
+        self.assertAlmostEqual(c, (p.window_width - p.window_flat_top) / 2)
+        self.assertLessEqual(p.window_flat_top, 6.0)
+
     def test_rib_stands_clear_of_the_heatsink_base(self):
         """The rib is far shorter than the pins, so the lead and M3 drills exit above it."""
         p = self.p

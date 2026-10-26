@@ -332,7 +332,8 @@ Heatsink nest:
   mm wide, 0.15 mm of clearance each side. The rib fixes the position and rotation in the lattice frame, the
   frame the layout is defined in; the Ø40 mm base diameter has a +0/−0.5 mm tolerance and is not used.
 - The plate seats 2.0 mm above the 40 mm height of the heatsink. The lead and M3 drills exit well above the
-  rib. Four side windows show the pins and the rib.
+  rib. Four side windows, 24 mm wide, show the pins and the rib; their tops are chamfered at 45° to a 4 mm flat, so
+  the nest prints without supports.
 
 #### Mounting on the drill press
 

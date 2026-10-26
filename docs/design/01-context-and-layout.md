@@ -2,7 +2,7 @@
 
 **Design Description**
 
-Revision: Oct 21, 2026
+Revision: Oct 25, 2026
 
 This document describes the design of the apparatus, and is maintained authoritatively as Markdown fragments
 in the project repo on GitHub at <https://github.com/fritzm/schlieren/tree/main/docs/design>.  It serves as
@@ -143,13 +143,15 @@ fabrication-critical dimension.
 
 ### 3.4 Common optical-axis datum
 
-The common optical axis is 72.35 mm above the top surface of the 2020 extrusion, set by the components of
-the post stack:
+The common optical axis is 72.35 mm above the top surface of the 2020 extrusion, established by commercial
+optomechanics to simplify alignment.  The stack-up is:
 
-- 0.010 in / 0.254 mm metal datum shim resting on the rail;
-- 50 mm Thorlabs TR50/M post;
-- 22.1 mm post-top-to-optical-axis offset for Thorlabs SM1 optical holders (0.870 in / 22.098 mm exact);
-- total nominal height: 72.35 mm (72.352 mm with the exact Thorlabs offset; the datum is 72.35 mm).
+<table style="border-collapse: collapse; border: none; margin-left: 2em; line-height: 1.4;">
+<tr><td style="text-align: right; padding: 0 1em 0 0.6em; border: none;">0.254</td><td style="padding: 0; border: none;">Steel datum shim on rail (bridges the rail top channel)</td></tr>
+<tr><td style="text-align: right; padding: 0 1em 0 0.6em; border: none;">50.000</td><td style="padding: 0; border: none;">Thorlabs TR50/M post</td></tr>
+<tr><td style="text-align: right; padding: 0 1em 0.5em 0.6em; border: none;">22.098</td><td style="padding: 0 0 0.5em; border: none;">Post-top to axis for Thorlabs SM1 optical holders</td></tr>
+<tr><td style="text-align: right; padding: 0.5em 1em 0 0.6em; border: none; border-top: 1px solid currentColor;">72.352</td><td style="padding: 0.5em 0 0; border: none; border-top: 1px solid currentColor;"></td></tr>
+</table>
 
 ### 3.5 Coordinate frames
 

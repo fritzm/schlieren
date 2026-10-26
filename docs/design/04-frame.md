@@ -1,6 +1,6 @@
 ## 4. Tabletop optical frame
 
-The tabletop frame provides a portable adjustable base to support the optical head fixtures. It is a weight-
+The tabletop frame provides a portable, adjustable base to support the optical head fixtures. It is a weight-
 and budget-conscious alternative to an optical bench or breadboard.  The model is
 `src/schlieren/parts/frame.py`.
 
@@ -9,8 +9,8 @@ and budget-conscious alternative to an optical bench or breadboard.  The model i
        alt="Tabletop frame: two 2020 rails pivoted on the plywood front pivot plate under their pivot lugs and
        yaw clamps, each with a rear rail-support block">
   <br>
-  <em>Fig. 1. Tabletop frame: rails, front pivot plate with pivot lugs and yaw clamps, and rear support
-    blocks</em>
+  <em>Fig. 1. Tabletop frame: rails, front pivot plate with pivots and yaw clamps, and rear support
+      blocks</em>
 </p>
 
 ### 4.1 Rails
@@ -24,7 +24,7 @@ Ordinary attachments use M5 × 0.8 socket-head hardware with flat washers in sta
 roll-in/drop-in M5 T-nuts (Amazon B0DP6JBX4Y).
 
 Sighting toward the mirror, the source rail is on the left (negative x in the pivot frame) and the imaging
-rail is to the right. This is dictated by fact that the iPhone extends well to the right of its camera axis
+rail is on the right. This is dictated by fact that the iPhone extends well to the right of its camera axis
 when sighting along that axis toward the mirror ([§9.1](09-camera-telephoto.md#91-camera)); placing that
 overhang toward the outside of the optical head keeps the phone clear of the source rail and its fixtures.
 

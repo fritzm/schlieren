@@ -20,7 +20,7 @@ from dataclasses import dataclass, field
 from functools import cache
 from math import cos, hypot, radians, sin
 
-from build123d import Compound, Pos, Rot, fillet
+from build123d import Compound, Plane, Polygon, Pos, Rot, extrude, fillet
 
 from schlieren.cad import (
     CUT_OVERRUN,
@@ -187,6 +187,9 @@ class DrillFixtureParameters:
     rib_clearance_width: float = 0.30  # Channel width minus rib width.
     window_width: float = 24.0
     window_floor_lip: float = 1.0
+    window_flat_top: float = (
+        4.0  # Width of the window's flat top; 45° chamfers to the sides print unsupported.
+    )
     window_top_margin: float = 3.0  # Solid above the windows, below the counterbore zone.
     # Minimum plate web between neighboring bushings.
     min_web: float = 1.5
@@ -243,6 +246,10 @@ class DrillFixtureParameters:
             raise ValueError(f"Plate web {self.web():.2f} mm is under {self.min_web:.2f} mm")
         if self.relief_window_diameter / 2 < self.hole_reach() + 0.5:
             raise ValueError("Relief window leaves under 0.5 mm of support ring inside the hole pattern")
+        if not 0 < self.window_flat_top < self.window_width:
+            raise ValueError("Window flat top must be narrower than the window")
+        if self.window_chamfer >= self.window_top_z(HEATSINK) - self.window_floor_lip:
+            raise ValueError("Window chamfers leave no vertical sides")
         if self.rib_width + self.rib_clearance_width > self.channel_width:
             raise ValueError("Rib does not fit the channel")
 
@@ -288,6 +295,15 @@ class DrillFixtureParameters:
     @property
     def key_slot_outer_radius(self) -> float:
         return self.plate_bore_diameter / 2 + self.key_projection + self.key_relief
+
+    @property
+    def window_chamfer(self) -> float:
+        """Each 45° top corner of a window, in both width and height."""
+        return (self.window_width - self.window_flat_top) / 2
+
+    def window_top_z(self, kind: str) -> float:
+        """Peak of the windows: solid above it, below the plate's counterbore zone."""
+        return self.nest_top(kind) - self.ring_height - self.ring_relief - self.window_top_margin
 
     @property
     def pad_preload(self) -> float:
@@ -437,6 +453,18 @@ def build_bushing_plate(p: DrillFixtureParameters):
     return plate
 
 
+def window_cutter(p: DrillFixtureParameters, kind: str, axis: str):
+    """A window cut through both faces on an axis: vertical sides, then 45° chamfers to a narrow flat top, so
+    nothing needs supports or bridges more than the flat."""
+    z0, z1 = p.window_floor_lip, p.window_top_z(kind)
+    half, c = p.window_width / 2, p.window_chamfer
+    outline = [(-half, z0), (half, z0), (half, z1 - c), (half - c, z1), (c - half, z1), (-half, z1 - c)]
+    reach = p.body_side / 2 + CUT_OVERRUN
+    # Plane.YZ's local x is the global y (cutting through the x faces); Plane.XZ's is the global x.
+    plane = Plane.YZ if axis == "x" else Plane.XZ
+    return extrude(plane * Polygon(*outline, align=None), amount=reach, both=True)
+
+
 @cache
 def build_ear(p: DrillFixtureParameters):
     """One mounting ear on the +x face, with its bolt slot along y and fillets where it meets the face."""
@@ -514,14 +542,8 @@ def build_nest(p: DrillFixtureParameters, kind: str):
             p.layout.m3_clearance_diameter, 0, z, face - CUT_OVERRUN, -p.pocket_diameter / 2 + CUT_OVERRUN
         )
     else:
-        z0 = p.window_floor_lip
-        z1 = top - p.ring_height - p.ring_relief - p.window_top_margin
-        nest -= box_between(
-            -h - CUT_OVERRUN, h + CUT_OVERRUN, -p.window_width / 2, p.window_width / 2, z0, z1
-        )
-        nest -= box_between(
-            -p.window_width / 2, p.window_width / 2, -h - CUT_OVERRUN, h + CUT_OVERRUN, z0, z1
-        )
+        nest -= window_cutter(p, kind, "x")
+        nest -= window_cutter(p, kind, "y")
         w, half = p.rib_width, p.rib_half_length
         nest += box_between(-half, half, -w / 2, w / 2, 0, p.rib_height)
         nest += box_between(-w / 2, w / 2, -half, half, 0, p.rib_height)
