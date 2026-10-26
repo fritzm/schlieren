@@ -186,7 +186,9 @@ class DrillFixtureParameters:
     rib_half_length: float = 19.0
     rib_clearance_width: float = 0.30  # Channel width minus rib width.
     window_width: float = 24.0
-    window_floor_lip: float = 1.0
+    window_floor_lip: float = (
+        1.0  # On the faces without ears; the ear faces' windows start above the ear root.
+    )
     window_flat_top: float = (
         4.0  # Width of the window's flat top; 45° chamfers to the sides print unsupported.
     )
@@ -248,7 +250,7 @@ class DrillFixtureParameters:
             raise ValueError("Relief window leaves under 0.5 mm of support ring inside the hole pattern")
         if not 0 < self.window_flat_top < self.window_width:
             raise ValueError("Window flat top must be narrower than the window")
-        if self.window_chamfer >= self.window_top_z(HEATSINK) - self.window_floor_lip:
+        if self.window_chamfer >= self.window_top_z(HEATSINK) - self.window_floor_z("x"):
             raise ValueError("Window chamfers leave no vertical sides")
         if self.rib_width + self.rib_clearance_width > self.channel_width:
             raise ValueError("Rib does not fit the channel")
@@ -300,6 +302,13 @@ class DrillFixtureParameters:
     def window_chamfer(self) -> float:
         """Each 45° top corner of a window, in both width and height."""
         return (self.window_width - self.window_flat_top) / 2
+
+    def window_floor_z(self, axis: str) -> float:
+        """Floor of the windows through the faces normal to an axis. The ears are on the x faces, so those windows
+        start above the top of the ear root fillet, leaving the wall behind each ear whole."""
+        if axis == "x":
+            return max(self.window_floor_lip, self.ear_top + self.ear_root_fillet_radius)
+        return self.window_floor_lip
 
     def window_top_z(self, kind: str) -> float:
         """Peak of the windows: solid above it, below the plate's counterbore zone."""
@@ -456,7 +465,7 @@ def build_bushing_plate(p: DrillFixtureParameters):
 def window_cutter(p: DrillFixtureParameters, kind: str, axis: str):
     """A window cut through both faces on an axis: vertical sides, then 45° chamfers to a narrow flat top, so
     nothing needs supports or bridges more than the flat."""
-    z0, z1 = p.window_floor_lip, p.window_top_z(kind)
+    z0, z1 = p.window_floor_z(axis), p.window_top_z(kind)
     half, c = p.window_width / 2, p.window_chamfer
     outline = [(-half, z0), (half, z0), (half, z1 - c), (half - c, z1), (c - half, z1), (-half, z1 - c)]
     reach = p.body_side / 2 + CUT_OVERRUN

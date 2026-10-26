@@ -333,7 +333,8 @@ Heatsink nest:
   frame the layout is defined in; the Ø40 mm base diameter has a +0/−0.5 mm tolerance and is not used.
 - The plate seats 2.0 mm above the 40 mm height of the heatsink. The lead and M3 drills exit well above the
   rib. Four side windows, 24 mm wide, show the pins and the rib; their tops are chamfered at 45° to a 4 mm flat, so
-  the nest prints without supports.
+  the nest prints without supports. The two windows behind the ears start above the top of the ear root
+  fillet, so the wall behind each ear is whole.
 
 #### Mounting on the drill press
 
@@ -355,8 +356,8 @@ edge and its ends and blended at the corners, spreads the clamping load at the r
 - A 1/8 in UHMW sheet under the nest, with clearance slots for the bolts, protects the base where the bits
   exit away from its center hole. The bolt length allows for it.
 
-To move between holes, loosen the thumb nuts, lower the bit into the next bushing and hold it there, and tighten
-the thumb nuts; the bushing sets the fixture's position.
+To move between holes, loosen the thumb nuts, lower the bit into the next bushing and hold it there, and
+tighten the thumb nuts; the bushing sets the fixture's position.
 
 #### Drilling
 

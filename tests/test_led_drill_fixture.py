@@ -178,6 +178,21 @@ class DrillFixtureTest(unittest.TestCase):
         self.assertAlmostEqual(c, (p.window_width - p.window_flat_top) / 2)
         self.assertLessEqual(p.window_flat_top, 6.0)
 
+    def test_wall_behind_each_ear_is_whole_to_the_top_of_the_fillet(self):
+        """The ear faces' windows start above the root fillet; the other faces' windows start at the lip."""
+        p = self.p
+        nest = self.nests[HEATSINK]
+        wall = p.body_side / 2 - 1.0  # Inside the face wall.
+        fillet_top = p.ear_top + p.ear_root_fillet_radius
+        for sign in (1, -1):
+            for across in (0.0, p.window_width / 2 - 1.0):
+                self.assertTrue(nest.is_inside((sign * wall, across, fillet_top - 0.1)), (sign, across))
+                self.assertFalse(nest.is_inside((sign * wall, across, fillet_top + 0.5)), (sign, across))
+        self.assertAlmostEqual(p.window_floor_z("x"), fillet_top)
+        for sign in (1, -1):  # The y faces keep their low windows.
+            self.assertFalse(nest.is_inside((0.0, sign * wall, p.window_floor_lip + 0.5)), sign)
+            self.assertTrue(nest.is_inside((0.0, sign * wall, p.window_floor_lip - 0.5)), sign)
+
     def test_rib_stands_clear_of_the_heatsink_base(self):
         """The rib is far shorter than the pins, so the lead and M3 drills exit above it."""
         p = self.p
