@@ -74,7 +74,6 @@ Interfaces:
 - The SM1 thread centers the emitter on the condenser axis; no vertical calibration is required.
 - Heatsink fastening: three M3 × 6 mm socket-head screws through the CN40 base, their heads in open cells
   between four pins, into M3 holes tapped through the cap. Positions are in [§6.4](#64-led-board-mounting).
-  **Provisional:** the screw length.
 - Leads drop past the star board's flat edges through two Ø2.0 mm holes in the cap and the heatsink base, 11.0
   mm from the axis (inside the thread relief), and out between the pin columns. The pigtail wire measures
   about 1.7 mm over its insulation.

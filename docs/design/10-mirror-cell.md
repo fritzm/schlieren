@@ -1,6 +1,17 @@
 ## 10. Mirror cell
 
-The model is `src/schlieren/parts/mirror_cell.py`.
+The mirror cell is fabricated from Baltic-birch plywood panels, and uses a three-point fine-adjustment
+architecture with compression springs and spherical washer interfaces.  The model is
+`src/schlieren/parts/mirror_cell.py`.
+
+<p align="center">
+  <img src="figures/mirror-cell.png" width="500" style="max-width: 90%"
+       alt="Mirror cell seen from the front: the base plate, the stationary plate, the mirror plate
+       with its 203 mm mirror and three adjuster tips, and the two angle brackets with their screws">
+  <br>
+  <em>Fig. 12. Mirror cell from the mirror side: base plate, stationary plate, mirror plate and
+    mirror, and angle brackets</em>
+</p>
 
 ### 10.1 Plates and basic architecture
 
@@ -14,15 +25,6 @@ The base plate provides the structural/tripod-support base and is joined to the 
 brackets described in [§10.7](#107-angle-brackets). The stationary plate carries three fine-adjustment
 stations ([§10.2](#102-three-adjuster-stations)) which couple it to the mirror plate. The 3/4 in mirror plate
 carries the 203 mm mirror and moves relative to the stationary plate.
-
-<p align="center">
-  <img src="figures/mirror-cell.png" width="500" style="max-width: 90%"
-       alt="Mirror cell seen from the front: the base plate, the stationary plate, the mirror plate
-       with its 203 mm mirror and three adjuster tips, and the two angle brackets with their screws">
-  <br>
-  <em>Fig. 12. Mirror cell from the mirror side: base plate, stationary plate, mirror plate and
-    mirror, and angle brackets</em>
-</p>
 
 The stationary plate is centered left/right on the 11.5 in-wide base. The rear face of the 1/2 in stationary
 plate is 4.000 in aft of the front edge of the 7.0 in-deep base, leaving 3.0 in of base behind it. Two

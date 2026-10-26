@@ -335,9 +335,6 @@ face. The peg has a 4 mm stem and a 6 mm lip; the band lies on the stem under th
   refitting one afterwards means stretching it around the other collar and its ear. A band stays on the lens
   when the lens is lifted out with the peg end unhooked.
 
-**Provisional:** the band size is chosen on an assumed modulus; the next larger inside diameter is the
-alternative if the 40 mm band is too tight.
-
 ### 9.9 Lens alignment
 
 This is the alignment the cradle must make possible, kept here as a feasibility check on the adjusters.

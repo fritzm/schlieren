@@ -80,9 +80,6 @@ A spherical mirror in a separate tripod-mountable cell forms an image of the sou
 the optical head. Refractive-index gradients in the test region near the mirror deflect portions of this
 return beam relative to the cutoff, producing schlieren contrast.
 
-The mirror cell is fabricated from Baltic-birch plywood panels, and uses a three-point fine-adjustment
-architecture with compression springs and spherical washer interfaces.
-
 ## 3. System-level geometry
 
 ### 3.1 Primary optic
