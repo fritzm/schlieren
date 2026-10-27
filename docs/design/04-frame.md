@@ -33,16 +33,16 @@ overhang toward the outside of the optical head keeps the phone clear of the sou
 The front pivot plate is a 180 × 150 mm Baltic-birch rectangle; the 180 mm dimension is transverse to the
 rails and the 150 mm dimension is fore/aft.
 
-Plate coordinates are the pivot frame ([§3.4](01-context-and-layout.md#35-coordinate-frames)): the
+Plate coordinates are the pivot frame ([§3.5](01-context-and-layout.md#35-coordinate-frames)): the
 origin is at the midpoint of the aft edge, +y runs toward the mirror along the plate centerline, and +x runs
 to the right seen from above with the mirror ahead. The mirror-facing edge is at y = 150 mm, and the left rail
 is the one at negative x.
 
-The pivot line is 25 mm behind the mirror-facing edge, giving pivot centers at:
+The pivot line is 25 mm behind the mirror-facing edge.  With a pivot separation of 95 mm, this gives pivot
+centers at:
 
 - left pivot: (-47.50, 125.00) mm;
 - right pivot: (+47.50, 125.00) mm;
-- total pivot separation: 95 mm.
 
 Each yaw-clamp station is 90 mm aft of its pivot along its rail axis.  At the nominal 0.85° splay, this gives
 yaw-strap centers at approximately:
@@ -94,10 +94,10 @@ Per rail, from the bottom up:
 socket head → oversized washer → plywood pivot plate → 20 mm spacer → 4 mm joining plate → oversized washer →
 M5 nyloc
 
-The socket heads are beneath the plywood and the nylocs on top, matching the yaw clamp bolts. The pivot bolts
-pass through 5.5 mm clearance holes in the plywood. The 20 mm spacer holds the pivot lug at the rail top,
-where the lug lies along the rail with the pivot bolt through its front hole; its other two holes fix it to
-the rail by M5 × 8 socket-head screws from the general M5 assortment into T-nuts in the rail top slot.
+The pivot bolts pass through 5.5 mm clearance holes in the plywood. The 20 mm spacer holds the pivot lug at
+the rail top, where the lug lies along the rail with the pivot bolt through its front hole; its other two
+holes fix it to the rail by M5 × 8 socket-head screws from the general M5 assortment into T-nuts in the rail
+top slot.
 
 Hardware:
 
@@ -120,10 +120,8 @@ Each yaw bolt stack, from the bottom up:
 socket head → oversized washer → plywood pivot plate → (alongside the rail) → EPDM friction strip → 4 mm yaw
 strap → oversized washer → M5 thumb nut
 
-The yaw bolts pass up alongside the 20 mm rail, and span the approximately 1/2 in (12.7 mm) Baltic-birch pivot
-plate, the full 20 mm rail height, the EPDM friction strip, the 4 mm yaw strap, washers, and the thumb-nut
-engagement.  Yaw is adjusted and locked at the front pivot plate by loosening the two thumb nuts, rotating the
-rail beneath the strap, and retightening.
+The yaw bolts also pass through 5.5 mm clearance holes in the plywood.  Yaw is adjusted and locked at the
+front pivot plate by loosening the two thumb nuts, rotating the rail beneath the strap, and retightening.
 
 Hardware:
 
