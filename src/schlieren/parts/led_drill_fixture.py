@@ -586,6 +586,27 @@ def build_bore_coupon(p: DrillFixtureParameters):
     return coupon
 
 
+@cache
+def build_drilled_part(p: DrillFixtureParameters, kind: str):
+    """The cap or heatsink as the fixture stands it, with the holes the bushings drill cut through it.
+
+    Each hole is the bushing's bore: the cap's tap drills and lead holes, and the heatsink base's M3 pilots and
+    lead holes (the M3 holes are opened to clearance afterwards). The cutters go through the whole cap and
+    through the heatsink's base, as the bits do.
+    """
+    if kind == CAP:
+        # Vendor frame: flange back face at y=-flange thickness, seat face at y=0, thread toward +y; stood
+        # on its back face with the thread up.
+        part = moved(thorlabs_sm1cp2m(), Pos(0, 0, p.flange_thickness) * Rot(X=90))
+        z0, z1 = 0.0, p.light.cap_overall
+    else:
+        part = moved(alpha_cn40_40b(), Pos(0, 0, p.light.heatsink_height) * Rot(X=90))
+        z0, z1 = p.light.heatsink_height - p.light.heatsink_base, p.light.heatsink_height
+    for hole in p.holes(kind):
+        part -= z_cylinder(BUSHINGS[hole.kind].bore, hole.x, hole.y, z0 - CUT_OVERRUN, z1 + CUT_OVERRUN)
+    return part
+
+
 def build_fixture_assembly(p: DrillFixtureParameters | None = None, kind: str = CAP, parts: bool = True):
     """A nest with its plate seated, the bushings in the plate, and (parts) the cap or heatsink in place."""
     p = p or DrillFixtureParameters()
@@ -650,20 +671,9 @@ def build_fixture_assembly(p: DrillFixtureParameters | None = None, kind: str = 
             ),
         ]
     if parts:
-        if kind == CAP:
-            # Vendor frame: flange back face at y=-flange thickness, seat face at y=0, thread toward +y; stood
-            # on its back face with the thread up.
-            part = labeled(
-                moved(thorlabs_sm1cp2m(), Pos(0, 0, p.flange_thickness) * Rot(X=90)),
-                CAP_LABEL,
-                BLACK_ANODIZED,
-            )
-        else:
-            part = labeled(
-                moved(alpha_cn40_40b(), Pos(0, 0, p.light.heatsink_height) * Rot(X=90)),
-                HEATSINK_LABEL,
-                BLACK_ANODIZED,
-            )
+        part = labeled(
+            build_drilled_part(p, kind), CAP_LABEL if kind == CAP else HEATSINK_LABEL, BLACK_ANODIZED
+        )
         children.append(part)
     return assembly(f"Drilling fixture, {kind}", children)
 

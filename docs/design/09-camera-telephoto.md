@@ -177,7 +177,7 @@ Each collar is a thin ring on the barrel with a clamp ear on top and a flat pad 
 - 12 mm wide, with a 3 mm wall around a bore of 37.3 mm, the measured 37.0 mm barrel plus a 0.3 mm diametral
   allowance, so a collar is 43.3 mm across. The wall is thin because the pad platforms carry the local
   thickness; the pad loads are a few newtons, so stiffness is not limiting;
-- the ear takes the common M3 split-clamp hardware ([§5.2](05-post-support.md#52-common-rail-shoe)) with the
+- the ear takes the common M3 split-clamp hardware ([§5.2](05-post-support.md#52-rail-shoe)) with the
   rail shoe's split and ear thicknesses: the screw passes through the thin ear on the left, and the hex nut is
   captured in a pocket in the thicker ear on the right, open to the outside, with a roof of at least 1.5 mm
   over it. The screw axis stands 4.25 mm above the ring top, so the screw head clears the ear's root fillet;
@@ -246,7 +246,7 @@ limiting; the fillets are margin.
 
 #### Shoe and joint
 
-The shoe's lower section is that of the common rail shoe ([§5.2](05-post-support.md#52-common-rail-shoe)): a
+The shoe's lower section is that of the common rail shoe ([§5.2](05-post-support.md#52-rail-shoe)): a
 20.4 mm rail opening, 5 mm side walls, 18 mm skirts, a 5 mm deck, and 2 mm rounded outside corners. M5
 clearance holes cross the skirts at rail mid-height for the side-channel screws, two of them 36 mm apart
 midway between the collars. The shoe extends 9 mm beyond each collar face, so it is symmetric about the middle
@@ -316,7 +316,7 @@ Hardware:
 - McMaster 91585A351, Ø3 × 10 mm 18-8 stainless dowel pins (ISO 2338 m6, chamfered ends), two for the groove
   at the fourth screw
 - McMaster 91585A457, Ø4 × 20 mm 18-8 stainless dowel pin, for the phone-rest rod
-- the common M3 split-clamp screw and nut ([§5.2](05-post-support.md#52-common-rail-shoe)), one pair per
+- the common M3 split-clamp screw and nut ([§5.2](05-post-support.md#52-rail-shoe)), one pair per
   collar
 
 ### 9.8 Retaining bands

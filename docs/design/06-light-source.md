@@ -1,12 +1,20 @@
 ## 6. Light source
 
-The light source is a single assembly on one post and common rail shoe
-([§5](05-post-support.md#5-common-rail-mounted-post-support)). A threaded holder carries one of two
-interchangeable threaded LED modules on its rear face, and a condensing lens and iris on its forward face. The
+The light source is a single assembly utilizing the common post support
+([§5](05-post-support.md#5-common-rail-mounted-post-support)). An internally threaded mount carries one of two
+interchangeable LED modules on its rear face, and a condensing lens and iris on its forward face. The
 condenser images the LED emitter onto the source slit ([§7](07-source-slit.md#7-source-slit)), and the iris
-sets the angular size of the illumination cone ([§3.2](01-context-and-layout.md#32-source-cone)).
+sets the angular size of the illumination cone ([§3.2](01-context-and-layout.md#32-source-cone)).  The model
+is `src/schlieren/parts/light_source.py`
 
-`src/schlieren/parts/light_source.py` models the stack-up; `uv run light-source` prints the focus ranges.
+<p align="center">
+  <img src="figures/light-source.png" width="340" style="max-width: 80%"
+       alt="Light source on its TR50/M post and rail shoe: pin-fin heatsink and LED cap behind the SMR1/M,
+       with the SM1V05, SM1L03, and iris ahead of it">
+  <br>
+  <em>Fig. 4. Light source on its post and rail shoe: heatsink and LED module, SMR1/M, SM1V05, SM1L03, and
+  iris</em>
+</p>
 
 ### 6.1 Assembly and stack order
 
@@ -22,16 +30,7 @@ From the LED to the slit:
 5. Thorlabs SM1D12 adjustable iris, threaded into the SM1L03.
 
 <p align="center">
-  <img src="figures/light-source.png" width="360" style="max-width: 80%"
-       alt="Light source on its TR50/M post and rail shoe: pin-fin heatsink and LED cap behind the SMR1/M,
-       with the SM1V05, SM1L03, and iris ahead of it">
-  <br>
-  <em>Fig. 4. Light source on its post and rail shoe: heatsink and LED module, SMR1/M, SM1V05, SM1L03, and
-  iris</em>
-</p>
-
-<p align="center">
-  <img src="figures/light-source-section.png" width="500" style="max-width: 95%"
+  <img src="figures/light-source-section.png" width="450" style="max-width: 95%"
        alt="Light source with the SMR1/M, SM1V05, SM1L03, and iris cut along the optical axis, and the
        heatsink, cap, star board with LED, and condenser lens shown whole">
   <br>
@@ -281,6 +280,8 @@ requirements set the accuracy needed, about 0.1 mm on position:
 
 `src/schlieren/parts/led_drill_fixture.py` models the fixture; `uv run led-drill-fixture` exports the STEP and STL
 files and the figure.
+The viewer assembly shows the cap and the heatsink with the bushing bores already drilled through them, to
+show the bit paths and exit clearances.
 
 #### Parts
 
@@ -331,9 +332,9 @@ Heatsink nest:
   mm wide, 0.15 mm of clearance each side. The rib fixes the position and rotation in the lattice frame, the
   frame the layout is defined in; the Ø40 mm base diameter has a +0/−0.5 mm tolerance and is not used.
 - The plate seats 2.0 mm above the 40 mm height of the heatsink. The lead and M3 drills exit well above the
-  rib. Four side windows, 24 mm wide, show the pins and the rib; their tops are chamfered at 45° to a 4 mm flat, so
-  the nest prints without supports. The two windows behind the ears start above the top of the ear root
-  fillet, so the wall behind each ear is whole.
+  rib. Four side windows, 24 mm wide, show the pins and the rib; their tops are chamfered at 45° to a 4 mm
+  flat, so the nest prints without supports. The two windows behind the ears start above the top of the ear
+  root fillet, so the wall behind each ear is whole.
 
 #### Mounting on the drill press
 

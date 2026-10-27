@@ -26,6 +26,7 @@ from schlieren.parts.led_drill_fixture import (
     DrillFixtureParameters,
     build_bore_coupon,
     build_bushing_plate,
+    build_drilled_part,
     build_fixture_assembly,
     build_nest,
 )
@@ -417,6 +418,31 @@ class DrillFixtureTest(unittest.TestCase):
         self.assertGreater(screw.max.Y, -p.pocket_diameter / 2)  # Protrudes into the pocket.
         self.assertLess(screw.min.Y, face)  # Head outside the notch face.
         self.assertNotIn(CLAMP_SCREW_LABEL, self.with_parts[HEATSINK])
+
+    def test_drilled_parts_have_the_bushing_bores_through_them(self):
+        """Each drilled hole is open at its layout coordinates, the full depth the bit goes through."""
+        for kind in NEST_KINDS:
+            part = build_drilled_part(self.p, kind)
+            z0, z1 = {
+                CAP: (0.0, self.p.light.cap_overall),
+                HEATSINK: (
+                    self.p.light.heatsink_height - self.p.light.heatsink_base,
+                    self.p.light.heatsink_height,
+                ),
+            }[kind]
+            for hole in self.p.holes(kind):
+                for z in (z0 + 0.1, (z0 + z1) / 2, z1 - 0.1):
+                    self.assertFalse(part.is_inside((hole.x, hole.y, z)), f"{kind} {hole.name} z={z}")
+                # Just outside the bore is solid.
+                edge = BUSHINGS[hole.kind].bore / 2 + 0.1
+                self.assertTrue(part.is_inside((hole.x + edge, hole.y, (z0 + z1) / 2)), f"{kind} {hole.name}")
+
+    def test_heatsink_is_not_drilled_at_the_m2_positions(self):
+        part = build_drilled_part(self.p, HEATSINK)
+        z = self.p.light.heatsink_height - self.p.light.heatsink_base / 2
+        for hole in self.p.layout.holes():
+            if hole.kind == "m2":
+                self.assertTrue(part.is_inside((hole.x, hole.y, z)), hole.name)
 
     def test_bore_coupon(self):
         coupon = build_bore_coupon(self.p)
