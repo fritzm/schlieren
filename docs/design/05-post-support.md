@@ -4,22 +4,12 @@ The common post support establishes fixtures accurately at the optical axis, and
 commercial optomechanical and 2020 rail ecosystems. The model is `src/schlieren/parts/rail_shoe.py`.
 
 <p align="center">
-  <img src="figures/rail-shoe.png" width="300" style="max-width: 80%"
+  <img src="figures/rail-shoe.png" width="250" style="max-width: 80%"
        alt="Common rail shoe on the rail and TR50/M post: saddle body, split clamping collar, and clamp ears
        with the captured-nut pocket">
   <br>
   <em>Fig. 3. Common rail shoe on rail with TR50/M post</em>
 </p>
-
-Several source-side and imaging-side fixtures deliberately share common mechanics. The light source, source
-slit, and cutoff each stand on common Thorlabs TR50/M optical posts and printed rail shoes
-([§5](05-post-support.md#5-common-rail-mounted-post-support)).
-
-The source slit and the cutoff both rotate about their optical axes on printed fixtures mounted in Thorlabs
-SM1RC/M SM1 split rings. The slit uses a flexure head with fine centering and slit-width adjustment
-([§7](07-source-slit.md#7-source-slit)); the cutoff uses a carriage that accepts interchangeable cassettes,
-allowing knife-edge, wire, and color-filter experiments without changing the supporting mechanism
-([§8](08-cutoff.md#8-cutoff)).
 
 ### 5.1 Post and shim
 
@@ -30,29 +20,21 @@ Each post rests on a stainless steel shim disk, which provides a consistent meta
 central slot in the 2020 rail.  The shims are McMaster 2895T62, 3/4 in OD discs × 0.010 in ±0.0005 in thick,
 full-hard 18-8 stainless steel.
 
-### 5.2 Common rail shoe
+### 5.2 Rail shoe
 
-The common shoe is a printed PLA U-shaped saddle that:
+The shoe is a printed PLA U-shaped saddle that:
 
 - straddles the 2020 extrusion;
 - locks with M5 hardware into T-nuts in the rail side channels;
 - leaves the rail top available as the datum surface;
 - carries a vertical 12.7 mm through-bore for the TR50/M post.
 
-The post passes through the printed shoe and bottoms on a McMaster 2895T62 0.010 in stainless datum shim
-resting on the rail top, so the printed PLA does not establish the precision optical height.
+The post passes through the printed shoe and bottoms on a stainless datum shim resting on the rail top,
+so the optomechanics, and not the printed PLA, establish the precision optical height.
 
 The post bore incorporates a single-split clamping collar so that the post can be locked against rotational
-movement while remaining fully seated on the metal datum:
-
-- one axial split;
-- one transverse clamp screw;
-- sufficient axial engagement to resist rocking and rotation;
-- rounded stress-relief termination at the bottom of the split;
-- generous fillets where the collar merges into the shoe body;
-- free-fitting 12.7 mm post bore before clamping.
-
-Ear thickness and the approximately 1–2 mm relaxed split gap are designed around the clamping setup:
+movement while remaining fully seated on the metal datum.  Ear thickness and the approximately 1–2 mm relaxed
+split gap are designed around the clamping setup:
 
 M3 socket-head screw → clearance through one ear → captured M3 hex nut in the opposite ear
 
@@ -69,5 +51,6 @@ Three fixtures use the common post/shoe architecture:
 2. source-slit flexure head ([§7](07-source-slit.md#7-source-slit));
 3. cutoff carriage ([§8](08-cutoff.md#8-cutoff)).
 
-The light source uses an SMR1/M internally threaded lens mount, and the source-slit and cutoff assemblies
-seat in SM1RC/M lens tube slip rings. These mounts preserve a 22.1 mm post-top to optical-axis dimension.
+The light source uses a Thorlabs SMR1/M internally threaded lens mount, and the source-slit and cutoff
+assemblies seat in Thorlabs SM1RC/M lens tube split slip rings. These mounts preserve a 22.1 mm post-top to
+optical-axis dimension.

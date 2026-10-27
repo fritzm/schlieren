@@ -67,8 +67,8 @@ bolt locations at approximately:
   <em>Fig. 2. Drilling template for the front pivot plate, in plate coordinates</em>
 </p>
 
-With 40 mm bolt spacing and 90 mm pivot-to-clamp distance, the rails have approximately 7.5 mm nominal
-clearance per side to the yaw bolts, and retain about 2.8 mm of this clearance when yawed ±3° from nominal.
+With 40 mm bolt spacing and 90 mm pivot-to-clamp distance, the rails have approximately 7.5 mm nominal play
+per side between the yaw bolts, and retain about 2.8 mm of this clearance when yawed ±3° from nominal.
 
 A front Sorbothane support foot is attached below the plate, centered at approximately (0, 125) mm, directly
 between the two rail pivots.  This keeps the support point on the pivot line and is clear of the pivot and yaw
@@ -153,6 +153,8 @@ points:
 - one centered foot beneath the front pivot plate;
 - one foot beneath each rear rail-support block.
 
-Feet: McMaster 8215K2, 1-1/4 in OD × 5/8 in high, 30 OO Sorbothane, with a stiffer McMaster 8215K6 (same size)
-as an alternative depending on vibration isolation needs. Moderate static compression of the feet is
-acceptable; the resulting small pitch and roll effects can be corrected with fine mirror alignment.
+Moderate static compression of the feet is acceptable; the resulting small pitch and roll effects can be
+corrected with fine mirror alignment.  The selected feet are:
+
+- McMaster 8215K2, adhesive-back sorbothane bumper, 1-1/4" OD, 4 lbs. max load
+- McMAster 8215K6, adhesive-back sorbothane bumper, 1-1/4" OD, 10 lbs. max load (alternate, stiffer)
