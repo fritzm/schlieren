@@ -10,7 +10,7 @@ from build123d import GeomType
 
 from schlieren.cad import intersect, z_cylinder
 from schlieren.parts.light_source import MODULES, LightSourceParameters, build_star_board
-from schlieren.parts.light_source_drawing import drilling_templates_svg, layout_drawing_svg
+from schlieren.parts.light_source_drawing import layout_drawing_svg
 from schlieren.parts.light_source_holes import HoleLayoutParameters
 from schlieren.testing import svg_attr
 from schlieren.vendor_cad import MCMASTER_92095A453_HEAD_DIAMETER, alpha_cn40_40b
@@ -156,49 +156,8 @@ class HoleDrawingTest(unittest.TestCase):
         svg = ET.fromstring(svg_text)
         return svg, {e.get("data-hole"): e for e in svg.iter(f"{NS}circle") if e.get("data-hole")}
 
-    def test_templates_are_full_scale_letter(self):
-        svg, _ = self.holes_in(drilling_templates_svg(self.p))
-        _, _, width, height = (float(v) for v in svg_attr(svg, "viewBox").split())
-        self.assertEqual(svg.get("width"), f"{width}mm")  # One user unit is 1 mm.
-        self.assertEqual(svg.get("height"), f"{height}mm")
-        self.assertAlmostEqual(width, 215.9)
-        self.assertAlmostEqual(height, 279.4)
-
-    def test_template_holes_are_those_of_the_layout_in_both_templates(self):
-        """Cap holes (all seven) and heatsink holes (no M2) sit at the layout positions, relative to each
-        center."""
-        svg, _ = self.holes_in(drilling_templates_svg(self.p))
-        by_name: dict[str, list[ET.Element]] = {}
-        for e in svg.iter(f"{NS}circle"):
-            if e.get("data-hole"):
-                by_name.setdefault(e.get("data-hole"), []).append(e)
-        for hole in self.p.holes():
-            circles = by_name[hole.name]
-            self.assertEqual(len(circles), 2 if hole.kind != "m2" else 1, hole.name)
-            circles.sort(key=lambda e: float(svg_attr(e, "cx")))  # cap template is the left one
-            expected = [self.p.cap_hole_diameter(hole.kind)]
-            if hole.kind != "m2":  # The M2 board screws are in the cap only.
-                heatsink = self.p.heatsink_hole_diameter(hole.kind)
-                assert heatsink is not None
-                expected.append(heatsink)
-            for e, diameter in zip(circles, expected, strict=True):
-                self.assertAlmostEqual(float(svg_attr(e, "r")) * 2, diameter)
-        cap = {n: c[0] for n, c in by_name.items()}
-        centers = {n: (float(svg_attr(c, "cx")), float(svg_attr(c, "cy"))) for n, c in cap.items()}
-        origin_x = centers["m3-1"][0] - self.holes_by_name()["m3-1"].x
-        origin_y = centers["m3-1"][1] + self.holes_by_name()["m3-1"].y
-        for name, (cx, cy) in centers.items():
-            hole = self.holes_by_name()[name]
-            self.assertAlmostEqual(cx - origin_x, hole.x, places=2)
-            self.assertAlmostEqual(origin_y - cy, hole.y, places=2)
-
     def holes_by_name(self):
         return {h.name: h for h in self.p.holes()}
-
-    def test_templates_state_through_holes_and_plug_taps(self):
-        text = " ".join(e.text or "" for e in ET.fromstring(drilling_templates_svg(self.p)).iter(f"{NS}text"))
-        self.assertIn("THROUGH", text)
-        self.assertIn("plug taps", text)
 
     def test_layout_figure_shows_every_hole_as_drilled_in_the_cap(self):
         _, holes = self.holes_in(layout_drawing_svg(self.p))

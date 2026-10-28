@@ -118,10 +118,10 @@ Fastening standard:
 - 1.6 mm tap drill
 - M2 × 0.4 HSS plug tap
 
-Use the cap's center-drill mark as the layout datum for the board hole pattern. Transfer each carrier board's
-hole geometry from the physical board rather than assuming it from the other module. Slightly oversized board
-holes permit final centering of the emitter on the cap axis: a 0.3 mm emitter offset moves the emitter image
-on the slit about 2 mm, so center each board by watching its image on the slit blades before final tightening.
+Each carrier board's hole geometry was taken from the physical board rather than assumed from the other
+module. Slightly oversized board holes permit final centering of the emitter on the cap axis: a 0.3 mm
+emitter offset moves the emitter image on the slit about 2 mm, so center each board by watching its image on
+the slit blades before final tightening.
 
 A thin insulating washer goes under each screw head, keeping the metal head off exposed board contacts and
 spreading its clamp over the board beside the notch:
@@ -173,11 +173,6 @@ the frame of the pin lattice; the cap and the heatsink are drilled to the same c
 - The smallest wall between holes in the cap, measured to the thread major radius, is 4.9 mm. The lead holes'
   outer edges, at 12.0 mm radius, leave about 0.55 mm to the cap's thread relief, the straight shank
   beneath the threads, which measures Ø0.988 in (12.55 mm radius) and is the boss's minimum radius.
-
-Full-scale drilling templates for both parts, to print at 100% on white Avery 5263 laser labels (first row)
-and stick on, come from `uv run light-source --templates`: the cap template goes on the LED-side face with its
-crosshair on the center-drill mark, and the heatsink template on the flat base face, aligned to the pin rows.
-Both are viewed from the LED side, so they share one set of coordinates.
 
 ### 6.5 Power and wiring
 
@@ -315,6 +310,7 @@ bore is the drill that makes the cap's hole ([§6.4](#64-led-board-mounting)):
   presses on the part's face with about 0.3 mm of compression. It holds the cap on its support ring and the
   heatsink on its pin tips against the bit grabbing, and is 2.3 mm clear of the nearest bushing.
 - The plate is printed ring-up, so the bores are vertical.
+- A little low-viscosity cyanoacrylate, wicked in around each bushing, retains it in the plate.
 
 Cap nest:
 

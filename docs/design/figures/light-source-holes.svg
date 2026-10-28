@@ -3,7 +3,6 @@
 text { font-family: Helvetica, Arial, sans-serif; fill: #000; }
 .heatsink { fill: #ececec; stroke: #777; stroke-width: 0.2; }
 .pin { fill: #b8b8b8; stroke: #555; stroke-width: 0.15; }
-.ghost { fill: none; stroke: #666; stroke-width: 0.15; stroke-dasharray: 0.8 0.5; }
 .cap { fill: none; stroke: #b36200; stroke-width: 0.25; }
 .cap-flange { fill: none; stroke: #b36200; stroke-width: 0.2; stroke-dasharray: 2 1; }
 .cap-relief { fill: none; stroke: #b36200; stroke-width: 0.15; stroke-dasharray: 0.6 0.6; }
@@ -15,12 +14,8 @@ text { font-family: Helvetica, Arial, sans-serif; fill: #000; }
 .lead { fill: #fc0; stroke: #000; stroke-width: 0.25; }
 .thread { fill: none; stroke: #c00; stroke-width: 0.15; }
 .head { fill: none; stroke: #c00; stroke-width: 0.15; stroke-dasharray: 0.8 0.5; }
-.mark { stroke: #000; stroke-width: 0.15; }
 .axis { stroke: #888; stroke-width: 0.12; stroke-dasharray: 3 0.8 0.6 0.8; }
 .leader { stroke: #444; stroke-width: 0.12; }
-.cut { fill: none; stroke: #000; stroke-width: 0.3; }
-.tick { stroke: #000; stroke-width: 0.2; }
-.box { fill: none; stroke: #000; stroke-width: 0.2; }
 </style>
 <rect width="100.0" height="76.0" fill="#fff"/>
 <circle class="heatsink" cx="50.000" cy="36.000" r="20.000"/>

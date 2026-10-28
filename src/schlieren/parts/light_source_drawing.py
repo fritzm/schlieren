@@ -1,11 +1,8 @@
-"""Drawings of the LED module hole layout; design §6.4.
+"""Drawing of the LED module hole layout; design §6.4.
 
-Two full-scale SVGs (one user unit is 1 mm), both in the plan view from the LED side of
-`schlieren.parts.light_source_holes`:
-
-- the design-doc figure of the layout: heatsink pins, cap, star board, and every hole with its position;
-- a sheet of two drilling templates, one for the cap and one for the heatsink base, to print at 100% on the
-  first row of an Avery 5263 label sheet, cut out, and stick on.
+A full-scale SVG (one user unit is 1 mm) in the plan view from the LED side of
+`schlieren.parts.light_source_holes`: the design-doc figure of the layout, with heatsink pins, cap, star board,
+and every hole with its position.
 """
 
 from math import cos, radians, sin
@@ -15,27 +12,12 @@ from schlieren.parts.light_source_holes import Hole, HoleLayoutParameters
 
 FONT_SIZE = 1.7
 SMALL_FONT_SIZE = 1.35
-TITLE_FONT_SIZE = 2.4
-MARK = 1.5  # Half-length of the crosshair on each hole in a template.
-EDGE_TICK = (1.0, 4.0)  # Template alignment ticks start and end this far outside the rim.
-LETTER = (215.9, 279.4)  # Template sheet, US Letter portrait.
-# Avery 5263 labels (2 columns by 5 rows of 4 x 2 in labels with no row gap), in the sheet's own
-# coordinates, from Avery's template for the product.
-LABEL_WIDTH = 101.6
-LABEL_HEIGHT = 50.8
-LABEL_LEFT_MARGIN = 4.7625  # 3/16 in.
-LABEL_TOP_MARGIN = 12.7  # 1/2 in.
-LABEL_COLUMN_PITCH = 104.775  # 4 1/8 in: a 1/8 in gutter.
-LABEL_TEXT_INSET = 1.5  # From the label edge to the instruction text beside the circle.
-LABEL_TEXT_TOP = 14.0  # First instruction line, above the label's center.
-LABEL_TEXT_LEADING = 3.0
 STAR_SLOT_REACH = 11.7  # The star's corner slots are drawn out past the corners (r = 11.5).
 
 STYLE = """
 text { font-family: Helvetica, Arial, sans-serif; fill: #000; }
 .heatsink { fill: #ececec; stroke: #777; stroke-width: 0.2; }
 .pin { fill: #b8b8b8; stroke: #555; stroke-width: 0.15; }
-.ghost { fill: none; stroke: #666; stroke-width: 0.15; stroke-dasharray: 0.8 0.5; }
 .cap { fill: none; stroke: #b36200; stroke-width: 0.25; }
 .cap-flange { fill: none; stroke: #b36200; stroke-width: 0.2; stroke-dasharray: 2 1; }
 .cap-relief { fill: none; stroke: #b36200; stroke-width: 0.15; stroke-dasharray: 0.6 0.6; }
@@ -47,12 +29,8 @@ text { font-family: Helvetica, Arial, sans-serif; fill: #000; }
 .lead { fill: #fc0; stroke: #000; stroke-width: 0.25; }
 .thread { fill: none; stroke: #c00; stroke-width: 0.15; }
 .head { fill: none; stroke: #c00; stroke-width: 0.15; stroke-dasharray: 0.8 0.5; }
-.mark { stroke: #000; stroke-width: 0.15; }
 .axis { stroke: #888; stroke-width: 0.12; stroke-dasharray: 3 0.8 0.6 0.8; }
 .leader { stroke: #444; stroke-width: 0.12; }
-.cut { fill: none; stroke: #000; stroke-width: 0.3; }
-.tick { stroke: #000; stroke-width: 0.2; }
-.box { fill: none; stroke: #000; stroke-width: 0.2; }
 """
 
 KIND_COLOR_CLASS = {"m3": "m3", "m2": "m2", "lead": "lead"}
@@ -205,132 +183,3 @@ def layout_drawing_svg(p: HoleLayoutParameters | None = None) -> str:
         SMALL_FONT_SIZE,
     )
     return sheet.svg()
-
-
-def drilling_templates_svg(p: HoleLayoutParameters | None = None) -> str:
-    """A US Letter label sheet (Avery 5263) with the cap and heatsink drilling templates at 100% scale."""
-    p = p or HoleLayoutParameters()
-    p.validate()
-    width, height = LETTER
-    sheet = _Sheet(width, height)
-    label_y = LABEL_TOP_MARGIN + LABEL_HEIGHT / 2  # Both templates are on the first row of labels.
-    left = sheet.at(LABEL_LEFT_MARGIN + LABEL_WIDTH / 2, label_y)
-    right = sheet.at(LABEL_LEFT_MARGIN + LABEL_COLUMN_PITCH + LABEL_WIDTH / 2, label_y)
-    cap_radius = p.cap_thread_major_diameter / 2
-    heat_radius = p.heatsink_diameter / 2
-
-    sheet.out.append(
-        f'<text x="{LABEL_LEFT_MARGIN}" y="5" font-size="{TITLE_FONT_SIZE}" font-weight="bold">'
-        "LED module drilling templates, SM1CP2M cap and CN40-40B heatsink</text>"
-    )
-    notes = [
-        "Print at 100% (no fit to page) on Avery 5263 labels, first row, and check the 20 mm bar against a rule. "
-        "Plan view from the LED side, +x to the right.",
-        "ALL HOLES ARE THROUGH HOLES. Plain plug taps are enough (M3 × 0.5 and M2 × 0.4); no bottoming tap is needed.",
-    ]
-    for i, note in enumerate(notes):
-        sheet.out.append(
-            f'<text x="{LABEL_LEFT_MARGIN}" y="{8.2 + 2.9 * i:.2f}" font-size="{SMALL_FONT_SIZE + 0.4}">'
-            f"{escape(note)}</text>"
-        )
-
-    def hole_marks(view: _Sheet, holes: list[tuple[Hole, float]]) -> None:
-        for hole, diameter in holes:
-            view.circle(hole.x, hole.y, diameter, KIND_COLOR_CLASS[hole.kind], hole.name)
-            view.line(hole.x - MARK - diameter / 2, hole.y, hole.x + MARK + diameter / 2, hole.y, "mark")
-            view.line(hole.x, hole.y - MARK - diameter / 2, hole.x, hole.y + MARK + diameter / 2, "mark")
-
-    def instructions(view: _Sheet, side: float, lines: list[str]) -> None:
-        """Text beside the circle (side is -1 for the left margin of the label, +1 for the right), which is
-        cut away with the rest of the label."""
-        anchor = "start" if side < 0 else "end"
-        x = side * (LABEL_WIDTH / 2 - LABEL_TEXT_INSET)
-        for i, line in enumerate(lines):
-            view.text(x, LABEL_TEXT_TOP - i * LABEL_TEXT_LEADING, line, anchor, SMALL_FONT_SIZE, bold=i == 0)
-
-    # Cap template: stuck on the LED-side (threaded) face, its crosshair over the cap's center-drill mark.
-    left.circle(0, 0, p.cap_thread_major_diameter, "cut")
-    left.line(-cap_radius - 3, 0, cap_radius + 3, 0, "axis")
-    left.line(0, -cap_radius - 3, 0, cap_radius + 3, "axis")
-    hole_marks(left, [(h, p.cap_hole_diameter(h.kind)) for h in p.holes()])
-    for hole in p.holes():
-        left.text(
-            hole.x,
-            hole.y - 4.6 if hole.kind != "lead" else hole.y + (2.6 if hole.y > 0 else -4.2),
-            _short_label(hole, p, cap=True),
-            size=SMALL_FONT_SIZE,
-        )
-    instructions(
-        left,
-        -1,
-        ["CAP", "Stick on the LED-side face;", "crosshair on the", "center-drill mark."],
-    )
-    instructions(
-        left,
-        1,
-        [
-            "Cut on the circle",
-            "(Ø26.29, the thread major).",
-            "Drill through.",
-            "M3: Ø2.5 tap drill",
-            "M2: Ø1.6 tap drill",
-            f"lead: Ø{p.lead_hole_diameter:g}",
-        ],
-    )
-
-    # Heatsink template: stuck on the flat (non-pin) base face; the pins stand on the far side.
-    right.circle(0, 0, p.heatsink_diameter, "cut")
-    _pins(p, right, "ghost")
-    right.line(-heat_radius - 6, 0, heat_radius + 6, 0, "axis")
-    right.line(0, -heat_radius - 6, 0, heat_radius + 6, "axis")
-    pitch = p.lattice_pitch
-    for i in range(-3, 3):
-        c = (2 * i + 1) * pitch / 2
-        for sx_, _sy in ((1, 0), (0, 1)):
-            for sign in (1, -1):
-                a, b = heat_radius + EDGE_TICK[0], heat_radius + EDGE_TICK[1]
-                if sx_:
-                    right.line(sign * a, c, sign * b, c, "tick")
-                else:
-                    right.line(c, sign * a, c, sign * b, "tick")
-    heatsink_holes = [(h, d) for h in p.holes() if (d := p.heatsink_hole_diameter(h.kind))]
-    hole_marks(right, heatsink_holes)
-    for hole, _ in heatsink_holes:
-        right.text(
-            hole.x,
-            hole.y - 4.6 if hole.kind != "lead" else hole.y + (2.6 if hole.y > 0 else -4.2),
-            _short_label(hole, p, cap=False),
-            size=SMALL_FONT_SIZE,
-        )
-    instructions(
-        right,
-        -1,
-        [
-            "HEATSINK",
-            "Stick on the flat base",
-            "face (pins on the far",
-            "side). Align the edge",
-            "ticks with the pin rows",
-            "seen edge-on.",
-        ],
-    )
-    instructions(
-        right,
-        1,
-        ["Cut on the Ø40 circle.", "M3 clearance: Ø3.3", f"lead: Ø{p.lead_hole_diameter:g}", "(no M2 holes)"],
-    )
-
-    # Scale bar.
-    bar_left, bar_y = width - LABEL_LEFT_MARGIN - 28.0, 5.0
-    sheet.out.append(f'<line class="box" x1="{bar_left}" y1="{bar_y}" x2="{bar_left + 20}" y2="{bar_y}"/>')
-    for x in (bar_left, bar_left + 20):
-        sheet.out.append(f'<line class="box" x1="{x}" y1="{bar_y - 1.5}" x2="{x}" y2="{bar_y + 1.5}"/>')
-    sheet.out.append(
-        f'<text x="{bar_left + 22}" y="{bar_y + 1}" font-size="{SMALL_FONT_SIZE + 0.4}">20 mm</text>'
-    )
-    return sheet.svg()
-
-
-def _short_label(hole: Hole, p: HoleLayoutParameters, cap: bool) -> str:
-    diameter = p.cap_hole_diameter(hole.kind) if cap else p.heatsink_hole_diameter(hole.kind)
-    return f"{hole.kind.upper() if hole.kind != 'lead' else 'lead'} Ø{diameter:g}"
