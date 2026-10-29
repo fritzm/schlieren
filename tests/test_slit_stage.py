@@ -14,6 +14,7 @@ from schlieren.parts.slit_stage import (
     STAGE_TABLE_HOLE_PITCH,
     STAGE_THICKNESS,
     SlitStageParameters,
+    _toe_pad,
     beam_envelope,
     blade,
     build_pedestal,
@@ -62,10 +63,13 @@ class SlitStageTests(unittest.TestCase):
     def test_blades_set_the_slit_and_share_the_seat_plane(self):
         p = self.p
         upper, lower = blade(p, 1).bounding_box(), blade(p, -1).bounding_box()
-        self.assertAlmostEqual(upper.min.Z - lower.max.Z, p.slit_width, places=9)
-        self.assertAlmostEqual(upper.min.Z, p.slit_width / 2, places=9)
-        for box in (upper, lower):
-            self.assertAlmostEqual(box.min.Y, 0, places=9)
+        self.assertAlmostEqual(upper.min.Z - lower.max.Z, p.slit_width, delta=0.001)  # Edge tips, inclined.
+        self.assertAlmostEqual(upper.min.Z, p.slit_width / 2, delta=0.001)
+        # Inclined by the fold, each edge dips a few hundredths of a millimeter ahead of the seat plane, and
+        # both alike: the cutting edges are parallel and at one height, collinear were the slit closed.
+        self.assertAlmostEqual(upper.min.Y, lower.min.Y, places=9)
+        self.assertGreater(upper.min.Y, -0.1)
+        self.assertLess(upper.min.Y, 0)
         # The stage's table top and the pedestal top are both the seat plane.
         self.assertAlmostEqual(stage_location(p).position.Y + STAGE_THICKNESS, 0, places=9)
         self.assertAlmostEqual(self.pedestal.bounding_box().max.Y, 0, places=9)
@@ -103,21 +107,46 @@ class SlitStageTests(unittest.TestCase):
         self.assertAlmostEqual(p.toe_z - p.table_edge, STAGE_SIZE / 2, places=6)
         self.assertGreater(p.toe_row_distance, p.blade_width - p.blade_overhang)
 
-    def test_toe_bars_clamp_the_spine_clear_of_the_blade(self):
+    def test_blades_rest_on_the_seat_edge_and_the_fold_front_edge(self):
         p = self.p
-        spine_far = p.slit_width / 2 + p.blade_width  # Distance from the slit center; the blade's rear edge.
+        z_fold = p.slit_width / 2 + p.blade.fold_front_z
+        for sign, support in ((1, self.stage), (-1, self.pedestal)):
+            b = blade(p, sign)
+            self.assertAlmostEqual(overlap_volume(b, support), 0, places=6)
+            self.assertLess(bounded_distance(b, support, 0.05), 1e-3)
+            # The fold's outer layer reaches the seat plane at its front edge, and no lower.
+            self.assertTrue(b.is_inside(Vector(0, 0.01, sign * (z_fold + 0.05))))
+            self.assertFalse(b.is_inside(Vector(0, -0.001, sign * (z_fold + 0.05))))
+
+    def test_toe_lands_on_the_plate_between_the_seat_edge_and_the_fold(self):
+        p = self.p
+        near, far = p.toe_pad_z
+        self.assertGreater(near, p.blade_overhang)
+        self.assertLess(far, p.blade.fold_front_z)
         for sign, turn in ((1, 0), (-1, 180)):
-            bar = moved(self.bar, Pos(0, 0, sign * p.toe_z) * Rot(Y=turn))
+            placed = Pos(0, 0, sign * p.toe_z) * Rot(Y=turn)
+            bar = moved(self.bar, placed)
+            pad = moved(_toe_pad(p), placed)
+            b = blade(p, sign)
             box = bar.bounding_box()
-            finger_tip = min(abs(box.min.Z), abs(box.max.Z))  # Nearest the slit.
-            # The bar spans the blade; its finger reaches over the whole spine and its body edge stops behind
-            # the blade's rear edge.
+            # The bar spans the blade; its body stops behind the blade's rear edge.
             self.assertLessEqual(box.min.X, -p.blade_length / 2 + 0.1)
             self.assertGreaterEqual(box.max.X, p.blade_length / 2 - 0.1)
-            self.assertLess(finger_tip, spine_far - p.spine_width)
-            self.assertGreater(p.toe_z - p.toe_body_setback, spine_far)
-            self.assertAlmostEqual(overlap_volume(bar, blade(p, sign)), 0, places=6)
-            self.assertGreater(bounded_distance(bar, blade(p, sign), 1.0), 0.4)
+            self.assertGreater(p.toe_z - p.toe_body_setback, p.slit_width / 2 + p.blade_width)
+            # The finger clears the whole blade, fold included; only the EPDM pad touches the plate.
+            self.assertAlmostEqual(overlap_volume(bar, b), 0, places=6)
+            self.assertGreaterEqual(bounded_distance(bar, b, 1.0), p.toe_fold_clearance - 1e-6)
+            self.assertGreater(overlap_volume(pad, b), 0)  # The pad's compression.
+            self.assertAlmostEqual(
+                overlap_volume(pad, b) / (pad.bounding_box().size.X * p.toe_pad_width),
+                p.toe_pad_squeeze,
+                delta=0.1,  # Less the slot and notches the pad crosses.
+            )
+            # The pad's footprint is on the plate: nothing of the fold or the seat edge lies under it.
+            pad_box = pad.bounding_box()
+            lo, hi = sorted((abs(pad_box.min.Z), abs(pad_box.max.Z)))
+            self.assertGreater(lo, p.table_edge)
+            self.assertLess(hi, p.slit_width / 2 + p.blade.fold_front_z)
             for x in p.toe_x:  # Screw holes at the stage's hole grid.
                 self.assertFalse(bar.is_inside(Vector(x, p.toe_thickness / 2, sign * p.toe_z)))
                 self.assertTrue(bar.is_inside(Vector(x + 2.5, p.toe_thickness / 2, sign * p.toe_z)))
@@ -204,7 +233,8 @@ class SlitStageTests(unittest.TestCase):
             {"cone_half_angle": 10.0},  # Cone reaches the stage edge.
             {"ring_grip": 5.0},  # Spigot and tube meet inside the ring.
             {"toe_thickness": 4.0},  # Screw would bottom in the tapped hole.
-            {"toe_finger_length": 1.0},  # Finger misses the spine.
+            {"toe_pad_fold_gap": -1.0},  # Pad on the fold.
+            {"toe_pad_width": 9.0},  # Pad reaches the seat edge.
             {"toe_end_margin": 1.0},  # Bar shorter than the blade.
             {"toe_pad_squeeze": 0.0},  # No clamping.
             {"screw_length": 14.0},  # Toe screws would bottom in the inserts.

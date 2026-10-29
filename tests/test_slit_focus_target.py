@@ -13,7 +13,7 @@ from schlieren.parts.slit_focus_target import (
     build_paper,
     build_retaining_ring,
 )
-from schlieren.parts.slit_stage import head_location
+from schlieren.parts.slit_stage import SlitStageParameters, head_location
 from schlieren.testing import overlap_volume, shared
 from schlieren.vendor_cad import SM1RC_M_THICKNESS
 
@@ -43,6 +43,15 @@ class FocusTargetTests(unittest.TestCase):
         # The rim stands off the post axis exactly as the stage head's blades do.
         rim_from_post = SM1RC_M_THICKNESS / 2 + p.stage.ring_gap + p.barrel_length
         self.assertAlmostEqual(head_location(p.stage).position.Y, rim_from_post, places=9)
+
+    def test_paper_plane_is_the_stage_blades_edge_plane_not_the_flexure_heads(self):
+        p = self.p
+        self.assertIsInstance(p.stage, SlitStageParameters)  # 2.9 mm overhang, not the flexure head's 1.5 mm.
+        # The paper's rear face is the seat plane; the stage's inclined blades put their edges' mid-plane
+        # within 0.02 mm of it, where the flexure head's 1.5 mm overhang would put them 0.076 mm off.
+        edge_plane = p.stage.seated_blade_y(0, 0)
+        self.assertAlmostEqual(self.paper.bounding_box().min.Y, edge_plane, delta=0.02)
+        self.assertAlmostEqual(self.paper.bounding_box().min.Y, 0, places=9)
 
     def test_ring_interface_matches_the_stage_plate(self):
         s = self.p.stage

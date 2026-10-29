@@ -72,7 +72,7 @@ $(FIG)/camera-support.png: $(CLI)/camera_support.py $(PARTS)/camera_support.py $
     $(PARTS)/carriage.py $(PARTS)/cassette.py $(PARTS)/adjuster.py $(PARTS)/rail_shoe.py $(PARTS)/rail.py $(CORE)
 	uv run camera-support --figure
 
-$(FIG)/slit-head.png: $(CLI)/slit_head.py $(PARTS)/slit_head.py $(PARTS)/adjuster.py $(PARTS)/rail_shoe.py $(PARTS)/rail.py $(CORE)
+$(FIG)/slit-head.png: $(CLI)/slit_head.py $(PARTS)/slit_head.py $(PARTS)/razor_blade.py $(PARTS)/adjuster.py $(PARTS)/rail_shoe.py $(PARTS)/rail.py $(CORE)
 	uv run slit-head --figure
 
 $(FIG)/frame.png: $(CLI)/frame.py $(PARTS)/frame.py $(PARTS)/frame_drawing.py $(PARTS)/rail.py $(CORE)

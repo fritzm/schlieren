@@ -66,15 +66,15 @@ rail follows one optical chief ray:
 
 The source rail contains, in optical order:
 
-1. light source (with interchangeable threaded LED/heatsink modules, condenser lens, and adjustable iris)
-2. source-slit flexure head
+1. light source (with interchangeable threaded LED modules, condenser lens, and adjustable iris)
+2. adjustable slit fixture
 
 The slit is the effective optical source, with the LED illuminating it through the condenser and iris. The
 imaging rail contains, in optical order:
 
 1. cutoff carriage at the returned slit-image plane;
-2. lens cradle, which supports and aligns a telephoto lens;
-3. phone rest, which supports an iPhone hanging from the lens as a camera.
+2. telephoto lens in adjustable cradle;
+3. iPhone attached to lens, with additional rail support.
 
 A spherical mirror in a separate tripod-mountable cell forms an image of the source slit back near
 the optical head. Refractive-index gradients in the test region near the mirror deflect portions of this
@@ -120,7 +120,7 @@ near 2f, at approximately the mirror center of curvature.
 ### 3.3 Source/imager offset
 
 The two rail pivot centers are separated by 95 mm at the mirror-facing front plate. At 3.2 m this gives
-approximately 1.70° total chief-ray separation.
+approximately 1.70° total chief-ray separation, or rail yaw of 0.85° from the mirror normal.
 
 Each rail points directly toward the mirror and follows its own chief ray. Sliding a fixture along a rail is
 therefore predominantly an axial adjustment.
@@ -170,7 +170,7 @@ These frames are right-handed and differ only in where their y axes lie:
 - source rail frame: y along the source rail centerline;
 - imaging rail frame: y along the imaging rail centerline.
 
-Each rail frame yaws with its rail, about 0.85° from the pivot frame at nominal. Its origin is on the rail top
-at the rail's pivot axis; a fixture is described with its own rail station at y = 0. In a rail frame the
-optical axis is at x = 0, z = 72.35 mm, and pitch, yaw, and roll are rotations about x, z, and y respectively.
-A rotating fixture may define a local frame, stated where it is used.
+Each rail frame yaws with its rail.  Its origin is on the rail top at the rail's pivot axis; a fixture is
+described with its own rail station at y = 0. In a rail frame the optical axis is at x = 0, z = 72.35 mm, and
+pitch, yaw, and roll are rotations about x, z, and y respectively. A rotating fixture may define a local
+frame, stated where it is used.

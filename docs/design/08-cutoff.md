@@ -337,8 +337,9 @@ Common clamp bars:
 - no blade-specific locating pocket or guide is required;
 - McMaster 9852N37 adhesive-backed 1/32 in, 60A solid EPDM is applied to the removable clamp-bar face to
   provide compliance and friction;
-- the bar bears primarily on the broad flat portion of a razor blade rather than relying on the folded spine
-  for its clamp datum;
+- the bar is meant to bear on the broad flat portion of a razor blade rather than the fold: **Provisional**,
+  because the blade's fold is 7.04 mm deep, so a knife edge on the aperture axis has the fold under the bar,
+  and the bar's height above the cassette face is not yet set from the blade;
 - the same clamp-bar geometry holds razor knife edges, Roscolux gel/filter material, Photofoil, and similar
   thin sheet cutoff elements.
 

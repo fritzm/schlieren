@@ -19,17 +19,26 @@ The slit uses two Stanley 11-515 backed single-edge scraper blades.
 
 Measured physical blade dimensions:
 
-- length: 1.535 in / 38.99 mm
-- width: 0.768 in / 19.51 mm
-- thickness at the sharp/flat portion: 0.010 in / 0.254 mm
-- thickness at the folded spine: 0.040 in / 1.016 mm
+- length: 1.537 in / 39.04 mm
+- width, cutting edge to the outside of the fold: 0.773 in / 19.64 mm
+- plate thickness: 0.010 in / 0.254 mm
+- fold: the back edge is folded over both faces, 0.277 in / 7.04 mm deep on each, 0.040 in / 1.016 mm thick across
+  the fold
+- bevel on both faces, breaking 0.030 in / 0.76 mm back from the cutting edge.
+
+The blade has a slot at mid-length and a notch in each end, approximated in the CAD from a photograph (about
+±0.3 mm); the slit and cassette fixtures do not rely on them. The CAD model is `parts/razor_blade.py`.
 
 Expected operating slit widths are 0.10–0.30 mm, starting around 0.15–0.20 mm.
 
-Each blade lies flat on its carrier's blade seat, cutting edge toward the slit and overhanging the carrier
-edge by about 1.5 mm. No blade pockets, holes, or spine compensation are used; a slight inclination of the
-blade toward its folded spine is acceptable, since the optically important geometry is the gap and parallelism
-of the two cutting edges.
+Each blade rests on its carrier's blade seat, cutting edge toward the slit and overhanging the carrier edge by
+about 1.5 mm. The fold's outer layers stand 0.38 mm proud of the plate's faces, so the blade touches the seat only
+at the carrier edge (with the plate face) and at the fold's front edge (with the fold's outer layer), 12.6 mm
+back from the cutting edge. Between the two the plate is inclined toward the fold by about 2°. No blade
+pockets, holes, or spine compensation are used. The inclination is acceptable because the optically important
+geometry is the gap and the parallelism of the two cutting edges: the two blades are identical and seated alike,
+so their edges lie at the same height above the seat plane (about 0.05 mm ahead of it at the carrier edge's
+contact), collinear were the slit closed, whatever the exact fold thickness.
 
 ### 7.2 Architecture
 
@@ -127,8 +136,10 @@ Slit setup:
 ### 7.5 Blade clamping
 
 Each blade is pinched against its carrier by an identical removable printed PLA clamp bar (54 × 7 × 4 mm)
-faced with McMaster 9852N37 1/32 in EPDM. The bar bears on the flat portion of the blade about 3 mm back from
-the cutting edge, leaving the slit cone clear, and is fastened by two M3 × 12 mm socket-head screws just
+faced with McMaster 9852N37 1/32 in EPDM. The bar bears on the plate about 3 mm back from the cutting edge,
+leaving the slit cone clear, and ends 2.6 mm short of the fold. Its face is parallel to the seat, so the
+inclined blade squeezes the pad from about 6% of its thickness at the edge toward the slit to about 37% at the
+edge toward the fold. The bar is fastened by two M3 × 12 mm socket-head screws just
 beyond the blade ends into M3 hex nuts captured in pockets opening from the carrier back. The common McMaster
 91292A114 screw and 91828A211 nut are used; four of each.
 

@@ -3,7 +3,7 @@
 import unittest
 from dataclasses import replace
 
-from build123d import Pos
+from build123d import Pos, Vector
 
 from schlieren.cad import box_between, moved, z_cylinder
 from schlieren.parts.rail_shoe import build_rail_shoe
@@ -13,6 +13,7 @@ from schlieren.parts.slit_head import (
     build_clamp_bar,
     build_slit_head,
     build_spigot_adapter,
+    clamp_epdm_compression,
     head_location,
 )
 from schlieren.testing import bounded_distance, overlap_volume, shared, slow
@@ -88,12 +89,37 @@ class SlitHeadTests(unittest.TestCase):
     def test_slit_centered_on_axis_with_blades_on_seat_plane(self):
         p = self.p
         upper, lower = _blade(p, 1).bounding_box(), _blade(p, -1).bounding_box()
-        self.assertAlmostEqual(upper.min.Z, p.slit_width / 2, places=9)
-        self.assertAlmostEqual(lower.max.Z, -p.slit_width / 2, places=9)
-        self.assertAlmostEqual(upper.min.Y, 0, places=9)
+        self.assertAlmostEqual(upper.min.Z, p.slit_width / 2, delta=0.001)  # Edge tips, inclined.
+        self.assertAlmostEqual(lower.max.Z, -p.slit_width / 2, delta=0.001)
+        # Inclined by the fold, each blade's edge dips a few hundredths of a millimeter ahead of the seat
+        # plane, and both dip alike: the two edges lie in one plane.
+        self.assertAlmostEqual(upper.min.Y, lower.min.Y, places=9)
+        self.assertGreater(upper.min.Y, -0.05)
+        self.assertLess(upper.min.Y, 0)
         self.assertEqual(self.head.bounding_box().max.Y, 0)
         # The blades, not the head, bound the illuminated aperture.
         self.assertGreater(p.blade_length / 2, p.spigot_bore / 2 + 3)
+
+    def test_blades_rest_on_the_carrier_edge_and_the_fold_front_edge(self):
+        p = self.p
+        z_fold = p.slit_width / 2 + p.blade.fold_front_z
+        for sign in (1, -1):
+            blade = _blade(p, sign)
+            self.assertLess(bounded_distance(blade, self.head, 0.05), 1e-3)  # Touching the carrier.
+            # The fold's outer layer reaches the seat plane at its front edge, and no lower.
+            self.assertTrue(blade.is_inside(Vector(0, 0.01, sign * (z_fold + 0.05))))
+            self.assertFalse(blade.is_inside(Vector(0, -0.001, sign * (z_fold + 0.05))))
+            # Between the two contacts the plate stands off the seat, rising toward the fold.
+            plate = [blade.is_inside(Vector(10, y, sign * (p.carrier_edge + 5.0))) for y in (0.1, 0.3, 0.6)]
+            self.assertEqual(
+                plate, [False, True, False]
+            )  # The plate there, clear of the slot, spans about 0.17-0.43.
+
+    def test_clamp_pad_is_squeezed_throughout_but_not_crushed(self):
+        near, far = clamp_epdm_compression(self.p)
+        self.assertGreater(near, 0.03)  # Edge toward the slit: the pad still touches the blade.
+        self.assertLess(far, 0.5)  # Edge toward the fold: the 1/32 in EPDM is not over-squeezed.
+        self.assertLess(near, far)
 
     def test_flexure_strain_and_preload(self):
         p = self.p
@@ -200,6 +226,8 @@ class SlitHeadTests(unittest.TestCase):
             {"centering_half_travel": 3.0},  # Exceeds the running clearance.
             {"spigot_diameter": 31.0},  # Does not enter the SM1RC/M.
             {"width_blade_thickness": 3.0},  # Overstrained flexure.
+            {"clamp_bar_setback": 6.0},  # Clamp bar reaches the blade fold.
+            {"carrier_depth": 9.0},  # Carrier ends before the blade fold.
             {"spring_outer_diameter": 11.0},  # Does not fit the lower platform connector.
             {"width_screw_x": -15.0},  # FAS100 #2 knob hits the frame top bar.
             {"ring_gap": 2.0},  # Adapter plate within 2 mm of the post.

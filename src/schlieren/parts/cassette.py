@@ -39,7 +39,7 @@ class CassetteParameters:
     cleat_top_diameter: float = 5.0
     cleat_height: float = 3.0  # Above the nominal 5 mm cassette body.
     cleat_top_round: float = 0.5
-    clamp_hole_x: float = 27.0  # Outside measured 38.99 mm blade length.
+    clamp_hole_x: float = 27.0  # Outside the measured 39.04 mm blade length.
     clamp_hole_y: float = 12.0  # Bars must bridge around the optical aperture.
     screw_diameter: float = 3.0
     screw_diametral_clearance: float = 0.4
@@ -130,7 +130,9 @@ class ClampBarParameters:
     thickness: float = 4.0
     end_width: float = 8.0
     inner_edge_y: float = 12.5  # Clear the Ø24 opening by 0.5 mm.
-    outer_edge_y: float = 17.5  # Bear inboard of the blade's folded spine.
+    outer_edge_y: float = (
+        17.5  # Provisional: 7 mm fold of a blade with its edge on the axis is under the bar (§8.7).
+    )
     bridge_half_length: float = 20.0
     end_relief_start_x: float = 21.0
     end_relief_depth: float = 1.6  # Clears plunger lips even with thin media.

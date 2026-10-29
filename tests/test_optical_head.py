@@ -82,8 +82,9 @@ class OpticalHeadTests(unittest.TestCase):
         self.assertEqual(len(blades), 2)
         for blade in blades:
             box = blade.bounding_box()
-            # The blade seats on the blade-seat plane and extends toward the head's front, rail -y.
-            self.assertAlmostEqual(box.max.Y, self.h.slit_station, delta=0.01)
+            # The blade rests on the blade-seat plane and extends toward the head's front, rail -y; its
+            # edge, inclined to the plane by the fold, dips a few hundredths of a millimeter ahead of it.
+            self.assertAlmostEqual(box.max.Y, self.h.slit_station, delta=0.05)
 
     def test_condenser_is_the_design_distance_from_the_slit(self):
         (lens,) = by_label(self.source, "ACL2520U-A condenser")

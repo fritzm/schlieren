@@ -15,7 +15,10 @@ from schlieren.parts.cassette import (
     build_cassette_assembly,
     build_clamp_bar,
 )
+from schlieren.parts.razor_blade import RazorBladeParameters
 from schlieren.testing import overlap_volume, shared, slow
+
+BLADE_LENGTH = RazorBladeParameters().length
 
 
 class CassetteTests(unittest.TestCase):
@@ -89,14 +92,14 @@ class CassetteTests(unittest.TestCase):
             self.assertFalse(self.blank.is_inside((x + 1.69, y, 4.9)))
             self.assertTrue(self.blank.is_inside((x + 1.71, y, 4.9)))
             # Fastener shanks lie outside measured blade ends.
-            self.assertGreater(abs(x) - p.bore_diameter / 2, 38.99 / 2)
+            self.assertGreater(abs(x) - p.bore_diameter / 2, BLADE_LENGTH / 2)
         for x in (-p.cleat_x, p.cleat_x):
             self.assertTrue(self.blank.is_inside((x, 0, 7.99)))
             # No rounded foot may lift a wrapped filament off the front datum.
             self.assertFalse(self.blank.is_inside((x, p.cleat_base_diameter / 2 + 0.02, 5.01)))
             self.assertFalse(self.blank.is_inside((x, 2.1, 5.7)))
             self.assertTrue(self.blank.is_inside((x, 2.1, 7)))
-            self.assertGreater(abs(x) - p.cleat_top_diameter / 2, 38.99 / 2)
+            self.assertGreater(abs(x) - p.cleat_top_diameter / 2, BLADE_LENGTH / 2)
         beam = Cylinder(12, 8, align=ON_FLOOR)
         self.assertLess(intersect(self.blank, beam).volume, 1e-6)
 

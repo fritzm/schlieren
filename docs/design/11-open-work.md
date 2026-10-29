@@ -14,6 +14,8 @@ Design areas marked **Provisional** in the sections above:
   ([§9.3](09-camera-telephoto.md#93-alignment-requirements)) rest on an assumed lens position behind the
   cutoff plane and an assumed camera pupil; the rear-glass vignetting limit rests on an assumed distance
   from the rear glass to the camera pupil, to be fixed by a flat-field photograph.
+- **Cassette razor-blade clamping** ([§8.7](08-cutoff.md#87-cassette-clamp-bars)): how the clamp bars bear on a
+  blade whose 7.04 mm fold lies under them, and the resulting bar height.
 - **Mirror cell** ([§10.5](10-mirror-cell.md#105-mirror-mounting),
   [§10.8](10-mirror-cell.md#108-mirror-safety-and-transport-retention)): RTV adhesion primer decision; safety
   retainers; transport sandwich covers, foam, and 1/4 in-80 thumb screws.

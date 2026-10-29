@@ -30,7 +30,7 @@ mirror, z=0 at the rail top, with the slit post at x=y=0. The head's front faces
 local +y is rail -y and the spigot, ring, and post are on the mirror side of the blades (see head_location).
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import cache
 from math import isfinite
 
@@ -42,6 +42,7 @@ from schlieren.cad import (
     box_between,
     compression_spring,
     labeled,
+    moved,
     y_cylinder,
     y_hex,
     z_cylinder,
@@ -76,6 +77,7 @@ from schlieren.palette import (
 )
 from schlieren.parts.adjuster import bearing_magnet, fas100_children, insert_98625a950
 from schlieren.parts.rail_shoe import REFERENCE_HARDWARE_LABEL, post_stack
+from schlieren.parts.razor_blade import RazorBladeParameters, build_razor_blade, seated_blade_location
 from schlieren.standards import (
     DATUM_SHIM_THICKNESS,
     INCH,
@@ -105,12 +107,9 @@ class SlitHeadParameters:
     # Thorlabs SM1RC/M (vendor STEP model): Ø1.21 in bore accepting Ø1.20 in SM1 tubes.
     ring_thickness: float = SM1RC_M_THICKNESS
     ring_bore: float = 1.21 * INCH
-    # Stanley 11-515 blades, measured (§7).
-    blade_length: float = 38.99
-    blade_width: float = 19.51
-    blade_thickness: float = 0.254
-    spine_thickness: float = 1.016
-    spine_width: float = 2.0  # Display only; fold width not measured.
+    blade: RazorBladeParameters = field(
+        default_factory=RazorBladeParameters
+    )  # Stanley 11-515, measured (§7).
     slit_width: float = 0.20  # Display/setup value in the likely 0.15-0.20 mm working region.
     # Thorlabs FAS100 (drawing): 1/4 in-80, 1.00 in thread from knob shoulder to ball tip.
     adjuster_thread_length: float = FAS100_THREAD_LENGTH
@@ -206,6 +205,18 @@ class SlitHeadParameters:
     # PLA material, typical values (provisional).
     pla_modulus: float = PLA_MODULUS
     flexure_strain_limit: float = 0.006
+
+    @property
+    def blade_length(self):
+        return self.blade.length
+
+    @property
+    def blade_width(self):
+        return self.blade.width
+
+    @property
+    def blade_thickness(self):
+        return self.blade.thickness
 
     @property
     def spring_pocket_diameter(self):
@@ -459,8 +470,13 @@ class SlitHeadParameters:
                 raise ValueError(f"{name} must be finite")
         if self.clamp_bar_z + self.clamp_bar_width / 2 > self.carrier_outer:
             raise ValueError("Clamp bars must sit on their carriers")
-        if self.blade_width < self.clamp_bar_setback + self.clamp_bar_width:
-            raise ValueError("Clamp bars must bear on the blades")
+        self.blade.validate()
+        # The blade rests on its carrier's edge and on the fold's front edge, so the carrier must reach under
+        # the fold; the clamp bar bears on the plate between the two, clear of the fold.
+        if self.blade_overhang + self.carrier_depth < self.blade.fold_front_z + 1.0:
+            raise ValueError("Blade carriers must reach under the blade fold")
+        if self.clamp_bar_setback + self.clamp_bar_width > self.blade.fold_front_z - 1.0:
+            raise ValueError("Clamp bars must bear on the blade plate, clear of the fold")
         if self.spigot_diameter >= self.ring_bore or self.spigot_bore >= self.spigot_diameter - 4:
             raise ValueError("Spigot must slip into the SM1RC/M and keep a wall")
         if self.spigot_shoulder_diameter < self.ring_bore + 2.0:
@@ -696,22 +712,42 @@ def build_clamp_bar(p=None):
 
 
 def _blade(p, sign):
-    """Stanley blade on the seat plane, cutting edge at the slit; sign +1 above the slit, -1 below."""
-    edge = sign * p.slit_width / 2
-    far = edge + sign * p.blade_width
-    flat = box_between(
-        -p.blade_length / 2, p.blade_length / 2, 0, p.blade_thickness, min(edge, far), max(edge, far)
+    """Stanley blade resting on its carrier's seat plane, cutting edge at the slit; sign +1 above the slit,
+    -1 below.
+
+    The blade touches the carrier at its edge and at the fold's front edge, so the plate is inclined toward the
+    fold (razor_blade.seat_tilt); both blades are inclined alike, so their edges lie in one plane.
+    """
+    seat = seated_blade_location(p.blade, p.blade_overhang)
+    side = Pos(0, 0, p.slit_width / 2) if sign > 0 else Pos(0, 0, -p.slit_width / 2) * Rot(Y=180)
+    return moved(build_razor_blade(p.blade), side * seat)
+
+
+def clamp_epdm(p):
+    """The EPDM pad on a clamp bar's face in the movable-blade position, uncompressed, its face in the plane
+    the bar's face would be if the blade were flat on the seat."""
+    return box_between(
+        -p.clamp_bar_half_length,
+        p.clamp_bar_half_length,
+        p.blade_thickness,
+        p.blade_thickness + p.epdm_thickness,
+        p.clamp_bar_z - p.clamp_bar_width / 2,
+        p.clamp_bar_z + p.clamp_bar_width / 2,
     )
-    spine_near = far - sign * p.spine_width
-    spine = box_between(
-        -p.blade_length / 2,
-        p.blade_length / 2,
-        0,
-        p.spine_thickness,
-        min(spine_near, far),
-        max(spine_near, far),
-    )
-    return flat + spine
+
+
+def clamp_epdm_compression(p):
+    """(least, greatest) EPDM compression, as fractions of its thickness, across the clamp bar's width.
+
+    The bar's face is flat and parallel to the seat; the inclined blade rises under it, so the pad is squeezed
+    least at the bar's edge toward the slit and most at its edge toward the fold."""
+    bar_z = p.clamp_bar_z - p.slit_width / 2  # Bar center, from the cutting edge.
+    face = seated_blade_location(p.blade, p.blade_overhang)
+    top = [
+        (face * Pos(0, p.blade_thickness / 2, z)).position.Y
+        for z in (bar_z - p.clamp_bar_width / 2, bar_z + p.clamp_bar_width / 2)
+    ]
+    return tuple((y - p.blade_thickness) / p.epdm_thickness for y in top)
 
 
 def head_location(p, rotation=0.0):
@@ -747,16 +783,15 @@ def build_slit_head_assembly(p=None, rotation=0.0, include_support=True, side_sc
     for sign, name in ((1, "Width"), (-1, "Datum")):
         placed = loc * Rot(Y=0 if sign > 0 else 180)
         children.append(labeled(bar, f"{name} clamp bar", printed, placed))
-        epdm = box_between(
-            -p.clamp_bar_half_length,
-            p.clamp_bar_half_length,
-            p.blade_thickness,
-            p.blade_thickness + p.epdm_thickness,
-            p.clamp_bar_z - p.clamp_bar_width / 2,
-            p.clamp_bar_z + p.clamp_bar_width / 2,
+        epdm = clamp_epdm(p)
+        blade = _blade(p, sign)
+        # The pad is compressed by the inclined blade: shown with the blade's volume taken out of it.
+        children.append(
+            labeled(
+                epdm - moved(blade, Rot(Y=0 if sign > 0 else 180).inverse()), f"{name} EPDM", RUBBER, placed
+            )
         )
-        children.append(labeled(epdm, f"{name} EPDM", RUBBER, placed))
-        children.append(labeled(_blade(p, sign), f"{name} blade", metal, loc))
+        children.append(labeled(blade, f"{name} blade", metal, loc))
     # M3 hardware, axes along y: screw heads toward +y, shanks toward -y into captive nuts seated on their
     # pocket floors (local +z of each vendor model turned to -y).
     to_nut_corners_along_x = Rot(Z=90)
