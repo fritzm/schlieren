@@ -39,3 +39,11 @@ M3_SOCKET_HEAD_DIAMETER = 5.5
 M3_SOCKET_HEAD_HEIGHT = MCMASTER_91292A114_HEAD_HEIGHT
 M3_NUT_ACROSS_FLATS = 5.5
 M3_NUT_THICKNESS = MCMASTER_91828A211_HEIGHT
+
+# McMaster 97171A310 M3 x 0.5 brass flanged heat-set insert: 5.7 mm installed length under a Ø5.5 x 0.53 mm
+# flange, for a printed hole up to Ø4 mm with the flange recessed flush. The hole depth is below the recess.
+M3_INSERT_INSTALLED_LENGTH = 5.7
+M3_INSERT_HOLE_DIAMETER = 4.0
+M3_INSERT_HOLE_DEPTH = 6.2  # The installed length and room for melt.
+M3_INSERT_FLANGE_RECESS_DIAMETER = 5.7
+M3_INSERT_FLANGE_RECESS_DEPTH = 0.6

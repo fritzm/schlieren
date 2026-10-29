@@ -69,3 +69,4 @@ Project policy: where a vendor model is available, use its exact values in prefe
 from the drawing. Thorlabs SM1 parts are inch-primary, so their models are exact while the drawings' mm values
 are rounded (e.g. SMR1/M 0.400 in = 10.16 mm, drawn as 10.2 mm). The reverse also occurs: the metric TR50/M
 model is rounded to inches (1.969 in, 0.499 in), so its exact metric nominals (50 mm, Ø12.7 mm) are used.
+| `Cadenas-XCRS40.step` | XCRS40.stp (ST-Developer, AP214, mm; CADENAS PARTcommunity download, license CC BY-ND 4.0) | partcommunity.com / 3dfindit.com XCRS40, "STEP" | X the travel axis (micrometer toward +X, tip at x=46 mm), Y from base underside (0) to table top (20 mm), Z across; 40 x 40 mm table and base centered on the origin, micrometer axis at (y, z) = (13, 28) mm; three solids (base, carriage with table, micrometer); the same stage geometry as the SF Technology SEMX40-AS, whose own STEP is surface-only |

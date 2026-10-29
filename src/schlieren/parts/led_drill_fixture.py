@@ -34,6 +34,12 @@ from schlieren.cad import (
     y_cylinder,
     z_cylinder,
 )
+from schlieren.hardware import (
+    M3_INSERT_FLANGE_RECESS_DEPTH,
+    M3_INSERT_FLANGE_RECESS_DIAMETER,
+    M3_INSERT_HOLE_DEPTH,
+    M3_INSERT_HOLE_DIAMETER,
+)
 from schlieren.palette import (
     BLACK_ANODIZED,
     BUSHING_BRASS,
@@ -155,10 +161,10 @@ class DrillFixtureParameters:
     screw_offset: float = 22.0  # Corner screw axes at (±, ±) this far from the part axis.
     # McMaster 97171A310 M3 × 0.5 brass flanged heat-set inserts in the nest's screw holes: 5.7 mm installed
     # length under a Ø5.5 × 0.53 mm flange, for a hole up to Ø4 mm; the flange sits recessed, flush.
-    insert_hole_diameter: float = 4.0
-    insert_hole_depth: float = 6.2  # Below the flange recess: the installed length and room for melt.
-    insert_flange_recess_diameter: float = 5.7
-    insert_flange_recess_depth: float = 0.6
+    insert_hole_diameter: float = M3_INSERT_HOLE_DIAMETER
+    insert_hole_depth: float = M3_INSERT_HOLE_DEPTH  # Below the flange recess.
+    insert_flange_recess_diameter: float = M3_INSERT_FLANGE_RECESS_DIAMETER
+    insert_flange_recess_depth: float = M3_INSERT_FLANGE_RECESS_DEPTH
     plate_thickness: float = 6.0  # Equal to the bushing length: the bushings sit flush on both faces.
     # Plate-to-part standoff: bushing end to the part face, chip room for the bits.
     standoff: float = 2.0

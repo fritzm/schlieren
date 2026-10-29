@@ -27,6 +27,7 @@ from build123d import (
     import_step,
 )
 
+from schlieren.cad import box_between, intersect
 from schlieren.standards import INCH
 
 VENDOR_CAD_DIR = Path(__file__).resolve().parents[2] / "cad" / "vendor"
@@ -49,6 +50,8 @@ SM1V05_LOCK_RING_X = 0.195 * INCH
 SM1V05_RETAINING_RING_X = 0.950 * INCH
 SM1L03_SHOULDER_X = -0.330 * INCH  # External-thread shoulder; thread end at x=-0.450 in, open end at x=0.
 SM1D12_SHOULDER_Z = 0.080 * INCH  # External-thread shoulder above the thread end at z=0.
+XCRS40_SIDE_Z = -20.0  # Side faces of the XCRS40 base and carriage, on the side away from the micrometer.
+VENDOR_CUT_EXTENT = 100.0  # Half-size of a cutter that spans a vendor model.
 ACL2520U_A_PLANO_Y = 6.0  # Plano face; convex vertex at y=-6.0.
 # FAS100 model: axis along +X through (y, z) = FAS100_AXIS_YZ, knob at -X, ball-tip apex at x=FAS100_TIP_X.
 FAS100_AXIS_YZ = (1.583, -2.103)
@@ -358,6 +361,34 @@ def thorlabs_fas100_parts() -> tuple[Compound, Compound, Compound]:
     """The thorlabs_fas100 frame split as (screw with ball tip, knob, index dimple), for coloring."""
     dimple, tip, screw, knob = sorted(thorlabs_fas100().solids(), key=lambda s: s.volume)
     return Compound([screw, tip]), Compound([knob]), Compound([dimple])
+
+
+@cache
+def cadenas_xcrs40_parts() -> tuple[Compound, Compound, Compound, Compound, Compound]:
+    """The XCRS40 crossed-roller linear stage as (base, carriage with table, micrometer, base side plate,
+    carriage lock knob), sharing one frame, for coloring.
+
+    Unmodified vendor frame: X the travel axis with the micrometer toward +X, Y up from the base underside
+    (y=0) to the table top (y=20 mm), Z across the table; the 40 x 40 mm table and base are centered on the
+    origin in X and Z, and the micrometer is at (y, z) = (13, 28) mm. The slotted plate with its screws and
+    the knob, both on the side away from the micrometer, are fused into the base and carriage in the vendor
+    model; they are cut off at the side faces (z = -20 mm) and returned as separate solids.
+    """
+    solids = vendor_step("Cadenas-XCRS40.step").solids()
+    micrometer = max(solids, key=lambda s: s.bounding_box().max.X)
+    carriage = max((s for s in solids if s is not micrometer), key=lambda s: s.bounding_box().max.Y)
+    base = next(s for s in solids if s is not micrometer and s is not carriage)
+    beyond_side = box_between(
+        -VENDOR_CUT_EXTENT, VENDOR_CUT_EXTENT, -1, VENDOR_CUT_EXTENT, -VENDOR_CUT_EXTENT, XCRS40_SIDE_Z
+    )
+    side_plate, lock_knob = intersect(base, beyond_side), intersect(carriage, beyond_side)
+    return (
+        Compound([base - beyond_side]),
+        Compound([carriage - beyond_side]),
+        Compound([micrometer]),
+        side_plate,
+        lock_knob,
+    )
 
 
 @cache
