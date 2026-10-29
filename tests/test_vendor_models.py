@@ -18,6 +18,7 @@ from schlieren.vendor_cad import (
     mcmaster_92815a202_envelope,
     thorlabs_sm1cp2m,
     thorlabs_sm1d12,
+    thorlabs_sm1l15,
     thorlabs_sm1rc_m,
     thorlabs_smr1_m,
     vendor_step,
@@ -189,6 +190,14 @@ class VendorModelTests(unittest.TestCase):
             with self.subTest(model=name):
                 for found, wanted in zip(extents(vendor_step(filename)), sorted(expected), strict=True):
                     self.assertAlmostEqual(found, wanted, delta=MODEL_ROUNDING)
+
+    def test_sm1l15_tube_frame(self):
+        box = thorlabs_sm1l15().bounding_box()
+        self.assertAlmostEqual(box.min.Y, -v.SM1L15_THREAD_LENGTH, delta=MODEL_ROUNDING)
+        self.assertAlmostEqual(box.max.Y, v.SM1L15_SHOULDER_TO_OPEN_END, delta=MODEL_ROUNDING)
+        for lo, hi in ((box.min.X, box.max.X), (box.min.Z, box.max.Z)):
+            self.assertAlmostEqual((lo + hi) / 2, 0, delta=MODEL_ROUNDING)  # Axis through the origin.
+            self.assertAlmostEqual(hi - lo, v.SM1L15_OUTER_DIAMETER, delta=MODEL_ROUNDING)
 
     def test_thumb_nut_envelope_contains_the_model(self):
         nut, envelope = mcmaster_92815a202(), mcmaster_92815a202_envelope()

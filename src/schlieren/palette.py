@@ -19,6 +19,7 @@ INDEX_DIMPLE = (0.95, 0.95, 0.95)  # FAS100 index dimple.
 # Non-metals.
 RUBBER = (0.15, 0.15, 0.15)  # EPDM and rubber pads, and the black Buna-N O-ring retaining bands.
 PLYWOOD = (0.82, 0.68, 0.45)
+PAPER = (0.97, 0.95, 0.88)  # Tissue or oiled paper.
 
 # Printed parts. A fixture's printed parts take distinct colors so they can be told apart.
 PRINTED_ORANGE = (0.8, 0.4, 0.25)  # The common rail shoe, and printed parts that stand in for it.

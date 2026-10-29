@@ -19,7 +19,7 @@ Keep the vendor file unmodified; place it in project coordinates in code, not by
 | `Thorlabs-SM1V05.step` | 0591-E0W.step (AP214, inch) | thorlabs.com SM1V05, "Step" | Axis +X, 1.030 in overall; three solids (sleeve, lock ring, retaining ring), placed separately |
 | `Thorlabs-SM1RC-M.step` | 13349-E0W.step (SolidWorks 2016, AP214, m) | thorlabs.com SM1RC/M, "Step" | Axis +Z through origin, faces at z=0 and 0.40 in, post seat at y=-0.87 in; two solids (split ring, M4 lock screw at +Y) |
 | `Thorlabs-FAS100.step` | 0634-E0W.step (SolidWorks 2007, AP214, mm) | thorlabs.com FAS100, "Step" | Axis +X through (y, z) = (1.583, -2.103) mm, knob at -X, ball-tip apex at x=22.013 mm; four solids |
-| `Thorlabs-SM1L15.step` | TTN048857-E0W.step (SolidWorks 2016, AP214, m) | thorlabs.com SM1L15, "Step" | Axis +X through (y, z) = (27.854, 33.711) mm, off origin; two solids (tube, retaining ring); not yet loaded |
+| `Thorlabs-SM1L15.step` | TTN048857-E0W.step (SolidWorks 2016, AP214, m) | thorlabs.com SM1L15, "Step" | Axis +X through (y, z) = (27.854, 33.711) mm, off origin; two solids (tube, retaining ring); only the tube is loaded |
 | `Thorlabs-SM1L03.step` | 0823-E0W.step (SolidWorks 2014, AP214, inch) | thorlabs.com SM1L03, "Step" | Axis +X, x from -0.45 in to 0; two solids (tube, retaining ring); only the tube is loaded |
 | `Thorlabs-SM1D12.step` | 0077-E0W.step (SolidWorks 2022, AP214, mm) | thorlabs.com SM1D12, "Step" | Axis +Z, z from 0 to 0.42 in; external-thread shoulder at z=0.08 in; 16 solids (iris leaves, housing, lever at +Y) |
 | `Thorlabs-SM1CP1.step` | 0756-E0W.step (SolidWorks 2022, AP214, mm) | thorlabs.com SM1CP1, "Step" | Axis +Z through (x, y) = (14.107, 16.294) mm, off origin, z from 19.595 to 23.786 mm; one solid; not yet loaded |

@@ -25,7 +25,12 @@ from schlieren.parts.slit_stage import (
     stage_location,
 )
 from schlieren.testing import bounded_distance, overlap_volume, shared, slow
-from schlieren.vendor_cad import SM1RC_M_THICKNESS, thorlabs_sm1rc_m
+from schlieren.vendor_cad import (
+    SM1L15_SHOULDER_TO_OPEN_END,
+    SM1L15_THREAD_LENGTH,
+    SM1RC_M_THICKNESS,
+    thorlabs_sm1rc_m,
+)
 
 ROTATION_SWEEP = range(-130, 131, 10)
 TR50_STUD_MAX = 5.2  # TR50/M drawing: setscrew stud 4.6-5.2 mm above the post top.
@@ -161,12 +166,25 @@ class SlitStageTests(unittest.TestCase):
         ring = moved(thorlabs_sm1rc_m(), Pos(0, -SM1RC_M_THICKNESS / 2, p.optical_height))
         self.assertAlmostEqual(plate.distance_to(ring), 0, places=3)  # Seated on the shoulder.
         self.assertAlmostEqual(overlap_volume(plate, ring), 0, places=3)
-        tube = children_by_label(self.assembly)["SM1 baffle tube (2 x SM1L15, proxy)"]  # Already placed.
+        tube = children_by_label(self.assembly)["SM1 baffle tube"]  # Already placed.
         # The tube enters from the other side by the same grip, leaving the gap between it and the spigot.
-        self.assertAlmostEqual(tube.bounding_box().max.Y, -ring_face + p.ring_grip, places=6)
-        self.assertAlmostEqual(plate.bounding_box().min.Y - tube.bounding_box().max.Y, p.tube_gap, places=6)
+        self.assertAlmostEqual(tube.bounding_box().max.Y, -ring_face + p.ring_grip, places=3)
+        self.assertAlmostEqual(plate.bounding_box().min.Y - tube.bounding_box().max.Y, p.tube_gap, places=3)
         self.assertAlmostEqual(p.tube_diameter, p.spigot_diameter)
         self.assertAlmostEqual(overlap_volume(tube, plate), 0, places=6)
+
+    def test_baffle_tubes_are_threaded_together(self):
+        """The source-side tube's thread runs into the ring-side tube's open end, shoulder to open end."""
+        tube = children_by_label(self.assembly)["SM1 baffle tube"]
+        near, far = (
+            children_by_label(tube)[label] for label in ("SM1L15 (ring side)", "SM1L15 (source side)")
+        )
+        length = SM1L15_SHOULDER_TO_OPEN_END + SM1L15_THREAD_LENGTH
+        self.assertAlmostEqual(tube.bounding_box().size.Y, 2 * length - SM1L15_THREAD_LENGTH, places=3)
+        # The far tube's open end is at the near tube's shoulder; its thread is inside the near tube.
+        self.assertAlmostEqual(
+            far.bounding_box().max.Y, near.bounding_box().min.Y + SM1L15_THREAD_LENGTH, places=3
+        )
 
     def test_beam_clears_stage_pedestal_and_plate(self):
         p = self.p
@@ -183,14 +201,14 @@ class SlitStageTests(unittest.TestCase):
 
     def test_validation_rejects_bad_layouts(self):
         for change in (
-            {"cone_half_angle": 6.0},  # Cone reaches the stage edge.
+            {"cone_half_angle": 10.0},  # Cone reaches the stage edge.
             {"ring_grip": 5.0},  # Spigot and tube meet inside the ring.
             {"toe_thickness": 4.0},  # Screw would bottom in the tapped hole.
             {"toe_finger_length": 1.0},  # Finger misses the spine.
             {"toe_end_margin": 1.0},  # Bar shorter than the blade.
             {"toe_pad_squeeze": 0.0},  # No clamping.
             {"screw_length": 14.0},  # Toe screws would bottom in the inserts.
-            {"toe_body_setback": 2.5},  # Body rides on the blade.
+            {"toe_body_setback": 4.0},  # Body rides on the blade.
         ):
             with self.assertRaises(ValueError, msg=str(change)):
                 replace(self.p, **change).validate()

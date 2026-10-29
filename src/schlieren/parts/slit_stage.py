@@ -10,7 +10,9 @@ Parts:
   a Ø24 mm light bore. The spigot is short, so the ring also grips an SM1 baffle tube (two SM1L15) from the
   light-source side. The stage bolts to the plate's front with captive nuts at its rear; the pedestal is screwed
   on from the plate's rear into heat-set M3 inserts;
-- stage: the SEMX40-AS, shown with the XCRS40 vendor solid model (same table and base layout). Its table top, 20 mm above its base, is the blade-seat plane;
+- stage: the stage on hand (Amazon B0B7RVW3SX), shown with Misumi's XCRS40 solid model (CADENAS PARTcommunity; the same
+  table and base layout as the SF Technology SEMX40-AS, whose own STEP is surface-only). Its table top, 20 mm above its
+  base, is the blade-seat plane;
 - pedestal: printed block carrying the stationary blade, its top in the blade-seat plane;
 - toe bars: one printed bar on the table and one on the pedestal, each screwed down at its two ends into the M3
   holes of the table's second row (the stage's tapped holes) or into heat-set M3 inserts in the pedestal. The bar's
@@ -28,7 +30,7 @@ are on the light-source side of the blades.
 
 **Provisional:** the stage's base mounting holes (four M3 counterbored, 32 mm pitch) are assumed to be
 reachable from the table side with the screws through the base flange; confirm on the stage. The blade overhang
-(1.9 mm past the table edge) and the toe bar's squeeze on the EPDM pad are first-print values.
+(2.9 mm past the table edge) and the toe bar's squeeze on the EPDM pad are first-print values.
 """
 
 from dataclasses import dataclass
@@ -43,6 +45,7 @@ from schlieren.cad import (
     box_between,
     fused,
     labeled,
+    place,
     y_cylinder,
     y_hex,
 )
@@ -66,17 +69,20 @@ from schlieren.parts.rail_shoe import REFERENCE_HARDWARE_LABEL, post_stack
 from schlieren.parts.slit_head import SlitHeadParameters
 from schlieren.standards import INCH
 from schlieren.vendor_cad import (
+    SM1L15_OUTER_DIAMETER,
+    SM1L15_SHOULDER_TO_OPEN_END,
     SM1RC_M_THICKNESS,
     cadenas_xcrs40_parts,
     mcmaster_91292a114,
     mcmaster_91828a211,
     mcmaster_97171a310,
+    thorlabs_sm1l15,
 )
 
 _HEAD = SlitHeadParameters()  # Shared defaults: blades, SM1 spigot and ring, M3 hardware.
 
-# SF Technology SEMX40-AS stage (sflinear.com.tw drawing SEMX40-AS-2D), in the frame of the CADENAS XCRS40 vendor
-# model that shows it: X the travel axis with the micrometer toward +X, Y up from the base (0) to the table top,
+# SF Technology SEMX40-AS stage (sflinear.com.tw drawing SEMX40-AS-2D), in the frame of the Misumi XCRS40 vendor
+# model (via CADENAS) that shows it: X the travel axis with the micrometer toward +X, Y up from the base (0) to the table top,
 # Z across the table. These are manufacturer values, not measurements of the stage on hand.
 STAGE_SIZE = 40.0  # Table and base outline, X and Z.
 STAGE_THICKNESS = 20.0  # Base underside to table top.
@@ -107,7 +113,7 @@ class SlitStageParameters:
     slit_width: float = _HEAD.slit_width  # Display/setup value; the stage sets the width.
     # Blade edge beyond the table and pedestal edges. Larger than the flexure head's, so the stage's end
     # features (STAGE_END_BUMP) clear the source cone.
-    blade_overhang: float = 1.9
+    blade_overhang: float = 2.9
     # Plate, spigot, and the shared SM1RC/M.
     plate_thickness: float = 6.0
     plate_margin: float = 3.0  # Plate edge beyond the stage and pedestal outlines.
@@ -138,7 +144,7 @@ class SlitStageParameters:
     toe_body_setback: float = (
         1.5  # Screw axis to the body edge toward the slit; clears the blade's rear edge.
     )
-    toe_finger_length: float = 3.0
+    toe_finger_length: float = 4.0  # Reaches over the spine, so it grows with blade_overhang (validated).
     toe_pad_squeeze: float = 0.3  # EPDM pad compression under the finger, provisional.
     toe_pad_inset: float = 1.0  # EPDM pad end inset from the bar end.
     epdm_thickness: float = INCH / 32  # McMaster 9852N37, uncompressed.
@@ -153,10 +159,11 @@ class SlitStageParameters:
     insert_flange_recess_depth: float = M3_INSERT_FLANGE_RECESS_DEPTH
     insert_installed_length: float = M3_INSERT_INSTALLED_LENGTH
     pedestal_screw_hole_height: float = 10.0  # Plate front up to the end of the screw clearance holes.
-    # SM1 baffle tube: two SM1L15 threaded together, nominal thread depth (provisional length).
-    tube_diameter: float = _HEAD.spigot_diameter
-    tube_clear_diameter: float = 22.9  # SM1L15 drawing.
-    tube_length: float = 2 * 1.5 * INCH
+    # SM1 baffle tube: two SM1L15 threaded together, the second tube's external thread run fully into the first
+    # one's open end. The clear diameter is the SM1L15 retaining-ring bore (drawing), the conservative limit
+    # with the rings fitted.
+    tube_diameter: float = SM1L15_OUTER_DIAMETER
+    tube_clear_diameter: float = 22.9
     # Beam: the source cone about the chief ray (§3.2), the lit slit length (§6.6), and the margin the stage
     # and pedestal edges keep from the cone.
     cone_half_angle: float = 2.0  # Degrees.
@@ -440,6 +447,26 @@ def head_location(p, rotation=0.0):
     return Pos(0, blade_plane, p.optical_height) * Rot(Y=rotation)
 
 
+def baffle_tube(p=None):
+    """Two SM1L15 tubes threaded together (vendor models, retaining rings omitted), entering the ring from the
+    light-source side.
+
+    The tube nearer the ring has its open end inside the ring, the grip from the other side as the spigot's. Its
+    external thread end runs into the open end of the second tube, which butts against the first tube's shoulder.
+    """
+    p = p or SlitStageParameters()
+    open_end = p.plate_back - p.ring_gap - p.ring_thickness + p.ring_grip
+    first = Pos(0, open_end - SM1L15_SHOULDER_TO_OPEN_END, 0)
+    second = Pos(0, open_end - 2 * SM1L15_SHOULDER_TO_OPEN_END, 0)
+    return assembly(
+        "SM1 baffle tube",
+        [
+            labeled(thorlabs_sm1l15(), "SM1L15 (ring side)", BLACK_ANODIZED, first),
+            labeled(thorlabs_sm1l15(), "SM1L15 (source side)", BLACK_ANODIZED, second),
+        ],
+    )
+
+
 def _m3(loc, x, z, bearing_y, shank_toward_back, name, metal):
     """M3 x 12 screw with its bearing face at bearing_y; its head toward +y when the shank goes toward -y."""
     turn = Rot(X=90) if shank_toward_back else Rot(X=-90)
@@ -497,13 +524,7 @@ def build_slit_stage_assembly(p=None, rotation=0.0, include_support=True, side_s
         children.append(_m3(loc, x, z, p.counterbore_floor, False, f"Pedestal screw {i}", metal))
         insert_loc = loc * Pos(x, p.plate_front + p.insert_flange_recess_depth, z) * Rot(X=90)
         children.append(labeled(mcmaster_97171a310(), f"Pedestal insert {i}", BUSHING_BRASS, insert_loc))
-    # Baffle tube (two SM1L15), entering the ring from the light-source side.
-    tube_end = p.plate_back - p.ring_gap - p.ring_thickness + p.ring_grip
-    tube = y_cylinder(p.tube_diameter, 0, 0, tube_end - p.tube_length, tube_end)
-    tube -= y_cylinder(
-        p.tube_clear_diameter, 0, 0, tube_end - p.tube_length - CUT_OVERRUN, tube_end + CUT_OVERRUN
-    )
-    children.append(labeled(tube, "SM1 baffle tube (2 x SM1L15, proxy)", BLACK_ANODIZED, loc))
+    children.append(place(loc, baffle_tube(p)))
     if include_support:
         reference = post_stack(
             ring=True,

@@ -49,6 +49,13 @@ SM1V05_AXIS_YZ = (0.600 * INCH, 0.600 * INCH)
 SM1V05_LOCK_RING_X = 0.195 * INCH
 SM1V05_RETAINING_RING_X = 0.950 * INCH
 SM1L03_SHOULDER_X = -0.330 * INCH  # External-thread shoulder; thread end at x=-0.450 in, open end at x=0.
+# SM1L15 model: axis +X through (y, z) = SM1L15_AXIS_YZ, off the origin; the external-thread shoulder is at
+# x=SM1L15_SHOULDER_X, with the 0.125 in thread toward -X and the open end 1.525 in toward +X.
+SM1L15_AXIS_YZ = (27.854, 33.711)
+SM1L15_SHOULDER_X = -12.761
+SM1L15_SHOULDER_TO_OPEN_END = 1.525 * INCH
+SM1L15_THREAD_LENGTH = 0.125 * INCH
+SM1L15_OUTER_DIAMETER = 1.20 * INCH
 SM1D12_SHOULDER_Z = 0.080 * INCH  # External-thread shoulder above the thread end at z=0.
 XCRS40_SIDE_Z = -20.0  # Side faces of the XCRS40 base and carriage, on the side away from the micrometer.
 VENDOR_CUT_EXTENT = 100.0  # Half-size of a cutter that spans a vendor model.
@@ -323,6 +330,18 @@ def thorlabs_sm1l03() -> Compound:
     """
     tube = max(vendor_step("Thorlabs-SM1L03.step").solids(), key=lambda s: s.volume)
     return Compound([Rot(Z=90) * Pos(-SM1L03_SHOULDER_X, 0, 0) * tube])
+
+
+@cache
+def thorlabs_sm1l15() -> Compound:
+    """Thorlabs SM1L15 tube, without its retaining ring; axis +Y through the origin.
+
+    The external-thread shoulder is at y=0, with the thread toward -Y and the open end toward +Y, as
+    thorlabs_sm1l03. Two tubes join by threading one tube's external thread into the other's open end.
+    """
+    tube = max(vendor_step("Thorlabs-SM1L15.step").solids(), key=lambda s: s.volume)
+    axis_yz = SM1L15_AXIS_YZ
+    return Compound([Rot(Z=90) * Pos(-SM1L15_SHOULDER_X, -axis_yz[0], -axis_yz[1]) * tube])
 
 
 @cache
