@@ -128,7 +128,7 @@ Hardware:
 - McMaster 92290A265, M5 × 50 partially threaded 316 SS socket-head screws — same part as the pivot bolts
 - McMaster 91116A350, oversized M5 washers
 - McMaster 92815A202, M5 low-profile knurled thumb nuts
-- McMaster 9852N37, 1/32 in EPDM friction strips, cut from the same sheet as the cassette clamp-bar pads
+- McMaster 9852N37, 1/32 in EPDM friction strips, cut from same stock as used elsewhere in the project
 
 ### 4.4 Rear supports and feet
 

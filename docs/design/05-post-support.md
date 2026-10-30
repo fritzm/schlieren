@@ -29,8 +29,8 @@ The shoe is a printed PLA U-shaped saddle that:
 - leaves the rail top available as the datum surface;
 - carries a vertical 12.7 mm through-bore for the TR50/M post.
 
-The post passes through the printed shoe and bottoms on a stainless datum shim resting on the rail top,
-so the optomechanics, and not the printed PLA, establish the precision optical height.
+The post passes through the printed shoe and bottoms on a stainless datum shim resting on the rail top, so the
+manufactured steel parts, and not the printed PLA, establish the precision optical height.
 
 The post bore incorporates a single-split clamping collar so that the post can be locked against rotational
 movement while remaining fully seated on the metal datum.  Ear thickness and the approximately 1–2 mm relaxed
@@ -48,9 +48,9 @@ Hardware:
 Three fixtures use the common post/shoe architecture:
 
 1. light source ([§6](06-light-source.md#6-light-source));
-2. source-slit flexure head ([§7](07-source-slit.md#7-source-slit));
+2. source-slit fixture ([§7](07-source-slit.md#7-source-slit));
 3. cutoff carriage ([§8](08-cutoff.md#8-cutoff)).
 
 The light source uses a Thorlabs SMR1/M internally threaded lens mount, and the source-slit and cutoff
-assemblies seat in Thorlabs SM1RC/M lens tube split slip rings. These mounts preserve a 22.1 mm post-top to
-optical-axis dimension.
+assemblies seat in Thorlabs SM1RC/M lens tube split slip rings. These mounts all preserve a 22.1 mm post-top
+to optical-axis dimension.
