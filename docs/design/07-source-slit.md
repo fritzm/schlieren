@@ -137,7 +137,7 @@ Printed parts: the stage plate, the pedestal, and two toe bars.
 - Toe bars: print flat, heel side down.
 - The spigot is printed at the SM1 tube nominal, which fits the SM1RC/M.
 
-Hardware: the stage, 4 × M3 screws (stage to plate), 4 × M3 nuts, 2 × M3 × 12 mm screws (pedestal to plate),
+Hardware: the stage, 4 × M3 × 10 mm screws (91292A113, stage to plate), 4 × M3 nuts, 2 × M3 × 12 mm screws (pedestal to plate),
 4 × M3 × 12 mm screws (toe bars), 4 × M3 heat-set inserts, 2 strips of EPDM.
 
 **Provisional:**
@@ -148,9 +148,9 @@ Hardware: the stage, 4 × M3 screws (stage to plate), 4 × M3 nuts, 2 × M3 × 1
   flange thickness are to be measured, and the base mounting holes (four M3, counterbored) are assumed reachable
   from the table side.
 - The blade overhang and the toe bar's squeeze on the EPDM pad (0.3 mm) are first-print values.
-- The M3 × 12 mm stage screws leave about 3 mm of thread behind the plate, 0.5 mm short of the ring face. M3 × 10
-  mm screws would leave about 1 mm and 2.5 mm of clearance, with the thread still showing past the nut; the
-  length rests on the stage's base flange thickness, which is not yet measured.
+- The M3 × 10 mm stage screws leave about 1 mm of thread behind the plate, 2.5 mm short of the ring face, with
+  the thread still showing past the nut; the length rests on the stage's base flange thickness, which is not yet
+  measured.
 
 
 ### 7.7 Slit focus target (Provisional)
@@ -158,22 +158,36 @@ Hardware: the stage, 4 × M3 screws (stage to plate), 4 × M3 nuts, 2 × M3 × 1
 The emitter image is focused on the slit plane ([§6.7](06-light-source.md#67-focus-and-module-interchange)), but
 the blades of the head sit deep in the stage and cannot be seen. A printed focus target swaps in for the
 stage plate on the same SM1RC/M ring: the same shoulder, ring gap, and spigot grip, then a hollow barrel that
-widens to a Ø40 mm rim whose face is the blade-seat plane. The baffle tube stays in its own ring on its own post
-through the swap. The models are
-`src/schlieren/parts/slit_focus_target.py` and `slit_focus_screen.py` (`uv run slit-focus-target`,
-`uv run slit-focus-screen`). **Provisional.**
+widens to a Ø40 mm rim whose face is the blade-seat plane. The Ø24 mm bore tapers in at 45° to Ø20 mm at the
+rim face, which gives the paper or glass a wide seat and the insert recesses a thicker wall; the beam there is
+about Ø11 mm. The baffle tube is a fixture of its own
+([§7.8](#78-baffle-tube)) and stays clamped on its own post through the swap; the focus models do not show it. The
+models are
+`src/schlieren/parts/slit_focus_target.py` (`uv run slit-focus-target`, with `--show` for the paper variant and
+`--show --glass` for the ground-glass one). **Provisional.**
 
-A sheet of tracing paper lies on the rim and a printed Ø40 × 6 mm retaining ring, with a Ø22 mm window about the
-baffle tube's clear bore, clamps it. Four M3 × 12 mm socket-head screws on a Ø32 mm circle run into heat-set
-inserts (97171A310) in the rim. The LED image forms on the paper's source-facing side and is read through the
-paper from the mirror side, so the turn of the SM1V05 can be judged by eye before the head is fitted. The
-rim face is the datum, so the paper's thickness (not yet measured; the model assumes 0.15 mm) offsets the focus
-plane from the blade-seat plane by that much.
+A sheet of tracing paper lies on the rim and a printed Ø40 × 4 mm retaining ring clamps it. The ring's Ø20 mm
+window matches the seat bore at the rim face, so the ring clamps the full width of the rim's annulus; it passes
+the whole beam and stays within the baffle tube's Ø22.9 mm bore. The window's mirror-side edge has a 1.5 mm × 45°
+bevel for a wider viewing angle; the 2.5 mm land behind it clamps the paper, and the screw heads bear outside the
+bevel. Four M3 × 10 mm socket-head screws (91292A113) on a Ø32 mm circle run into heat-set inserts (97171A310) in
+the rim. The LED image forms on the paper's source-facing side and is read through the paper from the mirror
+side, so the turn of the SM1V05 can be judged by eye before the head is fitted. The rim face is the datum, so the
+paper's thickness (not yet measured; the model assumes 0.15 mm) offsets the focus plane from the blade-seat plane
+by that much. For handling, the rim's back edge and the ring's front edge, both Ø40 mm, have a 0.5 mm chamfer;
+the mating faces keep sharp edges.
 
-A variant replaces the paper with a Ø1 in ground-glass disc (Thorlabs DG10 series, catalog 2.0 ± 0.2 mm thick)
-in a counterbore in the rim, ground face toward the source, pushed forward by a gasket cut from 1/16 in Durometer 30A neoprene sheet against the ring, so that the ground
-surface is at the datum whatever the glass thickness. Its counterbore clearance is to be set from a printed
-coupon, and the grit (DG10-600 to start) is to be confirmed on the bench.
+A variant replaces the paper with a Ø1 in ground-glass disc (Thorlabs DG10 series, catalog 2.0 ± 0.2 mm thick).
+The printed fixture is the same; only the retaining ring differs. The disc sits in a Ø25.7 mm pocket in the ring's
+rear face, ground face toward the source, lying on the rim face as the paper does, so the imaging surface is the
+blade-seat plane whatever the glass thickness (the paper's own thickness aside). A gasket cut from 1/16 in
+Durometer 30A neoprene sheet, between the glass's front face and the pocket ceiling, pushes the glass back onto
+the rim and absorbs the thickness spread. The disc has a 0.2 mm × 45° bevel on both edges (Thorlabs model; the
+drawing does not dimension it), so its flat faces are Ø25.0 mm, and the gasket is cut to that. The ring is
+4.65 mm thick (3.15 mm pocket, 1.5 mm lip) with a 1 mm × 45° bevel on the window, and takes the same M3 × 10 mm
+screws. The glass is set on the rim, then the gasket, then the ring over both; the flat seats on 2.5 mm of the
+rim, outside the Ø20 mm seat bore. The pocket clearance is to be set from a printed coupon, and the grit
+(DG10-600 to start) is to be confirmed on the bench.
 
 ### 7.8 Baffle tube
 
@@ -211,5 +225,4 @@ parallelism, [§7.5](#75-rotation-mount-and-clearances)) or to swap in the focus
 the head's rotation. The two posts share the datum shim and shoe design of every other station, so the tube's
 axis and the head's differ only by the posts' tolerance, against the bore's more than 5 mm of radial margin.
 
-The model is the baffle tube and its post stack in `src/schlieren/parts/slit_stage.py`, shown with the head
-and the focus fixtures.
+The model is the baffle tube and its post stack in `src/schlieren/parts/slit_stage.py`, shown with the head.

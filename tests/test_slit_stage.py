@@ -9,6 +9,7 @@ from schlieren.cad import children_by_label, intersect, moved, y_cylinder, z_cyl
 from schlieren.parts.rail_shoe import REFERENCE_HARDWARE_LABEL, build_rail_shoe
 from schlieren.parts.slit_stage import (
     BAFFLE_HARDWARE_LABEL,
+    STAGE_BASE_FLANGE,
     STAGE_BASE_HOLE_PITCH,
     STAGE_END_BUMP,
     STAGE_SIZE,
@@ -264,6 +265,19 @@ class SlitStageTests(unittest.TestCase):
         p = self.p
         self.assertGreater(p.screw_length - p.toe_thickness, 4.0)  # At least ~8 threads in the table.
 
+    def test_stage_screws_are_the_shorter_m3_and_reach_the_nuts(self):
+        p = self.p
+        self.assertEqual(p.stage_screw_length, 10.0)
+        tip = p.plate_front + STAGE_BASE_FLANGE - p.stage_screw_length
+        self.assertLessEqual(tip, p.plate_back)  # Through the plate to the nuts.
+        self.assertLess(p.plate_back - tip, p.ring_gap)  # Short of the ring face.
+        screws = [
+            c for label, c in children_by_label(self.assembly).items() if label.startswith("Stage screw")
+        ]
+        self.assertEqual(len(screws), 4)
+        for screw in screws:
+            self.assertAlmostEqual(screw.bounding_box().min.Y, head_location(p).position.Y + tip, delta=0.05)
+
     def test_validation_rejects_bad_layouts(self):
         for change in (
             {"cone_half_angle": 10.0},  # Cone reaches the stage edge.
@@ -275,6 +289,7 @@ class SlitStageTests(unittest.TestCase):
             {"toe_pad_width": 9.0},  # Pad reaches the seat edge.
             {"toe_end_margin": 1.0},  # Bar shorter than the blade.
             {"toe_pad_squeeze": 0.0},  # No clamping.
+            {"stage_screw_length": 5.0},  # Stage screws would not reach the nuts.
             {"screw_length": 14.0},  # Toe screws would bottom in the inserts.
             {"toe_body_setback": 4.0},  # Body rides on the blade.
         ):

@@ -60,6 +60,18 @@ MODELS = {
         "McMaster-91116A350.step",
         (v.MCMASTER_91116A350_DIAMETER, v.MCMASTER_91116A350_DIAMETER, v.MCMASTER_91116A350_THICKNESS),
     ),
+    "Thorlabs DG10-600 ground-glass diffuser": (
+        "Thorlabs-DG10-600.step",
+        (v.THORLABS_DG10_DIAMETER, v.THORLABS_DG10_DIAMETER, v.THORLABS_DG10_THICKNESS),
+    ),
+    "McMaster 91292A113 socket-head screw": (
+        "McMaster-91292A113.step",
+        (
+            v.MCMASTER_91292A113_HEAD_DIAMETER,
+            v.MCMASTER_91292A113_HEAD_DIAMETER,
+            v.MCMASTER_91292A113_LENGTH + v.MCMASTER_91292A113_HEAD_HEIGHT,
+        ),
+    ),
     "McMaster 91292A111 socket-head screw": (
         "McMaster-91292A111.step",
         (

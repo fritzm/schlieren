@@ -142,6 +142,12 @@ MCMASTER_93625A225_HEIGHT = 5.0
 # A stand-in for ordinary M5 flat washers: the part itself is not in the BOM.
 MCMASTER_93475A240_THICKNESS = 1.0
 MCMASTER_93475A240_DIAMETER = 10.0
+# Thorlabs DG10-600 model (ground-glass diffuser): a surface model (an open shell, no solid), axis +Z through
+# the origin, centered on its thickness. Both edges carry a 0.2 mm × 45° bevel in the model (flat faces Ø25.0 mm
+# inside the Ø25.4 mm cylinder); the drawing does not dimension it. The two faces are not distinguished.
+THORLABS_DG10_DIAMETER = 25.4
+THORLABS_DG10_THICKNESS = 2.0
+THORLABS_DG10_BEVEL = 0.2
 # McMaster 91292A114 model (M3 × 12, no threads): axis +Z through the origin, centered on its 15 mm overall
 # length (12 mm under the head plus the head), Ø5.5 mm head of 3 mm at +Z, Ø3 mm plain shank to -Z.
 MCMASTER_91292A114_LENGTH = 12.0  # Nominal: under the head.
@@ -150,6 +156,10 @@ MCMASTER_91292A114_HEAD_HEIGHT = 3.0
 MCMASTER_91292A111_LENGTH = 6.0  # Nominal: under the head.
 MCMASTER_91292A111_HEAD_HEIGHT = 3.0
 MCMASTER_91292A111_HEAD_DIAMETER = 5.5
+# McMaster 91292A113 model (M3 × 10, no threads): the 91292A114 layout, centered on its 13 mm overall length.
+MCMASTER_91292A113_LENGTH = 10.0  # Nominal: under the head.
+MCMASTER_91292A113_HEAD_HEIGHT = 3.0
+MCMASTER_91292A113_HEAD_DIAMETER = 5.5
 # McMaster 92095A453 model (M2 × 6 button head, no threads): axis +Z through the origin, Ø2 mm plain shank
 # from z=-3.0 mm to the head's bearing face at z=3.0 mm, Ø3.5 mm button head of 1.3 mm above it.
 MCMASTER_92095A453_LENGTH = 6.0  # Nominal: under the head.
@@ -320,6 +330,17 @@ def thorlabs_acl2520u_a() -> Compound:
     """Thorlabs ACL2520U-A condenser; axis +Y through the origin, plano face at y=0, convex vertex toward
     +Y."""
     return _moved("Thorlabs-ACL2520U-A.step", Pos(0, ACL2520U_A_PLANO_Y, 0) * Rot(Z=180))
+
+
+@cache
+def thorlabs_dg10() -> Solid:
+    """Thorlabs DG10-600 ground-glass diffuser, nominal 2.0 mm thick, with its 0.2 mm edge bevels; axis +Y
+    through the origin, one face at y=0 and the other at y=+2.0 mm.
+
+    The vendor model is an open shell; it is sewn into a solid here. It does not say which face is ground.
+    """
+    shell = vendor_step("Thorlabs-DG10-600.step").shells()[0]
+    return Rot(X=-90) * Pos(0, 0, THORLABS_DG10_THICKNESS / 2) * Solid(shell)
 
 
 @cache
@@ -590,6 +611,17 @@ def mcmaster_91292a114() -> Compound:
     """
     shift = (MCMASTER_91292A114_LENGTH - MCMASTER_91292A114_HEAD_HEIGHT) / 2
     return _moved("McMaster-91292A114.step", Pos(0, 0, shift) * Rot(X=180))
+
+
+@cache
+def mcmaster_91292a113() -> Compound:
+    """McMaster 91292A113 M3 × 0.5 × 10 mm 18-8 stainless socket head screw (unthreaded model).
+
+    Axis +Z through the origin, the head's bearing face at z=0 with the head toward -Z and the shank toward
+    +Z.
+    """
+    shift = (MCMASTER_91292A113_LENGTH - MCMASTER_91292A113_HEAD_HEIGHT) / 2
+    return _moved("McMaster-91292A113.step", Pos(0, 0, shift) * Rot(X=180))
 
 
 @cache

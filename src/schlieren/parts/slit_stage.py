@@ -89,11 +89,13 @@ from schlieren.standards import (
     SPIGOT_SHOULDER_DIAMETER,
 )
 from schlieren.vendor_cad import (
+    MCMASTER_91292A113_LENGTH,
     SM1L15_OUTER_DIAMETER,
     SM1L15_SHOULDER_TO_OPEN_END,
     SM1L15_THREAD_LENGTH,
     SM1RC_M_THICKNESS,
     cadenas_xcrs40_parts,
+    mcmaster_91292a113,
     mcmaster_91292a114,
     mcmaster_91828a211,
     mcmaster_97171a310,
@@ -141,7 +143,10 @@ class SlitStageParameters:
     ring_gap: float = 3.5  # Plate rear to ring face, the shoulder thickness.
     post_clearance: float = 2.0  # Minimum, rotating parts to the post and rail shoe over the working range.
     # Common M3 hardware: 91292A114 M3 x 12 SHCS, 91828A211 nut.
-    screw_length: float = 12.0
+    screw_length: float = 12.0  # Toe and pedestal screws, 91292A114.
+    stage_screw_length: float = (
+        MCMASTER_91292A113_LENGTH  # Stage to plate, 91292A113: shorter behind the plate.
+    )
     screw_clearance: float = M3_CLEARANCE_DIAMETER
     screw_head_diameter: float = M3_SOCKET_HEAD_DIAMETER
     screw_head_height: float = M3_SOCKET_HEAD_HEIGHT
@@ -385,6 +390,8 @@ class SlitStageParameters:
         engagement = self.screw_length - self.toe_thickness
         if engagement > self.insert_hole_depth or engagement < self.insert_installed_length - 0.5:
             raise ValueError("Toe screws must run through the pedestal's inserts without bottoming")
+        if self.plate_front + STAGE_BASE_FLANGE - self.stage_screw_length > self.plate_back:
+            raise ValueError("Stage screws must reach through the plate to the nuts")
         if self.pedestal_screw_hole_height <= self.insert_flange_recess_depth + self.insert_hole_depth:
             raise ValueError("Pedestal screws need clearance holes past their inserts")
         if self.beam_clearance < self.beam_margin:
@@ -565,10 +572,11 @@ def baffle_tube(p=None):
     )
 
 
-def _m3(loc, x, z, bearing_y, shank_toward_back, name, metal):
-    """M3 x 12 screw with its bearing face at bearing_y; its head toward +y when the shank goes toward -y."""
+def _m3(loc, x, z, bearing_y, shank_toward_back, name, metal, screw=mcmaster_91292a114):
+    """M3 screw (12 mm unless screw says otherwise) with its bearing face at bearing_y; its head toward +y
+    when the shank goes toward -y."""
     turn = Rot(X=90) if shank_toward_back else Rot(X=-90)
-    return labeled(mcmaster_91292a114(), name, metal, loc * Pos(x, bearing_y, z) * turn)
+    return labeled(screw(), name, metal, loc * Pos(x, bearing_y, z) * turn)
 
 
 def build_slit_stage_assembly(p=None, rotation=0.0, include_support=True, side_screws=False):
@@ -615,7 +623,7 @@ def build_slit_stage_assembly(p=None, rotation=0.0, include_support=True, side_s
                 )
     for i, (x, z) in enumerate(p.stage_screw_xz(), 1):
         head_y = p.plate_front + STAGE_BASE_FLANGE
-        children.append(_m3(loc, x, z, head_y, True, f"Stage screw {i}", metal))
+        children.append(_m3(loc, x, z, head_y, True, f"Stage screw {i}", metal, mcmaster_91292a113))
         nut = Rot(Z=90) * mcmaster_91828a211()
         children.append(
             labeled(nut, f"Stage nut {i}", metal, loc * Pos(x, 0, z) * Rot(X=90) * Pos(0, 0, -p.nut_floor))

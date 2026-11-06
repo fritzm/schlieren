@@ -264,7 +264,7 @@ The fitting and removal sequence is set by the bands ([§9.8](#98-retaining-band
 ### 9.6 Phone rest
 
 The phone hangs from the lens with its body to the outboard side of the optical axis
-([§3.4](01-context-and-layout.md#34-common-optical-axis-datum)). Its weight, centered about 43 mm from the
+([§3.4](01-context-and-layout.md#34-optical-axis)). Its weight, centered about 43 mm from the
 lens axis, would turn the lens in its collars. The phone rest stops that: the phone's lower long edge sits on
 one dowel pin lying along the rail, about 100 mm outboard of the axis, on the arm of a short printed shoe of
 its own. The shoe's lower section is that of the cradle shoe ([§9.5](#95-lens-cradle)), with a single pair of
