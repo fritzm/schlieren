@@ -30,8 +30,8 @@ overhang toward the outside of the optical head keeps the phone clear of the sou
 
 ### 4.2 Front pivot plate
 
-The front pivot plate is a 180 × 150 mm Baltic-birch rectangle; the 180 mm dimension is transverse to the
-rails and the 150 mm dimension is fore/aft.
+The front pivot plate is a 180 × 150 mm Baltic-birch rectangle, with its long dimension is transverse to the
+rails.
 
 Plate coordinates are the pivot frame ([§3.5](01-context-and-layout.md#35-coordinate-frames)): the
 origin is at the midpoint of the aft edge, +y runs toward the mirror along the plate centerline, and +x runs
@@ -67,8 +67,8 @@ bolt locations at approximately:
   <em>Fig. 2. Drilling template for the front pivot plate, in plate coordinates</em>
 </p>
 
-With 40 mm bolt spacing and 90 mm pivot-to-clamp distance, the rail yaws can be adjusted slightly more than
-±3° from nominal.
+With 40 mm bolt spacing and 90 mm pivot-to-clamp distance, the achievable yaws adjustment range of each rail
+is slightly more than ±3°.
 
 A front Sorbothane support foot is attached below the plate, centered at approximately (0, 125) mm, directly
 between the two rail pivots.  This keeps the support point on the pivot line and is clear of the pivot and yaw
@@ -94,36 +94,10 @@ Per rail, from the bottom up:
 socket head → oversized washer → plywood pivot plate → 20 mm spacer → 4 mm joining plate → oversized washer →
 M5 nyloc
 
-The pivot bolts pass through the plywood in bushings (below). The 20 mm spacer holds the pivot lug at
+The pivot bolts pass through 5.5 mm clearance holes in the plywood. The 20 mm spacer holds the pivot lug at
 the rail top, where the lug lies along the rail with the pivot bolt through its front hole; its other two
 holes fix it to the rail by M5 × 8 socket-head screws from the general M5 assortment into T-nuts in the rail
 top slot.
-
-**Pivot bushings (Provisional).** The nyloc is left loose enough for the rail to turn, so nothing preloads
-the pivot stack, and in a 5.5 mm clearance hole the bolt has about 0.25 mm of radial play and can tilt over the
-plywood's 12.7 mm thickness. With the rail clamped at the yaw straps 90 mm aft, the rail then rocks about the
-clamps. Each pivot hole is instead bored to 8 mm and fitted with a plain (flangeless) sleeve bushing,
-McMaster 6658K724: oil-embedded 841 bronze, 5 mm ID (0 to +0.02 mm) × 8 mm OD × 10 mm long, seated within the
-plywood. This leaves about 0.02 mm of play on the bolt shank and holds the bolt square to the plate. The
-bushing only guides the bolt to prevent pivot wobble: it carries no axial load, and nothing turns in it. The
-rotating interface is the joining plate, which turns about the bolt and across the end of the 20 mm spacer.
-
-The lug needs the same treatment. The yaw clamps hold the rail against sliding across the plywood, but friction
-resists turning the rail about the clamp center only weakly, and the long rear rail multiplies any lateral play
-at the front pivot (play × distance aft of the clamp / 90 mm). The lug's front hole is therefore bored to 8 mm
-and fitted with a 4 mm plain sleeve bushing, McMaster 6658K116 (the same oil-embedded 841 bronze, 5 mm ID × 8 mm
-OD), flush with both faces of the 4 mm plate. Together with the plywood bushing this locates the bolt laterally
-at both ends of the pivot to about 0.02 mm.
-
-- The bore is drilled square on a drill press, centered on the existing pivot hole, because the bushing fixes
-  the bolt axis to the bore axis. The 95 mm separation is not critical; the rails' splay adjustment absorbs
-  small variations.
-- The 1.5 mm wall is pressed into a snug 8.0 mm bore (also in the lug) and retained with a drop of cyanoacrylate or epoxy.
-- The pivot bolt's smooth shank, not its thread, must run in the bushing; the M5 × 50 screw's thread length
-  against the stack is to be checked.
-- The nyloc is run down only snug, so the spacer face seats on the plywood without locking the pivot.
-
-The yaw bolts are clamped hard, so the faces of their stack square them, and their 5.5 mm holes stay as drilled.
 
 Hardware:
 
@@ -131,8 +105,25 @@ Hardware:
 - McMaster 92871A091, 20 mm × 10 mm OD × 5.3 mm ID stainless spacer
 - McMaster 91116A350, M5 oversized washer, 15 mm OD
 - McMaster 93625A225, M5 nylon-insert locknut
-- McMaster 6658K724, 5 × 8 × 10 mm oil-embedded bronze sleeve bushing (pivot bushings, **Provisional**)
-- McMaster 6658K116, 5 × 8 × 4 mm oil-embedded bronze sleeve bushing (pivot lug bushings, **Provisional**)
+
+#### **Provisional: pivot bushings**
+
+Identified during construction: the nyloc is left loose enough for the rail to turn, so nothing preloads the
+pivot stack; with 5.5 mm clearance holes in the plywood and lugs the bolt has about 0.25 mm of radial play at
+each end and can tilt.  The yaw clamps hold the rail against sliding across the plywood effectively, but they
+resist turning the rail about the clamp center only weakly, and the long rear rail multiplies any lateral play
+at the front pivot (play × distance aft of the clamp / 90 mm). The end result is some undesireable position
+wobble in the rails even when firmly clamped.
+
+A proposed remediation is to bore the plywood and lug clearance holes out to 8 mm and press fit plain
+(flangeless) sleeve bushings.  These would locate the bolts laterally at both ends of the pivot to about 0.02
+mm and hold the bolts square to the plywood and lugs.  The bushings carry no axial load, and rotation within
+them is minimal occurring only while the rail yaw is being actively adjusted.
+
+Hardware:
+
+- McMaster 6658K724, 5 × 8 × 10 mm oil-embedded bronze sleeve bushing
+- McMaster 6658K116, 5 × 8 × 4 mm oil-embedded bronze sleeve bushing
 
 #### Yaw clamps
 
@@ -148,8 +139,8 @@ Each yaw bolt stack, from the bottom up:
 socket head → oversized washer → plywood pivot plate → (alongside the rail) → EPDM friction strip → 4 mm yaw
 strap → oversized washer → M5 thumb nut
 
-The yaw bolts also pass through 5.5 mm clearance holes in the plywood.  Yaw is adjusted and locked at the
-front pivot plate by loosening the two thumb nuts, rotating the rail beneath the strap, and retightening.
+The yaw bolts pass through 5.5 mm clearance holes in the plywood.  Yaw is adjusted and locked at the front
+pivot plate by loosening the two thumb nuts, rotating the rail beneath the strap, and retightening.
 
 Hardware:
 

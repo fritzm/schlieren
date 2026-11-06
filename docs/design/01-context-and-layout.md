@@ -48,8 +48,6 @@ The following are out of scope:
 Use off-the-shelf metal parts, vendor-supplied finished dimensions, plywood, thin foil, or printed PLA.
 Drilling and tapping of aluminum parts is within scope.
 
-A miter saw, drill press, and small hand router are available for working of plywood panels (thanks, Bret!).
-
 ## 2. System overview and physical layout
 
 The apparatus consists of two main physical assemblies:
@@ -106,7 +104,7 @@ $$
 The intended illumination cone is approximately ±1.82° (the mirror's half-angle, just filling it) to ±2.0°,
 corresponding to approximately NA = 0.032–0.035 in air. Slight mirror overfill is preferred to underfill.
 
-Useful nominal beam diameters for the ±1.82° cone are:
+Some beam diameters of the nominal ±1.82° cone for reference:
 
 | Distance from source slit | Approx. beam diameter |
 | ------------------------- | --------------------- |
@@ -138,15 +136,15 @@ A useful starting point is about 30–40 mm total slit/cutoff axial staggering, 
 approximately ±15–20 mm around nominal 2f. This is an experimental setup adjustment rather than a
 fabrication-critical dimension.
 
-### 3.4 Common optical-axis datum
+### 3.4 Optical axis
 
 The common optical axis is 72.35 mm above the top surface of the 2020 extrusion, established by commercial
 optomechanics to simplify alignment.  The stack-up is:
 
 <table style="border-collapse: collapse; border: none; margin-left: 2em; line-height: 1.4;">
-<tr><td style="text-align: right; padding: 0 1em 0 0.6em; border: none;">0.254 mm</td><td style="padding: 0; border: none;">Steel datum shim on rail (bridges the rail top channel)</td></tr>
+<tr><td style="text-align: right; padding: 0 1em 0 0.6em; border: none;">0.254 mm</td><td style="padding: 0; border: none;">steel datum shim on rail (bridges the rail top channel)</td></tr>
 <tr><td style="text-align: right; padding: 0 1em 0 0.6em; border: none;">50.000 mm</td><td style="padding: 0; border: none;">Thorlabs TR50/M post</td></tr>
-<tr><td style="text-align: right; padding: 0 1em 0.5em 0.6em; border: none;">22.098 mm</td><td style="padding: 0 0 0.5em; border: none;">Post top to axis for Thorlabs SM1 optical holders</td></tr>
+<tr><td style="text-align: right; padding: 0 1em 0.5em 0.6em; border: none;">22.098 mm</td><td style="padding: 0 0 0.5em; border: none;">various Thorlabs SM1 metric fixed mounts</td></tr>
 <tr><td style="text-align: right; padding: 0.5em 1em 0 0.6em; border: none; border-top: 1px solid currentColor;">72.352 mm</td><td style="padding: 0.5em 0 0; border: none; border-top: 1px solid currentColor;"></td></tr>
 </table>
 
