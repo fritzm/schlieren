@@ -5,8 +5,11 @@ docs/design/ and the part parameter classes remain authoritative. Each part help
 from the vendor's frame into a documented mounting frame, so callers place it with a translation.
 """
 
+import hashlib
+import inspect
 import os
 import tempfile
+from collections.abc import Callable
 from functools import cache
 from pathlib import Path
 from typing import cast
@@ -232,16 +235,28 @@ def vendor_step(filename: str) -> Compound:
     """
     source = VENDOR_CAD_DIR / filename
     stat = source.stat()
-    cached = VENDOR_CACHE_DIR / f"{source.stem}.{stat.st_mtime_ns}.{stat.st_size}.brep"
+    return _cached_brep(
+        f"{source.stem}.{stat.st_mtime_ns}.{stat.st_size}",
+        f"{source.stem}.*.brep",
+        lambda: import_step(source),
+    )
+
+
+def _cached_brep(name: str, stale_pattern: str, build: Callable[[], Compound]) -> Compound:
+    """The geometry `build` returns, read from VENDOR_CACHE_DIR/<name>.brep if saved, else built and saved.
+
+    Saving removes the entries matching stale_pattern, which an earlier version of this one left behind.
+    """
+    cached = VENDOR_CACHE_DIR / f"{name}.brep"
     if cached.is_file():
         try:
             return cast(Compound, import_brep(cached))
         except Exception:
-            pass  # An unreadable cache entry is rebuilt from the STEP file.
-    model = import_step(source)
+            pass  # An unreadable cache entry is rebuilt.
+    model = build()
     try:
         VENDOR_CACHE_DIR.mkdir(parents=True, exist_ok=True)
-        for stale in VENDOR_CACHE_DIR.glob(f"{source.stem}.*.brep"):
+        for stale in VENDOR_CACHE_DIR.glob(stale_pattern):
             stale.unlink(missing_ok=True)
         # Written beside its final name and renamed, so a process reading in parallel never sees half a file.
         handle, partial = tempfile.mkstemp(dir=VENDOR_CACHE_DIR, suffix=".partial")
@@ -271,7 +286,33 @@ def thorlabs_smr1_m() -> Compound:
 
     The text engraved in the y=0 face is filled.
     """
-    return _fill_engraving(_moved("Thorlabs-SMR1-M.step", Rot(X=90)))
+    return _filled_vendor_step("Thorlabs-SMR1-M.step", Rot(X=90))
+
+
+def _filled_vendor_step(filename: str, loc: Location) -> Compound:
+    """The vendor STEP file moved by loc, with its engraving filled (`_fill_engraving`).
+
+    The fill is a slow boolean, so its result is cached beside the STEP geometry. The entry is keyed on the
+    STEP file, loc, the engraving constants, and the fill's source, so changing any of them rebuilds it.
+    """
+    stat = (VENDOR_CAD_DIR / filename).stat()
+    key = repr(
+        (
+            stat.st_mtime_ns,
+            stat.st_size,
+            [round(c, 6) for c in (*loc.position, *loc.orientation)],
+            ENGRAVING_DEPTH,
+            ENGRAVING_MAX_EXTENT,
+            inspect.getsource(_fill_engraving),
+        )
+    )
+    digest = hashlib.sha1(key.encode()).hexdigest()[:16]
+    stem = Path(filename).stem
+    return _cached_brep(
+        f"filled-{stem}.{digest}",
+        f"filled-{stem}.*.brep",
+        lambda: _fill_engraving(_moved(filename, loc)),
+    )
 
 
 def _fill_engraving(model: Compound) -> Compound:
@@ -303,7 +344,7 @@ def thorlabs_sm1cp2m() -> Compound:
 
     The text engraved in the flat back face is filled, which drops its several hundred small faces.
     """
-    return _fill_engraving(_moved("Thorlabs-SM1CP2M.step", Pos(0, -SM1CP2M_SEAT_Y, 0)))
+    return _filled_vendor_step("Thorlabs-SM1CP2M.step", Pos(0, -SM1CP2M_SEAT_Y, 0))
 
 
 @cache
@@ -385,7 +426,7 @@ def thorlabs_sm1rc_m() -> Compound:
 
     The M4 locking screw across the clamp split is at +Z. The text engraved in the y=0 face is filled.
     """
-    return _fill_engraving(_moved("Thorlabs-SM1RC-M.step", Pos(0, SM1RC_M_THICKNESS, 0) * Rot(X=90)))
+    return _filled_vendor_step("Thorlabs-SM1RC-M.step", Pos(0, SM1RC_M_THICKNESS, 0) * Rot(X=90))
 
 
 @cache

@@ -26,7 +26,7 @@ from math import pi
 
 from build123d import Compound, Part, Rot, Shape, chamfer, fillet
 
-from schlieren.cad import CUT_OVERRUN, assembly, box_between, labeled, y_cylinder
+from schlieren.cad import CUT_OVERRUN, assembly, box_between, labeled, moved, y_cylinder
 from schlieren.palette import FOCUS_RING_GRAY, GLASS, TELEPHOTO_BARREL
 from schlieren.standards import INCH
 from schlieren.validation import require_positive_dimensions
@@ -217,9 +217,9 @@ def build_focus_ring(p: LensParameters | None = None) -> Shape:
         p.barrel_diameter / 2 - p.focus_channel_depth / 2,
         p.focus_ring_crest_diameter / 2,
     )
-    for k in range(p.focus_ridge_count):
-        ring = ring + Rot(Y=k * 360 / p.focus_ridge_count) * ridge
-    return ring
+    # Fused in one operation: fusing the ridges one at a time costs ten times as much.
+    ridges = [moved(ridge, Rot(Y=k * 360 / p.focus_ridge_count)) for k in range(p.focus_ridge_count)]
+    return ring.fuse(*ridges).clean()
 
 
 @cache

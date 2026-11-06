@@ -14,7 +14,7 @@ from schlieren.parts.frame import (
     build_rail_support_block,
 )
 from schlieren.parts.frame_drawing import pivot_plate_drawing_svg
-from schlieren.testing import near_pairs_among, shared, slow, svg_attr
+from schlieren.testing import loose_box, near_pairs_among, shared, slow, svg_attr
 from schlieren.vendor_cad import (
     MCMASTER_8215K2_DIAMETER,
     MCMASTER_8215K2_HEIGHT,
@@ -151,7 +151,9 @@ class FrameTests(unittest.TestCase):
         self.assertAlmostEqual(front.X, 0.0, places=5)
         self.assertAlmostEqual(front.Y, p.plate_depth - p.pivot_setback, places=5)
         lowest_other = min(
-            part.bounding_box().min.Z for part in leaves(self.frame) if not part.label.endswith("oot")
+            loose_box(part).min.Z  # Never above the exact minimum, so the margin test stays conservative.
+            for part in leaves(self.frame)
+            if not part.label.endswith("oot")
         )
         self.assertGreater(lowest_other - p.table, 5.0)
 

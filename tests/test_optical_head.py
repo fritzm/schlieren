@@ -7,6 +7,7 @@ from schlieren.cad import box_between, children_by_label, intersect, leaves, mov
 from schlieren.parts.optical_head import (
     IMAGING_SIDE,
     OpticalHeadParameters,
+    assemble_optical_head,
     build_imaging_fixtures,
     build_optical_head,
     build_source_fixtures,
@@ -52,11 +53,12 @@ class OpticalHeadTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.h = OpticalHeadParameters()
-        cls.head = build_optical_head(cls.h)
-        cls.groups = children_by_label(cls.head)
-        # The fixture groups are in the pivot frame, so measure stations in rail frames from the models.
+        # The fixture groups in the rail frames, where stations are measured; the head places copies of them
+        # in the pivot frame, so each is built once.
         cls.source = build_source_fixtures(cls.h)
         cls.imaging = build_imaging_fixtures(cls.h)
+        cls.head = assemble_optical_head(cls.h, cls.source, cls.imaging)
+        cls.groups = children_by_label(cls.head)
 
     def test_stations_stand_on_the_rails(self):
         self.h.validate()

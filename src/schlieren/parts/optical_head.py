@@ -153,12 +153,32 @@ def build_optical_head(
     """
     h = h or OpticalHeadParameters()
     h.validate()
+    return assemble_optical_head(
+        h,
+        build_source_fixtures(h, slit_rotation),
+        build_imaging_fixtures(h),
+        left_yaw,
+        right_yaw,
+        printed_color,
+    )
+
+
+def assemble_optical_head(
+    h: OpticalHeadParameters,
+    source: Compound,
+    imaging: Compound,
+    left_yaw: float = 0.0,
+    right_yaw: float = 0.0,
+    printed_color: tuple | None = PRINTED_BLACK_PLA,
+) -> Shape:
+    """The head from fixture groups already built (`build_source_fixtures`, `build_imaging_fixtures`).
+
+    The groups are copied, not modified, so a caller that also wants them in their rail frames can build
+    each once and share it.
+    """
     frame = build_frame_assembly(h.frame, left_yaw, right_yaw)
     yaw = {SOURCE_SIDE: left_yaw, IMAGING_SIDE: right_yaw}
-    fixtures = [
-        (build_source_fixtures(h, slit_rotation), SOURCE_SIDE),
-        (build_imaging_fixtures(h), IMAGING_SIDE),
-    ]
+    fixtures = [(source, SOURCE_SIDE), (imaging, IMAGING_SIDE)]
     children = [frame]
     for group, side in fixtures:
         children.append(place(h.frame.rail_location(side, yaw[side] * pi / 180), group))
