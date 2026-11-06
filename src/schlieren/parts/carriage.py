@@ -83,6 +83,9 @@ from schlieren.standards import (
     PLA_MODULUS,
     POST_DIAMETER,
     POST_LENGTH,
+    SM1_TUBE_DIAMETER,
+    SM1RC_M_BORE,
+    SPIGOT_SHOULDER_DIAMETER,
 )
 from schlieren.validation import require_positive_dimensions
 from schlieren.vendor_cad import SM1RC_M_THICKNESS, mcmaster_91292a114, mcmaster_91828a211, mcmaster_97936a109
@@ -103,14 +106,14 @@ class CarriageParameters:
     post_length: float = POST_LENGTH
     post_diameter: float = POST_DIAMETER
     ring_thickness: float = SM1RC_M_THICKNESS
-    ring_bore: float = 1.21 * INCH
-    # Rear spigot, same interface as the slit-head adapter (§7.6); printed at the SM1 tube nominal.
-    spigot_diameter: float = 1.20 * INCH
+    ring_bore: float = SM1RC_M_BORE
+    # Rear spigot, same interface as the slit stage plate (§7.5); printed at the SM1 tube nominal.
+    spigot_diameter: float = SM1_TUBE_DIAMETER
     # Plate back to ring face, set by a shoulder on the spigot that the ring seats against. Longer than the
     # slit head's: the plate reaches below the rail-shoe top, so it must clear the shoe end, not just the
     # post.
     ring_gap: float = 12.0
-    spigot_shoulder_diameter: float = 34.0  # Bears on the SM1RC/M face outside its Ø30.7 mm bore.
+    spigot_shoulder_diameter: float = SPIGOT_SHOULDER_DIAMETER
     post_clearance: float = (
         2.0  # Minimum, plate back to post and rail shoe, and rotating parts to the rail top.
     )

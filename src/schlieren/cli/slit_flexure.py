@@ -11,15 +11,15 @@ from schlieren.cli._common import (
     render,
     show,
 )
-from schlieren.parts.slit_head import (
-    SlitHeadParameters,
+from schlieren.parts.slit_flexure import (
+    SlitFlexureParameters,
     build_clamp_bar,
-    build_slit_head,
-    build_slit_head_assembly,
+    build_slit_flexure,
+    build_slit_flexure_assembly,
     build_spigot_adapter,
 )
 
-DEFAULT_FIGURE = Path("docs/design/figures/slit-head.png")
+DEFAULT_FIGURE = Path("docs/design/figures/slit-flexure.png")
 FIGURE_VIEW_DIRECTION = (
     -0.9,
     -1.0,
@@ -39,7 +39,7 @@ def main():
     add_output_option(parser)
     add_figure_option(parser, DEFAULT_FIGURE, "the head on its post and shoe")
     args = parser.parse_args()
-    p = SlitHeadParameters()
+    p = SlitFlexureParameters()
     p.validate()
     pitch_um = p.adjuster_pitch * 1000
     steer = SLIT_TO_MIRROR / IRIS_TO_SLIT
@@ -60,15 +60,15 @@ def main():
     print(f"Stage rotation (first-order): width {rw * 1e3:.2f} mrad/mm, centering {rc * 1e3:.3f} mrad/mm")
     print(f"  slit taper over 10 mm per 0.1 mm of width change: {rw * 0.1 * 1e4:.2f} um")
     parts = {
-        "slit_head": build_slit_head(p),
-        "slit_head_adapter": build_spigot_adapter(p),
-        "slit_head_clamp_bar": build_clamp_bar(p),
+        "slit_flexure": build_slit_flexure(p),
+        "slit_flexure_adapter": build_spigot_adapter(p),
+        "slit_flexure_clamp_bar": build_clamp_bar(p),
     }
     export_models(parts, args.output)
     if args.figure:
-        render(build_slit_head_assembly(p), args.figure, FIGURE_VIEW_DIRECTION)
+        render(build_slit_flexure_assembly(p), args.figure, FIGURE_VIEW_DIRECTION)
     if args.show:
-        show(build_slit_head_assembly(p, args.rotation))
+        show(build_slit_flexure_assembly(p, args.rotation))
 
 
 if __name__ == "__main__":

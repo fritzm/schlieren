@@ -28,7 +28,8 @@ EXTREME_POSES = (
     (-3.0, -3.0, 0.0, 0.0),  # Rails converged, slit and cutoff in the same plane: the closest approach.
     (-3.0, -3.0, 45.0, 35.0),
     (3.0, 3.0, 0.0, -35.0),
-    (-3.0, 3.0, 90.0, 0.0),
+    (-3.0, 3.0, -90.0, 0.0),  # Vertical slit, micrometer outboard: clear with no stagger.
+    (-3.0, 3.0, 90.0, 17.5),  # Micrometer toward the cutoff carriage: needs about 16 mm of stagger.
     (3.0, -3.0, 90.0, 35.0),
 )
 
@@ -74,17 +75,18 @@ class OpticalHeadTests(unittest.TestCase):
             for post in posts:
                 body = max(post.solids(), key=lambda s: s.volume)  # Not the setscrew stud above the top.
                 self.assertAlmostEqual(body.bounding_box().max.Z, POST_TOP, delta=TR50_MODEL_ROUNDING)
-        self.assertEqual(len(by_label(self.source, "TR50 M post")), 2)  # Light source and slit.
+        self.assertEqual(len(by_label(self.source, "TR50 M post")), 3)  # Light source, slit, and baffle tube.
         self.assertEqual(len(by_label(self.imaging, "TR50 M post")), 1)  # Cutoff.
 
     def test_slit_blades_lie_on_the_slit_station(self):
-        blades = [*by_label(self.source, "Datum blade"), *by_label(self.source, "Width blade")]
+        blades = [*by_label(self.source, "Stationary blade"), *by_label(self.source, "Movable blade")]
         self.assertEqual(len(blades), 2)
         for blade in blades:
             box = blade.bounding_box()
-            # The blade rests on the blade-seat plane and extends toward the head's front, rail -y; its
-            # edge, inclined to the plane by the fold, dips a few hundredths of a millimeter ahead of it.
-            self.assertAlmostEqual(box.max.Y, self.h.slit_station, delta=0.05)
+            # The blade rests on the blade-seat plane and extends toward the head's front, rail +y (toward
+            # the mirror); its edge, inclined to the plane by the fold, dips about 0.1 mm behind it over the
+            # 2.9 mm overhang.
+            self.assertAlmostEqual(box.min.Y, self.h.slit_station, delta=0.1)
 
     def test_condenser_is_the_design_distance_from_the_slit(self):
         (lens,) = by_label(self.source, "ACL2520U-A condenser")
@@ -131,7 +133,7 @@ class OpticalHeadTests(unittest.TestCase):
     def test_clearances_hold_at_the_adjustment_extremes(self):
         """The head is clear in the poses that bring its parts closest, not only at nominal.
 
-        With both rails yawed inward and the slit and cutoff un-staggered, the slit's flexure head passes the
+        With both rails yawed inward and the slit and cutoff un-staggered, the slit head passes the
         cutoff carriage's keeper frame at only about 1.4 mm (the stagger of §3.3 is what gives margin); the
         assertions keep that above MIN_CLEARANCE. The other poses cover opposite yaws, slit rotations, and the
         stagger at both signs.

@@ -20,7 +20,7 @@ from schlieren.testing import FULL_ENV
 MEMORY_PER_JOB = int(1.5 * 1024**3)
 
 # Test modules with the heaviest fixtures, started first so they overlap the rest.
-HEAVY = {"test_light_source", "test_camera_support", "test_carriage", "test_slit_head"}
+HEAVY = {"test_light_source", "test_camera_support", "test_carriage", "test_slit_flexure"}
 
 
 def default_jobs() -> int:

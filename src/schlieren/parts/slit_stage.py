@@ -1,14 +1,13 @@
-"""EXPERIMENT, not the §7 baseline: source-slit head on an SF Technology SEMX40-AS linear stage.
+"""Source-slit head (§7) on an SF Technology SEMX40-AS linear stage.
 
 The movable blade rides on the stage table and the width is set by the stage's micrometer; the stationary
-blade sits on a printed pedestal at the same height. No flexure, spring, or centering stage. Nothing here is
-final until the user accepts it; the design fragments and the BOM still describe the §7 flexure head.
+blade sits on a printed pedestal at the same height. No flexure, spring, or centering stage.
 
 Parts:
 
 - plate: flat printed plate with the SM1-tube-diameter spigot, a Ø34 mm shoulder the SM1RC/M seats against, and
-  a Ø24 mm light bore. The spigot is short, so the ring also grips an SM1 baffle tube (two SM1L15) from the
-  light-source side. The stage bolts to the plate's front with captive nuts at its rear; the pedestal is screwed
+  a Ø24 mm light bore. The spigot grips the whole SM1RC/M; the SM1 baffle tube (two SM1L15) has a ring and
+  post of its own upstream and ends just short of the head's ring (§7.8). The stage bolts to the plate's front with captive nuts at its rear; the pedestal is screwed
   on from the plate's rear into heat-set M3 inserts;
 - stage: the stage on hand (Amazon B0B7RVW3SX), shown with Misumi's XCRS40 solid model (CADENAS PARTcommunity; the same
   table and base layout as the SF Technology SEMX40-AS, whose own STEP is surface-only). Its table top, 20 mm above its
@@ -25,10 +24,10 @@ layer, which stands proud of the plate's face, meets the seat; the plate is incl
 both. A load behind the fold's front edge would instead lever the blade's cutting end up off the seat.
 
 Local frame, shown at rotation 0 (slit horizontal, micrometer up): x along the slit, z the adjustment axis (+z
-toward the micrometer), y the optical axis, +y out of the front toward the mirror, as the §7 head. The origin
+toward the micrometer), y the optical axis, +y out of the front toward the mirror, as §7.2. The origin
 is the slit center on the blade-seat plane. The stage is at its mid-travel (its base flush with its table).
 
-Assembly frame is the §3.4 source rail frame, as slit_head: x transverse, +y along the rail toward the mirror,
+Assembly frame is the §3.4 source rail frame, x transverse, +y along the rail toward the mirror,
 z=0 at the rail top, with the slit post at x=y=0. The light comes from the source side through the baffle
 tube and the plate's bore, passing the stage's edge to reach the slit from behind, so the spigot, ring, and post
 are on the light-source side of the blades.
@@ -38,7 +37,7 @@ reachable from the table side with the screws through the base flange; confirm o
 (2.9 mm past the table edge) and the toe bar's squeeze on the EPDM pad are first-print values.
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import cache
 from math import isfinite, radians, tan
 
@@ -56,11 +55,16 @@ from schlieren.cad import (
     y_hex,
 )
 from schlieren.hardware import (
+    M3_CLEARANCE_DIAMETER,
     M3_INSERT_FLANGE_RECESS_DEPTH,
     M3_INSERT_FLANGE_RECESS_DIAMETER,
     M3_INSERT_HOLE_DEPTH,
     M3_INSERT_HOLE_DIAMETER,
     M3_INSERT_INSTALLED_LENGTH,
+    M3_NUT_ACROSS_FLATS,
+    M3_NUT_THICKNESS,
+    M3_SOCKET_HEAD_DIAMETER,
+    M3_SOCKET_HEAD_HEIGHT,
 )
 from schlieren.palette import (
     BLACK_ANODIZED,
@@ -71,13 +75,23 @@ from schlieren.palette import (
     PRINTED_GREEN,
     RUBBER,
 )
-from schlieren.parts.rail_shoe import REFERENCE_HARDWARE_LABEL, post_stack
+from schlieren.parts.rail_shoe import REFERENCE_HARDWARE_LABEL, RailShoeParameters, post_stack
 from schlieren.parts.razor_blade import RazorBladeParameters, build_razor_blade, seated_blade_location
-from schlieren.parts.slit_head import SlitHeadParameters
-from schlieren.standards import INCH
+from schlieren.standards import (
+    DATUM_SHIM_THICKNESS,
+    INCH,
+    NUT_POCKET_ACROSS_FLATS_CLEARANCE,
+    OPTICAL_HEIGHT,
+    POST_DIAMETER,
+    POST_LENGTH,
+    SM1_TUBE_DIAMETER,
+    SM1RC_M_BORE,
+    SPIGOT_SHOULDER_DIAMETER,
+)
 from schlieren.vendor_cad import (
     SM1L15_OUTER_DIAMETER,
     SM1L15_SHOULDER_TO_OPEN_END,
+    SM1L15_THREAD_LENGTH,
     SM1RC_M_THICKNESS,
     cadenas_xcrs40_parts,
     mcmaster_91292a114,
@@ -86,7 +100,7 @@ from schlieren.vendor_cad import (
     thorlabs_sm1l15,
 )
 
-_HEAD = SlitHeadParameters()  # Shared defaults: blades, SM1 spigot and ring, M3 hardware.
+BAFFLE_HARDWARE_LABEL = "Baffle tube post stack"
 
 # SF Technology SEMX40-AS stage (sflinear.com.tw drawing SEMX40-AS-2D), in the frame of the Misumi XCRS40 vendor
 # model (via CADENAS) that shows it: X the travel axis with the micrometer toward +X, Y up from the base (0) to the table top,
@@ -105,40 +119,37 @@ STAGE_MICROMETER_TIP_X = 46.0  # Thimble end in the vendor model, which shows th
 
 @dataclass(frozen=True)
 class SlitStageParameters:
-    optical_height: float = _HEAD.optical_height
-    datum_thickness: float = _HEAD.datum_thickness
-    post_length: float = _HEAD.post_length
-    post_diameter: float = _HEAD.post_diameter
+    optical_height: float = OPTICAL_HEIGHT
+    datum_thickness: float = DATUM_SHIM_THICKNESS
+    post_length: float = POST_LENGTH
+    post_diameter: float = POST_DIAMETER
     ring_thickness: float = SM1RC_M_THICKNESS
-    ring_bore: float = _HEAD.ring_bore
+    ring_bore: float = SM1RC_M_BORE
     # Stanley 11-515 blades, measured (§7.1).
-    blade: RazorBladeParameters = _HEAD.blade
-    slit_width: float = _HEAD.slit_width  # Display/setup value; the stage sets the width.
-    # Blade edge beyond the table and pedestal edges. Larger than the flexure head's, so the stage's end
+    blade: RazorBladeParameters = field(default_factory=RazorBladeParameters)
+    slit_width: float = 0.20  # Display/setup value; the stage sets the width.
+    # Blade edge beyond the table and pedestal edges. Chosen so the stage's end
     # features (STAGE_END_BUMP) clear the source cone.
     blade_overhang: float = 2.9
-    # Plate, spigot, and the shared SM1RC/M.
+    # Plate, spigot, and the SM1RC/M that clamps it.
     plate_thickness: float = 6.0
     plate_margin: float = 3.0  # Plate edge beyond the stage and pedestal outlines.
     plate_corner_diameter: float = 6.0
-    spigot_diameter: float = _HEAD.spigot_diameter  # SM1 tube OD.
-    spigot_bore: float = _HEAD.spigot_bore
-    spigot_shoulder_diameter: float = _HEAD.spigot_shoulder_diameter
-    ring_gap: float = _HEAD.ring_gap  # Plate rear to ring face, the shoulder thickness.
-    ring_grip: float = (
-        4.5  # Spigot engagement in the ring; the baffle tube takes the same from the other side.
-    )
-    post_clearance: float = _HEAD.post_clearance
+    spigot_diameter: float = SM1_TUBE_DIAMETER  # SM1 tube OD.
+    spigot_bore: float = 24.0
+    spigot_shoulder_diameter: float = SPIGOT_SHOULDER_DIAMETER
+    ring_gap: float = 3.5  # Plate rear to ring face, the shoulder thickness.
+    post_clearance: float = 2.0  # Minimum, rotating parts to the post and rail shoe over the working range.
     # Common M3 hardware: 91292A114 M3 x 12 SHCS, 91828A211 nut.
-    screw_length: float = _HEAD.screw_length
-    screw_clearance: float = _HEAD.screw_clearance
-    screw_head_diameter: float = _HEAD.screw_head_diameter
-    screw_head_height: float = _HEAD.screw_head_height
-    counterbore_clearance: float = _HEAD.counterbore_clearance  # Diametral.
-    nut_across_flats: float = _HEAD.nut_across_flats
-    nut_thickness: float = _HEAD.nut_thickness
-    nut_across_flats_clearance: float = _HEAD.nut_across_flats_clearance
-    nut_axial_clearance: float = _HEAD.nut_axial_clearance
+    screw_length: float = 12.0
+    screw_clearance: float = M3_CLEARANCE_DIAMETER
+    screw_head_diameter: float = M3_SOCKET_HEAD_DIAMETER
+    screw_head_height: float = M3_SOCKET_HEAD_HEIGHT
+    counterbore_clearance: float = 0.5  # Diametral.
+    nut_across_flats: float = M3_NUT_ACROSS_FLATS
+    nut_thickness: float = M3_NUT_THICKNESS
+    nut_across_flats_clearance: float = NUT_POCKET_ACROSS_FLATS_CLEARANCE
+    nut_axial_clearance: float = 0.3
     # Toe bars: the slit side of the screw row is the finger, the far side the heel.
     toe_x: tuple = (-STAGE_TABLE_HOLE_PITCH, STAGE_TABLE_HOLE_PITCH)  # Along the slit, on the hole grid.
     toe_end_margin: float = 3.5  # Bar end beyond the outer screw axis, along the slit.
@@ -169,6 +180,12 @@ class SlitStageParameters:
     # with the rings fitted.
     tube_diameter: float = SM1L15_OUTER_DIAMETER
     tube_clear_diameter: float = 22.9
+    # The tube is clamped by an SM1RC/M of its own on its own post, upstream of the head's ring, so neither
+    # clamp depends on the printed spigot's diameter and the head turns without loosening the tube.
+    tube_end_gap: float = 1.0  # Tube end to the head ring's source face, axial.
+    tube_ring_spacing: float = 40.0  # Head ring center to tube ring center, along the rail.
+    tube_ring_end_margin: float = 10.0  # Tube beyond its ring's far face, at least.
+    shoe_spacing_margin: float = 5.0  # Free rail between the two posts' shoes, at least.
     # Beam: the source cone about the chief ray (§3.2), the lit slit length (§6.6), and the margin the stage
     # and pedestal edges keep from the cone.
     cone_half_angle: float = 2.0  # Degrees.
@@ -219,12 +236,17 @@ class SlitStageParameters:
 
     @property
     def spigot_length(self):
-        return self.ring_gap + self.ring_grip
+        return self.ring_gap + self.ring_thickness  # The spigot grips the whole ring.
 
     @property
-    def tube_gap(self):
-        """Spigot end to baffle tube end inside the ring."""
-        return self.ring_thickness - 2 * self.ring_grip
+    def tube_length(self):
+        """Two SM1L15 threaded together: the second tube's thread runs fully into the first's open end."""
+        return 2 * (SM1L15_SHOULDER_TO_OPEN_END + SM1L15_THREAD_LENGTH) - SM1L15_THREAD_LENGTH
+
+    @property
+    def tube_ring_far_margin(self):
+        """Tube beyond the tube ring's source-side face."""
+        return self.tube_length - self.tube_end_gap - self.tube_ring_spacing - self.ring_thickness / 2
 
     @property
     def nut_floor(self):
@@ -319,8 +341,14 @@ class SlitStageParameters:
             raise ValueError("Spigot must slip into the SM1RC/M and keep a wall")
         if self.spigot_shoulder_diameter < self.ring_bore + 2.0:
             raise ValueError("Spigot shoulder needs a land on the SM1RC/M face")
-        if self.tube_gap < 0.5:
-            raise ValueError("Spigot and baffle tube must not crowd each other in the ring")
+        if self.tube_end_gap < 0.5:
+            raise ValueError("Baffle tube must stop short of the head's ring")
+        if self.tube_ring_spacing - self.ring_thickness < self.tube_end_gap:
+            raise ValueError("Baffle tube's ring must sit wholly on the tube, clear of the head's ring")
+        if self.tube_ring_far_margin < self.tube_ring_end_margin:
+            raise ValueError("Baffle tube must project past its ring on the source side")
+        if self.tube_ring_spacing < RailShoeParameters().length + self.shoe_spacing_margin:
+            raise ValueError("The two rail shoes must not crowd each other")
         post_top_below_axis = self.optical_height - self.datum_thickness - self.post_length
         if self.spigot_shoulder_diameter / 2 > post_top_below_axis - self.post_clearance:
             raise ValueError("Spigot shoulder must clear the post top")
@@ -400,10 +428,8 @@ def build_stage_plate(p=None):
     plate = fillet(plate.edges().filter_by(Axis.Y), p.plate_corner_diameter / 2)
     shoulder_back = p.plate_back - p.ring_gap
     plate += y_cylinder(p.spigot_shoulder_diameter, 0, 0, shoulder_back, p.plate_back + 0.5)
-    plate += y_cylinder(p.spigot_diameter, 0, 0, p.plate_back - p.spigot_length, shoulder_back + 0.5)
-    plate -= y_cylinder(
-        p.spigot_bore, 0, 0, p.plate_back - p.spigot_length - CUT_OVERRUN, p.plate_front + CUT_OVERRUN
-    )
+    spigot_end = p.plate_back - p.spigot_length
+    plate += y_cylinder(p.spigot_diameter, 0, 0, spigot_end, shoulder_back + 0.5)
     # Stage screws: heads on the stage side, captive nuts in the plate's rear. The pockets open through the
     # shoulder where the screws run inside its radius.
     for x, z in p.stage_screw_xz():
@@ -421,6 +447,10 @@ def build_stage_plate(p=None):
             p.plate_back - CUT_OVERRUN,
             p.counterbore_floor,
         )
+    # The nut pockets' inner corners reach inside the spigot's radius. Restore the spigot from the shoulder's
+    # back face outward, so the ring's bearing surface is a full cylinder and the pockets are roofed by it.
+    plate += y_cylinder(p.spigot_diameter, 0, 0, spigot_end, shoulder_back)
+    plate -= y_cylinder(p.spigot_bore, 0, 0, spigot_end - CUT_OVERRUN, p.plate_front + CUT_OVERRUN)
     return plate
 
 
@@ -516,14 +546,14 @@ def head_location(p, rotation=0.0):
 
 
 def baffle_tube(p=None):
-    """Two SM1L15 tubes threaded together (vendor models, retaining rings omitted), entering the ring from the
-    light-source side.
+    """Two SM1L15 tubes threaded together (vendor models, retaining rings omitted), ending tube_end_gap short
+    of the head's ring on the light-source side and clamped in the ring of its own post.
 
-    The tube nearer the ring has its open end inside the ring, the grip from the other side as the spigot's. Its
-    external thread end runs into the open end of the second tube, which butts against the first tube's shoulder.
+    The tube nearer the head has its open end at that gap. Its external thread end runs into the open end of
+    the second tube, which butts against the first tube's shoulder.
     """
     p = p or SlitStageParameters()
-    open_end = p.plate_back - p.ring_gap - p.ring_thickness + p.ring_grip
+    open_end = p.plate_back - p.ring_gap - p.ring_thickness - p.tube_end_gap
     first = Pos(0, open_end - SM1L15_SHOULDER_TO_OPEN_END, 0)
     second = Pos(0, open_end - 2 * SM1L15_SHOULDER_TO_OPEN_END, 0)
     return assembly(
@@ -603,4 +633,12 @@ def build_slit_stage_assembly(p=None, rotation=0.0, include_support=True, side_s
             side_screws=side_screws,
         )
         children.append(assembly(REFERENCE_HARDWARE_LABEL, reference))
+        baffle_reference = post_stack(
+            y=-p.tube_ring_spacing,
+            ring=True,
+            optical_height=p.optical_height,
+            datum_thickness=p.datum_thickness,
+            side_screws=side_screws,
+        )
+        children.append(assembly(BAFFLE_HARDWARE_LABEL, baffle_reference))
     return assembly("Slit stage head (experiment)", children)

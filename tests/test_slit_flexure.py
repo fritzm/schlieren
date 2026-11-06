@@ -7,11 +7,11 @@ from build123d import Pos, Vector
 
 from schlieren.cad import box_between, moved, z_cylinder
 from schlieren.parts.rail_shoe import build_rail_shoe
-from schlieren.parts.slit_head import (
-    SlitHeadParameters,
+from schlieren.parts.slit_flexure import (
+    SlitFlexureParameters,
     _blade,
     build_clamp_bar,
-    build_slit_head,
+    build_slit_flexure,
     build_spigot_adapter,
     clamp_epdm_compression,
     head_location,
@@ -29,7 +29,7 @@ def _overlap(a, b):
     return overlap_volume(a, b)
 
 
-class SlitHeadTests(unittest.TestCase):
+class SlitFlexureTests(unittest.TestCase):
     @shared
     def clamp_bar(cls):
         return build_clamp_bar(cls.p)
@@ -40,9 +40,9 @@ class SlitHeadTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.p = SlitHeadParameters()
+        cls.p = SlitFlexureParameters()
         cls.p.validate()
-        cls.head = build_slit_head(cls.p)
+        cls.head = build_slit_flexure(cls.p)
         cls.adapter = build_spigot_adapter(cls.p)
         cls.fas = [
             moved(thorlabs_fas100(), Pos(x, cls.p.axis_y, z))

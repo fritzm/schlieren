@@ -47,7 +47,7 @@ uvx ruff check . && uvx ruff format .            # lint and format
 uv run frame [--show] [--figure]                 # tabletop frame layout and plywood parts
 uv run optical-head [--show] [--figure]          # optical head stations and interference check
 uv run light-source [--show] [--figure]          # light source focus stack-up
-uv run slit-head [--show]                        # source-slit flexure head
+uv run slit-stage [--show] [--figure]            # source-slit stage head
 uv run carriage [--show]                         # cutoff carriage
 uv run cassette [--show]                         # cassette blank and clamp bars
 uv run mirror-cell [--show] [--figure]           # mirror cell and base-plate drilling layout

@@ -16,6 +16,12 @@ DATUM_SHIM_DIAMETER = 0.75 * INCH
 POST_LENGTH = 50.0
 POST_DIAMETER = 12.7
 
+# The printed spigot interface of the slit stage plate and the cutoff carriage (§7.5, §8.1): a hollow spigot at
+# the SM1 tube OD, clamped by a Thorlabs SM1RC/M split ring (Ø1.21 in bore), against a shoulder the ring seats on.
+SM1_TUBE_DIAMETER = 1.20 * INCH
+SM1RC_M_BORE = 1.21 * INCH
+SPIGOT_SHOULDER_DIAMETER = 34.0  # Bears on the SM1RC/M face outside its Ø30.7 mm bore.
+
 # PLA (provisional): typical flexural modulus, for first-order flexure and keeper estimates.
 PLA_MODULUS = 3000.0  # MPa
 

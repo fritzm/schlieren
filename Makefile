@@ -22,7 +22,7 @@ CORE := src/schlieren/cad.py src/schlieren/render.py src/schlieren/vendor_cad.py
 
 FRAGMENTS := $(sort $(wildcard docs/design/[0-9][0-9]-*.md))
 FIGURES := $(addprefix $(FIG)/,\
-  rail-shoe.png cassette.png cutoff.png camera-support.png slit-head.png \
+  rail-shoe.png cassette.png cutoff.png camera-support.png slit-stage.png \
   frame.png frame-pivot-plate.svg \
   light-source.png light-source-section.png light-source-holes.svg led-drill-fixture.png \
   mirror-cell.png mirror-cell-below.png mirror-cell-adjuster.png mirror-cell-base-plate.svg)
@@ -72,8 +72,9 @@ $(FIG)/camera-support.png: $(CLI)/camera_support.py $(PARTS)/camera_support.py $
     $(PARTS)/carriage.py $(PARTS)/cassette.py $(PARTS)/adjuster.py $(PARTS)/rail_shoe.py $(PARTS)/rail.py $(CORE)
 	uv run camera-support --figure
 
-$(FIG)/slit-head.png: $(CLI)/slit_head.py $(PARTS)/slit_head.py $(PARTS)/razor_blade.py $(PARTS)/adjuster.py $(PARTS)/rail_shoe.py $(PARTS)/rail.py $(CORE)
-	uv run slit-head --figure
+$(FIG)/slit-stage.png: $(CLI)/slit_stage.py $(PARTS)/slit_stage.py $(PARTS)/razor_blade.py \
+    $(PARTS)/rail_shoe.py $(PARTS)/rail.py $(CORE)
+	uv run slit-stage --figure
 
 $(FIG)/frame.png: $(CLI)/frame.py $(PARTS)/frame.py $(PARTS)/frame_drawing.py $(PARTS)/rail.py $(CORE)
 	uv run frame --figure

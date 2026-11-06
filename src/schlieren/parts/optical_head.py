@@ -33,7 +33,7 @@ from schlieren.parts.light_source import (
     LightSourceParameters,
     build_light_source_assembly,
 )
-from schlieren.parts.slit_head import SlitHeadParameters, build_slit_head_assembly, head_location
+from schlieren.parts.slit_stage import SlitStageParameters, build_slit_stage_assembly, head_location
 
 SOURCE_SIDE = -1  # Left rail (§3.4).
 IMAGING_SIDE = 1  # Right rail.
@@ -45,7 +45,7 @@ STAND_ALONE_LABELS = ("Rail", "Optical axis")
 @dataclass(frozen=True)
 class OpticalHeadParameters:
     frame: FrameParameters = field(default_factory=FrameParameters)
-    slit: SlitHeadParameters = field(default_factory=SlitHeadParameters)
+    slit: SlitStageParameters = field(default_factory=SlitStageParameters)
     light_source: LightSourceParameters = field(default_factory=LightSourceParameters)
     carriage: CarriageParameters = field(default_factory=CarriageParameters)
     camera: CameraSupportParameters = field(default_factory=CameraSupportParameters)
@@ -112,7 +112,7 @@ class OpticalHeadParameters:
 def build_source_fixtures(h: OpticalHeadParameters, rotation: float = 0.0) -> Compound:
     """Light source and slit head in the source rail frame; rotation is the slit's, in degrees."""
     light_source = build_light_source_assembly(h.light_source, h.board, side_screws=True)
-    slit_head = build_slit_head_assembly(h.slit, rotation, side_screws=True)
+    slit_head = build_slit_stage_assembly(h.slit, rotation, side_screws=True)
     return assembly(
         "Source rail fixtures",
         [

@@ -144,10 +144,10 @@ The common optical axis is 72.35 mm above the top surface of the 2020 extrusion,
 optomechanics to simplify alignment.  The stack-up is:
 
 <table style="border-collapse: collapse; border: none; margin-left: 2em; line-height: 1.4;">
-<tr><td style="text-align: right; padding: 0 1em 0 0.6em; border: none;">0.254</td><td style="padding: 0; border: none;">Steel datum shim on rail (bridges the rail top channel)</td></tr>
-<tr><td style="text-align: right; padding: 0 1em 0 0.6em; border: none;">50.000</td><td style="padding: 0; border: none;">Thorlabs TR50/M post</td></tr>
-<tr><td style="text-align: right; padding: 0 1em 0.5em 0.6em; border: none;">22.098</td><td style="padding: 0 0 0.5em; border: none;">Post top to axis for Thorlabs SM1 optical holders</td></tr>
-<tr><td style="text-align: right; padding: 0.5em 1em 0 0.6em; border: none; border-top: 1px solid currentColor;">72.352</td><td style="padding: 0.5em 0 0; border: none; border-top: 1px solid currentColor;"></td></tr>
+<tr><td style="text-align: right; padding: 0 1em 0 0.6em; border: none;">0.254 mm</td><td style="padding: 0; border: none;">Steel datum shim on rail (bridges the rail top channel)</td></tr>
+<tr><td style="text-align: right; padding: 0 1em 0 0.6em; border: none;">50.000 mm</td><td style="padding: 0; border: none;">Thorlabs TR50/M post</td></tr>
+<tr><td style="text-align: right; padding: 0 1em 0.5em 0.6em; border: none;">22.098 mm</td><td style="padding: 0 0 0.5em; border: none;">Post top to axis for Thorlabs SM1 optical holders</td></tr>
+<tr><td style="text-align: right; padding: 0.5em 1em 0 0.6em; border: none; border-top: 1px solid currentColor;">72.352 mm</td><td style="padding: 0.5em 0 0; border: none; border-top: 1px solid currentColor;"></td></tr>
 </table>
 
 ### 3.5 Coordinate frames

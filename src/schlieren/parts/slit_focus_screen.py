@@ -10,8 +10,8 @@ the disc, so it cannot be loaded from behind.
 
 Local frame and assembly frame are those of the focus target and the stage head (y toward the mirror).
 
-**Provisional:** the counterbore clearance (calibrate with a printed coupon), the gasket (1/16 in soft
-rubber; no SKU chosen), and the choice of DG10 grit.
+**Provisional:** the counterbore clearance (calibrate with a printed coupon), the gasket (1/16 in Durometer 30A neoprene
+sheet, McMaster 1370N711, cut to an annulus), and the choice of DG10 grit.
 """
 
 from dataclasses import dataclass, field
@@ -47,7 +47,9 @@ class FocusScreenParameters:
     glass_thickness_tolerance: float = 0.2
     # Printed holes come out small: provisional starting value, to be set from a coupon.
     counterbore_diametral_clearance: float = 0.3
-    gasket_thickness: float = 1.59  # 1/16 in soft rubber, free; absorbs the glass's 0.4 mm thickness spread.
+    gasket_thickness: float = (
+        1.59  # 1/16 in neoprene sheet, free; absorbs the glass's 0.4 mm thickness spread.
+    )
     gasket_min_gap: float = 0.95  # Counterbore floor to the thickest glass: the gasket's working space.
     ledge_thickness: float = 1.0  # Floor lip narrowing the bore to the ring window under the glass.
 

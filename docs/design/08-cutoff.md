@@ -20,7 +20,7 @@ carriage model is `src/schlieren/parts/carriage.py`; the cassette blank and clam
 ### 8.1 Spigot and rotation interface
 
 The carriage mounts in 1 × Thorlabs SM1RC/M through a hollow printed spigot integral with the base plate, the
-same interface as the slit-head adapter ([§7.6](07-source-slit.md#76-rotation-mount-and-clearances)):
+same interface as the slit head's plate ([§7.5](07-source-slit.md#75-rotation-mount-and-clearances)):
 
 - Ø30.48 mm spigot (SM1 tube OD nominal), clamped directly by the SM1RC/M split ring (Ø30.7 mm bore, 10.16 mm
   thick, M4 locking screw across the split); the spigot end is flush with the ring's rear face;
@@ -84,8 +84,7 @@ outside diameter 0.352 in (8.941 mm); flange thickness 0.010 in (0.254 mm); spec
 (7.950 mm); and minimum material thickness 0.298 in (7.569 mm).
 
 The insert bore is nominally 0.313 in (7.950 mm), matching the drawing. The printed bore is a pilot, finished
-after printing with a 5/16 in (0.3125 in) drill rather than relying on FDM accuracy, to a press fit
-([§7.7](07-source-slit.md#77-fabrication-and-fit)). The 9.3 mm insert support exceeds the drawing's 0.298 in
+after printing with a 5/16 in (0.3125 in) drill rather than relying on FDM accuracy, to a press fit. The 9.3 mm insert support exceeds the drawing's 0.298 in
 (7.569 mm) minimum material thickness, leaving 1.7 mm of PLA beyond the end of the insert body (1.6 mm past
 the entry chamfer) and 3 mm of keeper crown over the bore. The spring plunger loads the FAS100 tip, so the
 screw pushes the insert outboard, toward the knob. The flange is therefore on the inner (cassette-side) face
@@ -111,8 +110,8 @@ plated face is a hard, wear-resistant bearing surface, and the magnet is functio
 FAS100 ball tip helps retain the driven plunger on the adjuster screw during cassette changes, when no
 cassette is loading the plunger against the screw. The bearing insert has its rear face fully supported by
 PLA, with a small cyanoacrylate (CA) or epoxy tack for retention. The FAS100 ball contacts the broad plated
-face rather than bare PLA. The slit head ([§7](07-source-slit.md#7-source-slit)) and the lens cradle
-([§9.5](09-camera-telephoto.md#95-lens-cradle)) use the same bearing insert; in the cradle the magnet's pull
+face rather than bare PLA. The lens cradle
+([§9.5](09-camera-telephoto.md#95-lens-cradle)) uses the same bearing insert; in the cradle the magnet's pull
 on the steel screw tips likewise adds some preload ([§9.8](09-camera-telephoto.md#98-retaining-bands)).
 
 The plunger top is held near 12.0 mm by the cassette clamp-bar relief, which leaves only 0.6 mm of roof over
@@ -326,8 +325,8 @@ rear datum face unobstructed.
 ### 8.7 Cassette clamp bars
 
 These bars and their hardware are the clamping standard for the cassettes
-([§8.6](#86-common-cassette)); the slit head uses its own smaller bars
-([§7.5](07-source-slit.md#75-blade-clamping)).
+([§8.6](#86-common-cassette)); the slit head uses printed toe bars
+([§7.4](07-source-slit.md#74-blade-clamping)).
 
 Common clamp bars:
 

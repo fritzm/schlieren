@@ -98,7 +98,7 @@ LBF = 4.44822  # N
 
 
 @dataclass(frozen=True)
-class SlitHeadParameters:
+class SlitFlexureParameters:
     # Frozen project datum (§3.4) and post stack.
     optical_height: float = OPTICAL_HEIGHT
     datum_thickness: float = DATUM_SHIM_THICKNESS
@@ -576,9 +576,9 @@ def _magnet_pocket(p, x, z_top, well=0.0):
 
 # Built once per parameter set and shared (see parts/carriage.py); the cached solids must not be modified.
 @cache
-def build_slit_head(p=None):
+def build_slit_flexure(p=None):
     """The one-piece flexure head, printed back face down."""
-    p = p or SlitHeadParameters()
+    p = p or SlitFlexureParameters()
     p.validate()
     back, front = -p.body_thickness, p.relieved_front
     ce, co = p.carrier_edge, p.carrier_outer
@@ -668,7 +668,7 @@ def build_spigot_adapter(p=None):
     Printed front face down, spigot up, without supports. The ring seats against the spigot shoulder, which
     fixes the adapter-to-post clearance.
     """
-    p = p or SlitHeadParameters()
+    p = p or SlitFlexureParameters()
     p.validate()
     m = p.adapter_corner_margin
     points = p.adapter_screw_xz()
@@ -696,7 +696,7 @@ def build_spigot_adapter(p=None):
 
 def build_clamp_bar(p=None):
     """One of two identical bars, in the movable-blade position; EPDM goes on its -y face."""
-    p = p or SlitHeadParameters()
+    p = p or SlitFlexureParameters()
     p.validate()
     y0 = p.clamp_bar_front - p.clamp_bar_thickness
     z0 = p.clamp_bar_z - p.clamp_bar_width / 2
@@ -760,17 +760,17 @@ def head_location(p, rotation=0.0):
     return Pos(0, -blade_plane, p.optical_height) * Rot(Z=180) * Rot(Y=rotation)
 
 
-def build_slit_head_assembly(p=None, rotation=0.0, include_support=True, side_screws=False):
+def build_slit_flexure_assembly(p=None, rotation=0.0, include_support=True, side_screws=False):
     """Head, adapter, bars, blades, and adjusters on the slit post; rotation 0 is a horizontal slit.
 
     side_screws adds the rail shoe's side-channel screws and washers to the support."""
-    p = p or SlitHeadParameters()
+    p = p or SlitFlexureParameters()
     p.validate()
     loc = head_location(p, rotation)
     printed = PRINTED_BLUE
     metal = METAL
     children: list[Shape] = [
-        labeled(build_slit_head(p), "Flexure head", printed, loc),
+        labeled(build_slit_flexure(p), "Flexure head", printed, loc),
         labeled(build_spigot_adapter(p), "Spigot adapter", PRINTED_DENIM, loc),
     ]
     for i, (x, z) in enumerate(p.adapter_screw_xz(), 1):

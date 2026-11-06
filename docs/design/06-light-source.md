@@ -1,33 +1,32 @@
 ## 6. Light source
 
 The light source is a single assembly utilizing the common post support
-([§5](05-post-support.md#5-common-rail-mounted-post-support)). An internally threaded mount carries one of two
-interchangeable LED modules on its rear face, and a condensing lens and iris on its forward face. The
+([§5](05-post-support.md#5-common-rail-mounted-post-support)). An internally threaded post-top mount carries
+an interchangeable LED module on its rear face, and a condensing lens and iris on its forward face. The
 condenser images the LED emitter onto the source slit ([§7](07-source-slit.md#7-source-slit)), and the iris
-sets the angular size of the illumination cone ([§3.2](01-context-and-layout.md#32-source-cone)).  The model
-is `src/schlieren/parts/light_source.py`
+sets the angular size of the illumination cone.  The model is `src/schlieren/parts/light_source.py`.
 
 <p align="center">
   <img src="figures/light-source.png" width="340" style="max-width: 80%"
        alt="Light source on its TR50/M post and rail shoe: pin-fin heatsink and LED cap behind the SMR1/M,
        with the SM1V05, SM1L03, and iris ahead of it">
   <br>
-  <em>Fig. 4. Light source on its post and rail shoe: heatsink and LED module, SMR1/M, SM1V05, SM1L03, and
-  iris</em>
+  <em>Fig. 4. Light source on its post and rail shoe</em>
 </p>
 
 ### 6.1 Assembly and stack order
 
-From the LED to the slit:
+From the LED toward the slit:
 
-1. threaded LED module ([§6.2](#62-led-modules)), with Thorlabs SM1CP2M cap threaded into the LED-side face of
-   the SMR1/M;
+1. LED module with Thorlabs SM1CP2M cap threaded into the LED-side face of the SMR1/M;
 2. Thorlabs SMR1/M mount (accepts the post);
-3. Thorlabs SM1V05, with its externally threaded sleeve entering the slit-side face of the SMR1/M and locked
-   with the included SM1NT locking ring. A Thorlabs ACL2520U-A condensing lens sits in the SM1V05 body with
-   its plano face on the internal seat (toward the LED) and its convex face toward the open end;
-4. Thorlabs SM1L03 spacer ring, threaded into the SM1V05 open end;
-5. Thorlabs SM1D12 adjustable iris, threaded into the SM1L03.
+3. Thorlabs SM1V05 adjustable lens tube, with its externally threaded sleeve entering the slit-side face of
+   the SMR1/M;
+4. Thorlabs ACL2520U-A condensing lens in the SM1V05 body with its plano face on the internal seat (toward the
+   LED) and its convex face toward the open end;
+5. Thorlabs SM1L03 spacer ring threaded into the SM1V05 open end, to provide relief between the lens
+   vertex and the iris ahead;
+6. Thorlabs SM1D12 adjustable iris threaded into the SM1L03.
 
 <p align="center">
   <img src="figures/light-source-section.png" width="450" style="max-width: 95%"
@@ -37,47 +36,48 @@ From the LED to the slit:
   <em>Fig. 5. Light-source cutaway, showing internal position of LED module and condensing lens</em>
 </p>
 
-The ACL2520U-A convex vertex sits about 0.7 mm inside the SM1V05 open end, so the SM1L03 spacer is required
-ahead of the iris; the SM1D12 interferes with the lens if threaded directly into the SM1V05.
-
 The cap and the SM1V05 sleeve share the SMR1/M thread. The cap threads in until its knurled flange seats on
-the SMR1/M face, so the LED position is fixed, and the SM1V05 engagement is the focus adjustment
-([§6.7](#67-focus-and-module-interchange)). Engagement runs from the Thorlabs minimum of 0.110 in / 2.79 mm to
-about 5.7–5.8 mm, where the sleeve end comes within 0.3 mm of the LED board. Turning the SM1V05 moves the lens
-and iris together relative to the LED; the resulting few-millimeter iris shift is negligible against the 150
-mm iris-to-slit spacing.
+the SMR1/M face, so the LED position is fixed, and the SM1V05 engagement is the focus adjustment.  Engagement
+runs from the Thorlabs minimum of 2.79 mm to about 5.7–5.8 mm, where the sleeve end comes within 0.3 mm of the
+LED board. Turning the SM1V05 moves the lens and iris together relative to the LED, but the resulting
+few-millimeter iris shift is negligible against the 150 mm iris-to-slit spacing.
 
 ### 6.2 LED modules
 
-There are two interchangeable LED modules, each a self-contained threaded assembly. The LEDs chosen are on
-industry-standard 20 mm "star" MCPCB carriers. Each carrier is mounted on an identical threaded SM1
-cap, so the SM1 thread and cap flange are the interchange standard.
+There are two LEDs, each built into its own self-contained threaded assembly with integrated heatsink. The
+LEDs chosen are on industry-standard 20 mm "star" MCPCB carriers.
 
 | Module | Emitter                             | Board                                    | Initial operating current (mA) |
 | ------ | ----------------------------------- | ---------------------------------------- | ------------------------------ |
 | Green  | OSRAM OSLON SSL 120, 530 nm nominal | NewEnergy star board, LST1-01F06-GRN1-00 | ~350                           |
 | White  | Nichia 519A R9080, 5000 K           | Convoy 20 mm star/DTP carrier            | ~500–700                       |
 
-Module stack, from the rear toward the condenser:
 
-1. Alpha CN40-40B heatsink ([§6.3](#63-common-heatsink)), bolted to the rear face of the cap with thermal
-   compound between;
-2. Thorlabs SM1CP2M externally SM1-threaded end cap (0.210 in / 5.33 mm solid aluminum, 0.100 in / 2.54 mm
-   thread, Ø1.200 in / 30.48 mm knurled flange);
-3. LED star board on the front face of the cap ([§6.4](#64-led-board-mounting)).
+
+
+
+
+
+Each carrier is mounted on an identical threaded SM1 cap, so the SM1 thread and cap flange are the interchange
+standard.
+
+
+LED Module stack, from the rear toward the condenser:
+
+1. Alpha CN40-40B heatsink, screwed to the rear face of the cap with thermal compound between;
+2. Thorlabs SM1CP2M externally SM1-threaded end cap (0.210 in solid aluminum, 0.100 in hread, Ø1.200 in
+   knurled flange);
+3. LED star carrier screwed to the front face of the cap with thermal compound between.
 
 Interfaces:
 
 - The cap flange is the repeatable axial stop on the SMR1/M face; the module's rotational position at the stop
   does not matter.
 - The SM1 thread centers the emitter on the condenser axis; no vertical calibration is required.
-- Heatsink fastening: three M3 × 6 mm socket-head screws through the CN40 base, their heads in open cells
-  between four pins, into M3 holes tapped through the cap. Positions are in [§6.4](#64-led-board-mounting).
+- Heatsink fastening: three M3 × 6 mm socket-head screws through clearance holes in the CN40 base, their heads
+  in open cells between four pins, into M3 holes tapped through the cap.
 - Leads drop past the star board's flat edges through two Ø2.0 mm holes in the cap and the heatsink base, 11.0
-  mm from the axis (inside the thread relief), and out between the pin columns. The pigtail wire measures
-  about 1.7 mm over its insulation.
-- Fabrication is drilling and tapping of purchased aluminum parts only ([§6.4](#64-led-board-mounting)), drilled
-  through the printed fixture of [§6.8](#68-cap-and-heatsink-drilling-fixture).
+  mm from the axis (inside the cap thread relief), and out between the pin columns.
 
 Clearances:
 
@@ -86,21 +86,19 @@ Clearances:
 - The heatsink front face is 2.79 mm (0.110 in) behind the SMR1/M face (the cap flange thickness).
 - The SMR1/M thread bore leaves about 3 mm of radial room around a 20 mm board for leads.
 
-### 6.3 Common heatsink
+#### Heatsink
 
 - Alpha CN40-40B natural-convection pin-fin heatsink, one per module
-- Ø40.0 mm (+0/−0.5) × 40 mm overall, 3.0 mm flat base, Ø2.8 mm pins on a 6.9 mm square grid
 - 6063 aluminum, black anodized; 24.6 g
+- Ø40.0 mm × 40 mm overall, 3.0 mm flat base, Ø2.8 mm pins on a 6.9 mm square grid
 - manufacturer natural-convection rating 6.9 °C/W
 
-At about 2 W (white module at 700 mA) the expected rise is roughly 14 °C above ambient; the green module
-dissipates about 1.1 W. The rating is the manufacturer's pins-up test; the module runs with pins horizontal,
-which pin fins tolerate well. **Provisional:** bench-test the temperature rise at 700 mA before relying on it.
+The rating is the manufacturer's pins-up test; the module runs with pins horizontal, which pin fins tolerate
+well.  The white LED dissipates about 2 W at 700 mA, for a steady state temperature rise roughly 14 °C above
+ambient. The green module dissipates about 1.1 W.  **Provisional:** bench-test the temperature rise at 700 mA
+before relying on it.
 
-The heatsink is round, with a radius under the 22.1 mm axis offset, so that it clears the post top at every
-rotation while the module is threaded in ([§6.2](#62-led-modules)).
-
-### 6.4 LED board mounting
+#### LED board mounting
 
 Measured star-board thicknesses (calipers):
 
@@ -112,7 +110,6 @@ Both boards are about 20 mm across (NewEnergy 0.783 in / 19.9 mm, catalog).
 
 Fastening standard:
 
-- M2 × 0.4
 - McMaster 92095A453, M2 × 6 mm screws
 - tapped directly into the front (threaded) face of the SM1CP2M cap, in through holes
 - 1.6 mm tap drill
@@ -221,7 +218,9 @@ Setup values (not hard CAD dimensions):
 - initial iris opening approximately 9–10.5 mm (about ±1.7–2.0° at 150 mm)
 
 Set focus by imaging the LED onto the closed slit blades and turning the SM1V05 until the emitter image is
-sharp and centered, then lock the SM1NT and open the slit.
+sharp and centered, then lock the SM1NT and open the slit. The blades of the stage-based slit head cannot be
+seen, and a focus target stands in for the head ([§7.7](07-source-slit.md#77-slit-focus-target-provisional),
+**Provisional**).
 
 Calculated emitter heights above the cap face, using the measured board thicknesses, about 0.07 mm of solder,
 and the apparent emitter heights through the LED domes (calculated from the manufacturer outline drawings:
@@ -256,13 +255,13 @@ threaded end cap and an SM1EC2 snap-on dust cap.
 
 ### 6.8 Cap and heatsink drilling fixture
 
-The hole layout ([§6.4](#64-led-board-mounting)) is drilled through a fixture of three printed parts and seven press-fit steel drill
+The hole layout ([§6.2](#62-led-modules)) is drilled through a fixture of three printed parts and seven press-fit steel drill
 bushings, so the hole positions come from the fixture and not from how a drill press is set up by eye. Two
 requirements set the accuracy needed, about 0.1 mm on position:
 
 - The 2.0 mm lead holes in the cap and the heatsink base must line up through the bolted joint, for a pigtail
   wire about 1.7 mm over its insulation.
-- A 0.3 mm emitter offset moves the emitter image about 2 mm on the slit ([§6.4](#64-led-board-mounting)), so
+- A 0.3 mm emitter offset moves the emitter image about 2 mm on the slit ([§6.2](#62-led-modules)), so
   the M2 board holes must not shift the star far from the axis.
 
 <p align="center">
@@ -285,7 +284,7 @@ are drilled from the same coordinates. A **cap nest** and a **heatsink nest** ea
 All are printed in PLA.
 
 Bushings, McMaster metric press-fit drill bushings (hardened steel, 6 mm long, chamfered on one end); each
-bore is the drill that makes the cap's hole ([§6.4](#64-led-board-mounting)):
+bore is the drill that makes the cap's hole ([§6.2](#62-led-modules)):
 
 | Hole           | Count | Bore (mm) | Outside diameter (mm) | SKU       |
 | -------------- | ----- | --------- | --------------------- | --------- |
@@ -359,7 +358,7 @@ tighten the thumb nuts; the bushing sets the fixture's position.
 
 Both parts are drilled through the plate from the LED-side face.
 
-- Cap: all seven holes, through. Then tap the M3 and M2 holes by hand ([§6.4](#64-led-board-mounting)).
+- Cap: all seven holes, through. Then tap the M3 and M2 holes by hand ([§6.2](#62-led-modules)).
 - Heatsink: the three M3 positions with the 2.5 mm bushings as pilots, then opened to the Ø3.3 clearance with
   the larger bit following the pilot; and the two lead holes. The plate carries all seven bushings for both
   parts, but the M2 positions are not drilled in the heatsink.
