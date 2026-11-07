@@ -26,7 +26,7 @@ Design areas marked **Provisional** in the sections above:
   blade whose 7.04 mm fold lies under them, and the resulting bar height.
 - **Mirror cell** ([§10.5](10-mirror-cell.md#105-mirror-mounting),
   [§10.8](10-mirror-cell.md#108-mirror-safety-and-transport-retention)): RTV adhesion primer decision; safety
-  retainers; transport sandwich covers, foam, and 1/4 in-80 thumb screws.
+  retainers; transport sandwich foam, through-bolts, sheaths, and nuts.
 
 ### 11.2 Next steps
 

@@ -137,7 +137,8 @@ Each of the three springs is captured between two seat washers, producing:
 - 6 spring-seat washers
 - 6 shallow spring-seat-washer counterbores
 
-The counterbores register the washers; they are not spring pockets.
+The counterbores register the washers; they are not spring pockets. Each washer is tacked into its counterbore
+with a small amount of G/Flex epoxy.
 
 The nominal wood-face-to-wood-face inter-plate gap is 0.500 in / 12.7 mm at the neutral mirror position.
 
@@ -291,39 +292,55 @@ Front safety retention is intentionally non-stressing:
 #### Transport sandwich
 
 For shipping or travel the cell is disassembled and the mirror plate, with its mirror and bonded bushings, is
-held between two covers. The adjusters, springs, and seat washers are removed.
+held between two covers. The adjusters and springs are removed, and the stationary plate, with its seat washers,
+stays with the base plate and brackets.
 
-- Each cover is thin hardboard (masonite or similar) cut to the profile of the mirror plate, with a clearance
-  hole at each of the three adjuster-bushing centers. There is one cover on the front and one on the rear.
+- Each cover is 1/8 in hardboard (masonite or similar) cut to the profile of the mirror plate, with a clearance
+  hole at each of the three adjuster-bushing centers. There is one cover on the front and one on the rear. The
+  foam bears across the whole plate face, so the cover is supported over its area and needs no particular
+  stiffness.
 - The mirror's back surface is flush with the rear face of the plate ([§10.5](#105-mirror-mounting)), so the
-  rear cover carries a full-face sheet of thin closed-cell foam, which bears evenly on the glass and the
+  rear cover carries a full-profile sheet of thin closed-cell foam, which bears evenly on the glass and the
   plywood.
 - The front glass is recessed about 1 mm below the plywood face, and the bushing flanges stand 0.254 mm proud
-  of it. The front cover carries a foam ring that bears on the outer rim of the glass, outside the clear
-  aperture, so it does not touch the reflective surface across the aperture. The ring also acts as a dust
-  gasket. A sheet of optical tissue lies over the mirror face beneath the cover to keep the foam and any dust
-  off the coating.
-- Closed-cell foam is preferred, because open-cell foam sheds particles. The foam thickness, about 3 mm,
-  covers the 1 mm recess plus a light compression; it sets the preload and is chosen so the glass is held
-  without stressing it.
-- Low-profile thumb screws thread into the adjuster bushings from the front and from the back, with full
-  thread engagement, to clamp the sandwich. The bushing thread is 1/4 in-80, which common thumb screws do not
-  match. The intended screw is a short Kozak TS250-80 adjuster (available from 5/16 in) with a KB250-80 knob,
-  which threads onto the screw end and can be removed. Lengths of about 5/8 in for the front and 3/4 in for
-  the rear suit a 1/8 in cover and a few millimeters of foam; the engaged lengths from the two sides together
-  must stay below the 0.625 in / 15.9 mm bushing length, and the barrel's rear end is 3.4 mm below the rear
-  face of the plate.
-- Threaded rods that pass through the bushing bores without engaging their threads, with thumb nuts on both
-  sides of the covers, would also work. They are less preferred: care is needed not to damage the fine bushing
-  threads.
-- The covers restrain the mirror axially only; lateral restraint is by the RTV pads. The sandwich is then
-  wrapped in bubble wrap or boxed.
+  of it. The front cover carries a full-profile foam gasket with a 206.4 mm opening (the mirror-plate
+  aperture, so the glass floating in its radial gap is never overlapped) and a clearance hole at each bushing
+  center. The gasket bears on the plywood only and never touches the glass, so the recess does not affect its
+  preload and nothing contacts the reflective surface. It also seals the cavity over the mirror as a dust
+  gasket.
+- Adhesive-backed F1 felt covers the inside face of the front cover, and the foam gasket is stuck to the felt.
+  The felt is a backstop: its surface stands off the glass by the compressed foam thickness plus the 1 mm
+  recess, about 3 mm, so a mirror that breaks free of its RTV pads travels only that far before meeting a soft
+  surface and not bare hardboard. The standoff must stay at least about 2 mm so that the felt does not touch the
+  glass while the sandwich is merely clamped. The felt limits travel but absorbs little energy; the foam and the
+  outer packaging do that. Its surface hangs above the coating, so lift loose fibers from it with tape before
+  assembly.
+- Closed-cell foam is preferred, because open-cell foam sheds particles. Both gaskets are a uniform thickness
+  of about 3 mm, compressed about 25–30% against the plywood; the compression sets the preload and the felt
+  standoff.
+- Three through-bolts, one at each bushing center, clamp the sandwich with a nut and washer on each cover. The
+  bolts do not engage the bushing's 1/4 in-80 thread. Each passes through the bushing bore inside a snug
+  polyethylene-family sheath that runs the length of the bushing, so the bolt never touches the fine thread. The
+  1/4 in-80 internal thread has a basic minor diameter of about 6.0 mm (calculated from the thread form, not
+  measured), which bolt plus sheath must clear; an M3 or M4 bolt with a sheath of about 0.8–1 mm wall is the
+  intended size. A fender-type washer under each nut spreads the load over the hardboard. The cover holes are
+  just oversize to the bolt, so the bolts locate the covers on the plate.
+- The covers touch the cell only through foam. The bolts tie the two covers to each other and do not couple
+  either cover to the mirror plate, so a cover impact reaches the cell only after the foam. The only metal a
+  cover could reach is the bushing's front flange, 0.254 mm proud of the plate face, and the foam must be
+  crushed by about 90% before it does; the bushing's rear end is 3.4 mm below the rear face and cannot be
+  reached. The foam is not stopped by a deliberate hard limit, because one would conduct shock.
+- The bolts are all one length, about 38–40 mm: two covers, the felt, two compressed foam layers, the plate,
+  and the nut stack. Each nut adjusts its own cover's foam compression independently. Thumb nuts make the
+  assembly tool-free.
+- The covers restrain the mirror axially only; lateral restraint is by the RTV pads. The rear foam holds the
+  glass against rearward motion; forward motion is resisted by the RTV pads alone, with the front felt as the
+  backstop. The sandwich is then wrapped in bubble wrap or boxed.
 
 **Provisional:** the safety retainers are not yet designed, including the felt facing. For the transport
-sandwich: the cover material and thickness (the covers are clamped at 120.65 mm radius, while the foam ring
-bears at about 100 mm, so the covers must be stiff enough between the clamp points, possibly 1/4 in); the foam
-material and thickness; the ring's width against the clear aperture; the thumb-screw lengths and their
-availability; and the optical tissue.
+sandwich: the foam material and thickness (about 3 mm uniform, holding the felt standoff at 2 mm or more); and
+the through-bolt size and length, the sheath material and wall, and the nuts, including the felt's thickness
+in the clamp stack. Measure a bushing bore before choosing the bolt and sheath.
 
 ### 10.9 Tripod interface
 
