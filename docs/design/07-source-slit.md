@@ -3,7 +3,7 @@
 The source slit is a pair of razor blades, one on the table of a purchased 40 × 40 mm linear stage and one on a
 printed pedestal, with the stage's micrometer setting the slit width. The head is mounted for continuous
 rotation about the optical axis in an SM1RC/M on the common post and rail shoe
-([§5](05-post-support.md#5-common-rail-mounted-post-support)). A baffle tube behind it on the source side is
+([§5](05-post-support.md#5-rail-mounted-posts)). A baffle tube behind it on the source side is
 clamped on a post of its own ([§7.8](#78-baffle-tube)), and a printed focus target stands in for the head to
 focus the LED image ([§7.7](#77-slit-focus-target-provisional)).
 
@@ -194,7 +194,7 @@ rim, outside the Ø20 mm seat bore. The pocket clearance is to be set from a pri
 A baffle tube sits on the source side of the slit head, on the optical axis. Two Thorlabs
 SM1L15 lens tubes (1.5 in thread depth), threaded together, form a tube Ø30.48 mm outside, 80.6 mm long, with a
 Ø22.9 mm clear bore (the SM1L15 retaining-ring bore). It is clamped in a Thorlabs SM1RC/M split ring on its own
-post, datum shim, and rail shoe ([§5](05-post-support.md#5-common-rail-mounted-post-support)), 40 mm upstream
+post, datum shim, and rail shoe ([§5](05-post-support.md#5-rail-mounted-posts)), 40 mm upstream
 of the slit head's post, so the two shoes leave 10 mm of rail between them. The tube's open end stops 1.0 mm
 short of the head ring's source face, 40.7 mm behind the blade-seat plane, and the tube
 projects 34.6 mm past its own ring toward the source, ending about 29 mm short of the iris.

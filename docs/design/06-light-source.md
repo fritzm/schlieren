@@ -1,10 +1,10 @@
 ## 6. Light source
 
 The light source is a single assembly utilizing the common post support
-([§5](05-post-support.md#5-common-rail-mounted-post-support)). An internally threaded post-top mount carries
-an interchangeable LED module on its rear face, and a condensing lens and iris on its forward face. The
-condenser images the LED emitter onto the source slit ([§7](07-source-slit.md#7-source-slit)), and the iris
-sets the angular size of the illumination cone.  The model is `src/schlieren/parts/light_source.py`.
+([§5](05-post-support.md#5-rail-mounted-posts)). An internally threaded mount carries an interchangeable LED
+module on its rear face, and a condensing lens and iris on its forward face. The condenser images the LED
+emitter onto the source slit ([§7](07-source-slit.md#7-source-slit)) ahead, and the iris sets the angular size
+of the illumination cone. The model is `src/schlieren/parts/light_source.py`.
 
 <p align="center">
   <img src="figures/light-source.png" width="340" style="max-width: 80%"
@@ -18,73 +18,31 @@ sets the angular size of the illumination cone.  The model is `src/schlieren/par
 
 From the LED toward the slit:
 
-1. LED module with Thorlabs SM1CP2M cap threaded into the LED-side face of the SMR1/M;
-2. Thorlabs SMR1/M mount (accepts the post);
-3. Thorlabs SM1V05 adjustable lens tube, with its externally threaded sleeve entering the slit-side face of
-   the SMR1/M;
-4. Thorlabs ACL2520U-A condensing lens in the SM1V05 body with its plano face on the internal seat (toward the
-   LED) and its convex face toward the open end;
-5. Thorlabs SM1L03 spacer ring threaded into the SM1V05 open end, to provide relief between the lens
-   vertex and the iris ahead;
-6. Thorlabs SM1D12 adjustable iris threaded into the SM1L03.
+1. LED module;
+2. Thorlabs SMR1/M mount;
+3. Thorlabs SM1V05 adjustable lens tube;
+4. Thorlabs ACL2520U-A condensing lens seated in the lens tube;
+5. Thorlabs SM1L03 spacer ring, to provide relief between the lens vertex and the iris ahead;
+6. Thorlabs SM1D12 adjustable iris.
 
 <p align="center">
   <img src="figures/light-source-section.png" width="450" style="max-width: 95%"
        alt="Light source with the SMR1/M, SM1V05, SM1L03, and iris cut along the optical axis, and the
        heatsink, cap, star board with LED, and condenser lens shown whole">
   <br>
-  <em>Fig. 5. Light-source cutaway, showing internal position of LED module and condensing lens</em>
+  <em>Fig. 5. Light-source cutaway, showing internal position of LED carrier and condensing lens</em>
 </p>
 
-The cap and the SM1V05 sleeve share the SMR1/M thread. The cap threads in until its knurled flange seats on
-the SMR1/M face, so the LED position is fixed, and the SM1V05 engagement is the focus adjustment.  Engagement
-runs from the Thorlabs minimum of 2.79 mm to about 5.7–5.8 mm, where the sleeve end comes within 0.3 mm of the
-LED board. Turning the SM1V05 moves the lens and iris together relative to the LED, but the resulting
-few-millimeter iris shift is negligible against the 150 mm iris-to-slit spacing.
+The LED modules and the condenser lens holder share opposite sides of the SMR1/M mount thread. The module
+threads in until seated against the rear SMR1/M face, providing reapeatable LED positioning, and the remaining
+forward thread is used by the lens holder for focus adjustment.
 
 ### 6.2 LED modules
 
-There are two LEDs, each built into its own self-contained threaded assembly with integrated heatsink. The
-LEDs chosen are on industry-standard 20 mm "star" MCPCB carriers.
-
-| Module | Emitter                             | Board                                    | Initial operating current (mA) |
-| ------ | ----------------------------------- | ---------------------------------------- | ------------------------------ |
-| Green  | OSRAM OSLON SSL 120, 530 nm nominal | NewEnergy star board, LST1-01F06-GRN1-00 | ~350                           |
-| White  | Nichia 519A R9080, 5000 K           | Convoy 20 mm star/DTP carrier            | ~500–700                       |
-
-
-
-
-
-
-
-Each carrier is mounted on an identical threaded SM1 cap, so the SM1 thread and cap flange are the interchange
-standard.
-
-
-LED Module stack, from the rear toward the condenser:
-
-1. Alpha CN40-40B heatsink, screwed to the rear face of the cap with thermal compound between;
-2. Thorlabs SM1CP2M externally SM1-threaded end cap (0.210 in solid aluminum, 0.100 in hread, Ø1.200 in
-   knurled flange);
-3. LED star carrier screwed to the front face of the cap with thermal compound between.
-
-Interfaces:
-
-- The cap flange is the repeatable axial stop on the SMR1/M face; the module's rotational position at the stop
-  does not matter.
-- The SM1 thread centers the emitter on the condenser axis; no vertical calibration is required.
-- Heatsink fastening: three M3 × 6 mm socket-head screws through clearance holes in the CN40 base, their heads
-  in open cells between four pins, into M3 holes tapped through the cap.
-- Leads drop past the star board's flat edges through two Ø2.0 mm holes in the cap and the heatsink base, 11.0
-  mm from the axis (inside the cap thread relief), and out between the pin columns.
-
-Clearances:
-
-- The heatsink's lowest point is 2.1 mm above the TR50/M post top at any rotation (22.1 mm axis offset minus
-  20 mm maximum radius).
-- The heatsink front face is 2.79 mm (0.110 in) behind the SMR1/M face (the cap flange thickness).
-- The SMR1/M thread bore leaves about 3 mm of radial room around a 20 mm board for leads.
+The LED modules are constructed around Thorlabs SM1CP2M SM1 externally threaded solid aluminum end caps.
+Each cap is drilled and tapped so a heatsink can be screwed to its rear face, and an LED carrier board screwed
+to its front face.  The cap's external SM1 thread then serves as the module interchange standard, supporting
+and aligning the module in the assembled light source.
 
 #### Heatsink
 
@@ -93,59 +51,50 @@ Clearances:
 - Ø40.0 mm × 40 mm overall, 3.0 mm flat base, Ø2.8 mm pins on a 6.9 mm square grid
 - manufacturer natural-convection rating 6.9 °C/W
 
-The rating is the manufacturer's pins-up test; the module runs with pins horizontal, which pin fins tolerate
-well.  The white LED dissipates about 2 W at 700 mA, for a steady state temperature rise roughly 14 °C above
-ambient. The green module dissipates about 1.1 W.  **Provisional:** bench-test the temperature rise at 700 mA
-before relying on it.
+The above rating is the manufacturer's pins-up test; the module runs with pins horizontal, which pin fins
+tolerate well.
 
-#### LED board mounting
+The heatsink and cap are fastened with three M3 × 6 mm socket-head screws run through drilled clearance holes
+in the heatsink base into corresponding tapped M3 holes in the cap. The screws are positioned so their heads
+sit on the heatsink base in open cells between sets of four pins. Three such screws hold the heatsink without
+a rocking axis; the fourth cell is free but unused.  A thin layer of thermal compound is used between the
+heatsink and the cap.
 
-Measured star-board thicknesses (calipers):
+The heatsink base also has drilled holes to accommodate exit of the LED power leads, which are run out between
+pin columns.
 
-- green NewEnergy star: 0.0625 in / 1.59 mm (the datasheet lists 0.047 or 0.067 in; the measured value
-  governs)
-- white Convoy 20 mm star: 0.0590 in / 1.50 mm
+#### LEDs
 
-Both boards are about 20 mm across (NewEnergy 0.783 in / 19.9 mm, catalog).
+The LEDs chosen are on industry-standard 20 mm "star" MCPCB carriers:
 
-Fastening standard:
+| Module | Emitter                             | Board                                    | Initial operating current (mA) |
+| ------ | ----------------------------------- | ---------------------------------------- | ------------------------------ |
+| Green  | OSRAM OSLON SSL 120, 530 nm nominal | NewEnergy star board, LST1-01F06-GRN1-00 | ~350                           |
+| White  | Nichia 519A R9080, 5000 K           | Convoy 20 mm star/DTP carrier            | ~500–700                       |
 
-- McMaster 92095A453, M2 × 6 mm screws
-- tapped directly into the front (threaded) face of the SM1CP2M cap, in through holes
-- 1.6 mm tap drill
-- M2 × 0.4 HSS plug tap
+Each star board is fastened to its module with a pair of M2 x 6mm screws through board slots into tapped
+holes on the front of the cap; slightly oversized board slots permit final centering of the emitter on the cap
+axis. A thin insulating washer goes under each screw head, keeping the metal head off exposed board contacts
+and spreading clamp contact over the board slot. A thin layer of thermal compound is also used between board
+and cap.
 
-Each carrier board's hole geometry was taken from the physical board rather than assumed from the other
-module. Slightly oversized board holes permit final centering of the emitter on the cap axis: a 0.3 mm
-emitter offset moves the emitter image on the slit about 2 mm, so center each board by watching its image on
-the slit blades before final tightening.
-
-A thin insulating washer goes under each screw head, keeping the metal head off exposed board contacts and
-spreading its clamp over the board beside the notch:
-
-- McMaster 91545A410
-- M2 lubricant-filled nylon flat washer
-
-A thin layer of thermal compound is used between board and cap.
+Leads drop past the star board's flat edges and pass out through two Ø2.0 mm holes in the cap and heatsink
+base, positioned inside the cap thread relief.
 
 #### Cap and heatsink hole layout
 
-All holes in the cap and in the heatsink base are **through holes**, drilled from one face. Plain plug taps
-(M3 × 0.5, M2 × 0.4) cut full threads through them; no bottoming tap is required. No screw reaches the far
-face of the cap: the M2 screws are 6 mm under the head, about 4 mm of it in the cap past the board and washer,
-and the M3 screws engage about 3 mm past the 3.0 mm heatsink base.
+The drill and tap prescriptions for the cap and heatsink are as follows.  Coordinates are in millimeters from
+the optical axis, +x to the right and +y up as seen from the LED side, in the frame of the heatsink pin
+lattice:
 
 <p align="center">
   <img src="figures/light-source-holes.svg" width="640" style="max-width: 95%"
        alt="Plan view from the LED side of the cap, the 20 mm star board, and the heatsink pins, with the M3,
        M2, and lead holes and their positions">
   <br>
-  <em>Fig. 6. Cap and heatsink hole layout, seen from the LED side, in the frame of the heatsink pin
-    lattice</em>
+  <em>Fig. 6. Cap and heatsink hole layout, seen from the LED side.  Grey: heatsink; orange: cap; blue:
+  20 mm star; red: M3 hardware; green: M2 hardware</em>
 </p>
-
-Coordinates are in millimeters from the optical axis, +x to the right and +y up as seen from the LED side, in
-the frame of the pin lattice; the cap and the heatsink are drilled to the same coordinates:
 
 | Hole      | Position                                       | In the cap               | In the heatsink base |
 | --------- | ---------------------------------------------- | ------------------------ | -------------------- |
@@ -153,23 +102,78 @@ the frame of the pin lattice; the cap and the heatsink are drilled to the same c
 | M2, two   | (±9.30, 0)                                     | Ø1.6 tap drill, M2 × 0.4 | none                 |
 | Lead, two | (0, ±11.0)                                     | Ø2.0                     | Ø2.0                 |
 
-- M3 holes: each is the center of a cell of the pin lattice, 4.88 mm from each of four pins, so the Ø5.5 mm
-  socket head lands between the pins with 0.73 mm to spare and the key reaches it. Three screws hold the
-  heatsink without a rocking axis; the fourth cell is free but unused. Roughly 70% of each hole's area lies
-  under the star, a small loss of its thermal contact.
-- M2 holes: in the two opposite corner notches of the star on the x axis, 0.225 mm inboard of the center of the
-  notch's 1/8 in arc (0.375 in from the axis). Each notch is that arc flaring to a mouth 0.138 in wide on the
-  NewEnergy star and at most 0.150 in on the Convoy. Measured across opposite notches, the closed ends are at
-  r = 7.98 mm (NewEnergy) and 7.93 mm (Convoy), so the Ø2 shank keeps at least 0.32 mm of play in x for
-  centering the emitter. Moving in puts the head's edge 0.4 mm onto the notch's closed end, and the washer's
-  outer edge at r = 11.8 mm, 0.75 mm from the cap's thread relief. The holes are covered by the solid
-  heatsink base, so they do not meet the pins.
-- Lead holes: on the axis through the midpoints of two opposite flat edges of the star, centered at 11.0 mm
-  radius and tangent to each edge. Each is 1.1 mm from the nearest pins, in the 4.1 mm channel between pin
-  columns.
-- The smallest wall between holes in the cap, measured to the thread major radius, is 4.9 mm. The lead holes'
-  outer edges, at 12.0 mm radius, leave about 0.55 mm to the cap's thread relief, the straight shank
-  beneath the threads, which measures Ø0.988 in (12.55 mm radius) and is the boss's minimum radius.
+All holes in the cap and in the heatsink base are **through holes**, drilled from one face. Plain plug taps
+cut full threads through them; no bottoming taps are required. No screw reaches the far face of the cap in
+either direction: the M2 screws are 6 mm under the head, about 4 mm of it in the cap from the front past the
+board and washer, and the M3 screws engage about 3 mm past the 3.0 mm heatsink base from the back.
+
+#### Drilling fixtures
+
+In practice, the cap and heatsink require fairly precise drilling; the lead holes' outer edges, for example,
+leave only about 0.55 mm to the cap's outer thread relief. The Ø2.0 mm lead hole alignment between cap and
+heatsink must also be kept pretty tight to avoid impinging the Ø1.7 mm leads passing through both. To this
+end, a bushed drill template and custom alignment nests for both the caps and heatsink were designed. The
+model for these is `src/schlieren/parts/led_drill_fixture.py`.
+
+<p align="center">
+  <img src="figures/led-drill-fixture.png" width="560" style="max-width: 95%"
+       alt="Two printed drilling setups side by side: the short cap nest with its bushing plate, and the tall
+       heatsink nest, open at the sides, with its bushing plate">
+  <br>
+  <em>Fig. 7. Drilling fixtures: bushing plate on the cap nest (left) and on the heatsink nest (right)</em>
+</p>
+
+A single **bushing plate** serves both parts, so the lead exit holes and the M3 holes that fix the
+cap-to-heatsink rotation are drilled from the same coordinates. A matching **cap nest** and a **heatsink
+nest** each locate one type of part beneath. All are printed in PLA, with a keyed registration between cap and
+nests allowing only a single assembled orientation for each.
+
+Selected hardened steel metric press-fit drill bushings for the plate are as follows:
+
+| Hole           | Count | Bore (mm) | Outside diameter (mm) | SKU                |
+| -------------- | ----- | --------- | --------------------- | ------------------ |
+| M2 tap drill   | 2     | 1.6       | 4                     | McMaster 96990A132 |
+| M3 tap drill   | 3     | 2.5       | 5                     | McMaster 96990A147 |
+| Lead hole      | 2     | 2.0       | 5                     | McMaster 96990A139 |
+
+The bushing plate bores are drawn over the bushing outside diameter to allow for printed hole undercutting.
+They give a press fit, found with the bore coupon (`led_drill_bore_coupon`, 0.00 to 0.20 mm over in 0.05 mm
+steps). A little low-viscosity cyanoacrylate, wicked in around each bushing, retains it.
+
+The bushing plate seats on each nest's top face, and is held there during drilling by four M3 × 12 mm screws
+through corner clearance holes in the bushing plate into brass flanged heat-set inserts in each nest's
+corners. The nests are designed to leave a 2.0 mm gap between the bottom of the plate and the top of the
+drilled surface to accommodate drill chips. A boss under the center of the bushing plate carries a disc of the
+1/32 in adhesive-backed EPDM sheet (McMaster 9852N37; the same sheet used elsewhere). Seated, that disc
+presses down on the drilled part's top face with about 0.3 mm of compression to help restrain the part against
+wobble or bit grabbing.
+
+The cap nest additionally has an M3 x 12 mm side clamp screw through a heat-set insert which bears against the
+knurled edge of the held cap, while the heatsink nest has a cross-shaped rib that engages between the held
+heatsink's pins opposite the drilling surface.  Both of these measures restrain the held parts against
+rotation within their nests while drilling.
+
+**Mounting on the drill press**
+
+The nests as modeled mount on the base of a Dremel 220 drill press, which has four diagonal keyhole slots.
+Each nest inself has two slotted ears, on its ±x faces.  The nests sit turned 45° on the drill press base so
+their x axis lies along one pair of base slots.
+
+One carriage bolt on each side extends upward through a drill press base slot, through a nest ear and a flat
+washer, and engages a flanged knurled thumb nut at the top of the stack. The fixture can thus be located in x
+along the base slots, and in y along the ear slots, enough to bring any bushing under the drill drill spindle.
+
+**Drilling**
+
+Both parts are drilled through the plate from the LED-side face. To move between holes, loosen the thumb
+nuts, lower the bit into the next bushing and hold it there, and tighten the thumb nuts; the bushing sets the
+fixture's position.
+
+- Cap: all seven holes, through. Then tap the M3 and M2 holes by hand.
+- Heatsink: the three M3 positions the two lead holes.  Then open the M3 holes to Ø3.3 clearance with a
+  hand drill at low speed.
+
+The plate carries all seven bushings for both parts, but the M2 positions are not drilled in the heatsink.
 
 ### 6.5 Power and wiring
 
@@ -192,6 +196,10 @@ Connector hardware:
 
 The supply side should present recessed/socket contacts.
 
+The white LED dissipates about 2 W at 700 mA, for a steady state temperature rise roughly 14 °C above ambient
+taking into consideration the manufacturer heatsink specs above. The green module dissipates about 1.1 W.
+**Provisional:** bench-test the temperature rise at 700 mA.
+
 ### 6.6 Condenser optics
 
 The condenser images the LED emitter onto the source slit (about 6.6× magnification). Each slit point receives
@@ -209,6 +217,10 @@ plano face) and about 153 mm from the convex vertex to the slit, the optimum emi
 about 15 mm. The optimum moves only about ±0.7 mm for ±30 mm of slit position.
 
 ### 6.7 Focus and module interchange
+
+Engagement runs from the Thorlabs minimum of 2.79 mm to about 5.7–5.8 mm, where the sleeve end comes within
+0.3 mm of the LED board. Turning the SM1V05 moves the lens and iris together relative to the LED, but the
+resulting few-millimeter iris shift is negligible against the 150 mm iris-to-slit spacing.
 
 Setup values (not hard CAD dimensions):
 
@@ -253,119 +265,3 @@ Module interchange:
 In transport, the condenser/iris assembly is protected from dust and scratches by a Thorlabs SM1CP1 internally
 threaded end cap and an SM1EC2 snap-on dust cap.
 
-### 6.8 Cap and heatsink drilling fixture
-
-The hole layout ([§6.2](#62-led-modules)) is drilled through a fixture of three printed parts and seven press-fit steel drill
-bushings, so the hole positions come from the fixture and not from how a drill press is set up by eye. Two
-requirements set the accuracy needed, about 0.1 mm on position:
-
-- The 2.0 mm lead holes in the cap and the heatsink base must line up through the bolted joint, for a pigtail
-  wire about 1.7 mm over its insulation.
-- A 0.3 mm emitter offset moves the emitter image about 2 mm on the slit ([§6.2](#62-led-modules)), so
-  the M2 board holes must not shift the star far from the axis.
-
-<p align="center">
-  <img src="figures/led-drill-fixture.png" width="560" style="max-width: 95%"
-       alt="Two printed drilling setups side by side: the short cap nest with its bushing plate, and the tall
-       heatsink nest, open at the sides, with its bushing plate">
-  <br>
-  <em>Fig. 7. Drilling fixture: bushing plate on the cap nest (left) and on the heatsink nest (right)</em>
-</p>
-
-`src/schlieren/parts/led_drill_fixture.py` models the fixture; `uv run led-drill-fixture` exports the STEP and STL
-files and the figure.
-The viewer assembly shows the cap and the heatsink with the bushing bores already drilled through them, to
-show the bit paths and exit clearances.
-
-#### Parts
-
-One **bushing plate** serves both parts, so the leads, and the M3 holes that fix the cap-to-heatsink rotation,
-are drilled from the same coordinates. A **cap nest** and a **heatsink nest** each locate one part under it.
-All are printed in PLA.
-
-Bushings, McMaster metric press-fit drill bushings (hardened steel, 6 mm long, chamfered on one end); each
-bore is the drill that makes the cap's hole ([§6.2](#62-led-modules)):
-
-| Hole           | Count | Bore (mm) | Outside diameter (mm) | SKU       |
-| -------------- | ----- | --------- | --------------------- | --------- |
-| M2 tap drill   | 2     | 1.6       | 4                     | 96990A132 |
-| M3 tap drill   | 3     | 2.5       | 5                     | 96990A147 |
-| Lead hole      | 2     | 2.0       | 5                     | 96990A139 |
-
-- The plate is 54 mm square and 6 mm thick, the bushing length, so the bushings sit flush on both faces. Its
-  bores are at the layout coordinates, in the frame seen looking down at the part's LED-side face (+x right,
-  +y up). The smallest web between bores is 2.8 mm.
-- Under the plate, a registration ring (Ø45.0 mm outside, Ø41.0 mm inside, 2.5 mm high) fits the Ø45.2 mm bore
-  in the top of either nest, with a key tab on +x that fits a slot in the nest. The tab allows one orientation
-  only. The plate seats on the nest's top face and is held by four M3 × 12 mm screws, through its corner
-  clearance holes into M3 heat-set inserts in the nest's corners. The inserts are McMaster 97171A310 brass
-  flanged inserts (5.7 mm installed length, Ø5.5 mm flange 0.53 mm thick), set in Ø4.0 mm holes with the
-  flange recessed flush with the nest's top face. The socket heads stand 3 mm above the plate's top face, 31
-  mm from the axis; the plate has no counterbores.
-- The nests share the 54 mm square outline and the plate bore. The plate's bushing ends stand 2.0 mm off the
-  part's LED-side face, which leaves room for chips.
-- A Ø10 mm boss, 1.5 mm tall, under the center of the plate carries a Ø10 mm disc of the 1/32 in
-  adhesive-backed EPDM sheet (McMaster 9852N37; the sheet is in the cassette allocation). Seated, the disc
-  presses on the part's face with about 0.3 mm of compression. It holds the cap on its support ring and the
-  heatsink on its pin tips against the bit grabbing, and is 2.3 mm clear of the nearest bushing.
-- The plate is printed ring-up, so the bores are vertical.
-- A little low-viscosity cyanoacrylate, wicked in around each bushing, retains it in the plate.
-
-Cap nest:
-
-- A Ø30.68 mm pocket (0.20 mm diametral clearance on the Ø30.48 mm flange) holds the cap boss-up. The flange
-  back face stands on a support ring around a Ø25 mm relief window through the floor; the holes reach 12.0 mm
-  from the axis, so the exits and chips clear the support.
-- An M3 clamp screw, in a heat-set insert on the −y side at the flange mid-thickness, pushes the cap against
-  the opposite wall of the pocket and keeps it from turning if the drill grabs. A notch in the −y face thins
-  the wall there to 7.7 mm, so the 12 mm screw protrudes about 4 mm into the pocket.
-
-Heatsink nest:
-
-- The heatsink stands pins down, on the floor, and is drilled from its flat base face. A cross-shaped rib 3.8
-  mm wide and 8 mm tall stands in the two open channels through the center of the pin lattice, which are 4.1
-  mm wide, 0.15 mm of clearance each side. The rib fixes the position and rotation in the lattice frame, the
-  frame the layout is defined in; the Ø40 mm base diameter has a +0/−0.5 mm tolerance and is not used.
-- The plate seats 2.0 mm above the 40 mm height of the heatsink. The lead and M3 drills exit well above the
-  rib. Four side windows, 24 mm wide, show the pins and the rib; their tops are chamfered at 45° to a 4 mm
-  flat, so the nest prints without supports. The two windows behind the ears start above the top of the ear
-  root fillet, so the wall behind each ear is whole.
-
-#### Mounting on the drill press
-
-The nests mount on the base of a Dremel 220 drill press, which has four diagonal slots, 3/8 in wide and 7/32
-in deep, running from 3/4 in (the apex of the slot's inner rounded end) to 2-1/4 in (the keyhole) from the
-spindle axis. Each nest has two ears, 8 mm thick, on its ±x faces, and sits turned 45° on the base so that its
-x axis lies along one diagonal pair of base slots. A 2 mm fillet where each ear meets the face, along its top
-edge and its ends and blended at the corners, spreads the clamping load at the root.
-
-- A 5/16-18 × 1-1/4 in square-neck carriage bolt (McMaster 92356A589) rides in each base slot, head under the
-  base and its 0.32 in square neck in the slot, which keeps it from turning. It goes in from the top, the head
-  tipped through the slot's 5/8 in keyhole, or from underneath.
-- The bolt passes through a slot in the ear that runs along the face (y), 40 mm from the axis, and a 5/16 in
-  SAE washer and a flanged knurled thumb nut (McMaster 95150A180, 5/8 in head) clamp the ear from the top. The
-  thumb nut clears the nest face by 5 mm.
-- The fixture moves in x along the base slots (±10.5 mm) and in y along the ear slots (±12 mm), enough to
-  bring any bushing under the spindle. Over that travel the bolt neck stays between 25 and 55 mm from the
-  spindle axis, inside the slot.
-- A 1/8 in UHMW sheet under the nest, with clearance slots for the bolts, protects the base where the bits
-  exit away from its center hole. The bolt length allows for it.
-
-To move between holes, loosen the thumb nuts, lower the bit into the next bushing and hold it there, and
-tighten the thumb nuts; the bushing sets the fixture's position.
-
-#### Drilling
-
-Both parts are drilled through the plate from the LED-side face.
-
-- Cap: all seven holes, through. Then tap the M3 and M2 holes by hand ([§6.2](#62-led-modules)).
-- Heatsink: the three M3 positions with the 2.5 mm bushings as pilots, then opened to the Ø3.3 clearance with
-  the larger bit following the pilot; and the two lead holes. The plate carries all seven bushings for both
-  parts, but the M2 positions are not drilled in the heatsink.
-
-Because one plate drills both parts, an error in the plate's bore positions shifts the holes in both parts the
-same way, which keeps the two sets of lead holes in line.
-
-The plate bores are drawn over the bushing outside diameter to allow for printed holes undercutting: 0.10 mm
-diametral for the 5 mm bushings, and 0.125 mm for the 4 mm bushing. Both give a press fit, found with the bore
-coupon (`led_drill_bore_coupon`, 0.00 to 0.20 mm over in 0.05 mm steps).

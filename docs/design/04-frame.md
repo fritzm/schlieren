@@ -130,9 +130,9 @@ Hardware:
 One 3-hole joining plate spans transversely across each rail as its yaw clamp strap. Its two outer holes take
 the yaw bolts, one on each side of the rail; the rail rotates beneath the strap.
 
-A strip of McMaster 9852N37 adhesive-backed 1/32 in (0.79 mm) EPDM is applied to underside of each strap and
-provides friction where the clamp strap bears against the rail top. The strip spans the strap width and stays
-between the outer bolt holes (about 30 mm long).
+A strip of McMaster 9852N37 adhesive-backed 1/32 in EPDM is applied to underside of each strap and provides
+friction where the clamp strap bears against the rail top. The strip spans the strap width and stays between
+the outer bolt holes (about 30 mm long).
 
 Each yaw bolt stack, from the bottom up:
 

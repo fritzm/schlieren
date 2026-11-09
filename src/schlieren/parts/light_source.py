@@ -26,6 +26,8 @@ from build123d import Circle, Compound, Polygon, Pos, RegularPolygon, Rot, Spher
 from schlieren.cad import CUT_OVERRUN, assembly, centered_box, floor_box, labeled, y_cylinder, z_cylinder
 from schlieren.palette import BLACK_ANODIZED, GLASS, LED_YELLOW, METAL, NYLON, SOLDER_MASK_WHITE
 from schlieren.parts.light_source_holes import (
+    CONVOY_NOTCH_SPAN_IN,
+    NEWENERGY_NOTCH_SPAN_IN,
     STAR_NOTCH_COUNT,
     STAR_NOTCH_WIDTH,
     HoleLayoutParameters,
@@ -101,7 +103,7 @@ GREEN = LEDBoard(
     0.53,
     2.15,
     1.754,
-    notch_span_in=(0.630 + 0.628 + 0.628) / 3,
+    notch_span_in=NEWENERGY_NOTCH_SPAN_IN,
     notch_mouth_in=0.138,
 )
 WHITE = LEDBoard(
@@ -113,7 +115,7 @@ WHITE = LEDBoard(
     0.77,
     3.1,
     2.35,
-    notch_span_in=(0.624 + 0.626 + 0.624) / 3,
+    notch_span_in=CONVOY_NOTCH_SPAN_IN,
     notch_mouth_in=0.150,  # At most; the corners are rounded, so the mouth is hard to locate.
 )
 MODULES = (GREEN, WHITE)

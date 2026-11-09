@@ -1,6 +1,6 @@
-## 5. Common rail-mounted post support
+## 5. Rail-mounted posts
 
-The common post support establishes fixtures accurately at the optical axis, and bridges between the
+A common post design establishes fixtures accurately at the optical axis, and bridges between the
 commercial optomechanical and 2020 rail ecosystems. The model is `src/schlieren/parts/rail_shoe.py`.
 
 <p align="center">
@@ -8,7 +8,7 @@ commercial optomechanical and 2020 rail ecosystems. The model is `src/schlieren/
        alt="Common rail shoe on the rail and TR50/M post: saddle body, split clamping collar, and clamp ears
        with the captured-nut pocket">
   <br>
-  <em>Fig. 3. Common rail shoe on rail with TR50/M post</em>
+  <em>Fig. 3. Common rail-mounted post design</em>
 </p>
 
 ### 5.1 Post and shim

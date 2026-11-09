@@ -11,7 +11,6 @@ from xml.sax.saxutils import escape
 from schlieren.parts.light_source_holes import Hole, HoleLayoutParameters
 
 FONT_SIZE = 1.7
-SMALL_FONT_SIZE = 1.35
 STAR_SLOT_REACH = 11.7  # The star's corner slots are drawn out past the corners (r = 11.5).
 
 STYLE = """
@@ -22,13 +21,14 @@ text { font-family: Helvetica, Arial, sans-serif; fill: #000; }
 .cap-flange { fill: none; stroke: #b36200; stroke-width: 0.2; stroke-dasharray: 2 1; }
 .cap-relief { fill: none; stroke: #b36200; stroke-width: 0.15; stroke-dasharray: 0.6 0.6; }
 .star { fill: #d6e4f2; stroke: #2f5f98; stroke-width: 0.25; fill-opacity: 0.9; }
-.notch { fill: #fff; stroke: none; }
+.notch { fill: #000; stroke: none; }  /* black cuts the notch out of the star's mask */
 .notch-edge { fill: none; stroke: #2f5f98; stroke-width: 0.25; }
 .m3 { fill: #fff; stroke: #c00; stroke-width: 0.3; }
 .m2 { fill: #fff; stroke: #070; stroke-width: 0.3; }
 .lead { fill: #fc0; stroke: #000; stroke-width: 0.25; }
 .thread { fill: none; stroke: #c00; stroke-width: 0.15; }
 .head { fill: none; stroke: #c00; stroke-width: 0.15; stroke-dasharray: 0.8 0.5; }
+.washer { fill: none; stroke: #070; stroke-width: 0.15; stroke-dasharray: 0.8 0.5; }
 .axis { stroke: #888; stroke-width: 0.12; stroke-dasharray: 3 0.8 0.6 0.8; }
 .leader { stroke: #444; stroke-width: 0.12; }
 """
@@ -87,31 +87,48 @@ class _Sheet:
         return head + "\n".join(self.out) + "\n</svg>\n"
 
 
-def _notch_paths(p: HoleLayoutParameters, sheet: _Sheet) -> None:
-    """The six U-notches on the star's corners (corners at 0°, 60°, ...), each opening outward."""
+def _notch_edges(p: HoleLayoutParameters, sheet: _Sheet) -> list[str]:
+    """The U-shaped edge of each of the six notches on the star's corners (at 0°, 60°, ...), opening outward."""
     half = p.notch_width / 2
     inner = p.notch_center_radius
+    edges = []
     for k in range(6):
         angle = radians(60 * k)
 
         def pt(u: float, v: float, c: float = cos(angle), s: float = sin(angle)) -> str:
             return f"{sheet.x(u * c - v * s):.3f},{sheet.y(u * s + v * c):.3f}"
 
-        u_edge = f"M {pt(STAR_SLOT_REACH, half)} L {pt(inner, half)} A {half:.4f} {half:.4f} 0 0 0 {pt(inner, -half)} L {pt(STAR_SLOT_REACH, -half)}"
-        sheet.path(u_edge + " Z", "notch")
-        sheet.path(u_edge, "notch-edge")
+        edges.append(
+            f"M {pt(STAR_SLOT_REACH, half)} L {pt(inner, half)} A {half:.4f} {half:.4f} 0 0 0 "
+            f"{pt(inner, -half)} L {pt(STAR_SLOT_REACH, -half)}"
+        )
+    return edges
 
 
 def _star(p: HoleLayoutParameters, sheet: _Sheet) -> None:
-    """The 20 mm star board: flats at 30° + 60°k, so a corner and its notch lie on +x."""
+    """The 20 mm star board: flats at 30° + 60°k, so a corner and its notch lie on +x.
+
+    The notches are cut out of the board with a mask, so they are transparent and show what lies beneath;
+    their edges are clipped to the board outline, since the notch shapes reach past the corners.
+    """
     apothem = p.star_across_flats / 2
     corner = apothem / cos(radians(30))
     points = " ".join(
         f"{sheet.x(corner * cos(radians(60 * k))):.3f},{sheet.y(corner * sin(radians(60 * k))):.3f}"
         for k in range(6)
     )
-    sheet.out.append(f'<polygon class="star" points="{points}"/>')
-    _notch_paths(p, sheet)
+    edges = _notch_edges(p, sheet)
+    cutouts = "".join(f'<path class="notch" d="{edge} Z"/>' for edge in edges)
+    sheet.out.append(
+        f'<defs><clipPath id="star-clip"><polygon points="{points}"/></clipPath>'
+        f'<mask id="star-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="{sheet.width}" '
+        f'height="{sheet.height}"><polygon fill="#fff" points="{points}"/>{cutouts}</mask></defs>'
+    )
+    sheet.out.append(f'<polygon class="star" points="{points}" mask="url(#star-mask)"/>')
+    sheet.out.append('<g clip-path="url(#star-clip)">')
+    for edge in edges:
+        sheet.path(edge, "notch-edge")
+    sheet.out.append("</g>")
 
 
 def _pins(p: HoleLayoutParameters, sheet: _Sheet, css: str) -> None:
@@ -131,8 +148,8 @@ def layout_drawing_svg(p: HoleLayoutParameters | None = None) -> str:
     """The design-doc figure: pins, cap, star, and every hole, with positions in mm from the axis."""
     p = p or HoleLayoutParameters()
     p.validate()
-    width, height = 100.0, 76.0
-    sheet = _Sheet(width, height, width / 2, 36.0)
+    width, height = 100.0, 66.0
+    sheet = _Sheet(width, height, width / 2, height / 2)
 
     sheet.circle(0, 0, p.heatsink_diameter, "heatsink")
     _pins(p, sheet, "pin")
@@ -147,6 +164,8 @@ def layout_drawing_svg(p: HoleLayoutParameters | None = None) -> str:
         if hole.kind == "m3":
             sheet.circle(hole.x, hole.y, p.m3_head_diameter, "head")
             sheet.circle(hole.x, hole.y, p.m3_thread_major, "thread")
+        elif hole.kind == "m2":
+            sheet.circle(hole.x, hole.y, p.m2_washer_diameter, "washer")
         sheet.circle(hole.x, hole.y, p.cap_hole_diameter(hole.kind), KIND_COLOR_CLASS[hole.kind], hole.name)
 
     # Labels sit outside the heatsink on leaders; left and right columns, top and bottom for the leads.
@@ -165,21 +184,4 @@ def layout_drawing_svg(p: HoleLayoutParameters | None = None) -> str:
         sheet.line(hole.x, hole.y, edge, ly, "leader")
         sheet.text(lx, ly - FONT_SIZE * 0.3, _hole_label(hole, p), anchor)
 
-    sheet.text(
-        -width / 2 + 3,
-        -31.5,
-        "View from the LED side. Orange: cap (Ø26.29 thread, Ø25.1 relief, Ø30.48 flange); blue: 20 mm star; "
-        "grey: heatsink pins.",
-        "start",
-        SMALL_FONT_SIZE,
-    )
-    sheet.text(
-        -width / 2 + 3,
-        -33.7,
-        f"All holes are through. Cap drilled M3 Ø{p.m3_tap_drill:g}, M2 Ø{p.m2_tap_drill:g}, lead "
-        f"Ø{p.lead_hole_diameter:g}; heatsink base M3 Ø{p.m3_clearance_diameter:g}, lead "
-        f"Ø{p.lead_hole_diameter:g}. Dashed circles: M3 head Ø{p.m3_head_diameter:g}.",
-        "start",
-        SMALL_FONT_SIZE,
-    )
     return sheet.svg()

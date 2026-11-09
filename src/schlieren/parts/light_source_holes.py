@@ -18,7 +18,7 @@ from math import hypot
 
 from schlieren.hardware import M3_CLEARANCE_DIAMETER, M3_SOCKET_HEAD_DIAMETER
 from schlieren.standards import INCH
-from schlieren.vendor_cad import MCMASTER_91545A410_DIAMETER
+from schlieren.vendor_cad import MCMASTER_91545A410_DIAMETER, MCMASTER_92095A453_HEAD_DIAMETER
 
 Point = tuple[float, float]
 
@@ -31,6 +31,10 @@ STAR_NOTCH_CENTER_RADIUS = 0.375 * INCH
 # measured boards (§6.4), so the Ø2 shank keeps at least 0.3 mm of play for centering the emitter, while the
 # washer's outer edge moves in from the cap's thread relief.
 M2_SCREW_RADIUS = 9.30
+# Measured with calipers (inches): across two opposite notches' closed ends, the mean of three readings per
+# board; half of each span is the closed end's radius from the axis.
+NEWENERGY_NOTCH_SPAN_IN = (0.630 + 0.628 + 0.628) / 3
+CONVOY_NOTCH_SPAN_IN = (0.624 + 0.626 + 0.624) / 3
 
 
 @dataclass(frozen=True)
@@ -64,6 +68,9 @@ class HoleLayoutParameters:
     # Board screws: center radius on the x axis, and the nylon washer under each head.
     m2_radius: float = M2_SCREW_RADIUS
     m2_washer_diameter: float = MCMASTER_91545A410_DIAMETER
+    m2_head_diameter: float = MCMASTER_92095A453_HEAD_DIAMETER
+    # The notch's closed end on the board where it is nearest the axis, the worst case for the head's reach.
+    notch_end_radius: float = min(NEWENERGY_NOTCH_SPAN_IN, CONVOY_NOTCH_SPAN_IN) * INCH / 2
     # Tapped holes in the cap, with the thread major diameter bounding the material around each.
     m3_tap_drill: float = 2.5
     m3_thread_major: float = 3.0
@@ -82,6 +89,7 @@ class HoleLayoutParameters:
     min_head_gap: float = 0.5  # Socket-head edge to pin edge.
     min_relief_wall: float = 0.4  # Lead hole edge to the thread relief.
     min_washer_relief_gap: float = 0.5  # M2 washer edge to the thread relief.
+    min_head_onto_notch: float = 0.0  # M2 head's inner edge onto the board past the notch's closed end.
 
     @property
     def pin_radius(self) -> float:
@@ -143,6 +151,7 @@ class HoleLayoutParameters:
             ),
             "lead_to_relief": self.cap_relief_radius - max(hypot(*h.position) + lead_radius for h in leads),
             "washer_to_relief": self.cap_relief_radius - self.m2_radius - self.m2_washer_diameter / 2,
+            "head_onto_notch": self.notch_end_radius - (self.m2_radius - self.m2_head_diameter / 2),
             "lead_to_star_edge": min(hypot(*h.position) - lead_radius for h in leads)
             - self.star_across_flats / 2,
         }
@@ -155,6 +164,7 @@ class HoleLayoutParameters:
             "head_to_pin": self.min_head_gap,
             "lead_to_relief": self.min_relief_wall,
             "washer_to_relief": self.min_washer_relief_gap,
+            "head_onto_notch": self.min_head_onto_notch,
             "lead_to_star_edge": 0.0,
         }
         short = [

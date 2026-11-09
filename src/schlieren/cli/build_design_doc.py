@@ -64,7 +64,7 @@ th {{ background: #eee; }}
 code {{ font-family: Menlo, monospace; font-size: 0.88em; }}
 pre {{ background: #f4f4f4; padding: 0.6em; break-inside: avoid; white-space: pre-wrap; }}
 p[align=center] {{ break-inside: avoid; }}
-p:has(+ ul), p:has(+ ol), p:has(+ table), p:has(+ pre) {{ break-after: avoid; }}
+p:has(+ ul), p:has(+ ol), p:has(+ table), p:has(+ pre), p:has(+ p[align=center]) {{ break-after: avoid; }}
 a {{ color: #1a4f8b; text-decoration: none; }}
 nav {{ break-after: page; }}
 .contents-title {{ font-size: 1.2em; font-weight: bold; margin: 1.2em 0 0.5em; }}

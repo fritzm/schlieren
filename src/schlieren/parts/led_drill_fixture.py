@@ -228,11 +228,10 @@ class DrillFixtureParameters:
     ear_root_fillet_radius: float = 2.0
     nut_clearance: float = 1.0  # Thumb-nut head to the nest face.
     # Dremel 220 base (measured): 3/8" slots, 7/32" deep, from 3/4" (the apex of the inner rounded end) to 2-1/4"
-    # (the keyhole) from the spindle axis along the diagonal. A sheet under the nest protects the base.
+    # (the keyhole) from the spindle axis along the diagonal.
     base_slot_depth: float = 7 / 32 * INCH
     base_slot_inner_radius: float = 3 / 4 * INCH
     base_slot_outer_radius: float = 9 / 4 * INCH
-    base_sheet_thickness: float = 1 / 8 * INCH  # The 1/8" UHMW sheet (SHP-012).
     min_nut_engagement: float = 8.0
 
     def validate(self) -> None:
@@ -359,7 +358,7 @@ class DrillFixtureParameters:
     @property
     def bolt_under_head_z(self) -> float:
         """The carriage bolt's under-head face, on the underside of the base slot."""
-        return -self.floor_thickness - self.base_sheet_thickness - self.base_slot_depth
+        return -self.floor_thickness - self.base_slot_depth
 
     def nut_engagement(self) -> float:
         """Bolt thread in the thumb nut, which bears on the washer on the ear."""

@@ -2,7 +2,7 @@
 
 **Design Description**
 
-Revision: Oct 25, 2026
+Revision: Nov 7, 2026
 
 This document describes the design of the apparatus, and is maintained authoritatively as Markdown fragments
 in the project repo on GitHub at <https://github.com/fritzm/schlieren/tree/main/docs/design>.  It serves as

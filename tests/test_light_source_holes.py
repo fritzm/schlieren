@@ -87,6 +87,8 @@ class HoleLayoutTest(unittest.TestCase):
         self.assertGreaterEqual(gaps["lead_to_pin"], self.p.min_pin_gap)
         self.assertGreaterEqual(gaps["head_to_pin"], self.p.min_head_gap)
         self.assertGreaterEqual(gaps["lead_to_relief"], self.p.min_relief_wall)
+        self.assertGreaterEqual(gaps["washer_to_relief"], self.p.min_washer_relief_gap)
+        self.assertGreaterEqual(gaps["head_onto_notch"], self.p.min_head_onto_notch)
         self.assertGreaterEqual(gaps["lead_to_star_edge"], -1e-9)
 
     def test_holes_do_not_overlap_in_the_cap(self):
@@ -109,6 +111,10 @@ class HoleLayoutTest(unittest.TestCase):
         for board in MODULES:
             play = self.p.m2_radius - self.p.m2_thread_major / 2 - board.notch_end_radius
             self.assertGreaterEqual(play, M2_MIN_CENTERING_PLAY, board.name)
+
+    def test_head_reach_uses_the_nearest_measured_notch_end(self):
+        self.assertAlmostEqual(self.p.notch_end_radius, min(board.notch_end_radius for board in MODULES))
+        self.assertAlmostEqual(self.p.clearances()["head_onto_notch"], 0.38, places=2)
 
     def test_m2_head_and_washer_bear_on_the_board(self):
         for board in MODULES:

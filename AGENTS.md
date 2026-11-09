@@ -294,6 +294,26 @@ When updating it:
 - retain useful rationale where it explains a non-obvious current decision;
 - leave procurement and CAD state, and detailed BOM data, to `bom/bom.csv`.
 
+The document should let a reader, human or agent, build a coherent and complete picture of what is in the design,
+why, how it fits together, and the calculations and constraints that drive the basic element selections and gross
+dimensions. It conveys absolute and relative scale; detailed dimensional validation belongs in the models, which
+are the single source for dimensions.
+
+- State a dimension only when the narrative uses it: a calculation, a constraint, a selection rationale, or a
+  sense of scale. Otherwise name the parameter and the module that holds it, or omit it. Do not copy a
+  model-held dimension into the text for completeness, and do not hand-copy values computed by the model.
+- The document is also the shop reference during construction, so dimensions a builder works to belong in it:
+  hole sizes and clearances, plate and stock sizes, alignments and stack positions. State these as the
+  committed fabrication values, and keep them in step with the model parameters (a test pins the important
+  ones); on a conflict the model governs, so fix the text.
+- Keep measured values, and the rule for which source governs a value (for example, a measurement over a
+  datasheet), only where no model parameter holds them yet; once one does, state the provenance and leave the
+  value to the model.
+- Part and hardware callouts serve two reader queries: where in the kit a part is used, and which particular part
+  to use in a given place. Name each part by the identifier the BOM uses, and say where it goes. The document may
+  be printed as a desktop reference for the build crew, so a callout must identify the part without opening the
+  code.
+
 ## Engineering reasoning
 
 Distinguish clearly between measured values, manufacturer specifications, committed project dimensions,
