@@ -15,13 +15,13 @@ Parts:
 - pedestal: printed block carrying the stationary blade, its top in the blade-seat plane;
 - toe bars: one printed bar on the table and one on the pedestal, each screwed down at its two ends into the M3
   holes of the table's second row (the stage's tapped holes) or into heat-set M3 inserts in the pedestal. The bar's
-  finger runs the length of the blade, reaches over its fold, and drops a toe onto the plate just short of the
-  fold's front edge, so nothing crosses the cutting edge. No blade is drilled.
+  finger runs the length of the blade and presses the rear of the blade's fold through a strip of EPDM; it stops
+  short of the field-lens tube that stands over the axis (§7.9). No blade is drilled.
 
-The blade rests on the seat edge (the table or pedestal edge) and on the fold's front edge, where the fold's outer
-layer, which stands proud of the plate's face, meets the seat; the plate is inclined toward the fold between the two
-(razor_blade.seat_tilt). The toe presses on the plate between those two contacts, so the clamp load holds the blade on
-both. A load behind the fold's front edge would instead lever the blade's cutting end up off the seat.
+The blade lies on its fold, flat on the seat (razor_blade.flat_seated_blade_location): the fold's outer layer is on
+the table or pedestal, and the plate, which the fold stands proud of, is parallel to the seat and clear of its edge,
+with the cutting edge overhanging the seat edge. The toe presses the fold flat. The clamp has only to hold the blade
+against its own weight and handling loads.
 
 Local frame, shown at rotation 0 (slit horizontal, micrometer up): x along the slit, z the adjustment axis (+z
 toward the micrometer), y the optical axis, +y out of the front toward the mirror, as §7.2. The origin
@@ -76,7 +76,7 @@ from schlieren.palette import (
     RUBBER,
 )
 from schlieren.parts.rail_shoe import REFERENCE_HARDWARE_LABEL, RailShoeParameters, post_stack
-from schlieren.parts.razor_blade import RazorBladeParameters, build_razor_blade, seated_blade_location
+from schlieren.parts.razor_blade import RazorBladeParameters, build_razor_blade, flat_seated_blade_location
 from schlieren.standards import (
     DATUM_SHIM_THICKNESS,
     INCH,
@@ -90,6 +90,7 @@ from schlieren.standards import (
 )
 from schlieren.vendor_cad import (
     MCMASTER_91292A113_LENGTH,
+    SM1L10_OUTER_DIAMETER,
     SM1L15_OUTER_DIAMETER,
     SM1L15_SHOULDER_TO_OPEN_END,
     SM1L15_THREAD_LENGTH,
@@ -163,11 +164,13 @@ class SlitStageParameters:
     toe_body_setback: float = (
         1.5  # Screw axis to the body edge toward the slit; clears the blade's rear edge.
     )
-    toe_pad_width: float = 2.0  # Along z, on the plate in front of the fold.
-    toe_pad_fold_gap: float = 0.5  # Pad edge to the fold's front edge.
-    toe_fold_clearance: float = 0.3  # Finger underside above the highest point of the fold.
+    toe_pad_width: float = 3.0  # Along z, on the fold's top face.
+    toe_pad_edge_margin: float = 0.25  # Pad edge to the fold's rear edge, at least.
     toe_pad_squeeze: float = 0.3  # EPDM pad compression under the finger, provisional.
     toe_pad_inset: float = 1.0  # EPDM pad end inset from the bar end.
+    # The fingers' slit-side faces stand this far, radially, beyond the body of the field-lens tube (§7.9), which
+    # is concentric with the optical axis; the head turns about that axis.
+    toe_finger_tube_clearance: float = 1.0
     epdm_thickness: float = INCH / 32  # McMaster 9852N37, uncompressed.
     # Pedestal.
     pedestal_end_margin: float = 2.0  # Beyond the stage outline along the slit.
@@ -294,39 +297,41 @@ class SlitStageParameters:
 
     def seated_blade_y(self, z_from_edge, face):
         """y above the seat plane of the blade's seat-side (-1) or outer (+1) face at z_from_edge back of the
-        cutting edge."""
-        seat = seated_blade_location(self.blade, self.blade_overhang)
+        cutting edge; the blade is flat, so the same all across it."""
+        seat = flat_seated_blade_location(self.blade)
         return (seat * Pos(0, face * self.blade.thickness / 2, z_from_edge)).position.Y
 
     @property
+    def fold_front_z(self):
+        """Distance from the optical axis to the fold's front edge, across the slit."""
+        return self.slit_width / 2 + self.blade.fold_front_z
+
+    @property
+    def blade_rear_z(self):
+        """Distance from the optical axis to the blade's rear edge."""
+        return self.slit_width / 2 + self.blade.width
+
+    @property
+    def toe_finger_face_z(self):
+        """Distance from the optical axis to the fingers' slit-side faces: clear of the field-lens tube."""
+        return SM1L10_OUTER_DIAMETER / 2 + self.toe_finger_tube_clearance
+
+    @property
     def toe_pad_z(self):
-        """(near, far) of the toe pad, in z from the blade's cutting edge: on the plate just short of the fold."""
-        far = self.blade.fold_front_z - self.toe_pad_fold_gap
-        return far - self.toe_pad_width, far
+        """(near, far) of the toe pad, as distances from the optical axis: on the fold's top face, at its rear."""
+        near = self.toe_finger_face_z
+        return near, near + self.toe_pad_width
 
     @property
     def toe_finger_underside(self):
-        """Raised clear of the fold's highest point, at its back edge."""
-        top = (
-            seated_blade_location(self.blade, self.blade_overhang)
-            * Pos(0, self.blade.fold_thickness / 2, self.blade.width)
-        ).position.Y
-        return top + self.toe_fold_clearance
-
-    @property
-    def toe_lug_underside(self):
-        """Face of the toe lug the EPDM pad hangs from: the plate's outer face at the pad's center, plus the
-        pad's compressed thickness."""
-        near, far = self.toe_pad_z
-        plate_top = self.seated_blade_y((near + far) / 2, 1)
-        return plate_top + self.epdm_thickness - self.toe_pad_squeeze
+        """The fold's top face plus the pad's compressed thickness."""
+        return self.blade.fold_thickness + self.epdm_thickness - self.toe_pad_squeeze
 
     @property
     def toe_pad_local_z(self):
         """(near, far) of the toe pad in the toe bar's frame: z = 0 at the screw axes, the slit toward -z."""
         near, far = self.toe_pad_z
-        shift = -self.toe_row_distance - self.blade_overhang  # Cutting edge to the screw axis, toward -z.
-        return near + shift, far + shift
+        return near - self.toe_z, far - self.toe_z
 
     @property
     def toe_finger_length(self):
@@ -368,21 +373,24 @@ class SlitStageParameters:
         if self.screw_length - self.toe_thickness > STAGE_TABLE_HOLE_DEPTH:
             raise ValueError("Toe screws must not bottom in the table's tapped holes")
         self.blade.validate()
-        # The body stops short of the blade's rear edge; the finger reaches over the fold to a toe on the plate
-        # between the seat edge and the fold's front edge.
+        # The body stops short of the blade's rear edge; the finger presses the fold's rear.
         rear_edge = self.blade_width - self.blade_overhang  # From the table edge toward the stage.
         screw_to_rear = self.toe_row_distance - rear_edge
         if screw_to_rear <= self.toe_body_setback:
             raise ValueError("Toe bar body must stop short of the blade's rear edge")
+        if self.table_edge > self.fold_front_z - 1.0:
+            raise ValueError("The blade's fold must lie wholly on the table")
+        if self.toe_finger_tube_clearance < 0.5:
+            raise ValueError("The toe fingers must clear the field-lens tube")
         near, far = self.toe_pad_z
-        if near <= self.blade_overhang + 1.0 or far >= self.blade.fold_front_z:
-            raise ValueError("Toe pad must lie on the plate between the seat edge and the fold")
+        if near < self.fold_front_z + 1.0 or far > self.blade_rear_z - self.toe_pad_edge_margin:
+            raise ValueError("Toe pad must lie on the fold's top face")
         if self.toe_pad_local_z[1] >= -self.toe_body_setback:
             raise ValueError("Toe finger must reach forward of the bar body")
-        if self.toe_pad_squeeze <= 0 or self.toe_lug_underside >= self.toe_finger_underside:
-            raise ValueError("Toe lug must stand below the finger and hold the EPDM pad in compression")
+        if not 0 < self.toe_pad_squeeze < self.epdm_thickness / 2:
+            raise ValueError("The EPDM pad must be held in compression, by less than half its thickness")
         if self.toe_thickness <= self.toe_finger_underside + 1.0:
-            raise ValueError("Toe finger must leave material above the fold clearance")
+            raise ValueError("Toe finger must leave material above the pad")
         if self.blade_overhang + self.toe_row_distance < self.blade.fold_front_z + 1.0:
             raise ValueError("The table must reach under the fold's front edge")
         if self.toe_heel + self.toe_row_distance > self.pedestal_depth:
@@ -491,41 +499,42 @@ def build_pedestal(p=None):
 @cache
 def build_toe_bar(p=None):
     """One toe bar in the movable-blade position: centered on the slit along x, its two screw axes along y at
-    z = 0, the seat plane at y = 0, the slit toward -z. The finger's underside clears the blade fold; a lug at
-    its end holds the EPDM pad on the plate in front of the fold. The heel sits on the table. Print flat, heel
-    side down."""
+    z = 0, the seat plane at y = 0, the slit toward -z. The finger's underside carries the EPDM pad over the
+    rear of the blade's fold, and its slit-side face stops short of the field-lens tube. The heel sits on the
+    table. Print flat, heel side down."""
     p = p or SlitStageParameters()
     p.validate()
     half = p.toe_bar_half_length
     body = box_between(-half, half, 0, p.toe_thickness, -p.toe_body_setback, p.toe_heel)
-    finger_z0 = p.toe_pad_local_z[0]
     finger = box_between(
-        -half, half, p.toe_finger_underside, p.toe_thickness, finger_z0, -p.toe_body_setback + 0.5
+        -half,
+        half,
+        p.toe_finger_underside,
+        p.toe_thickness,
+        p.toe_pad_local_z[0],
+        -p.toe_body_setback + 0.5,
     )
-    lug = box_between(
-        -half, half, p.toe_lug_underside, p.toe_finger_underside + 0.5, finger_z0, finger_z0 + p.toe_pad_width
-    )
-    bar = fused(fused(body, finger), lug)
+    bar = fused(body, finger)
     for x in p.toe_x:
         bar -= y_cylinder(p.screw_clearance, x, 0, -CUT_OVERRUN, p.toe_thickness + CUT_OVERRUN)
     return bar
 
 
 def _toe_pad(p):
-    """The EPDM pad under the toe lug, uncompressed, in the toe bar's frame."""
+    """The EPDM pad under the finger, uncompressed, in the toe bar's frame."""
     half = p.toe_bar_half_length - p.toe_pad_inset
     z0, z1 = p.toe_pad_local_z
-    return box_between(-half, half, p.toe_lug_underside - p.epdm_thickness, p.toe_lug_underside, z0, z1)
+    return box_between(-half, half, p.toe_finger_underside - p.epdm_thickness, p.toe_finger_underside, z0, z1)
 
 
 def blade(p, sign):
-    """Stanley blade resting on the table or pedestal, cutting edge at the slit; sign +1 above the slit
-    (movable, on the table), -1 below (stationary, on the pedestal).
+    """Stanley blade lying on its fold on the table or pedestal, cutting edge at the slit; sign +1 above the
+    slit (movable, on the table), -1 below (stationary, on the pedestal).
 
-    It touches the seat at its edge and at the fold's front edge, so the plate is inclined toward the fold
-    (razor_blade.seat_tilt); both blades are inclined alike, so their cutting edges are parallel and at one
+    The fold is flat on the seat and the plate parallel to it, clear of the seat's edge (razor_blade.
+    flat_seated_blade_location); both blades are seated alike, so their cutting edges are parallel and at one
     height, collinear when the slit is closed."""
-    seat = seated_blade_location(p.blade, p.blade_overhang)
+    seat = flat_seated_blade_location(p.blade)
     side = Pos(0, 0, p.slit_width / 2) if sign > 0 else Pos(0, 0, -p.slit_width / 2) * Rot(Y=180)
     return moved(build_razor_blade(p.blade), side * seat)
 

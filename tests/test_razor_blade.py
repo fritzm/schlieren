@@ -5,7 +5,13 @@ from dataclasses import replace
 
 from build123d import Vector
 
-from schlieren.parts.razor_blade import RazorBladeParameters, build_razor_blade, build_razor_blade_assembly
+from schlieren.cad import moved
+from schlieren.parts.razor_blade import (
+    RazorBladeParameters,
+    build_razor_blade,
+    build_razor_blade_assembly,
+    flat_seated_blade_location,
+)
 from schlieren.standards import INCH
 
 
@@ -89,6 +95,20 @@ class RazorBladeTests(unittest.TestCase):
         for z in (p.notch_z, p.slot_z):
             self.assertGreater(z - p.slot_length / 2, p.bevel_break)
             self.assertLess(z + p.slot_length / 2, p.fold_front_z)
+
+    def test_flat_seating_puts_the_fold_on_the_seat_and_the_plate_parallel_above_it(self):
+        p = self.p
+        seated = moved(self.blade, flat_seated_blade_location(p))
+        box = seated.bounding_box()
+        self.assertAlmostEqual(box.min.Y, 0, places=9)  # The fold's outer layer on the seat plane.
+        self.assertAlmostEqual(box.max.Y, p.fold_thickness, places=9)
+        # In front of the fold the plate is parallel to the seat, the fold's standoff above it.
+        for z in (3.0, 8.0):
+            self.assertFalse(seated.is_inside(Vector(8.0, p.fold_standoff - 0.05, z)))
+            self.assertTrue(seated.is_inside(Vector(8.0, p.fold_standoff + 0.05, z)))
+            self.assertFalse(seated.is_inside(Vector(8.0, p.fold_standoff + p.thickness + 0.05, z)))
+        # The cutting edge's mid-plane is half the fold's thickness above the seat.
+        self.assertAlmostEqual(flat_seated_blade_location(p).position.Y, p.fold_thickness / 2, places=9)
 
     def test_viewer_child_is_labeled(self):
         child = build_razor_blade_assembly(self.p)

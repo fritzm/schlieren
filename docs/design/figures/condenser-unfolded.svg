@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="296" viewBox="0 0 1000 296" role="img">
+<style>
+rect.bg { fill: #fff; }
+text { font-family: Menlo, Consolas, "DejaVu Sans Mono", monospace; font-size: 11.5px; fill: #1b2127; }
+.m { fill: #5a6670; }
+.ax { stroke: #1b2127; stroke-width: 1; stroke-dasharray: 6 3; opacity: .55; fill: none; }
+.part { stroke: #1b2127; stroke-width: 1.4; fill: none; }
+.glass { stroke: #1b2127; stroke-width: 1.4; fill: #cfd5da; fill-opacity: .55; }
+.dim { stroke: #5a6670; stroke-width: 1; fill: none; }
+.b-axis { fill: #0d7d8c; fill-opacity: .22; stroke: #0d7d8c; stroke-width: .8; }
+.b-edge { fill: #b5651d; fill-opacity: .20; stroke: #b5651d; stroke-width: .8; }
+.obj, .img { stroke: #b5651d; stroke-width: 3; }
+.cone { stroke: #0d7d8c; stroke-width: 1; stroke-dasharray: 3 3; fill: none; }
+</style>
+<rect class="bg" width="1000" height="296"/>
+<line class="ax" x1="60" y1="150" x2="940" y2="150"/>
+<polygon class="b-edge" points="100,148 162,135.3 580,163 162,164.7"/>
+<polygon class="b-edge" points="100,152 162,164.7 580,137 162,135.3"/>
+<polygon class="b-axis" points="100,150 162,135.3 580,150 162,164.7"/>
+<rect class="part" x="84" y="124" width="16" height="52"/>
+<line class="obj" x1="100" y1="148" x2="100" y2="152"/>
+<text x="100" y="116" text-anchor="middle">LED + dome</text>
+<path class="glass" d="M140 117 H147.5 C165 120 172 135 172 150 C172 165 165 180 147.5 183 H140 Z"/>
+<line class="ax" x1="162" y1="112" x2="162" y2="188"/>
+<text x="162" y="201" text-anchor="middle" class="m">H</text>
+<text x="180" y="201" text-anchor="middle" class="m">H′</text>
+<text x="170" y="92" text-anchor="end">ACL2520U-A, EFL 20.1</text>
+<line class="part" x1="191" y1="136.5" x2="191" y2="122"/>
+<line class="part" x1="191" y1="163.5" x2="191" y2="178"/>
+<line class="part" x1="187" y1="122" x2="195" y2="122"/>
+<line class="part" x1="187" y1="178" x2="195" y2="178"/>
+<text x="204" y="92">SM1D12 iris, set Ø9.5–10.5 (range 1–12)</text>
+<line class="dim" x1="191" y1="96" x2="191" y2="116"/>
+<line class="dim" x1="167" y1="96" x2="167" y2="110"/>
+<line class="ax" x1="580" y1="112" x2="580" y2="188"/>
+<line class="img" x1="580" y1="137" x2="580" y2="163"/>
+<text x="580" y="92" text-anchor="middle">source slit</text>
+<text x="592" y="132" class="m">image ≈ 10 mm</text>
+<text x="592" y="170" class="m">(6.6 × emitter)</text>
+<text x="104" y="76" class="m">object side: ±13°</text>
+<text x="330" y="196" class="m">image side: ±1.8–2.0° at each slit point</text>
+<line class="cone" x1="580" y1="150" x2="900" y2="62"/>
+<line class="cone" x1="580" y1="150" x2="900" y2="238"/>
+<line stroke="#1b2127" stroke-width="3" x1="920" y1="50" x2="920" y2="250"/>
+<text x="930" y="46" text-anchor="end">mirror Ø203</text>
+<text x="740" y="108" class="m" transform="rotate(-15 740 108)">cone exaggerated</text>
+<g class="dim">
+<line x1="100" y1="222" x2="162" y2="222"/><line x1="100" y1="216" x2="100" y2="228"/><line x1="162" y1="216" x2="162" y2="228"/>
+<line x1="172" y1="222" x2="580" y2="222"/><line x1="172" y1="216" x2="172" y2="228"/><line x1="580" y1="216" x2="580" y2="228"/>
+<line x1="580" y1="222" x2="920" y2="222" stroke-dasharray="2 4"/><line x1="920" y1="216" x2="920" y2="228"/>
+<line x1="100" y1="252" x2="140" y2="252"/><line x1="140" y1="246" x2="140" y2="258"/><line x1="100" y1="246" x2="100" y2="258"/>
+<line x1="191" y1="252" x2="580" y2="252"/><line x1="191" y1="246" x2="191" y2="258"/><line x1="580" y1="246" x2="580" y2="258"/>
+</g>
+<text x="131" y="240" text-anchor="middle">u 23.14</text>
+<text x="376" y="240" text-anchor="middle">v ≈ 153, H′ (vertex) to slit</text>
+<text x="750" y="240" text-anchor="middle">2f ≈ 3200 mm, not to scale</text>
+<text x="120" y="270" text-anchor="middle">g = 15.04</text>
+<text x="120" y="284" text-anchor="middle">LED to plano face</text>
+<text x="386" y="270" text-anchor="middle">L ≈ 150, iris to slit</text>
+</svg>

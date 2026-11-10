@@ -42,38 +42,44 @@ class FocusTargetTests(unittest.TestCase):
             self.assertEqual(len(part.solids()), 1)
             self.assertTrue(part.is_valid)
 
-    def test_rim_face_is_the_blade_seat_plane_the_stage_head_puts_ahead_of_the_post(self):
+    def test_rim_face_is_the_blades_edge_plane_the_stage_head_puts_ahead_of_the_post(self):
         p = self.p
         self.assertAlmostEqual(self.target.bounding_box().max.Y, 0, places=9)
         self.assertAlmostEqual(self.paper.bounding_box().min.Y, 0, places=9)
-        # The rim stands off the post axis exactly as the stage head's blades do.
+        # The rim stands off the post axis as the stage head's blade edges do: the blade-seat plane's distance,
+        # plus the edges' height above it.
         rim_from_post = SM1RC_M_THICKNESS / 2 + p.stage.ring_gap + p.barrel_length
-        self.assertAlmostEqual(head_location(p.stage).position.Y, rim_from_post, places=9)
+        self.assertAlmostEqual(
+            head_location(p.stage).position.Y + p.stage.seated_blade_y(0, 0), rim_from_post, places=9
+        )
 
     def test_paper_plane_is_the_stage_blades_edge_plane_not_the_flexure_heads(self):
         p = self.p
         self.assertIsInstance(p.stage, SlitStageParameters)  # 2.9 mm overhang, not the flexure head's 1.5 mm.
-        # The paper's rear face is the seat plane; the stage's inclined blades put their edges' mid-plane
-        # within 0.02 mm of it, where the flexure head's 1.5 mm overhang would put them 0.076 mm off.
+        # The stage's blades lie flat on their folds, so their cutting edges' mid-plane is half the fold's
+        # thickness above the seat plane. The paper's rear face is that plane.
         edge_plane = p.stage.seated_blade_y(0, 0)
-        self.assertAlmostEqual(self.paper.bounding_box().min.Y, edge_plane, delta=0.02)
-        self.assertAlmostEqual(self.paper.bounding_box().min.Y, 0, places=9)
+        self.assertAlmostEqual(edge_plane, p.stage.blade.fold_thickness / 2, places=9)
+        self.assertAlmostEqual(p.rim_y, edge_plane, places=9)
+        paper = children_by_label(self.assembly)["Paper"].bounding_box()
+        self.assertAlmostEqual(paper.min.Y - head_location(p.stage).position.Y, edge_plane, places=9)
 
     def test_assembly_has_no_baffle_tube(self):
         self.assertNotIn("SM1 baffle tube", children_by_label(self.assembly))
 
     def test_ring_interface_matches_the_stage_plate(self):
-        s = self.p.stage
+        p = self.p
+        s = p.stage
         box = self.target.bounding_box()
-        self.assertAlmostEqual(box.min.Y, s.plate_back - s.spigot_length, places=9)
+        self.assertAlmostEqual(box.min.Y, p.plate_back - s.spigot_length, places=9)
         # Spigot and shoulder diameters are the plate's, so the SM1RC/M and baffle tube seat the same way.
-        self.assertTrue(self.target.is_inside(Vector(s.spigot_diameter / 2 - 0.2, s.plate_back - 6.0, 0)))
-        self.assertFalse(self.target.is_inside(Vector(s.spigot_diameter / 2 + 0.2, s.plate_back - 6.0, 0)))
+        self.assertTrue(self.target.is_inside(Vector(s.spigot_diameter / 2 - 0.2, p.plate_back - 6.0, 0)))
+        self.assertFalse(self.target.is_inside(Vector(s.spigot_diameter / 2 + 0.2, p.plate_back - 6.0, 0)))
         self.assertTrue(
-            self.target.is_inside(Vector(s.spigot_shoulder_diameter / 2 - 0.2, s.plate_back - 1.0, 0))
+            self.target.is_inside(Vector(s.spigot_shoulder_diameter / 2 - 0.2, p.plate_back - 1.0, 0))
         )
         self.assertFalse(
-            self.target.is_inside(Vector(s.spigot_shoulder_diameter / 2 + 0.2, s.plate_back - 1.0, 0))
+            self.target.is_inside(Vector(s.spigot_shoulder_diameter / 2 + 0.2, p.plate_back - 1.0, 0))
         )
 
     def test_barrel_steps_out_to_the_rim_only_where_the_inserts_are(self):
@@ -90,7 +96,7 @@ class FocusTargetTests(unittest.TestCase):
     def test_bore_is_clear_end_to_end(self):
         p = self.p
         taper = p.seat_taper_length
-        for y in (p.stage.plate_back - 5.0, p.stage.plate_back + 5.0, -taper - 0.5):
+        for y in (p.plate_back - 5.0, p.plate_back + 5.0, -taper - 0.5):
             self.assertFalse(self.target.is_inside(Vector(p.bore / 2 - 0.2, y, 0)))
             self.assertTrue(self.target.is_inside(Vector(p.bore / 2 + 0.2, y, 0)))
 
@@ -240,16 +246,19 @@ class FocusScreenTests(unittest.TestCase):
         self.assertNotIn("Focus screen fixture", children)
 
     def test_ground_face_is_the_stage_blades_edge_plane_on_the_rim_face(self):
-        # The glass lies on the rim face like the paper: its source-facing ground face is the y = 0 seat
-        # plane, within 0.02 mm of the stage's inclined blade edges' mid-plane, at any glass thickness.
-        edge_plane = self.p.target.stage.seated_blade_y(0, 0)
+        # The glass lies on the rim face like the paper: its source-facing ground face is the y = 0 rim face
+        # at any glass thickness, and the rim face is the stage's blades' edge plane.
         for thickness in (self.p.glass_thickness_min, self.p.glass_thickness_max):
             glass = build_glass(self.p, thickness)
             self.assertAlmostEqual(glass.bounding_box().min.Y, 0, places=9)
-            self.assertAlmostEqual(glass.bounding_box().min.Y, edge_plane, delta=0.02)
         self.assertAlmostEqual(self.glass.bounding_box().min.Y, 0, places=9)  # The vendor model, nominal.
         self.assertAlmostEqual(build_focus_target(self.p.target).bounding_box().max.Y, 0, places=9)
         self.assertAlmostEqual(self.ring.bounding_box().min.Y, 0, places=9)
+        stage = self.p.target.stage
+        placed = children_by_label(self.assembly)["Ground glass"].bounding_box()
+        self.assertAlmostEqual(
+            placed.min.Y - head_location(stage).position.Y, stage.seated_blade_y(0, 0), places=9
+        )
 
     def test_glass_is_the_vendor_model_and_the_parametric_disc_matches_it(self):
         p = self.p

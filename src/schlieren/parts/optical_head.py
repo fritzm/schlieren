@@ -26,6 +26,7 @@ from schlieren.parts.camera_support import (
     cutoff_post_station,
 )
 from schlieren.parts.carriage import CarriageParameters
+from schlieren.parts.field_lens import FieldLensParameters, build_field_lens_station
 from schlieren.parts.frame import FrameParameters, build_frame_assembly
 from schlieren.parts.light_source import (
     GREEN,
@@ -50,6 +51,8 @@ class OpticalHeadParameters:
     carriage: CarriageParameters = field(default_factory=CarriageParameters)
     camera: CameraSupportParameters = field(default_factory=CameraSupportParameters)
     board: LEDBoard = GREEN
+    # The field lens station ahead of the slit (§7.9). False leaves it out, to run the apparatus without it.
+    field_lens: bool = True
 
     # Setup values (§3.3). Station is y along the rail from its pivot, so negative.
     slit_station: float = (
@@ -61,6 +64,15 @@ class OpticalHeadParameters:
     def slit_post_station(self) -> float:
         """The slit post: the blade plane is the head frame's origin, aft of the post."""
         return self.slit_station - head_location(self.slit).position.Y
+
+    @property
+    def field_lens_parameters(self) -> FieldLensParameters:
+        return FieldLensParameters(stage=self.slit)
+
+    @property
+    def field_lens_post_station(self) -> float:
+        """The field lens post, ahead of the slit blade plane toward the mirror."""
+        return self.slit_station + self.field_lens_parameters.post_y
 
     @property
     def light_source_origin_station(self) -> float:
@@ -97,6 +109,8 @@ class OpticalHeadParameters:
         self.frame.validate()
         self.light_source.validate()
         self.slit.validate()
+        if self.field_lens:
+            self.field_lens_parameters.validate()
         self.carriage.validate()
         self.camera.validate()
         rail_rear = -(self.frame.rail_front_setback + self.frame.rail_length)
@@ -107,19 +121,23 @@ class OpticalHeadParameters:
         ):
             if not rail_rear < station < -self.frame.rail_front_setback:
                 raise ValueError(f"The {name} must stand on its rail")
+        if self.field_lens and not self.field_lens_post_station < -self.frame.rail_front_setback:
+            raise ValueError("The field lens post must stand on its rail")
 
 
 def build_source_fixtures(h: OpticalHeadParameters, rotation: float = 0.0) -> Compound:
-    """Light source and slit head in the source rail frame; rotation is the slit's, in degrees."""
+    """Light source, slit head, and field lens station (unless h leaves it out) in the source rail frame;
+    rotation is the slit's, in degrees."""
     light_source = build_light_source_assembly(h.light_source, h.board, side_screws=True)
     slit_head = build_slit_stage_assembly(h.slit, rotation, side_screws=True)
-    return assembly(
-        "Source rail fixtures",
-        [
-            place(Pos(0, h.light_source_origin_station, 0), light_source),
-            place(Pos(0, h.slit_post_station, 0), slit_head),
-        ],
-    )
+    fixtures = [
+        place(Pos(0, h.light_source_origin_station, 0), light_source),
+        place(Pos(0, h.slit_post_station, 0), slit_head),
+    ]
+    if h.field_lens:
+        station = build_field_lens_station(h.field_lens_parameters, side_screws=True)
+        fixtures.append(place(Pos(0, h.slit_station, 0), station))
+    return assembly("Source rail fixtures", fixtures)
 
 
 def build_imaging_fixtures(h: OpticalHeadParameters) -> Compound:

@@ -8,7 +8,7 @@ thousandths of an inch, hence the tolerance.
 
 import unittest
 
-from build123d import Box, Pos
+from build123d import Box, Pos, Vector
 
 from schlieren import vendor_cad as v
 from schlieren.vendor_cad import (
@@ -16,8 +16,10 @@ from schlieren.vendor_cad import (
     mcmaster_91131a028,
     mcmaster_92815a202,
     mcmaster_92815a202_envelope,
+    thorlabs_la1433_a,
     thorlabs_sm1cp2m,
     thorlabs_sm1d12,
+    thorlabs_sm1l10,
     thorlabs_sm1l15,
     thorlabs_sm1rc_m,
     thorlabs_smr1_m,
@@ -59,6 +61,14 @@ MODELS = {
     "McMaster 91116A350 washer": (
         "McMaster-91116A350.step",
         (v.MCMASTER_91116A350_DIAMETER, v.MCMASTER_91116A350_DIAMETER, v.MCMASTER_91116A350_THICKNESS),
+    ),
+    "Thorlabs LA1433-A plano-convex lens": (
+        "Thorlabs-LA1433-A.step",
+        (v.LA1433_A_DIAMETER, v.LA1433_A_DIAMETER, v.LA1433_A_CENTER_THICKNESS),
+    ),
+    "Thorlabs SM1L10 lens tube": (
+        "Thorlabs-SM1L10.step",
+        (v.SM1L10_OUTER_DIAMETER, v.SM1L10_OUTER_DIAMETER, v.SM1L10_LENGTH),
     ),
     "Thorlabs DG10-600 ground-glass diffuser": (
         "Thorlabs-DG10-600.step",
@@ -210,6 +220,32 @@ class VendorModelTests(unittest.TestCase):
         for lo, hi in ((box.min.X, box.max.X), (box.min.Z, box.max.Z)):
             self.assertAlmostEqual((lo + hi) / 2, 0, delta=MODEL_ROUNDING)  # Axis through the origin.
             self.assertAlmostEqual(hi - lo, v.SM1L15_OUTER_DIAMETER, delta=MODEL_ROUNDING)
+
+    def test_sm1l10_tube_and_ring_frame(self):
+        tube, ring = thorlabs_sm1l10()
+        box = tube.bounding_box()
+        self.assertAlmostEqual(box.min.Y, -v.SM1L10_THREAD_LENGTH, delta=MODEL_ROUNDING)
+        self.assertAlmostEqual(box.max.Y, v.SM1L10_LENGTH - v.SM1L10_THREAD_LENGTH, delta=MODEL_ROUNDING)
+        for lo, hi in ((box.min.X, box.max.X), (box.min.Z, box.max.Z)):
+            self.assertAlmostEqual((lo + hi) / 2, 0, delta=MODEL_ROUNDING)  # Axis through the origin.
+            self.assertAlmostEqual(hi - lo, v.SM1L10_OUTER_DIAMETER, delta=MODEL_ROUNDING)
+        # The ring is flush at the open end and as thick as the SM1RR; its bore is the clear aperture.
+        ring_box = ring.bounding_box()
+        self.assertAlmostEqual(ring_box.max.Y, box.max.Y, delta=MODEL_ROUNDING)
+        self.assertAlmostEqual(ring_box.size.Y, v.SM1RR_THICKNESS, delta=MODEL_ROUNDING)
+        self.assertAlmostEqual(v.SM1RR_CLEAR_DIAMETER, 22.9, delta=0.1)
+
+    def test_la1433_a_lens_frame(self):
+        box = thorlabs_la1433_a().bounding_box()
+        self.assertAlmostEqual(box.min.Y, 0.0, delta=MODEL_ROUNDING)  # Plano face.
+        self.assertAlmostEqual(box.max.Y, v.LA1433_A_CENTER_THICKNESS, delta=MODEL_ROUNDING)  # Convex apex.
+        for lo, hi in ((box.min.X, box.max.X), (box.min.Z, box.max.Z)):
+            self.assertAlmostEqual((lo + hi) / 2, 0, delta=MODEL_ROUNDING)
+        # The convex face is on +Y: the rim is thinner than the center.
+        lens = thorlabs_la1433_a()
+        rim = v.LA1433_A_DIAMETER / 2 - 0.1
+        self.assertTrue(lens.is_inside(Vector(rim, 1.0, 0)))
+        self.assertFalse(lens.is_inside(Vector(rim, 2.5, 0)))
 
     def test_thumb_nut_envelope_contains_the_model(self):
         nut, envelope = mcmaster_92815a202(), mcmaster_92815a202_envelope()

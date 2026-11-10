@@ -2,6 +2,7 @@
 assembly."""
 
 import argparse
+from dataclasses import replace
 from pathlib import Path
 
 from schlieren.cli._common import add_figure_option, add_show_option, render, show
@@ -23,22 +24,27 @@ def main() -> None:
     )
     parser.add_argument("--right-yaw", type=float, default=0.0, help="Imaging rail yaw outward, deg")
     parser.add_argument("--slit-rotation", type=float, default=0.0, help="Slit head rotation, deg")
+    parser.add_argument(
+        "--no-field-lens", action="store_true", help="Leave out the field lens station ahead of the slit"
+    )
     add_figure_option(parser, DEFAULT_FIGURE, "the whole optical head")
     args = parser.parse_args()
-    overrides = {"cutoff_stagger": args.stagger}
+    h = OpticalHeadParameters(cutoff_stagger=args.stagger, field_lens=not args.no_field_lens)
     if args.slit_station is not None:
-        overrides["slit_station"] = args.slit_station
-    h = OpticalHeadParameters(**overrides)
+        h = replace(h, slit_station=args.slit_station)
     h.validate()
-    print("Stations along the rail from its pivot, mm (negative aft):")
-    for name, station in (
+    stations = [
         ("Slit blade plane", h.slit_station),
         ("Slit post", h.slit_post_station),
         ("Light source post", h.light_source_post_station),
         ("Cutoff cassette front", h.cutoff_plane_station),
         ("Cutoff post", h.cutoff_post_station),
         ("Phone back", h.phone_back_station),
-    ):
+    ]
+    if h.field_lens:
+        stations.insert(2, ("Field lens post", h.field_lens_post_station))
+    print("Stations along the rail from its pivot, mm (negative aft):")
+    for name, station in stations:
         print(f"  {name:<22} {station:8.2f}")
     head = build_optical_head(h, args.left_yaw, args.right_yaw, args.slit_rotation)
     if args.figure:

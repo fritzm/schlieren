@@ -59,6 +59,18 @@ SM1L15_SHOULDER_X = -12.761
 SM1L15_SHOULDER_TO_OPEN_END = 1.525 * INCH
 SM1L15_THREAD_LENGTH = 0.125 * INCH
 SM1L15_OUTER_DIAMETER = 1.20 * INCH
+# SM1L10 model: axis +X through the origin, open end at x=0 and the 0.12 in external thread toward -X, ending at
+# x=-1.15 in. Inside, the SM1 internal thread runs 1.00 in from the open end to an internal lip (a Ø24 mm bore)
+# that the lens seats on; the SM1RR retaining ring (the second solid) is flush at the open end.
+SM1L10_LENGTH = 1.15 * INCH
+SM1L10_THREAD_LENGTH = 0.12 * INCH
+SM1L10_SHOULDER_X = -(SM1L10_LENGTH - SM1L10_THREAD_LENGTH)
+SM1L10_THREAD_DEPTH = 1.00 * INCH
+SM1L10_OUTER_DIAMETER = 1.20 * INCH
+SM1L10_THREAD_DIAMETER = 1.035 * INCH  # The external thread's major diameter; the model's is 26.28 mm.
+SM1L10_LIP_DIAMETER = 24.0
+SM1RR_THICKNESS = 0.08 * INCH
+SM1RR_CLEAR_DIAMETER = 22.9  # Drawing; the vendor model's bore is 22.98 mm.
 SM1D12_SHOULDER_Z = 0.080 * INCH  # External-thread shoulder above the thread end at z=0.
 XCRS40_SIDE_Z = -20.0  # Side faces of the XCRS40 base and carriage, on the side away from the micrometer.
 VENDOR_CUT_EXTENT = 100.0  # Half-size of a cutter that spans a vendor model.
@@ -151,6 +163,9 @@ MCMASTER_93475A240_DIAMETER = 10.0
 THORLABS_DG10_DIAMETER = 25.4
 THORLABS_DG10_THICKNESS = 2.0
 THORLABS_DG10_BEVEL = 0.2
+LA1433_A_DIAMETER = 25.4
+LA1433_A_CENTER_THICKNESS = 3.05  # The vendor model; the drawing rounds it to 3.1 mm.
+LA1433_A_RADIUS = 77.26  # Convex face, from the vendor model (drawing: R77.3).
 # McMaster 91292A114 model (M3 × 12, no threads): axis +Z through the origin, centered on its 15 mm overall
 # length (12 mm under the head plus the head), Ø5.5 mm head of 3 mm at +Z, Ø3 mm plain shank to -Z.
 MCMASTER_91292A114_LENGTH = 12.0  # Nominal: under the head.
@@ -404,6 +419,30 @@ def thorlabs_sm1l15() -> Compound:
     tube = max(vendor_step("Thorlabs-SM1L15.step").solids(), key=lambda s: s.volume)
     axis_yz = SM1L15_AXIS_YZ
     return Compound([Rot(Z=90) * Pos(-SM1L15_SHOULDER_X, -axis_yz[0], -axis_yz[1]) * tube])
+
+
+@cache
+def thorlabs_sm1l10() -> tuple[Compound, Compound]:
+    """Thorlabs SM1L10 tube and its SM1RR retaining ring as (tube, ring), each on axis +Y through the origin.
+
+    The external-thread shoulder is at y=0, with the thread toward -Y and the open end toward +Y, as
+    thorlabs_sm1l03; the ring sits flush at the open end, as shipped. The lens seats on the internal lip at the
+    thread end, SM1L10_THREAD_DEPTH from the open end, and the ring holds it from the open end.
+    """
+    solids = sorted(vendor_step("Thorlabs-SM1L10.step").solids(), key=lambda s: s.volume)
+    ring, tube = solids
+    to_frame = Rot(Z=90) * Pos(-SM1L10_SHOULDER_X, 0, 0)
+    return Compound([to_frame * tube]), Compound([to_frame * ring])
+
+
+@cache
+def thorlabs_la1433_a() -> Compound:
+    """Thorlabs LA1433-A Ø1 in plano-convex lens, f = 149.5 mm; axis +Y through the origin, the plano face at
+    y=0 and the convex apex at y=LA1433_A_CENTER_THICKNESS."""
+    model = vendor_step("Thorlabs-LA1433-A.step")
+    return Compound(
+        [Rot(X=-90) * Pos(0, 0, LA1433_A_CENTER_THICKNESS / 2) * solid for solid in model.solids()]
+    )
 
 
 @cache

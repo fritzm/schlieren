@@ -18,25 +18,25 @@ FRM-016,Tabletop frame,3,244 pcs M5 socket screws assortment kit 304 SS,,Amazon,
 FRM-017,Tabletop frame,,Rubber/EPDM sheet,Yaw strap friction strips,McMaster,9852N37,,sheet,In hand,§4.3,"Two strips (one per yaw strap), cut from the CAS-002 sheet; no separate purchase."
 FRM-018,Tabletop frame,2,"Oil-embedded 841 bronze sleeve bearing, 5 mm ID × 8 mm OD × 10 mm long",Rail pivot bushings (one per pivot hole),McMaster,6658K724,4,each,In hand,§4.3,"Pressed into 8 mm bores in the pivot plate to take up the play of the M5 pivot bolt in its hole; plain sleeve, no flange (no axial load). Bore 0 to +0.02 mm on the 5 mm shank. Two spares in the quantity. Pivot bolts must run on the smooth shank (check thread length, FRM-004)."
 FRM-019,Tabletop frame,2,"Oil-embedded 841 bronze sleeve bearing, 5 mm ID × 8 mm OD × 4 mm long",Rail pivot lug bushings (one per lug),McMaster,6658K116,4,each,In hand,§4.3,"Pressed into an 8 mm bore drilled through the pivot lug's front hole, flush with the 4 mm plate, to take up the play of the M5 pivot bolt in the lug hole; plain sleeve. Bore 0 to +0.02 mm on the 5 mm shank, OD 8.02 mm (0 to +0.02). Two spares in the quantity bought."
-SUP-001,Optical supports,4,"Ø12.7 mm optical post, 50 mm, SS",,Thorlabs,TR50/M,4,each,In hand,§5.1,"Four installed (condenser, slit, baffle tube, cutoff stations)."
-SUP-002,Optical supports,4,"Shim discs, 3/4 in OD x 0.010 ±0.0005 in, SS",Post seats,McMaster,2895T62,5,pack,In hand,§5.2,
-SUP-003,Optical supports,4,"M3 × 12 mm socket head screw, 18-8 SS",Collar clamp screws,McMaster,91292A114,100,pack,In hand,§5.2,Finalized 12 mm length.
-SUP-004,Optical supports,4,"M3 × 0.5 hex nut, 18-8 SS, 5.5 mm AF × 2.4 mm high",Collar clamp nuts,McMaster,91828A211,100,pack,In hand,§5.2,Full-height DIN 934 nut; captured in printed pocket.
-SUP-005,Optical supports,4,PLA printed post shoes,,,,,,CAD ready,§5.2,
+SUP-001,Optical supports,4,"Ø12.7 mm optical post, 50 mm, SS",,Thorlabs,TR50/M,4,each,In hand,§5.1,"Four installed (condenser, slit, baffle tube, cutoff stations); the field-lens post is SLT-026."
+SUP-002,Optical supports,5,"Shim discs, 3/4 in OD x 0.010 ±0.0005 in, SS",Post seats,McMaster,2895T62,5,pack,In hand,§5.2,"One per station, five with the field-lens post: the pack of five is used up."
+SUP-003,Optical supports,5,"M3 × 12 mm socket head screw, 18-8 SS",Collar clamp screws,McMaster,91292A114,100,pack,In hand,§5.2,Finalized 12 mm length.
+SUP-004,Optical supports,5,"M3 × 0.5 hex nut, 18-8 SS, 5.5 mm AF × 2.4 mm high",Collar clamp nuts,McMaster,91828A211,100,pack,In hand,§5.2,Full-height DIN 934 nut; captured in printed pocket.
+SUP-005,Optical supports,5,PLA printed post shoes,,,,,,CAD ready,§5.2,
 LGT-001,Light source,1,"Aspheric Condenser Lens, Ø25 mm, f=20.1 mm, NA=0.60, ARC: 350-700 nm",,Thorlabs,ACL2520U-A,1,each,In hand,§6.1,
 LGT-002,Light source,1,"Ø1"" Adjustable lens tube, 0.31"" travel range",,Thorlabs,SM1V05,1,each,In hand,§6.1,
 LGT-003,Light source,1,"SM1 lens tube, 0.30"" thread depth",Spacing between lens and iris,Thorlabs,SM1L03,1,each,In hand,§6.1,
 LGT-004,Light source,1,Adjustable iris,,Thorlabs,SM1D12,1,each,In hand,§6.1,
 LGT-005,Light source,1,"Ø1"" lens mount with SM1 internal threads and no retaining Lip, M4 tap",Post attachment,Thorlabs,SMR1/M,1,each,In hand,§6.1,
-LGT-006,Light source,1,Internally SM1-threaded end cap,Transport cover for the condenser/iris assembly,Thorlabs,SM1CP1,1,each,In hand,§6.7,
-LGT-007,Light source,1,Snap-on plastic dust cap for SM1 lens tube,Transport cover for the condenser/iris assembly,Thorlabs,SM1EC2,5,pack,In hand,§6.7,One of the pack of five is used; the rest are spare.
+LGT-006,Light source,1,Internally SM1-threaded end cap,Transport cover for the condenser/iris assembly,Thorlabs,SM1CP1,1,each,In hand,§6.3,
+LGT-007,Light source,1,Snap-on plastic dust cap for SM1 lens tube,Transport cover for the condenser/iris assembly,Thorlabs,SM1EC2,5,pack,In hand,§6.3,One of the pack of five is used; the rest are spare.
 LGT-008,Light source,1,Nichia 519A R9080 5000K,White LED,Convoy,519A R9080 5000K,3,each,In hand,§6.2,
 LGT-009,Light source,1,OSRAM LST1-01F06-GRN1-00,Green LED,Digikey,1672-1132-ND,2,each,In hand,§6.2,
 LGT-012,Light source,4,M2 nylon washers,LED insulating washers,McMaster,91545A410,,pack,In hand,§6.2,
-LGT-013,Light source,1,"ALIENTEK DP100 DC Power Supply Variable, 30V 5A",LED CC/CV power supply,Amazon,B0CWRG6YFM,1,each,In hand,§6.5,
-LGT-014,Light source,2,"Cable Assembly, Micro-Fit 3.0 P-S 2ckt 150 mm",LED pigtails,Mouser,538-214758-1021,2,each,In hand,§6.5,
-LGT-015,Light source,1,"Cable Assembly, Micro-Fit 3.0 R-S 2ckt 600MM",Power supply pigtail,Mouser,538-214756-1023,2,each,In hand,§6.5,
-LGT-016,Light source,1,Banana plug set 1 blk 1 red,DP100 connection,Mouser,565-1825-02,1,each,In hand,§6.5,
+LGT-013,Light source,1,"ALIENTEK DP100 DC Power Supply Variable, 30V 5A",LED CC/CV power supply,Amazon,B0CWRG6YFM,1,each,In hand,§6.2,
+LGT-014,Light source,2,"Cable Assembly, Micro-Fit 3.0 P-S 2ckt 150 mm",LED pigtails,Mouser,538-214758-1021,2,each,In hand,§6.2,
+LGT-015,Light source,1,"Cable Assembly, Micro-Fit 3.0 R-S 2ckt 600MM",Power supply pigtail,Mouser,538-214756-1023,2,each,In hand,§6.2,
+LGT-016,Light source,1,Banana plug set 1 blk 1 red,DP100 connection,Mouser,565-1825-02,1,each,In hand,§6.2,
 LGT-017,Light source,2,"SM1 end cap, external threads, with center drill mark, anodized aluminum","LED carrier: board on front face, threads into condenser SMR1/M",Thorlabs,SM1CP2M,1,each,In hand,§6.2,"One per LED module. Drill/tap, all through holes (§6.2): M2 board holes, M3 heatsink holes, lead pass-through holes at r = 11.0 mm."
 LGT-018,Light source,2,"Alpha CN40-40B natural-convection pin-fin heatsink, Ø40 × 40 mm, black anodized",LED module heatsink,Luxeon Star LEDs,CN40-40B,3,each,In hand,§6.2,One per LED module; bolted to SM1CP2M rear. Drill base for M3 screws in open pin cells and for leads. Three ordered and received; one spare.
 LGT-019,Light source,6,"M3 × 0.5 × 6 mm socket head screw, 18-8 SS",Heatsink-to-cap fasteners,McMaster,91292A111,100,pack,In hand,§6.2,Three per module. Provisional length (3 mm base + ~3 mm thread into the through-tapped cap; shorter than the cap thickness). Same series as the common 12 mm screw.
@@ -54,8 +54,12 @@ SLT-017,Source slit,1,"Ø1 in ground-glass diffuser, 600 grit, N-BK7, unmounted"
 SLT-018,Source slit,1,"Linear stage, 40 × 40 mm, micrometer drive (SF Technology SEMX40-AS type)",Slit width adjustment; the table carries the movable blade,Amazon,B0B7RVW3SX,1,each,In hand,§7.2,"Dimensions are the manufacturer's, not measured on the stage in hand; Misumi XCRS40 CAD stands in (§7.6)."
 SLT-019,Source slit,1,PLA printed slit stage plate,,,,,,CAD ready,§7.5,
 SLT-020,Source slit,1,PLA printed slit pedestal,,,,,,CAD ready,§7.2,
-SLT-021,Source slit,2,PLA printed slit toe bars,,,,,,CAD ready,§7.4,
+SLT-021,Source slit,2,PLA printed slit toe bars,,,,,,CAD ready,§7.4,"Fingers press the rear of each blade's fold, stopping short of the field-lens tube's body (§7.4)."
 SLT-022,Source slit,4,"M3 × 10 mm socket head screw, 18-8 SS",Retaining-ring screws of the slit focus target and focus screen (§7.7),McMaster,91292A113,100,pack,In hand,§7.7,"Provisional (focus target). Same 91292A113 stock as SLT-013, one shared 100-pack. Screw into heat-set inserts (97171A310) in the rim face; 4.0 mm ring."
+SLT-023,Source slit,1,"Plano-convex lens, Ø1 in, N-BK7, f = 150 mm, ARC: 350-700 nm","Field lens (§7.9); plano face toward the slit, seated on the lip of the SLT-024 tube",Thorlabs,LA1433-A,1,each,To procure,§7.9,"Catalog f = 149.5 mm ± 1 %, back focal length 147.5 mm."
+SLT-024,Source slit,1,"SM1 lens tube, 1.00"" thread depth","Field-lens tube (§7.9); the lens seats on its internal lip, held by the SM1RR retaining ring supplied with the tube",Thorlabs,SM1L10,1,each,To procure,§7.9,"Thread end toward the slit, just over the blade folds between the toe fingers. Seat the ring with the optical spanner wrench (SHP-003)."
+SLT-025,Source slit,1,"Slip ring for SM1 lens tubes, M4 Tap",Field-lens tube mount; clamps the tube on its own post (§7.9),Thorlabs,SM1RC/M,1,each,To procure,§7.9,
+SLT-026,Source slit,1,"Ø12.7 mm optical post, 50 mm, SS",Field-lens post (§7.9),Thorlabs,TR50/M,1,each,To procure,§7.9,"The fifth post on the common stack (SUP-002 to SUP-005 supply its shim, clamp screw and nut, and printed shoe)."
 CAR-002,Carriages,1,"Slip ring for SM1 lens tubes, M4 Tap",Post attachment,Thorlabs,SM1RC/M,1,each,In hand,§8.1,Cutoff carriage.
 CAR-005,Carriages,1,"Fine adjustment screw with knob, 1/4""-80, 1.00"" long",Cassette positioner,Thorlabs,FAS100,3,each,In hand,§8.3,"Three in hand: one for the cutoff carriage, two spare (UNU-015)."
 CAR-006,Carriages,1,Compression springs,Cassette counter-force plunger,McMaster,2006N292,5,pack,In hand,§8.3,Shared 5-pack with the unused spring UNU-017.

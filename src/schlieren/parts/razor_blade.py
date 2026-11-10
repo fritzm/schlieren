@@ -184,6 +184,17 @@ def seated_blade_location(p, overhang):
     return Pos(0, p.thickness / 2 * cos(tilt) - near * sin(tilt), 0) * Rot(X=-degrees(tilt))
 
 
+def flat_seated_blade_location(p):
+    """Blade frame -> seat frame for a blade lying on its fold, flat on a seat plane (y = 0).
+
+    The fold's outer layer is on the seat, so the plate stands `fold_standoff` above it, parallel to it and
+    clear of the seat's edge; the plate's mid-plane, and so the cutting edge, is half the fold's thickness above
+    the seat. Seat frame as `seated_blade_location`: z across the blade from the cutting edge (z = 0) toward
+    the fold. A blade on the opposite side of a slit is this placed with `Rot(Y=180)`.
+    """
+    return Pos(0, p.fold_thickness / 2, 0)
+
+
 def build_razor_blade_assembly(p=None):
     """The blade as a labeled viewer child."""
     return labeled(build_razor_blade(p), "Razor blade", METAL)

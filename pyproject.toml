@@ -20,6 +20,7 @@ dependencies = [
 camera-support = "schlieren.cli.camera_support:main"
 carriage = "schlieren.cli.carriage:main"
 cassette = "schlieren.cli.cassette:main"
+field-lens = "schlieren.cli.field_lens:main"
 frame = "schlieren.cli.frame:main"
 lens = "schlieren.cli.lens:main"
 led-drill-fixture = "schlieren.cli.led_drill_fixture:main"
@@ -85,5 +86,5 @@ classmethod-decorators = ["schlieren.testing.shared"]
 
 [dependency-groups]
 dev = [
-    "ty>=0.0.89",
+    "ty>=0.0.99",
 ]

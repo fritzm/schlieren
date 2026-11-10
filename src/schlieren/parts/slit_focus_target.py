@@ -3,7 +3,7 @@ is focused. Nothing here is final until the user accepts it.
 
 The emitter image is focused on the slit plane, but the blades sit deep in the stage and cannot be seen. This
 fixture swaps in for the stage plate on the same SM1RC/M ring: the same shoulder, ring gap, and spigot grip,
-then a hollow barrel that widens to a rim whose face is the blade-seat plane. The bore tapers in at 45 degrees
+then a hollow barrel that widens to a rim whose face is the plane of the blades' cutting edges. The bore tapers in at 45 degrees
 to a seat bore at the rim face. A translucent screen lies on the rim and a retaining ring screws down over it
 into heat-set inserts; the ring's window is the seat bore. The LED image forms on the screen's source-facing
 side and is read through it from the mirror side. The screen is one of two variants sharing the one printed
@@ -14,11 +14,12 @@ fixture, each with a ring of its own:
   with a 0.2 mm edge bevel, catalog and vendor-model values) in a pocket in the ring's rear face, ground face
   toward the source, lying on the rim face like the paper. A neoprene gasket between the glass's front face and
   the pocket ceiling pushes the glass back onto the rim and absorbs the thickness spread, so the imaging surface
-  is the y = 0 blade-seat plane whatever the glass thickness. The glass is loaded from the front: set it on the
+  is the y = 0 rim face, the plane of the blades' cutting edges, whatever the glass thickness. The glass is loaded from the front: set it on the
   rim, then the gasket, then the ring over both. Its Ø25.0 mm flat seats on 2.5 mm of the rim.
 
-Local frame and assembly frame are the stage head's (slit_stage.py): y toward the mirror, the origin on the
-optical axis in the blade-seat plane, so the rim face is y = 0.
+Assembly frame is the stage head's (slit_stage.py): y toward the mirror, the origin on the optical axis in the
+blade-seat plane. The blades lie on their folds, so their cutting edges' mid-plane is `rim_y` ahead of that plane;
+the fixture is built with its rim face at y = 0 and placed there.
 
 **Provisional:** the paper's thickness (tissue about 0.05 mm, oiled paper about 0.1 mm), the retention (four
 M3 x 10 screws into heat-set inserts), the glass pocket's clearance (calibrate with a printed coupon), the
@@ -106,9 +107,20 @@ class FocusTargetParameters:
         return self.stage.spigot_shoulder_diameter
 
     @property
+    def rim_y(self):
+        """The rim face's height above the blade-seat plane: the mid-plane of the blades' cutting edges, where
+        the emitter image is to be focused."""
+        return self.stage.seated_blade_y(0, 0)
+
+    @property
+    def plate_back(self):
+        """The stage plate's rear, where the shoulder seats on the ring, in this frame (rim face at y = 0)."""
+        return self.stage.plate_back - self.rim_y
+
+    @property
     def barrel_length(self):
-        """Shoulder face to the rim: the stage plate's rear to the blade-seat plane."""
-        return -self.stage.plate_back
+        """Shoulder face to the rim: the stage plate's rear to the blades' edge plane."""
+        return -self.plate_back
 
     @property
     def screw_radius(self):
@@ -182,13 +194,13 @@ def build_focus_target(p=None):
     p = p or FocusTargetParameters()
     p.validate()
     s = p.stage
-    shoulder_back = s.plate_back - s.ring_gap
-    body = y_cylinder(p.barrel_diameter, 0, 0, s.plate_back, -p.rim_length + CUT_OVERRUN)
+    shoulder_back = p.plate_back - s.ring_gap
+    body = y_cylinder(p.barrel_diameter, 0, 0, p.plate_back, -p.rim_length + CUT_OVERRUN)
     body += y_cylinder(p.rim_diameter, 0, 0, -p.rim_length, 0)
-    body += y_cylinder(s.spigot_shoulder_diameter, 0, 0, shoulder_back, s.plate_back + 0.5)
-    body += y_cylinder(s.spigot_diameter, 0, 0, s.plate_back - s.spigot_length, shoulder_back + 0.5)
+    body += y_cylinder(s.spigot_shoulder_diameter, 0, 0, shoulder_back, p.plate_back + 0.5)
+    body += y_cylinder(s.spigot_diameter, 0, 0, p.plate_back - s.spigot_length, shoulder_back + 0.5)
     taper = p.seat_taper_length
-    body -= y_cylinder(p.bore, 0, 0, s.plate_back - s.spigot_length - CUT_OVERRUN, -taper + CUT_OVERRUN)
+    body -= y_cylinder(p.bore, 0, 0, p.plate_back - s.spigot_length - CUT_OVERRUN, -taper + CUT_OVERRUN)
     body -= y_cone(p.bore, p.seat_bore_diameter, 0, 0, -taper, 0)
     body -= y_cylinder(p.seat_bore_diameter, 0, 0, -taper, CUT_OVERRUN)
     for x, z in p.screw_xz():
@@ -245,7 +257,7 @@ def build_focus_target_assembly(p=None, include_support=True):
     p = p or FocusTargetParameters()
     p.validate()
     s = p.stage
-    loc = head_location(s)
+    loc = head_location(s) * Pos(0, p.rim_y, 0)  # The rim face is at the blades' edge plane.
     children: list[Shape] = [
         labeled(build_focus_target(p), "Focus target", PRINTED_BLUE, loc),
         labeled(build_retaining_ring(p), "Retaining ring", PRINTED_GREEN, loc * Pos(0, p.paper_thickness, 0)),
@@ -399,7 +411,7 @@ def build_focus_screen_assembly(p=None, include_support=True):
     p.validate()
     t = p.target
     s = t.stage
-    loc = head_location(s)
+    loc = head_location(s) * Pos(0, t.rim_y, 0)  # The rim face is at the blades' edge plane.
     children: list[Shape] = [
         labeled(build_focus_target(t), "Focus target", PRINTED_BLUE, loc),
         labeled(build_glass_retaining_ring(p), "Retaining ring", PRINTED_GREEN, loc),

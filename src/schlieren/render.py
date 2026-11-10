@@ -12,7 +12,7 @@ from pathlib import Path
 import numpy as np
 import vtk
 from build123d import Shape, Vector
-from OCP.TopLoc import TopLoc_Location  # ty: ignore[unresolved-import]  # missing from the OCP stubs
+from OCP.TopLoc import TopLoc_Location  # ty: ignore[import-not-found]  # missing from the OCP stubs
 from vtkmodules.util.numpy_support import numpy_to_vtk, numpy_to_vtkIdTypeArray, vtk_to_numpy
 
 from schlieren.cad import leaves

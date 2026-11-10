@@ -66,6 +66,7 @@ The source rail contains, in optical order:
 
 1. light source (with interchangeable threaded LED modules, condenser lens, and adjustable iris)
 2. adjustable slit fixture
+3. field lens, on a post of its own just ahead of the slit ([§7.9](07-source-slit.md#79-field-lens))
 
 The slit is the effective optical source, with the LED illuminating it through the condenser and iris. The
 imaging rail contains, in optical order:

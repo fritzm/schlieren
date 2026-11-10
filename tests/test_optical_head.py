@@ -64,6 +64,7 @@ class OpticalHeadTests(unittest.TestCase):
         self.h.validate()
         for station in (
             self.h.slit_post_station,
+            self.h.field_lens_post_station,
             self.h.light_source_post_station,
             self.h.cutoff_post_station,
         ):
@@ -77,7 +78,8 @@ class OpticalHeadTests(unittest.TestCase):
             for post in posts:
                 body = max(post.solids(), key=lambda s: s.volume)  # Not the setscrew stud above the top.
                 self.assertAlmostEqual(body.bounding_box().max.Z, POST_TOP, delta=TR50_MODEL_ROUNDING)
-        self.assertEqual(len(by_label(self.source, "TR50 M post")), 3)  # Light source, slit, and baffle tube.
+        # Light source, slit, baffle tube, and field lens.
+        self.assertEqual(len(by_label(self.source, "TR50 M post")), 4)
         self.assertEqual(len(by_label(self.imaging, "TR50 M post")), 1)  # Cutoff.
 
     def test_slit_blades_lie_on_the_slit_station(self):
@@ -95,6 +97,25 @@ class OpticalHeadTests(unittest.TestCase):
         ls = self.h.light_source
         vertex = lens.bounding_box().max.Y  # Plano face toward the LED, convex vertex toward the slit (§6).
         self.assertAlmostEqual(self.h.slit_station - vertex, ls.lens_to_slit, delta=0.05)
+
+    def test_field_lens_stands_ahead_of_the_slit_on_its_own_post(self):
+        lens = self.h.field_lens_parameters
+        (glass,) = by_label(self.source, "Field lens LA1433-A")
+        # The plano face is the lens's rear: the design distance ahead of the blade plane, on the axis.
+        box = glass.bounding_box()
+        self.assertAlmostEqual(box.min.Y - self.h.slit_station, lens.lens_plano_y, delta=0.01)
+        self.assertAlmostEqual(box.center().Z, self.h.slit.optical_height, delta=0.01)
+        # Its post stands ahead of the slit's by the design spacing, with the shoes clear of each other.
+        self.assertAlmostEqual(
+            self.h.field_lens_post_station - self.h.slit_post_station, lens.post_spacing, delta=0.01
+        )
+
+    def test_field_lens_can_be_left_out(self):
+        bare = OpticalHeadParameters(field_lens=False)
+        bare.validate()
+        source = build_source_fixtures(bare)
+        self.assertEqual(by_label(source, "Field lens LA1433-A"), [])
+        self.assertEqual(len(by_label(source, "TR50 M post")), 3)
 
     def test_cutoff_plane_follows_the_stagger(self):
         base = OpticalHeadParameters()

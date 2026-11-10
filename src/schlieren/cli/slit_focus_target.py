@@ -29,7 +29,10 @@ def main():
     p.validate()
     g = FocusScreenParameters(target=p)
     g.validate()
-    print(f"Screen plane {-p.stage.plate_back:.1f} mm ahead of the shoulder's seat on the stage plate's rear")
+    print(
+        f"Screen plane {p.barrel_length:.1f} mm ahead of the shoulder's seat on the stage plate's rear, "
+        f"{p.rim_y:.2f} mm ahead of the blade-seat plane (the blades' edge plane)"
+    )
     print(
         f"Barrel {p.barrel_length:.1f} mm long; bore tapers to Ø{p.seat_bore_diameter:.1f} mm at the rim face "
         f"over {p.seat_taper_length:.1f} mm"
