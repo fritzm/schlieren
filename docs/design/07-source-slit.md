@@ -3,8 +3,8 @@
 The source slit is a pair of razor blades, one on the table of a purchased 40 × 40 mm linear stage and one on a
 printed pedestal, with the stage's micrometer setting the slit width. The head is mounted for continuous
 rotation about the optical axis in an SM1RC/M on the common post and rail shoe
-([§5](05-post-support.md#5-rail-mounted-posts)). A baffle tube behind it on the source side is
-clamped on a post of its own ([§7.8](#78-baffle-tube)), a field lens on a post of its own ahead of the blades
+([§5](05-post-support.md#5-rail-mounted-posts)). A baffle behind it on the source side is clamped on the
+head's spigot and turns with it ([§7.8](#78-baffle)), a field lens on a post of its own ahead of the blades
 makes the mirror illumination uniform ([§7.9](#79-field-lens)), and a printed focus target stands in for the
 head to focus the LED image ([§7.7](#77-slit-focus-target)).
 
@@ -54,7 +54,7 @@ optical axis toward the mirror; the origin is the slit center in the blade-seat 
 (the table top and the pedestal top) is the front of the head; the stage's 20 mm thickness puts it 20 mm ahead
 of the plate front. In this section "front" and "back" refer to the head, not to the rail direction.
 
-The head's front faces the mirror. The light comes from the source side through the baffle tube and the plate's
+The head's front faces the mirror. The light comes from the source side through the baffle and the plate's
 Ø24 mm bore and passes the stage's edge to reach the slit from behind, so the spigot, ring, and post are on the
 light-source side of the blades. The source cone is ±2° about the chief ray and the lit slit length is ±5 mm
 ([§6.3](06-light-source.md#63-condenser-optics)); the stage and pedestal edges keep 1.65 mm from the cone.
@@ -62,9 +62,9 @@ light-source side of the blades. The source cone is ±2° about the chief ray an
 <p align="center">
   <img src="figures/slit-stage.png" width="300" style="max-width: 90%"
        alt="Stage slit head from the mirror side: the stage plate, the linear stage with its micrometer, the
-       pedestal, the two blades with their toe bars, and the baffle tube, on posts and rail shoes">
+       pedestal, the two blades with their toe bars, and the baffle on the spigot, on the post and rail shoe">
   <br>
-  <em>Fig. 9. Stage slit head and baffle tube on their posts and rail shoes, seen from the mirror side: the
+  <em>Fig. 9. Stage slit head and baffle on its post and rail shoe, seen from the mirror side: the
     movable blade on the stage table, the stationary blade on the pedestal, a toe bar over each, and the
     micrometer up</em>
 </p>
@@ -117,8 +117,8 @@ is the ring's axial stop: the ring seats against it, which places the plate 3.5 
 Do not clamp the ring away from the shoulder. The nut pockets reach inside the spigot's radius, so the spigot
 is restored behind the shoulder and roofs them, and the ring grips a full cylinder.
 
-The spigot runs the ring's full thickness, and the ring clamps nothing else; the baffle tube
-([§7.8](#78-baffle-tube)) ends 1.0 mm short of the ring's source face. The SM1RC/M keeps the 22.1 mm
+The spigot runs the ring's full thickness and protrudes 12 mm past its source face, where the baffle's clamp
+([§7.8](#78-baffle)) grips it; the ring clamps nothing else. The SM1RC/M keeps the 22.1 mm
 post-top-to-axis dimension ([§5.1](05-post-support.md#51-post-and-shim)). Loosening the ring rotates the whole
 head about the optical axis:
 
@@ -166,15 +166,15 @@ stage plate on the same SM1RC/M ring: the same shoulder, ring gap, and spigot gr
 widens to a Ø40 mm rim whose face is the plane of the blades' cutting edges, 0.51 mm ahead of the blade-seat plane
 ([§7.1](#71-blades-and-slit-widths)). The Ø24 mm bore tapers in at 45° to Ø20 mm at the
 rim face, which gives the paper or glass a wide seat and the insert recesses a thicker wall; the beam there is
-about Ø11 mm. The baffle tube is a fixture of its own
-([§7.8](#78-baffle-tube)) and stays clamped on its own post through the swap; the focus models do not show it. The
-models are
+about Ø11 mm. The target's spigot ends flush with the ring's source face, so the baffle
+([§7.8](#78-baffle)) is taken off the plate's spigot first: loosen its clamp screw and slide it off. The focus
+models do not show it. The models are
 `src/schlieren/parts/slit_focus_target.py` (`uv run slit-focus-target`, with `--show` for the paper variant and
 `--show --glass` for the ground-glass one).
 
 A sheet of tracing paper lies on the rim and a printed Ø40 × 4 mm retaining ring clamps it. The ring's Ø20 mm
 window matches the seat bore at the rim face, so the ring clamps the full width of the rim's annulus; it passes
-the whole beam and stays within the baffle tube's Ø22.9 mm bore. The window's mirror-side edge has a 1.5 mm × 45°
+the whole beam and stays within the plate's Ø24 mm bore. The window's mirror-side edge has a 1.5 mm × 45°
 bevel for a wider viewing angle; the 2.5 mm land behind it clamps the paper, and the screw heads bear outside the
 bevel. Four M3 × 10 mm socket-head screws (91292A113) on a Ø32 mm circle run into heat-set inserts (97171A310) in
 the rim. The LED image forms on the paper's source-facing side and is read through the paper from the mirror
@@ -195,15 +195,20 @@ screws. The glass is set on the rim, then the gasket, then the ring over both; t
 rim, outside the Ø20 mm seat bore. **Provisional:** the pocket clearance is to be set from a printed coupon, and the grit
 (DG10-600 to start) is to be confirmed on the bench.
 
-### 7.8 Baffle tube
+### 7.8 Baffle
 
-A baffle tube sits on the source side of the slit head, on the optical axis. Two Thorlabs
-SM1L15 lens tubes (1.5 in thread depth), threaded together, form a tube Ø30.48 mm outside, 80.6 mm long, with a
-Ø22.9 mm clear bore (the SM1L15 retaining-ring bore). It is clamped in a Thorlabs SM1RC/M split ring on its own
-post, datum shim, and rail shoe ([§5](05-post-support.md#5-rail-mounted-posts)), 40 mm upstream
-of the slit head's post, so the two shoes leave 10 mm of rail between them. The tube's open end stops 1.0 mm
-short of the head ring's source face, 40.7 mm behind the blade-seat plane, and the tube
-projects 34.6 mm past its own ring toward the source, ending about 29 mm short of the iris.
+A baffle sits on the source side of the slit head, on the optical axis: one printed part, a clamp ring on the
+plate's spigot followed by a lattice tube that carries a matte black foil wrap. It is built from the spigot out,
+so the posts, shoes, and optical-mechanical rings of the other stations are not needed.
+
+<p align="center">
+  <img src="figures/baffle.png" width="300" style="max-width: 90%"
+       alt="Baffle on the plate's spigot, seen from the source side: the split clamp ring with its ears and
+       screw, the relief hole, the diamond-window net tube, and the far collar, without the foil wrap">
+  <br>
+  <em>Fig. 10. Baffle on the plate's spigot, seen from the source side, without its foil wrap: clamp ring,
+    slit relief hole, net, far collar</em>
+</p>
 
 **Motivation.** The condenser focuses the LED image, about 10 mm across, on the blades
 ([§6.3](06-light-source.md#63-condenser-optics)), and a slit of 0.10–0.30 mm passes only a small fraction of it.
@@ -212,26 +217,50 @@ the source as a broad cloud, strikes the bare post, the source hardware, and the
 forwarded by them, glossy surface to glossy surface, toward the mirror and the operator at the imaging
 station. The cloud lights the room and adds veiling glare to the image. A tube immediately behind the head
 confines the return to the direction of the LED: it travels back through the bore toward the iris, and the
-rest meets the black anodized wall. This reduced the stray light greatly.
+rest meets the black walls and vanes.
 
-**Beam.** The tube bounds the light but does not stop down the beam. The beam on the source side of the slit
+**Beam.** The baffle bounds the light but does not stop down the beam. The beam on the source side of the slit
 lies between the iris aperture (about Ø9–10.5 mm, [§6.3](06-light-source.md#63-condenser-optics))
-and the lit slit length (±5 mm), so it is about Ø10–11 mm over the whole tube, with the ±2° cone about the chief
-ray inside that envelope. The Ø22.9 mm bore leaves more than 5 mm of radius all around, so no alignment
-tolerance of the two posts clips the beam, and the tube's length is set by its ring and its distance from the
-iris, not by the beam. At the slit end the beam is bounded by the head instead, not the tube: the stage and pedestal edges keep 1.65
+and the lit slit length (±5 mm), so it is about Ø10–11 mm over the whole baffle, with the ±2° cone about the chief
+ray inside that envelope. The Ø25 mm bore leaves 7 mm of radius all around, and is no narrower than the plate's
+Ø24 mm spigot bore, so no alignment tolerance clips the beam, and the length is set by the clamp and the
+distance to the iris, not by the beam. It ends 81 mm from the ring's source face, about 30 mm short of the iris.
+At the slit end the beam is bounded by the head instead, not the baffle: the stage and pedestal edges keep 1.65
 mm from the cone ([§7.2](#72-architecture)).
 
-**Separate ring.** The tube has its own SM1RC/M rather than sharing the head's, for two reasons. A shared ring
-closes on whichever of the printed spigot and the metal tube has the larger diameter and leaves the other loose,
-which would make the clamp depend on the printed spigot's diameter; each ring closes on a single part. And
-loosening the head's ring to turn the head (±90° for a vertical slit, small angles for slit-to-cutoff
-parallelism, [§7.5](#75-rotation-mount-and-clearances)) or to swap in the focus target
-([§7.7](#77-slit-focus-target)) leaves the tube clamped. The tube is round, so it is unaffected by
-the head's rotation. The two posts share the datum shim and shoe design of every other station, so the tube's
-axis and the head's differ only by the posts' tolerance, against the bore's more than 5 mm of radial margin.
+**Mount.** The plate's spigot protrudes 12 mm past the SM1RC/M's source face. The baffle's clamp ring, 12.5 mm
+long, fits over that end and butts the ring's face, which sets its axial position. The clamp is built as the
+rail shoe's collar is ([§5.2](05-post-support.md#52-rail-shoe)): a Ø30.68 mm bore (0.20 mm diametral clearance
+on the spigot), a 1.5 mm split along the top, and ears with one M3 × 12 mm screw (91292A114) and a captured M3
+nut (91828A211), 3.5 mm ear on the screw side and 4.5 mm on the nut side. The slit ends in a Ø3.5 mm round
+relief hole in the solid collar behind the clamp bore, so the ring closes on the spigot without cracking at the
+slit's end. The bore stops at a shoulder 0.5 mm short of the spigot's end. The ears stand about 24 mm above the
+axis at rotation 0 and turn with the head, which they clear through its working range. The baffle needs no
+precision of its own: the spigot, held by the head's ring, sets its axis, and the bore's radial margin over the
+beam (above) absorbs the clearance of the two printed fits.
 
-The model is the baffle tube and its post stack in `src/schlieren/parts/slit_stage.py`, shown with the head.
+**Net.** Behind the collar the baffle is a lattice tube, Ø31 mm outside, with staggered diamond windows cut
+through its wall so that the ligaments between them (1.4 mm wide) run at 45° to the axis. That lets it print on
+end without supports and be stiff enough to support its own length and the foil. The ligaments are 3 mm deep,
+standing into the bore as vanes, which leaves a Ø25 mm bore. A stray ray that strikes a vane's flank is
+trapped there, where it would otherwise slide along a bare wall. Six windows run around the tube, in nine rows
+staggered by half a window; the end rows are centered on the collars' faces, so they are triangles. A solid ring
+collar closes the net's far end.
+
+**Foil and finish.** The net's inside is painted with flat black spray paint (a rattle can) before the foil goes
+on; the vanes' flanks and the bore's inside surface are the baffle's absorbing surfaces, and the clamp's bore
+and the spigot are kept free of paint. The foil is Rosco Photofoil matte black aluminum wrap (BOM SHP-022),
+wrapped once or twice around the outside of the net between the two collars, matte side in, so the windows show
+foil; a strip of tape across the seam holds it. The collars stand 1.8 mm above the net's surface, which guides
+the foil's edges and leaves it flush with them. Wrapping the outside avoids fitting a liner into the bore.
+
+**Fabrication.** Print on end, clamp end down, in PLA, without supports; the ears and split lie along the
+layers. The model is `src/schlieren/parts/baffle.py` (`uv run baffle`, with `--show` for the viewer assembly),
+and `slit_stage.py` shows it with the head.
+
+**Provisional:** the clamp's bore clearance and split gap are first-print values, to be settled with a coupon
+print; the net's stiffness as a cantilever of its own length, the vanes' depth, and the effect of the painted
+vanes on the glare are to be confirmed on the bench.
 
 ### 7.9 Field lens
 
@@ -246,11 +275,10 @@ model is `src/schlieren/parts/field_lens.py` (`uv run field-lens`, with `--show`
 
 <p align="center">
   <img src="figures/field-lens.png" width="300" style="max-width: 90%"
-       alt="Slit head and baffle tube with the field lens station on its own post ahead of the blades: the
+       alt="Slit head and baffle with the field lens station on its own post ahead of the blades: the
        LA1433-A in its SM1L10 tube, clamped in an SM1RC/M ring, seen through the ring from the mirror side">
   <br>
-  <em>Fig. 10. Field lens station ahead of the slit head, with the head's post and the baffle tube's, seen from
-    the mirror side</em>
+  <em>Fig. 11. Field lens station ahead of the slit head, with the head's post, seen from the mirror side</em>
 </p>
 
 **Stack.** The lens sits with its plano face on the internal lip of a Thorlabs SM1L10 lens tube, 3.81 mm from

@@ -48,6 +48,7 @@ PRINTED_COLORS = (
     PRINTED_DENIM,
 )
 PRINTED_BLACK_PLA = (0.1, 0.1, 0.11)  # The filament the parts are printed in.
+PHOTOFOIL_BLACK = (0.08, 0.08, 0.09)  # Rosco Photofoil matte black aluminum wrap.
 
 # Metals, continued.
 STAINLESS = (0.72, 0.73, 0.75)

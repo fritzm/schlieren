@@ -78,8 +78,8 @@ class OpticalHeadTests(unittest.TestCase):
             for post in posts:
                 body = max(post.solids(), key=lambda s: s.volume)  # Not the setscrew stud above the top.
                 self.assertAlmostEqual(body.bounding_box().max.Z, POST_TOP, delta=TR50_MODEL_ROUNDING)
-        # Light source, slit, baffle tube, and field lens.
-        self.assertEqual(len(by_label(self.source, "TR50 M post")), 4)
+        # Light source, slit, and field lens.
+        self.assertEqual(len(by_label(self.source, "TR50 M post")), 3)
         self.assertEqual(len(by_label(self.imaging, "TR50 M post")), 1)  # Cutoff.
 
     def test_slit_blades_lie_on_the_slit_station(self):
@@ -115,7 +115,7 @@ class OpticalHeadTests(unittest.TestCase):
         bare.validate()
         source = build_source_fixtures(bare)
         self.assertEqual(by_label(source, "Field lens LA1433-A"), [])
-        self.assertEqual(len(by_label(source, "TR50 M post")), 3)
+        self.assertEqual(len(by_label(source, "TR50 M post")), 2)  # Light source and slit.
 
     def test_cutoff_plane_follows_the_stagger(self):
         base = OpticalHeadParameters()

@@ -1,221 +1,103 @@
 # iPhone schlieren — Agent Instructions
 
-This repository contains the code, CAD source, tests, tooling, and other version-controlled engineering
-artifacts for the iPhone schlieren Deep Creek vacation project.
+Repo: code, CAD source, tests, tooling and engineering artifacts for the iPhone schlieren Deep Creek project.
 
-Do not assume that repository history, chat history, generated files, or remembered context (including agent
-memory) represents the current physical design; none of these overrides the repository. Read the relevant
-repository resources (`docs/design/`, `bom/bom.csv`) before substantive work.
+Repo history, chat history, generated files and remembered context (including agent memory) never override
+the repository. Before substantive work, read the relevant `docs/design/` fragment(s) and/or `bom/bom.csv`.
+
+## Reference docs (read when the task touches them)
+
+- `docs/agents/cad.md`: writing or changing CAD/part code
+- `docs/agents/testing.md`: writing or restructuring tests
+- `docs/agents/tooling.md`: CLI commands, Makefile, editor/type checker, hooks
+- `docs/agents/design-doc-style.md`: editing `docs/design/`
 
 ## Sources of truth
 
-Git is authoritative for version-controlled engineering artifacts: build123d and Python source, tests,
-CAD/build utilities, the design fragments, `bom/bom.csv`, repository configuration, and agent instructions.
+Git is authoritative for version-controlled artifacts: build123d/Python source, tests, CAD/build utilities,
+design fragments, `bom/bom.csv`, repo configuration, agent instructions.
 
-Use the following priority order:
+Priority, higher wins on conflict:
 
-1. Explicit instructions from the user in the current session.
-2. This `AGENTS.md`.
-3. Current repository contents (including `bom/` and `docs/design/`).
-4. Git history, old chats, summaries, and other historical material.
+1. Explicit user instructions in the current session
+2. This `AGENTS.md`
+3. Current repository contents (including `bom/`, `docs/design/`)
+4. Git history, old chats, summaries, other historical material
 
-If two sources conflict, prefer the higher-priority source.
-
-Do not resurrect superseded or rejected designs merely because they appear in Git history, comments, old
-files, or conversation history, and do not turn historical alternatives into current design requirements.
+Never resurrect superseded or rejected designs from history, comments, old files or conversation, and never
+turn historical alternatives into current requirements.
 
 ### Derived artifacts
 
-Generated files are derived artifacts: never edit one by hand and treat it as the new source. They are:
+Never hand-edit a generated file and treat it as the new source.
 
-- `exports/` (STEP, STL, drawings, the consolidated design document): not versioned;
-- `docs/schlieren-design.pdf` and `bom/schlieren-bom.xlsx`: versioned beside their sources for reading and
-  sharing by repository link;
-- `docs/design/figures/`: versioned so the fragments display without a build.
-
-Generated STEP, STL, 3MF, DXF, or similar files are derived unless explicitly documented otherwise. build123d
-source is the authoritative representation of programmatically generated mechanical geometry.
+- `exports/` (STEP, STL, drawings, consolidated design doc): not versioned
+- `docs/schlieren-design.pdf`, `bom/schlieren-bom.xlsx`: versioned beside their sources for sharing
+- `docs/design/figures/`: versioned so fragments display without a build
+- STEP/STL/3MF/DXF and similar are derived unless documented otherwise; build123d source is authoritative
+  for generated geometry.
 
 ### Design description: `docs/design/`
 
-Per-subsystem Markdown fragments, named `NN-*.md`; filename order is document order. Authoritative for:
+Per-subsystem fragments `NN-*.md` (filename order = document order). Authoritative for: design baseline,
+dimensions and geometry; architecture and mechanical/optical concepts; decisions and rationale; provisional
+areas and next steps.
 
-- the design baseline, dimensions and geometry
-- architecture, mechanical and optical concepts
-- design decisions and rationale
-- provisional (open or evolving) design areas and next steps
+Described design is baseline unless marked **Provisional**; `11-open-work.md` rolls up provisional areas.
+Read only the fragment(s) the task needs (section numbers match the BOM `Source section` column) plus
+`11-open-work.md` for cross-cutting work; not the whole set unless required.
 
-Described design is the baseline unless explicitly marked **Provisional**; `11-open-work.md` rolls up the
-provisional areas and next steps. Read only the fragment(s) relevant to the task (section numbers match the
-BOM `Source section` column), plus `11-open-work.md` for cross-cutting open work. Do not read the whole set
-unless the task needs it.
-
-`uv run build-design-doc` concatenates the fragments into `exports/docs/schlieren-design.md` (generated; never
-edit it) and copies `docs/design/figures/` beside it. With `--pdf` it also writes `schlieren-design.html`
-there and prints it to `docs/schlieren-design.pdf`. The PDF step needs a local Chrome or Chromium and network
-access (KaTeX, for the formulas). Rebuild the PDF when the fragments or figures change; it is not reproducible
-byte for byte, so do not rebuild it needlessly.
-
-Figures are PNG renders (`src/schlieren/render.py`) and SVG drawings generated from the CAD by a part
-command's `--figure` option. Regenerate one when its part's geometry changes.
+`uv run build-design-doc` builds `exports/docs/schlieren-design.md` (generated; never edit). Rebuild
+`docs/schlieren-design.pdf` (`--pdf`; needs Chrome and network) when fragments or figures change, not
+needlessly (not byte-reproducible). Regenerate a figure when its part's geometry changes.
 
 ### BOM and procurement: `bom/bom.csv`
 
-Single CSV, one row per BOM line item. Authoritative for BOM contents, quantities, subsystem allocations,
-vendors, SKUs, procurement status, inventory state, purchasing notes, and the CAD state of printed parts
-(`CAD ready` / `CAD open`). The design fragments do not track procurement or CAD state.
+One row per BOM line item. Authoritative for contents, quantities, subsystem allocations, vendors, SKUs,
+procurement status, inventory, purchasing notes, and CAD state of printed parts (`CAD ready` / `CAD open`).
+Design fragments do not track procurement or CAD state. Read it before answering or acting on procurement,
+BOM, inventory, vendor, quantity or purchasing questions.
 
-Read `bom/bom.csv` before answering or acting on procurement, BOM, inventory, vendor, quantity, or purchasing
-questions.
-
-`uv run build-bom-xlsx` builds `bom/schlieren-bom.xlsx` (BOM tab, Summary formulas, procurement-state
-conditional formatting) from the CSV. The workbook must match the CSV (a test checks this): rebuild it
-whenever `bom.csv` changes. The build is reproducible, so an unchanged CSV gives an unchanged file.
-
-The workbook is also the convenient place to edit the BOM in a spreadsheet program. Such edits are not
-authoritative until reconciled into the CSV: `uv run reconcile-bom [workbook.xlsx]` reports the differences
-row by row, and `--apply` writes them to `bom.csv`. Review the report with the user before applying; never
-overwrite the CSV blindly.
+`uv run build-bom-xlsx` builds `bom/schlieren-bom.xlsx` from the CSV; it must match (a test checks), so
+rebuild whenever `bom.csv` changes. Workbook edits are not authoritative until reconciled with
+`uv run reconcile-bom`; review its report with the user before `--apply`; never overwrite the CSV blindly.
 
 ### Reference drawings: `docs/reference/`
 
-Vendor drawings and datasheets for purchased parts, named `<Brand>-<part>.pdf` (see the README there). Consult
-them for catalog dimensions. They are manufacturer specifications, not measured values or committed project
-dimensions; a measurement recorded in `docs/design/` takes precedence.
+Vendor drawings/datasheets, `<Brand>-<part>.pdf` (see README there). Use for catalog dimensions. They are
+manufacturer specs, not measured or committed dimensions; a measurement in `docs/design/` takes precedence.
 
 ## Design decisions and canonical updates
 
-Discussion, experiments, CAD changes, and proposed ideas are provisional until the user accepts them as final.
-A CAD experiment or exploratory branch should not update the design fragments or the BOM unless the user
-explicitly accepts the result. Do not silently promote a proposal into the project baseline.
+Discussion, experiments, CAD changes and proposals are provisional until the user accepts them as final.
+Exploratory work must not update fragments or BOM without explicit acceptance; never silently promote a
+proposal to baseline.
 
-When the user finalizes a design decision:
+When the user finalizes a decision:
 
-1. update the applicable CAD/source/tests in this repository;
-2. update the applicable `docs/design/` fragment(s);
-3. if the decision changes procurement, quantity, allocation, vendor choice, or BOM structure, also update
-   `bom/bom.csv`;
-4. rebuild the derived artifacts that depend on what changed (PDF, workbook, figures);
-5. verify that the affected files agree.
+1. update the affected CAD/source/tests
+2. update the affected `docs/design/` fragment(s)
+3. if procurement, quantity, allocation, vendor or BOM structure changes, update `bom/bom.csv`
+4. rebuild dependent derived artifacts (PDF, workbook, figures)
+5. verify affected files agree
 
-A procurement-only change normally updates `bom/bom.csv` without changing the design fragments unless it
-materially changes the engineering baseline.
+Procurement-only change: update `bom/bom.csv` only, unless it materially changes the engineering baseline.
 
-## CAD conventions
+## CAD
 
-Prefer:
-
-- clear named parameters, and no unexplained numeric constants
-- explicit interfaces
-- reusable helper functions where repetition is meaningful
-- simple constructive geometry
-- deterministic builds
-- assertions or tests for important dimensions and relationships
-
-Separate physical nominal dimensions from fabrication allowances. For example:
-
-```python
-POST_DIAMETER = 12.70
-POST_DIAMETRAL_CLEARANCE = 0.25
-POST_BORE = POST_DIAMETER + POST_DIAMETRAL_CLEARANCE
-```
-
-Use names that make it clear whether a clearance is radial, diametral, axial, or otherwise directional.
-
-When a required dimension remains unresolved, expose it as a parameter or clearly mark it as provisional
-rather than burying an assumption in geometry.
-
-### Shared building blocks
-
-Use these instead of redefining them in a part module:
-
-- `schlieren/standards.py`: project-wide dimensions that more than one model depends on (`INCH`,
-  `OPTICAL_HEIGHT`, the TR50/M post and datum shim). Parameter classes take them as defaults.
-- `schlieren/palette.py`: every viewer color, named. Do not put a color literal in a part module; add it to
-  the palette (or reuse the matching entry).
-- `schlieren/cad.py`: primitive solids named by axis and extents (`box_between`, `floor_box`, `centered_box`,
-  `x_cylinder`/`y_cylinder`/`z_cylinder`, `centered_cylinder`, `y_cone`/`z_cone`, `y_hex`/`z_hex`), the axis
-  planes, and the assembly helpers (`labeled`, `place`, `assembly`, `moved`). Cylinders take diameters.
-  `CUT_OVERRUN` is the 1 mm a cutter extends past the faces it cuts through; use it rather than a bare `± 1`.
-  `children_by_label` raises on duplicate sibling labels, so give siblings distinct labels. `intersect` and
-  `fused` are typed `a & b` and `a + b`: build123d's `&` returns `None` for no overlap (`intersect` gives an
-  empty Compound, volume 0), and its stubs type `+` as possibly a `Wire`. Use them in place of the operators
-  wherever the result's `.volume`, `.solids()`, or `.is_inside` is used, so `ty` passes.
-- `schlieren/validation.py`: `require_positive_dimensions`, for a parameter class's `validate`; it names the
-  offending field.
-- `schlieren/hardware.py`: catalog dimensions of purchased hardware that more than one model uses (the bar
-  magnet, the FAS100, the 98625A950 insert, the 2006N292 spring, common M3 hardware). Parameter classes take
-  them as defaults and add their own fabrication allowances; hardware used by one model stays with it.
-- `post_stack` in `parts/rail_shoe.py`: the post, rail shoe, shoe clamp hardware, and optional SM1RC/M ring
-  and side-channel screws that every fixture on a rail shows.
-- `parts/adjuster.py`: the FAS100, its brass insert, and its bearing magnet, as the slit head and cutoff
-  carriage show them.
-
-Place assembly children with `labeled(shape, label, color, loc)` and `place`, and move large models with
-`cad.moved(shape, loc)`, not `loc * shape`: build123d's `Location * shape` deep-copies the whole B-rep, while
-these only compose locations. That difference was most of the cost of building the optical head.
-
-Keep part-specific calibration dimensions and experimental compensation values with the relevant part unless
-they have clearly become project-wide standards.
-
-### Units
-
-Use millimeters for internal CAD geometry unless there is a strong reason not to.
-
-Preserve inherently imperial interfaces in their conventional form when useful, including:
-
-- screw and thread designations
-- sheet thicknesses
-- commercial hardware dimensions
-- other purchased components specified primarily in inches
-
-Convert deliberately at the model boundary rather than mixing implicit units.
+Named parameters, millimeters internally, reuse shared modules (`standards.py`, `palette.py`, `cad.py`,
+`hardware.py`, `validation.py`) instead of redefining. Read `docs/agents/cad.md` before CAD work.
 
 ## Tests
 
-Add tests where they provide useful protection against accidental geometry changes.
-
-Good candidates include:
-
-- overall bounding dimensions
-- bore diameters
-- hole spacing
-- optical-axis locations
-- interface dimensions
-- symmetry
-- required clearances
-- quantities or counts of repeated features
-
-Prefer testing engineering invariants rather than implementation details. Do not change a test merely to make
-an unintended geometry change pass.
-
-Iterate with `uv run run-tests` and run the tests relevant to a change after modifying CAD or supporting code.
-Tests that take more than a few seconds, typically exhaustive pairwise interference or rotation-sweep checks,
-are marked `@slow` (`schlieren.testing`) and skipped by default; the skip count is reported. Run
-`uv run run-tests --full` before presenting completed work.
-
-Build each model once per test class. Parameters and the model most tests use go in `setUpClass`; every other
-model at its default parameters and pose is a `@shared` attribute (`schlieren.testing`), built on first use so
-that a model only slow tests need costs the default run nothing. A test builds a model itself only for a
-variant (changed parameters or pose) or where the build is what is under test. Shared models must not be
-modified. Where every pose of an assembly rebuilds the same pose-independent parts, cache those builders in
-the part module (`functools.cache` on the frozen parameter class, as `parts/carriage.py` does) rather than
-working around the cost in the tests.
-
-For new pairwise checks, use the bounding-box prefilters in `schlieren.testing` (`near_pairs`,
-`near_pairs_among`, `boxes_overlap`, `overlap_volume`, `bounded_distance`) before exact boolean or distance
-queries. Where a group of parts keeps the same relative placement across a sweep (an engagement, a board),
-check the pairs inside the group once, not per step. Exact bounding boxes of vendor models cost tens of
-milliseconds each and are not cached; the loose box is much cheaper and only ever larger, so it is safe for a
-prefilter. Leave `loose` off where the box test is itself the assertion.
-
-The full run takes well under a minute. If it grows to minutes, suspect per-pair bounding boxes, `loc * shape`
-on large models, or an assembly built more than once per module.
+Test engineering invariants (bounding dimensions, bores, spacing, counts, clearances), not implementation
+details; never edit a test just to pass an unintended geometry change. Iterate with `uv run run-tests`;
+run `uv run run-tests --full` before presenting work. Read `docs/agents/testing.md` before writing or
+restructuring tests.
 
 ## Commands
 
-Dependencies are managed with `uv` (Python >= 3.12). Tests use `unittest`; ruff is run via `uvx`; `ty`
-(Astral's type checker, a dev dependency) is run via `uv run`.
+`uv` (Python >= 3.12); tests use `unittest`; ruff via `uvx`; `ty` via `uv run`.
 
 ```sh
 uv sync                                               # install/update the environment
@@ -232,133 +114,55 @@ uv run build-bom-xlsx                                 # bom/bom.csv -> bom/schli
 uv run reconcile-bom [workbook.xlsx] [--apply]        # workbook edits -> differences from bom/bom.csv
 ```
 
-Commands live in `src/schlieren/cli/` and are registered in `pyproject.toml` `[project.scripts]`; run them
-with `uv run <command>` from the repo root. Output paths such as `--output` default to `exports/` relative to
-the current directory. To add a command: write `cli/<name>.py` with `main()` and register it in
-`[project.scripts]`. Build the options and the export, drawing, figure, and viewer steps from `cli/_common.py`
-(`add_output_option`, `add_show_option`, `add_figure_option`, `export_models`, `write_text`, `render`,
-`show`); keep geometry, such as a print layout, in the part module so it can be tested.
+Rebuild derived artifacts with `make` (only what is stale; `make -n` previews; `make test` = full suite;
+never `make -t`). Read `docs/agents/tooling.md` before adding a CLI command or editing the `Makefile`,
+editor or type-checker settings. Hooks: ruff auto-formats edited `.py` files; direct edits to `exports/`
+are blocked.
 
-To rebuild derived artifacts, prefer the `Makefile`, which runs the commands above for whatever is out of date
-(design-doc figures, the consolidated design document and PDF, the BOM workbook) and nothing else: `make` (or
-`make figures`, `doc`, `pdf`, `bom`; `make -n` previews; `make test` runs the full suite). `make` with no
-target includes the PDF, which needs Chrome and network access. Its dependencies are declared by hand: when a
-part module gains an import, or a new figure or `--figure` output is added, update the matching rule in the
-`Makefile`; the shared modules (`cad.py`, `standards.py`, `palette.py`, `hardware.py`, `vendor_cad.py`,
-`render.py`, `cli/_common.py`) are in its `CORE` list. Do not use `make -t`; it marks stale targets current
-without rebuilding them.
+## BOM rules
 
-The editor settings in `.vscode/` use the `ty` extension as language server and type checker in place of
-Pylance, a 110-column ruler, and ruff format on save. build123d's type stubs are imprecise (a boolean operator
-on a `Part` is typed `Part` but returns a `Compound`, and several accessors are typed `Optional`), so many
-diagnostics come from the stubs rather than the code. Where a suppression is warranted, use
-`# ty: ignore[rule]` with the rule name. In tests, `schlieren.testing.svg_attr` reads an SVG attribute that
-must be present (ElementTree's `get` is typed `str | None`).
+- Each row is a distinct allocation; never merge rows just because Vendor + SKU match (rollups may
+  aggregate).
+- Quote any `bom.csv` field containing a comma; an unquoted comma breaks `test_bom`. Edit as text or via the
+  `csv` module, then rebuild the workbook.
+- Never guess procurement state, quantity, vendor, SKU, package size or arrival state; preserve
+  unresolved uncertainty.
 
-A `.claude/` PostToolUse hook auto-formats edited `.py` files with ruff, and a PreToolUse hook blocks direct
-edits to `exports/`. Project skill: `/reconcile-bom` (review and apply edits made in a copy of the BOM
-workbook).
+## Design document
 
-## Working with the BOM
-
-Each BOM row is a distinct project allocation. Do not merge rows solely because Vendor + SKU are identical;
-procurement rollups may aggregate them, but allocation rows stay distinct when they serve different
-subsystems.
-
-Quote any `bom.csv` field that contains a comma (notes and item names often do); an unquoted comma splits the
-row, and `test_bom` fails on the ragged row. Edit the CSV as text or with the `csv` module, then rebuild the
-workbook.
-
-Do not guess:
-
-- procurement state
-- quantity
-- vendor
-- SKU
-- package size
-- arrival state
-
-If a required value is unresolved, preserve that uncertainty rather than inventing a value.
-
-## Working with the design document
-
-Keep the design document a description of the design as it stands, with relevant rationale; it is not a
-status-tracking or history document.
-
-When updating it:
-
-- preserve established terminology;
-- state settled design plainly; mark open or evolving areas **Provisional** and keep the §11 rollup in step;
-- when a decision changes, rewrite the affected text to describe the new design; do not narrate what it
-  replaced ("previously", "no longer", "superseded");
-- retain useful rationale where it explains a non-obvious current decision;
-- leave procurement and CAD state, and detailed BOM data, to `bom/bom.csv`.
-
-The document should let a reader, human or agent, build a coherent and complete picture of what is in the design,
-why, how it fits together, and the calculations and constraints that drive the basic element selections and gross
-dimensions. It conveys absolute and relative scale; detailed dimensional validation belongs in the models, which
-are the single source for dimensions.
-
-- State a dimension only when the narrative uses it: a calculation, a constraint, a selection rationale, or a
-  sense of scale. Otherwise name the parameter and the module that holds it, or omit it. Do not copy a
-  model-held dimension into the text for completeness, and do not hand-copy values computed by the model.
-- The document is also the shop reference during construction, so dimensions a builder works to belong in it:
-  hole sizes and clearances, plate and stock sizes, alignments and stack positions. State these as the
-  committed fabrication values, and keep them in step with the model parameters (a test pins the important
-  ones); on a conflict the model governs, so fix the text.
-- Keep measured values, and the rule for which source governs a value (for example, a measurement over a
-  datasheet), only where no model parameter holds them yet; once one does, state the provenance and leave the
-  value to the model.
-- Part and hardware callouts serve two reader queries: where in the kit a part is used, and which particular part
-  to use in a given place. Name each part by the identifier the BOM uses, and say where it goes. The document may
-  be printed as a desktop reference for the build crew, so a callout must identify the part without opening the
-  code.
+Describe the design as it stands, with rationale; not status or history. On a changed decision rewrite the
+text (no "previously"/"no longer"), mark open areas **Provisional** and keep the §11 rollup in step; leave
+procurement and CAD state to `bom/bom.csv`. Read `docs/agents/design-doc-style.md` before editing
+`docs/design/`.
 
 ## Engineering reasoning
 
-Distinguish clearly between measured values, manufacturer specifications, committed project dimensions,
-calculated values, fabrication allowances, and provisional estimates. Do not silently replace a measured value
-with a nominal catalog value.
-
-When calculations depend materially on current project dimensions, read the relevant `docs/design/`
-fragment(s) first.
+Distinguish measured values, manufacturer specs, committed project dimensions, calculated values,
+fabrication allowances and provisional estimates. Never silently replace a measured value with a catalog
+nominal. When calculations depend on project dimensions, read the relevant `docs/design/` fragment(s) first.
 
 ## Change scope
 
-Make the smallest coherent change that satisfies the task, and prefer small, reviewable diffs.
+- Smallest coherent change; small reviewable diffs.
+- No opportunistic redesign of unrelated subsystems.
+- Don't alter established interfaces, dimensions, dependencies or procurement decisions just to simplify code.
+- If a change exposes a likely conflict elsewhere, report it before changing the other subsystem.
 
-Do not opportunistically redesign unrelated subsystems.
+## Git
 
-Do not alter established interfaces, dimensions, dependencies, or procurement decisions merely to simplify
-code.
+No commit, push, force-push, shared-history rebase, branch deletion, release creation or remote-settings
+change unless explicitly asked. Working-tree edits and tests are allowed. Keep transient files, viewer
+artifacts, caches and local environments out of version control.
 
-If a requested change exposes a likely conflict elsewhere, identify the conflict before silently changing the
-other subsystem.
+## Workflow
 
-## Git behavior
+Start of a substantial task: decide whether it depends on design state, BOM state or both; read the
+applicable `docs/design/` fragment(s) and/or `bom/bom.csv`; inspect the relevant CAD/source files. Then
+change and verify. Update `docs/design/` and `bom/bom.csv` only for finalized decisions (see "Design
+decisions and canonical updates").
 
-Do not commit, push, force-push, rebase shared history, delete branches, create releases, or change remote
-repository settings unless the user explicitly asks. Working-tree edits and tests are permitted when required
-by the task.
+Before presenting work: inspect the diff and remove unrelated changes; run `uv run run-tests --full`;
+report assumptions and unresolved issues.
 
-Keep generated transient files, viewer artifacts, caches, and local environments out of version control.
-
-## Agent workflow
-
-At the beginning of a substantial task:
-
-1. determine whether the task depends on current design state, BOM state, or both;
-2. read the applicable `docs/design/` fragment(s) and/or `bom/bom.csv`;
-3. inspect the relevant repository CAD/source files.
-
-Then make the requested change and run appropriate verification. Update `docs/design/` and `bom/bom.csv` only
-when the user has finalized a decision, following "Design decisions and canonical updates".
-
-Before presenting completed work:
-
-- inspect the diff and remove accidental or unrelated changes;
-- run the full test suite (`uv run run-tests --full`);
-- report important assumptions or unresolved issues.
-
-The objective is to keep CAD, implementation, design state, and procurement state synchronized without
-treating exploratory work as finalized engineering.
+Goal: keep CAD, implementation, design state and procurement state synchronized without treating
+exploratory work as final.

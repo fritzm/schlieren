@@ -257,7 +257,7 @@ def build_field_lens_station(p=None, side_screws=False):
 
 
 def build_field_lens_head_assembly(p=None, rotation=0.0, side_screws=False):
-    """The slit head and baffle tube with the field lens station on the source rail, slit post at y = 0."""
+    """The slit head and baffle with the field lens station on the source rail, slit post at y = 0."""
     p = p or FieldLensParameters()
     p.validate()
     head = build_slit_stage_assembly(p.stage, rotation, side_screws=side_screws)

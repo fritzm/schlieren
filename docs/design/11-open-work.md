@@ -22,6 +22,8 @@ Design areas marked **Provisional** in the sections above:
   the stamped blade folds lie on the seats and under the toe pad
   ([§7.1](07-source-slit.md#71-blades-and-slit-widths), [§7.4](07-source-slit.md#74-blade-clamping)); the
   stage-screw length behind the plate.
+- **Baffle** ([§7.8](07-source-slit.md#78-baffle)): the clamp's bore clearance and split gap; the net's
+  stiffness and vane depth; the glare reduction of the painted vanes, to be confirmed on the bench.
 - **Field lens** ([§7.9](07-source-slit.md#79-field-lens)): the iris-to-slit distance its position and the iris
   setting rest on (calculated, not measured); the mirror illumination with the lens in place and removed, to be
   confirmed from a flat-field photograph.
@@ -46,3 +48,6 @@ Design areas marked **Provisional** in the sections above:
    consolidated setup and alignment procedure for the apparatus.
 5. Design the mirror-cell safety retainers and settle the transport sandwich
    ([§10.8](10-mirror-cell.md#108-mirror-safety-and-transport-retention)).
+6. Print the baffle clamp as a short coupon to settle its bore clearance and split gap, then print the baffle,
+   paint it, wrap it, and compare the stray light with the baffle in place and removed
+   ([§7.8](07-source-slit.md#78-baffle)).

@@ -39,7 +39,7 @@ def main():
     print(f"Beam clearance to the stage and pedestal edges: {p.beam_clearance:.2f} mm")
     print(f"Micrometer tip {p.micrometer_reach:.1f} mm from the optical axis (±{6.5} mm of travel)")
     print(
-        f"Baffle tube ends {p.tube_end_gap} mm short of the head's ring; its own ring is {p.tube_ring_spacing} mm upstream"
+        f"Baffle clamps the spigot's last {p.baffle.spigot_extension} mm past the ring and runs {p.baffle.length} mm back"
     )
     parts = {
         "slit_stage_plate": build_stage_plate(p),

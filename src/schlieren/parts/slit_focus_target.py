@@ -151,11 +151,8 @@ class FocusTargetParameters:
             raise ValueError("Insert flange recesses must leave a wall inside the bore")
         if self.screw_circle_diameter / 2 + recess / 2 > self.rim_diameter / 2 - 1.0:
             raise ValueError("Insert flange recesses must leave a wall inside the barrel")
-        if (
-            self.ring_window_diameter > s.tube_clear_diameter
-            or self.ring_window_diameter < 2 * s.lit_half_length
-        ):
-            raise ValueError("Ring window must pass the beam and not exceed the baffle tube's bore")
+        if self.ring_window_diameter > s.spigot_bore or self.ring_window_diameter < 2 * s.lit_half_length:
+            raise ValueError("Ring window must pass the beam and not exceed the spigot's bore")
         if not 0 <= self.ring_window_chamfer < self.ring_thickness:
             raise ValueError("Window chamfer must leave a land of the ring's thickness")
         head_edge = self.screw_radius - s.screw_head_diameter / 2

@@ -5,10 +5,10 @@ from dataclasses import replace
 
 from build123d import Compound, Pos, Rot, Vector
 
-from schlieren.cad import children_by_label, intersect, moved, y_cylinder, z_cylinder
-from schlieren.parts.rail_shoe import REFERENCE_HARDWARE_LABEL, build_rail_shoe
+from schlieren.cad import children_by_label, intersect, leaves, moved, y_cylinder, z_cylinder
+from schlieren.parts.baffle import BODY_LABEL, BaffleParameters, build_baffle
+from schlieren.parts.rail_shoe import build_rail_shoe
 from schlieren.parts.slit_stage import (
-    BAFFLE_HARDWARE_LABEL,
     STAGE_BASE_FLANGE,
     STAGE_BASE_HOLE_PITCH,
     STAGE_END_BUMP,
@@ -30,8 +30,6 @@ from schlieren.parts.slit_stage import (
 from schlieren.testing import bounded_distance, overlap_volume, shared, slow
 from schlieren.vendor_cad import (
     SM1L10_OUTER_DIAMETER,
-    SM1L15_SHOULDER_TO_OPEN_END,
-    SM1L15_THREAD_LENGTH,
     SM1RC_M_THICKNESS,
     thorlabs_sm1rc_m,
 )
@@ -44,6 +42,10 @@ class SlitStageTests(unittest.TestCase):
     @shared
     def shoe(cls):
         return build_rail_shoe()
+
+    @shared
+    def baffle_body(cls):
+        return children_by_label(children_by_label(cls.assembly)["Baffle"])[BODY_LABEL]
 
     @shared
     def assembly(cls):
@@ -207,64 +209,64 @@ class SlitStageTests(unittest.TestCase):
         p = self.p
         plate = moved(self.plate, head_location(p))
         ring_face = SM1RC_M_THICKNESS / 2
-        self.assertAlmostEqual(plate.bounding_box().min.Y, -ring_face, places=6)  # Flush with the far face.
+        # The spigot protrudes past the ring's far face by the baffle's extension.
+        self.assertAlmostEqual(plate.bounding_box().min.Y, -ring_face - p.baffle.spigot_extension, places=6)
         ring = moved(thorlabs_sm1rc_m(), Pos(0, -SM1RC_M_THICKNESS / 2, p.optical_height))
         self.assertAlmostEqual(plate.distance_to(ring), 0, places=3)  # Seated on the shoulder.
         self.assertAlmostEqual(overlap_volume(plate, ring), 0, places=3)
 
-    def test_baffle_tube_has_its_own_ring_and_post(self):
-        """The tube stops short of the head's ring and is clamped by a ring on a post of its own."""
+    def test_baffle_butts_the_ring_and_clamps_the_extended_spigot(self):
+        """The baffle's clamp front face is the ring's source face; its bore wraps the protruding spigot."""
         p = self.p
         ring_face = SM1RC_M_THICKNESS / 2
-        tube = children_by_label(self.assembly)["SM1 baffle tube"]  # Already placed.
+        baffle = children_by_label(children_by_label(self.assembly)["Baffle"])[BODY_LABEL]  # Already placed.
+        box = baffle.bounding_box()
+        self.assertAlmostEqual(box.max.Y, -ring_face, places=6)
+        self.assertAlmostEqual(box.min.Y, -ring_face - p.baffle.length, places=6)
+        self.assertAlmostEqual(box.min.Z, p.optical_height - p.baffle.clamp_diameter / 2, places=6)
+        self.assertAlmostEqual(box.max.Z, p.optical_height + p.baffle.ear_top_z, places=6)  # Ears up.
         plate = moved(self.plate, head_location(p))
-        self.assertAlmostEqual(tube.bounding_box().max.Y, -ring_face - p.tube_end_gap, places=3)
-        self.assertAlmostEqual(overlap_volume(tube, plate), 0, places=6)
-        self.assertAlmostEqual(p.tube_diameter, p.spigot_diameter)
-        # The tube's ring sits wholly on the tube, with tube left over on the source side.
-        ring_far_face = -p.tube_ring_spacing - ring_face
-        self.assertLess(ring_far_face + SM1RC_M_THICKNESS, tube.bounding_box().max.Y)
-        self.assertGreaterEqual(ring_far_face - tube.bounding_box().min.Y, p.tube_ring_end_margin - 1e-6)
-        self.assertAlmostEqual(p.tube_length, tube.bounding_box().size.Y, places=3)
+        self.assertAlmostEqual(overlap_volume(plate, baffle), 0, places=6)
+        # The bore clears the spigot by half the diametral clearance, radially; nothing is closer.
+        self.assertAlmostEqual(
+            bounded_distance(plate, baffle, 1.0), p.baffle.clamp_bore_diametral_clearance / 2, delta=1e-3
+        )
+        self.assertAlmostEqual(plate.bounding_box().min.Y, -ring_face - p.baffle.spigot_extension, places=6)
+        self.assertAlmostEqual(
+            plate.bounding_box().min.Y - baffle.bounding_box().max.Y, -p.baffle.spigot_extension, places=6
+        )
 
-    def test_support_shows_a_second_post_stack_for_the_baffle_tube(self):
-        p = self.p
-        full = build_slit_stage_assembly(p)
-        children = children_by_label(full)
-        head_ring = children_by_label(children[REFERENCE_HARDWARE_LABEL])["SM1RC M ring"]
-        tube_ring = children_by_label(children[BAFFLE_HARDWARE_LABEL])["SM1RC M ring"]
-        self.assertAlmostEqual(
-            head_ring.bounding_box().center().Y - tube_ring.bounding_box().center().Y,
-            p.tube_ring_spacing,
-            places=3,
-        )
-        self.assertAlmostEqual(
-            tube_ring.bounding_box().center().Z, head_ring.bounding_box().center().Z, places=3
-        )
+    def test_baffle_turns_with_the_head_and_needs_no_post_of_its_own(self):
+        full = build_slit_stage_assembly(self.p)
+        posts = [leaf for leaf in leaves(full) if leaf.label == "TR50 M post"]
+        self.assertEqual(len(posts), 1)  # The head's only.
+        rotated = build_slit_stage_assembly(self.p, rotation=90.0, include_support=False)
+        spun = children_by_label(children_by_label(rotated)["Baffle"])[BODY_LABEL].bounding_box()
+        straight = children_by_label(children_by_label(self.assembly)["Baffle"])[BODY_LABEL].bounding_box()
+        self.assertAlmostEqual(spun.size.Y, straight.size.Y, places=6)
+        self.assertAlmostEqual(spun.min.Y, straight.min.Y, places=6)
+        self.assertGreater(spun.size.X, straight.size.X)  # The ears went sideways.
 
     def test_spigot_bearing_surface_is_a_full_tube(self):
         # The stage-screw nut pockets reach inside the spigot's radius; the spigot, restored past the
         # shoulder's back face, roofs them rather than being notched, so the ring grips a complete cylinder.
         p = self.p
         shoulder_back = p.plate_back - p.ring_gap
-        spigot_end = p.plate_back - p.spigot_length
+        spigot_end = p.spigot_end_y
         tube = y_cylinder(p.spigot_diameter, 0, 0, spigot_end, shoulder_back) - y_cylinder(
             p.spigot_bore, 0, 0, spigot_end - 1, shoulder_back + 1
         )
         self.assertAlmostEqual(intersect(self.plate, tube).volume, tube.volume, places=3)
 
-    def test_baffle_tubes_are_threaded_together(self):
-        """The source-side tube's thread runs into the ring-side tube's open end, shoulder to open end."""
-        tube = children_by_label(self.assembly)["SM1 baffle tube"]
-        near, far = (
-            children_by_label(tube)[label] for label in ("SM1L15 (ring side)", "SM1L15 (source side)")
+    def test_baffle_bore_passes_the_beam_and_the_spigot_bore(self):
+        p = self.p
+        self.assertGreaterEqual(p.baffle.net_bore, p.spigot_bore)
+        self.assertGreaterEqual(p.baffle.net_bore, 2 * p.lit_half_length + 4.0)
+        ring_face = SM1RC_M_THICKNESS / 2
+        beam = y_cylinder(
+            2 * (p.lit_half_length + 1.0), 0, p.optical_height, -ring_face - p.baffle.length, -ring_face
         )
-        length = SM1L15_SHOULDER_TO_OPEN_END + SM1L15_THREAD_LENGTH
-        self.assertAlmostEqual(tube.bounding_box().size.Y, 2 * length - SM1L15_THREAD_LENGTH, places=3)
-        # The far tube's open end is at the near tube's shoulder; its thread is inside the near tube.
-        self.assertAlmostEqual(
-            far.bounding_box().max.Y, near.bounding_box().min.Y + SM1L15_THREAD_LENGTH, places=3
-        )
+        self.assertAlmostEqual(overlap_volume(beam, self.baffle_body), 0, places=6)
 
     def test_beam_clears_stage_pedestal_and_plate(self):
         p = self.p
@@ -295,9 +297,8 @@ class SlitStageTests(unittest.TestCase):
     def test_validation_rejects_bad_layouts(self):
         for change in (
             {"cone_half_angle": 10.0},  # Cone reaches the stage edge.
-            {"tube_end_gap": 0.0},  # Tube reaches the head's ring.
-            {"tube_ring_spacing": 20.0},  # The two shoes crowd each other.
-            {"tube_ring_end_margin": 60.0},  # Tube barely reaches past its ring.
+            {"baffle": replace(BaffleParameters(), spigot_bore=20.0)},  # Baffle for a different spigot.
+            {"baffle": replace(BaffleParameters(), vane_depth=9.0)},  # Vanes narrow the bore past the beam.
             {"toe_thickness": 4.0},  # Screw would bottom in the tapped hole.
             {"toe_pad_width": 9.0},  # Pad runs off the fold's rear edge.
             {"toe_finger_tube_clearance": 0.0},  # Fingers touch the field-lens tube.
@@ -313,14 +314,19 @@ class SlitStageTests(unittest.TestCase):
 
     @slow
     def test_rotation_sweep_clears_post_ring_and_shoe(self):
-        """Plate, stage (with its micrometer), and pedestal clear the post and shoe through the working range."""
+        """Plate, stage (with its micrometer), pedestal, and baffle clear the post and shoe through the working range."""
         p = self.p
         post_top = p.datum_thickness + p.post_length
         body = z_cylinder(p.post_diameter, 0, 0, p.datum_thickness, post_top)
         stud = z_cylinder(4.0, 0, 0, post_top, post_top + TR50_STUD_MAX)
         for rotation in ROTATION_SWEEP:
             loc = head_location(p, rotation)
-            moving = [moved(self.plate, loc), moved(self.stage, loc), moved(self.pedestal, loc)]
+            moving = [
+                moved(self.plate, loc),
+                moved(self.stage, loc),
+                moved(self.pedestal, loc),
+                moved(build_baffle(p.baffle), loc * Pos(0, p.ring_face_y, 0)),  # With its ears.
+            ]
             for name, fixed in (("post", body), ("shoe", self.shoe)):
                 clearance = min(bounded_distance(part, fixed, p.post_clearance) for part in moving)
                 self.assertGreaterEqual(clearance, p.post_clearance, msg=f"{name} at rotation {rotation}")

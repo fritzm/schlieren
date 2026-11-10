@@ -22,7 +22,7 @@ CORE := src/schlieren/cad.py src/schlieren/render.py src/schlieren/vendor_cad.py
 
 FRAGMENTS := $(sort $(wildcard docs/design/[0-9][0-9]-*.md))
 FIGURES := $(addprefix $(FIG)/,\
-  rail-shoe.png cassette.png cutoff.png camera-support.png slit-stage.png field-lens.png \
+  rail-shoe.png cassette.png cutoff.png camera-support.png slit-stage.png baffle.png field-lens.png \
   frame.png frame-pivot-plate.svg \
   light-source.png light-source-section.png light-source-holes.svg led-drill-fixture.png \
   mirror-cell.png mirror-cell-below.png mirror-cell-adjuster.png mirror-cell-base-plate.svg)
@@ -72,11 +72,14 @@ $(FIG)/camera-support.png: $(CLI)/camera_support.py $(PARTS)/camera_support.py $
     $(PARTS)/carriage.py $(PARTS)/cassette.py $(PARTS)/adjuster.py $(PARTS)/rail_shoe.py $(PARTS)/rail.py $(CORE)
 	uv run camera-support --figure
 
-$(FIG)/slit-stage.png: $(CLI)/slit_stage.py $(PARTS)/slit_stage.py $(PARTS)/razor_blade.py \
+$(FIG)/slit-stage.png: $(CLI)/slit_stage.py $(PARTS)/slit_stage.py $(PARTS)/baffle.py $(PARTS)/razor_blade.py \
     $(PARTS)/rail_shoe.py $(PARTS)/rail.py $(CORE)
 	uv run slit-stage --figure
 
-$(FIG)/field-lens.png: $(CLI)/field_lens.py $(PARTS)/field_lens.py $(PARTS)/slit_stage.py $(PARTS)/razor_blade.py \
+$(FIG)/baffle.png: $(CLI)/baffle.py $(PARTS)/baffle.py $(CORE)
+	uv run baffle --figure
+
+$(FIG)/field-lens.png: $(CLI)/field_lens.py $(PARTS)/field_lens.py $(PARTS)/slit_stage.py $(PARTS)/baffle.py $(PARTS)/razor_blade.py \
     $(PARTS)/rail_shoe.py $(PARTS)/rail.py $(CORE)
 	uv run field-lens --figure
 

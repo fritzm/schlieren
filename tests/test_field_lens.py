@@ -185,7 +185,7 @@ class FieldLensTests(unittest.TestCase):
         head = build_field_lens_head_assembly(self.p)
         labels = set(children_by_label(head))
         self.assertIn("Field lens station", labels)
-        self.assertIn("SM1 baffle tube", labels)
+        self.assertIn("Baffle", labels)
         # The station is placed with the slit head's blade-seat plane at its origin.
         glass = [leaf for leaf in leaves(head) if leaf.label == "Field lens LA1433-A"]
         self.assertEqual(len(glass), 1)

@@ -64,15 +64,15 @@ class FocusTargetTests(unittest.TestCase):
         paper = children_by_label(self.assembly)["Paper"].bounding_box()
         self.assertAlmostEqual(paper.min.Y - head_location(p.stage).position.Y, edge_plane, places=9)
 
-    def test_assembly_has_no_baffle_tube(self):
-        self.assertNotIn("SM1 baffle tube", children_by_label(self.assembly))
+    def test_assembly_has_no_baffle(self):
+        self.assertNotIn("Baffle", children_by_label(self.assembly))
 
     def test_ring_interface_matches_the_stage_plate(self):
         p = self.p
         s = p.stage
         box = self.target.bounding_box()
         self.assertAlmostEqual(box.min.Y, p.plate_back - s.spigot_length, places=9)
-        # Spigot and shoulder diameters are the plate's, so the SM1RC/M and baffle tube seat the same way.
+        # Spigot and shoulder diameters are the plate's, so the SM1RC/M seats the same way.
         self.assertTrue(self.target.is_inside(Vector(s.spigot_diameter / 2 - 0.2, p.plate_back - 6.0, 0)))
         self.assertFalse(self.target.is_inside(Vector(s.spigot_diameter / 2 + 0.2, p.plate_back - 6.0, 0)))
         self.assertTrue(
@@ -120,7 +120,7 @@ class FocusTargetTests(unittest.TestCase):
 
     def test_ring_window_passes_the_beam_and_ring_grips_the_rim(self):
         p = self.p
-        self.assertLessEqual(p.ring_window_diameter, p.stage.tube_clear_diameter)
+        self.assertLessEqual(p.ring_window_diameter, p.stage.spigot_bore)
         self.assertGreater(p.ring_window_diameter, 2 * p.stage.lit_half_length)
         self.assertLess(p.ring_window_diameter, p.bore)
         self.assertFalse(
@@ -215,10 +215,6 @@ class FocusTargetTests(unittest.TestCase):
         self.assertTrue(self.ring.is_inside(Vector(p.seat_bore_diameter / 2 + 0.05, p.ring_thickness / 2, 0)))
         self.assertTrue(self.target.is_inside(Vector(p.seat_bore_diameter / 2 + 0.05, -0.05, 0)))
 
-    def test_validate_rejects_a_window_the_baffle_tube_cannot_pass(self):
-        with self.assertRaises(ValueError):
-            replace(self.p, seat_bore_diameter=self.p.stage.tube_clear_diameter + 0.6).validate()
-
 
 class FocusScreenTests(unittest.TestCase):
     @shared
@@ -278,8 +274,8 @@ class FocusScreenTests(unittest.TestCase):
         gasket = self.gasket.bounding_box()
         self.assertAlmostEqual(gasket.max.X, p.glass_flat_diameter / 2, delta=1e-6)
 
-    def test_assembly_has_no_baffle_tube(self):
-        self.assertNotIn("SM1 baffle tube", children_by_label(self.assembly))
+    def test_assembly_has_no_baffle(self):
+        self.assertNotIn("Baffle", children_by_label(self.assembly))
 
     def test_pocket_clears_the_glass_and_lip_overlaps_it(self):
         p = self.p
