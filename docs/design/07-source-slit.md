@@ -56,7 +56,7 @@ of the plate front. In this section "front" and "back" refer to the head, not to
 
 The head's front faces the mirror. The light comes from the source side through the baffle and the plate's
 Ø24 mm bore and passes the stage's edge to reach the slit from behind, so the spigot, ring, and post are on the
-light-source side of the blades. The source cone is ±2° about the chief ray and the lit slit length is ±5 mm
+light-source side of the blades. The source cone is ±2° about the chief ray and the lit slit length extends to ±7.5 mm
 ([§6.3](06-light-source.md#63-condenser-optics)); the stage and pedestal edges keep 1.65 mm from the cone.
 
 <p align="center">
@@ -75,10 +75,10 @@ light-source side of the blades. The source cone is ±2° about the chief ray an
 - the slit is 0.2 mm in the model, within the 0.10–0.30 mm working range of [§7.1](#71-blades-and-slit-widths).
 
 There is no centering stage. Only the movable blade moves, so a width change shifts the slit center by half the
-change. The iris is about 150 mm before the slit, so moving the slit by d turns the illumination cone by d/150;
-at the mirror the beam moves about 21 × d. A 0.1 mm width change therefore moves the slit center 0.05 mm and
+change. The iris is about 144 mm before the slit, so moving the slit by d turns the illumination cone by d/144;
+at the mirror the beam moves about 23 × d. A 0.1 mm width change therefore moves the slit center 0.05 mm and
 the beam about 1 mm at the mirror, which needs no recentering (the cutoff is readjusted for any width change
-in any case). With the field lens ([§7.9](#79-field-lens)) in place the beam moves only about 0.07 × d.
+in any case). With the field lens ([§7.9](#79-field-lens)) in place the beam moves only about 0.8 × d.
 
 Slit setup:
 
@@ -221,8 +221,8 @@ rest meets the black walls and vanes.
 
 **Beam.** The baffle bounds the light but does not stop down the beam. The beam on the source side of the slit
 lies between the iris aperture (about Ø9–10.5 mm, [§6.3](06-light-source.md#63-condenser-optics))
-and the lit slit length (±5 mm), so it is about Ø10–11 mm over the whole baffle, with the ±2° cone about the chief
-ray inside that envelope. The Ø25 mm bore leaves 7 mm of radius all around, and is no narrower than the plate's
+and the lit slit length (to ±7.5 mm), so it is about Ø15–16 mm over the whole baffle, with the ±2° cone about the chief
+ray inside that envelope. The Ø25 mm bore leaves about 4.5 mm of radius all around, and is no narrower than the plate's
 Ø24 mm spigot bore, so no alignment tolerance clips the beam, and the length is set by the clamp and the
 distance to the iris, not by the beam. It ends 81 mm from the ring's source face, about 30 mm short of the iris.
 At the slit end the beam is bounded by the head instead, not the baffle: the stage and pedestal edges keep 1.65
@@ -297,14 +297,14 @@ through the region around the axis. The screw heads set the post's position: the
 about 12 mm ahead of the blade plane and the post axis about 17 mm ahead, 52.0 mm from the slit head's post, which
 leaves about 22 mm of rail between the shoes. The station along the rail is a setup value, set by sliding the
 shoe, and the tube's position in its ring sets the lens's distance from the slit; neither is critical, since
-2 mm either way moves the lit end's footprint on the mirror by about 1.4 mm. The beam at the lens is about 11 mm
-long, inside the tube's Ø24 mm bore at the lip and the retaining ring's Ø22.9 mm aperture.
+2 mm either way moves the footprint from the end of the brightest portion on the mirror by about 1.4 mm (about 2.1 mm
+from the shoulder's edge). The beam at the lens is about 16 mm long, inside the tube's Ø24 mm bore at the lip and the retaining ring's Ø22.9 mm aperture.
 
 **Alignment.** A lens decentered by δ shifts the whole illumination on the mirror by about 21 δ; the lit end's cone
-is already within about 0.3 mm of the mirror's center with the lens centered. Mirror height corrects the component
+is already within about 4 mm of the mirror's center (about 6 mm at the shoulder's edge) with the lens centered. Mirror height corrects the component
 of the shift across the slit, as for the slit-width shift of [§7.3](#73-slit-width); the component along the slit is
 limited by the post stack's alignment. Opening the iris from Ø10.2 mm to its Ø12 mm maximum widens each footprint
-by about 18 mm at the mirror, enough for a lens error of about 0.9 mm.
+by about 19 mm at the mirror, enough for a lens error of about 0.9 mm.
 
 **Without the field lens.** To compare with and without it, loosen the SM1RC/M's M4 screw and slide the tube out of
 the ring toward the mirror; the empty ring and post stand clear of the beam. Slide the tube back to restore the
@@ -313,6 +313,6 @@ the focus target is fitted ([§7.7](#77-slit-focus-target)): the tube's thread e
 target's rim and ring go, and the paper is read from the mirror side. The lens does not change the focus of the LED
 image on the slit plane.
 
-**Provisional:** the lens's position and the iris setting rest on the iris-to-slit distance of about 150 mm
-([§6.3](06-light-source.md#63-condenser-optics)), which is calculated and not measured; both are to be confirmed from a
+**Provisional:** the lens's position and the iris setting rest on the iris-to-slit distance of about 144 mm
+([§6.3](06-light-source.md#63-condenser-optics)), which is calculated from the stack and not measured; both are to be confirmed from a
 flat-field photograph of the mirror illumination with the lens in place and removed.

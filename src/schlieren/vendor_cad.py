@@ -72,6 +72,10 @@ SM1L10_LIP_DIAMETER = 24.0
 SM1RR_THICKNESS = 0.08 * INCH
 SM1RR_CLEAR_DIAMETER = 22.9  # Drawing; the vendor model's bore is 22.98 mm.
 SM1D12_SHOULDER_Z = 0.080 * INCH  # External-thread shoulder above the thread end at z=0.
+# The SM1D12's 10 leaves, from the vendor model: they span 0.76 mm before to 1.47 mm past the thread shoulder
+# (2.23 mm thick), so their midplane is 0.355 mm past the shoulder, toward the far end. The vendor drawing
+# does not locate them.
+SM1D12_LEAF_MIDPLANE_FROM_SHOULDER = 0.355
 XCRS40_SIDE_Z = -20.0  # Side faces of the XCRS40 base and carriage, on the side away from the micrometer.
 VENDOR_CUT_EXTENT = 100.0  # Half-size of a cutter that spans a vendor model.
 ACL2520U_A_PLANO_Y = 6.0  # Plano face; convex vertex at y=-6.0.

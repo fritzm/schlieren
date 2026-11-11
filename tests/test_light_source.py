@@ -23,6 +23,7 @@ from schlieren.parts.light_source import (
 from schlieren.parts.light_source_holes import HoleLayoutParameters
 from schlieren.testing import near_pairs_among, shared, slow
 from schlieren.vendor_cad import (
+    SM1D12_LEAF_MIDPLANE_FROM_SHOULDER,
     alpha_cn40_40b,
     thorlabs_acl2520u_a,
     thorlabs_sm1cp2m,
@@ -289,6 +290,24 @@ class LightSourceTests(unittest.TestCase):
             self.assertGreater(lever.min.Y, iris.min.Y)
             self.assertLess(lever.max.Y, iris.max.Y)
             self.assertGreater(lever.max.Z, iris.max.Z)
+
+    def test_iris_to_slit_follows_the_stack(self):
+        p = self.p
+        housing, _ = thorlabs_sm1d12()
+        leaves_ = [solid.bounding_box() for solid in housing.solids() if solid.volume < 10]
+        self.assertEqual(len(leaves_), 10)
+        for leaf in leaves_:
+            self.assertAlmostEqual(
+                (leaf.min.Y + leaf.max.Y) / 2, SM1D12_LEAF_MIDPLANE_FROM_SHOULDER, delta=0.01
+            )
+        e = p.engagement_range(GREEN)[0]
+        placed = parts_by_label(build_light_source_assembly(p, GREEN, e)).__getitem__
+        vertex = placed("ACL2520U-A condenser").bounding_box().max.Y
+        leaf_plane = placed("SM1D12 iris").bounding_box().min.Y + p.sm1d12_thread_length
+        leaf_plane += SM1D12_LEAF_MIDPLANE_FROM_SHOULDER
+        self.assertAlmostEqual(leaf_plane - vertex, p.vertex_to_iris, delta=MODEL_MATCH)
+        self.assertAlmostEqual(p.iris_to_slit, p.lens_to_slit - p.vertex_to_iris, delta=1e-9)
+        self.assertAlmostEqual(p.iris_to_slit, 143.6, delta=0.1)
 
     def test_cap_and_heatsink_are_drilled_through(self):
         """Each part loses exactly its §6.4 through holes: the cap seven, the heatsink base five."""

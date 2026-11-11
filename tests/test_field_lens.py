@@ -126,18 +126,21 @@ class FieldLensTests(unittest.TestCase):
 
     def test_optics_rest_on_the_light_source_geometry(self):
         p = self.p
-        # The iris sits about 150 mm behind the slit (§6.3); the condenser model puts the lens's convex vertex
-        # a few millimeters farther.
-        self.assertAlmostEqual(p.iris_to_slit, LightSourceParameters().lens_to_slit, delta=5.0)
+        # The iris leaves sit about 144 mm behind the slit (§6.3): the condenser stack puts them about 9.4 mm
+        # ahead of the lens's convex vertex.
+        self.assertAlmostEqual(p.iris_to_slit, LightSourceParameters().iris_to_slit, delta=1e-9)
+        self.assertAlmostEqual(p.iris_to_slit, 143.6, delta=0.1)
 
     def test_lens_centers_every_cone_on_the_mirror(self):
         p = self.p
-        # Without it the lit end's cone lands more than the mirror's radius off center; with it, a few millimeters.
+        # Without it the lit end's cone lands more than the mirror's radius off center; with it, a small fraction
+        # of that (the stock focal length is about 4 % above the one that matches the stack's iris-to-slit
+        # distance, and the residual grows with the lit half-length).
         self.assertGreater(p.unlensed_shift, p.mirror_half_aperture)
-        self.assertLess(abs(p.chief_ray_shift()), 3.0)
+        self.assertLess(abs(p.chief_ray_shift()), 0.1 * p.unlensed_shift)
         self.assertLess(abs(p.chief_ray_shift(3.0)), abs(p.chief_ray_shift()))
         # The stock focal length is within a few percent of the one that images the iris onto the mirror.
-        self.assertAlmostEqual(p.lens_focal_length, p.ideal_focal_length, delta=0.03 * p.ideal_focal_length)
+        self.assertAlmostEqual(p.lens_focal_length, p.ideal_focal_length, delta=0.05 * p.ideal_focal_length)
 
     def test_lens_narrows_each_cone_slightly_and_the_iris_makes_up_for_it(self):
         p = self.p
@@ -154,7 +157,10 @@ class FieldLensTests(unittest.TestCase):
         p = self.p
         for shift in (-2.0, 2.0):
             moved_lens = replace(p, fold_clearance=p.fold_clearance + shift)
-            self.assertAlmostEqual(moved_lens.chief_ray_shift(), p.chief_ray_shift(), delta=2.0)
+            # The shift moves about 0.14 mm per mm of lens travel per mm of lit half-length.
+            self.assertAlmostEqual(
+                moved_lens.chief_ray_shift(), p.chief_ray_shift(), delta=0.3 * p.stage.lit_half_length
+            )
 
     def test_validation_rejects_bad_layouts(self):
         for change in (

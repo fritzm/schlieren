@@ -183,7 +183,9 @@ class SlitStageParameters:
     # Beam: the source cone about the chief ray (§3.2), the lit slit length (§6.6), and the margin the stage
     # and pedestal edges keep from the cone.
     cone_half_angle: float = 2.0  # Degrees.
-    lit_half_length: float = 5.0
+    # Half-extent of the lit length along the slit, to the soft edge of the shoulder: the brightest portion is about
+    # 10 mm long (§6.3). Wall measurement with the iris open; **provisional**, to be recalibrated from a dimmed image.
+    lit_half_length: float = 7.5
     beam_margin: float = 0.5
 
     # Table and pedestal edges, and the stage.

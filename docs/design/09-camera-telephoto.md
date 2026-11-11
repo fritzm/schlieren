@@ -88,7 +88,8 @@ passes through it, then spreads again at the ±1.82° cone angle
 ([§3.2](01-context-and-layout.md#32-source-cone)). The values below are calculated. **Provisional:** they rest
 on assumed values, namely a barrel front about 42 mm behind the cutoff plane (a 10 mm gap to the cutoff split
 ring's rear face, which lies about 32 mm behind the cassette front face; the front glass is then about 55 mm
-behind the plane), a 10 mm lit slit image, and a Main-camera pupil of about 3.7 mm (6 mm focal length at
+behind the plane), a 10 mm bright slit image (its shoulder reaches about 15 mm, [§6.3](06-light-source.md#63-condenser-optics), which
+would cut the along-slit centering margin to about ±1.5 mm for the shoulder's full extent), and a Main-camera pupil of about 3.7 mm (6 mm focal length at
 f/1.6). The telephoto's front clear aperture is measured at 0.845 in / 21.5 mm. The distance is not critical:
 the cone footprint grows by only about 0.06 mm per mm of distance, so a 10 mm shorter gap would add about 0.3
 mm to the along-slit centering margin.

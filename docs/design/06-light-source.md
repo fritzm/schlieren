@@ -185,25 +185,36 @@ The condenser images the LED emitter onto the source slit (about 6.6× magnifica
 light from its conjugate emitter point through the full iris aperture, so its cone is uniformly filled in angle.
 Emitter structure appears as intensity variation along the slit, not as structure in the mirror illumination. The
 LED image should cover the illuminated slit length; the domes enlarge the apparent emitters by about 1.4–1.5×.
+The image's brightest portion is about 10 mm long, as calculated, with a weaker shoulder that extends to about
+±7.5 mm (measured from the wall image with the iris open and the slit removed); the clearances of the slit head and
+field lens ([§7.2](07-source-slit.md#72-architecture), [§7.9](07-source-slit.md#79-field-lens)) use that extent.
 
 **Field lens.** A slit point's cone is centered on the chief ray from the center of the iris to that point, not on
-the mirror. The iris is about 150 mm behind the slit and the mirror 3200 mm ahead of it, so for a point a
-distance h along the slit the chief ray is tilted by about h/150, and the cone's footprint on the mirror is
-displaced by about h (1 + 3200/150) ≈ 22 h: 112 mm at the lit end of the slit (h = 5 mm), more than the mirror's
-101.5 mm radius. Each slit point lights a mirror-sized disk, but the disks' centers are spread along the slit, so
-without a correction the illumination falls along the slit to about 55 % of its central value at the mirror's
+the mirror. The iris leaves are about 144 mm behind the slit (the 153 mm from the lens's convex vertex less the
+9.4 mm to the leaves, below) and the mirror 3200 mm ahead of it, so for a point a distance h along the slit
+the chief ray is tilted by about h/144, and the cone's footprint on the mirror is displaced by about
+h (1 + 3200/144) ≈ 23 h: 116 mm at the end of the brightest portion of the slit (h = 5 mm) and 175 mm at the edge of the
+shoulder (h = 7.5 mm), more than the mirror's 101.5 mm radius. Each slit point lights a mirror-sized disk, but the
+disks' centers are spread along the slit, so without a correction the illumination falls along the slit to about 55 % of its central value at the mirror's
 edge. A field lens just ahead of the slit removes the spread ([§7.9](07-source-slit.md#79-field-lens)): it images
 the iris onto the mirror, which aims every chief ray at the mirror's center, so the cones from all slit points
-overlap there. For the lens at the position of §7.9 the iris plane, about 157 mm behind the lens's object-side
-principal plane, is imaged onto the mirror by a focal length of about 150 mm; the Thorlabs LA1433-A (f = 149.5
-mm) is the stock lens that matches it, and the lit end's cone then centers within about 0.3 mm of the mirror's
-center instead of 112 mm. A lens ahead of the slit leaves the condenser's conjugates, the lit length, and the
+overlap there. For the lens at the position of §7.9 the iris plane, about 151 mm behind the lens's object-side
+principal plane, is imaged onto the mirror by a focal length of about 144 mm; the Thorlabs LA1433-A (f = 149.5
+mm) is the nearest stock lens, about 4 % long, and the cone from the end of the brightest portion then centers
+within about 4 mm of the mirror's center instead of 116 mm (about 6 mm at the shoulder's edge, instead of 175 mm). A lens ahead of the slit leaves the condenser's conjugates, the lit length, and the
 focus of the LED image on the slit unchanged. It converges each cone by about 5 %, so the iris is set to about
-Ø10.2 mm for the cone to reach the mirror's edge from the lit end of the slit.
+Ø10.2 mm for the cone to reach the mirror's edge from the edge of the shoulder (Ø10.0 mm from the end of the brightest portion).
 
 Defocus in either direction underfills the ±1.82° cone: iris-edge rays then trace back beyond the emitter
 edge, darkening the mirror edge and shortening the uniformly lit slit length. With the LED at the condenser
 focus (12 mm, collimated) the emitter cannot fill the cone even at the slit center.
+
+The iris-to-slit distance follows from the stack ([§6.1](#61-assembly-and-stack-order)): the leaves of the
+SM1D12 lie 9.4 mm ahead of the lens's convex vertex. That is 0.7 mm for the vertex's depth inside the SM1V05's
+open end (the 12.0 mm lens in its 12.7 mm seat), 8.38 mm for the SM1L03 (the iris's thread shoulder seats on
+its open end), and 0.36 mm for the leaves' midplane past that shoulder. The last is from the vendor model,
+whose 10 leaves span 0.76 mm before to 1.47 mm past the shoulder; the vendor drawing does not locate them.
+With 153 mm from the vertex to the slit, the leaves are 143.6 mm from the slit.
 
 Using ACL2520U-A catalog values (EFL 20.1 mm, BFL 12.0 mm; object-side principal plane about 8.1 mm inside the
 plano face) and about 153 mm from the convex vertex to the slit, the optimum emitter-to-plano-face gap is
@@ -229,7 +240,8 @@ The prescription, with the basis of each value:
 | Emitter to plano face             | 15.04 mm (13–17 usable)                         | Calculated optimum for 153 mm vertex-to-slit                                                                       |
 | ACL2520U-A condenser              | EFL 20.1, BFL 12.0, NA 0.60, CA > 22.5          | Catalog; object-side principal plane H at EFL − BFL = 8.1 mm inside the plano face                                |
 | Conjugates                        | u 23.14, v 153, m ≈ 6.6                         | Calculated from 1/u + 1/v = 1/f; u from H, v from the image-side principal plane H′ at the convex vertex          |
-| SM1D12 iris                       | Ø1–12 range; ≈ Ø10.2 set                        | Catalog range; setting calculated as D = 2 · L · tan θ at L ≈ 150 mm, θ = 1.95°, the cone that reaches the mirror's edge from the lit end of the slit through the field lens |
+| SM1D12 iris                       | Ø1–12 range; ≈ Ø10.2 set                        | Catalog range; setting calculated as D = 2 · L · tan θ at L = 143.6 mm, θ = 2.03°, the cone that reaches the mirror's edge from the shoulder's edge (±7.5 mm) of the lit slit through the field lens |
+| Iris leaves to slit               | 143.6 mm (leaves 9.4 mm ahead of the vertex)    | Calculated from the stack: vertex 0.7 mm inside the SM1V05 open end, SM1L03 8.38 mm, leaf midplane 0.36 mm past the SM1D12 shoulder (vendor model); 153 mm vertex-to-slit |
 | Source slit                       | 0.10–0.30 wide, 10 mm lit length                | [§7](07-source-slit.md)                                                                                            |
 | Field lens                        | LA1433-A, Ø1 in, f 149.5; plano face ≈ 5 mm ahead of the slit | Catalog; the focal length the position needs, from the iris-to-mirror conjugates (above); [§7.9](07-source-slit.md#79-field-lens) |
 | Mirror                            | f 1600; slit at 2f = 3200 mm, ±101.5 mm, ±1.82° | Catalog D203F1600; slit at the center of curvature ([§3.2](01-context-and-layout.md#32-source-cone)); ±2.0° gives slight overfill     |
@@ -243,9 +255,9 @@ through the slit scales with it:
 
 | Gap g    | m     | v (vertex to slit) | Iris needed (D = 2 L tan θ, θ = 1.82–2.0°) | Lit length | Result                                                                            |
 | -------- | ----- | ------------------ | --------------------------- | ---------- | --------------------------------------------------------------------------------- |
-| 14 mm    | 10.1× | ≈ 222 mm           | ≈ 14–15 mm                  | ≈ 15 mm    | Iris cannot open far enough (12 mm maximum); image longer than the 10 mm needed   |
-| 15.04 mm | 6.6×  | ≈ 153 mm           | 9.5–10.5 mm                 | ≈ 10 mm    | Design point; the image just reaches the lit length (green)                       |
-| 16 mm    | 5.0×  | ≈ 121 mm           | ≈ 7.5–8 mm                  | ≈ 7.5 mm   | About 25% less light through the slit; the iris is then about 118 mm from the slit, so the field lens (matched to 150 mm) leaves the lit end's cone about 20 mm off the mirror's center; a lens of about 120 mm would center it |
+| 14 mm    | 10.1× | ≈ 222 mm           | ≈ 13.5–15 mm                | ≈ 15 mm    | Iris cannot open far enough (12 mm maximum); image longer than the 10 mm needed   |
+| 15.04 mm | 6.6×  | ≈ 153 mm           | 9.1–10 mm                   | ≈ 10 mm    | Design point; the image just reaches the lit length (green)                       |
+| 16 mm    | 5.0×  | ≈ 121 mm           | ≈ 7–8 mm                    | ≈ 7.5 mm   | About 25% less light through the slit; the iris is then about 112 mm from the slit, so the field lens (matched to about 144 mm) leaves the lit end's cone about 35 mm off the mirror's center; a lens of about 115 mm would center it |
 
 #### Focus
 
@@ -254,7 +266,7 @@ emitter, and the SM1V05 sets the lens position by how far it is threaded into th
 added engagement moves the lens a millimeter closer to the emitter, so the engagement range sets the range of
 reachable emitter-to-plano gaps. Engagement runs from the Thorlabs minimum of 2.79 mm to about 5.7–5.8 mm, where
 the sleeve end comes within 0.3 mm of the LED board. Turning the SM1V05 moves the lens and iris together, but
-the resulting few-millimeter iris shift is negligible against the 150 mm iris-to-slit spacing, so the iris
+the resulting few-millimeter iris shift is negligible against the 144 mm iris-to-slit spacing, so the iris
 setting is unaffected. The gap is measured to the emitting surface, not the dome top.
 
 The emitter heights above the cap face are calculated from the measured board thicknesses, about 0.07 mm of
@@ -276,7 +288,7 @@ whole module away from the lens and keeps the flange as the axial stop; a shim u
 instead shorten the gap and make the shortfall worse.
 
 To set up, thread the SM1V05 in to the engagement above for the module in use, set the iris to about Ø10.2 mm,
-and place the slit head about 150 mm from the iris. The blades of the stage-based slit head cannot be seen, so
+and place the slit head about 144 mm from the iris leaves (153 mm from the lens vertex). The blades of the stage-based slit head cannot be seen, so
 swap the printed focus target in for the head ([§7.7](07-source-slit.md#77-slit-focus-target)), with the field
 lens station slid clear ([§7.9](07-source-slit.md#79-field-lens)), turn the SM1V05 until the emitter image on
 the target is sharp and centered, then lock the SM1NT, restore the slit head and the field lens, and open the

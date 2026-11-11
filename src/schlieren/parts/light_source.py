@@ -41,6 +41,7 @@ from schlieren.vendor_cad import (
     MCMASTER_91545A410_THICKNESS,
     MCMASTER_92095A453_HEAD_HEIGHT,
     MCMASTER_92095A453_LENGTH,
+    SM1D12_LEAF_MIDPLANE_FROM_SHOULDER,
     alpha_cn40_40b,
     mcmaster_91292a111,
     mcmaster_91545a410,
@@ -157,7 +158,8 @@ class LightSourceParameters:
     # Calculated from the vendor models: height above the plano face of the SM1V05 retaining ring's lens-side
     # face when its inner edge meets the convex surface (contact at 4.29 mm).
     lens_retaining_ring_seat: float = 4.30
-    # Setup value: rear principal plane (convex vertex) to slit, ~150 mm iris-to-slit plus iris offset.
+    # Setup value: rear principal plane (convex vertex) to slit. The iris-to-slit distance follows from it
+    # (`iris_to_slit`), about 9.4 mm less.
     lens_to_slit: float = 153.0
     # Alpha CN40-40B (diameter +0/-0.5; use the maximum).
     heatsink_diameter: float = 40.0
@@ -207,6 +209,17 @@ class LightSourceParameters:
     def lens_vertex_inside_open_end(self):
         """Convex vertex below the SM1V05 open end; the SM1L03 spaces the iris clear of the lens."""
         return self.sm1v05_seat_depth - self.lens_center_thickness
+
+    @property
+    def vertex_to_iris(self):
+        """Convex vertex to the iris leaves' midplane: the vertex's depth in the SM1V05, the SM1L03, and the
+        leaves' position past the SM1D12's thread shoulder."""
+        return self.lens_vertex_inside_open_end + self.sm1l03_length + SM1D12_LEAF_MIDPLANE_FROM_SHOULDER
+
+    @property
+    def iris_to_slit(self):
+        """The iris leaves to the slit, which the iris setting and the field lens (§6.3, §7.9) rest on."""
+        return self.lens_to_slit - self.vertex_to_iris
 
     # Axial positions (u) of the parts that move with the SM1V05 focus engagement.
     def sleeve_end_u(self, engagement):

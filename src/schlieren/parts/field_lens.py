@@ -1,7 +1,7 @@
 """Field lens station (design §7.9): a lens ahead of the source slit, on a post of its own.
 
-The cone from each slit point is centered on the chief ray from the center of the iris, about 150 mm behind
-the slit, so without a field lens the cones from points along the slit land displaced on the mirror, by about
+The cone from each slit point is centered on the chief ray from the center of the iris, about 144 mm behind
+the slit (the condenser stack's, `LightSourceParameters.iris_to_slit`), so without a field lens the cones from points along the slit land displaced on the mirror, by about
 112 mm at the lit end against the mirror's 101.5 mm radius (§6.3). A positive lens just ahead of the slit
 whose focal length is close to the iris-to-lens distance images the iris onto the mirror instead, so every
 cone lands centered on it. The lens is a Thorlabs LA1433-A (Ø1 in, N-BK7, plano-convex, f = 149.5 mm); on the
@@ -33,6 +33,7 @@ from build123d import Pos, Shape
 
 from schlieren.cad import assembly, labeled, place
 from schlieren.palette import BLACK_ANODIZED, GLASS
+from schlieren.parts.light_source import LightSourceParameters
 from schlieren.parts.rail_shoe import RailShoeParameters, post_stack
 from schlieren.parts.slit_stage import SlitStageParameters, build_slit_stage_assembly, head_location
 from schlieren.standards import POST_DIAMETER
@@ -72,7 +73,7 @@ class FieldLensParameters:
     lens_back_focal_length: float = LA1433_A_BACK_FOCAL_LENGTH
     # What the lens works between (§6.3, §3.2): the iris behind the slit, the mirror ahead of it with the slit
     # at its center of curvature, and the mirror's half-aperture.
-    iris_to_slit: float = 150.0
+    iris_to_slit: float = field(default_factory=lambda: LightSourceParameters().iris_to_slit)
     slit_to_mirror: float = 3200.0
     mirror_half_aperture: float = 101.5
     # Tube and ring placement.

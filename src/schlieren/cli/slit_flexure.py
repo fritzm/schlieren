@@ -11,6 +11,7 @@ from schlieren.cli._common import (
     render,
     show,
 )
+from schlieren.parts.light_source import LightSourceParameters
 from schlieren.parts.slit_flexure import (
     SlitFlexureParameters,
     build_clamp_bar,
@@ -25,8 +26,9 @@ FIGURE_VIEW_DIRECTION = (
     -1.0,
     0.6,
 )  # From the light-source side, outboard and above: the blades, knobs, and flexure.
-# Setup values for the steering figure: iris-to-slit ~150 mm (§6.7), slit-to-mirror ~3200 mm (§3.1).
-IRIS_TO_SLIT = 150.0
+# Setup values for the steering figure: iris-to-slit from the condenser stack (§6.3), slit-to-mirror ~3200 mm
+# (§3.1).
+IRIS_TO_SLIT = LightSourceParameters().iris_to_slit
 SLIT_TO_MIRROR = 3200.0
 
 
