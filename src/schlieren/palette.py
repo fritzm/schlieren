@@ -33,6 +33,7 @@ PRINTED_INDIGO = (0.35, 0.5, 0.75)
 PRINTED_AMBER = (0.85, 0.65, 0.25)
 PRINTED_AZURE = (0.3, 0.55, 0.8)
 PRINTED_DENIM = (0.3, 0.5, 0.7)
+PRINTED_WHITE = (0.93, 0.93, 0.9)  # Light filament, to show against dark optics.
 QR_PLATE_DARK = (0.16, 0.16, 0.18)  # Mirror-cell quick-release plate.
 
 # Every printed-part color above, for assemblies that show the parts as printed rather than told apart.
@@ -46,6 +47,7 @@ PRINTED_COLORS = (
     PRINTED_AMBER,
     PRINTED_AZURE,
     PRINTED_DENIM,
+    PRINTED_WHITE,
 )
 PRINTED_BLACK_PLA = (0.1, 0.1, 0.11)  # The filament the parts are printed in.
 PHOTOFOIL_BLACK = (0.08, 0.08, 0.09)  # Rosco Photofoil matte black aluminum wrap.

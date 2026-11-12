@@ -33,11 +33,13 @@ slit-flexure = "schlieren.cli.slit_flexure:main"
 baffle = "schlieren.cli.baffle:main"
 slit-stage = "schlieren.cli.slit_stage:main"
 slit-focus-target = "schlieren.cli.slit_focus_target:main"
+ring-reticle = "schlieren.cli.ring_reticle:main"
 razor-blade = "schlieren.cli.razor_blade:main"
 build-bom-xlsx = "schlieren.cli.build_bom_xlsx:main"
 build-design-doc = "schlieren.cli.build_design_doc:main"
 reconcile-bom = "schlieren.cli.reconcile_bom:main"
 run-tests = "schlieren.cli.run_tests:main"
+wall-card = "schlieren.cli.wall_card:main"
 
 [build-system]
 requires = ["uv_build>=0.12.17,<0.13.0"]
