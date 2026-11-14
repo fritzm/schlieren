@@ -10,8 +10,8 @@ side and is read through it from the mirror side. The screen is one of two varia
 fixture, each with a ring of its own:
 
 - paper: a sheet of tissue or oiled paper clamped between the rim and the ring;
-- ground glass: a Ø1 in ground-glass disc (Thorlabs DG10 series: 2.0 +/- 0.2 mm thick, Ø25.4 +0/-0.25 mm,
-  with a 0.2 mm edge bevel, catalog and vendor-model values) in a pocket in the ring's rear face, ground face
+- ground glass: a Ø1 in ground-glass disc (Thorlabs DG10-600: 2.0 mm thick and Ø25.4 mm by its drawing, which
+  gives no tolerances, with a 0.2 mm edge bevel from the vendor model) in a pocket in the ring's rear face, ground face
   toward the source, lying on the rim face like the paper. A neoprene gasket between the glass's front face and
   the pocket ceiling pushes the glass back onto the rim and absorbs the thickness spread, so the imaging surface
   is the y = 0 rim face, the plane of the blades' cutting edges, whatever the glass thickness. The glass is loaded from the front: set it on the
@@ -275,7 +275,8 @@ def build_focus_target_assembly(p=None, include_support=True):
 class FocusScreenParameters:
     # The paper target's parameters: the fixture is shared. Its paper thickness is not used here.
     target: FocusTargetParameters = field(default_factory=FocusTargetParameters)
-    # Thorlabs DG10 catalog values (verify against the part before ordering).
+    # Thorlabs DG10-600 drawing (docs/reference): the nominal diameter and thickness. It gives no tolerance, so
+    # `glass_thickness_tolerance` is the pocket's allowance, which the gasket makes uncritical.
     glass_diameter: float = 25.4
     glass_thickness_nominal: float = 2.0
     glass_thickness_tolerance: float = 0.2

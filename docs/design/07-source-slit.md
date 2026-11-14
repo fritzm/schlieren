@@ -184,12 +184,12 @@ paper's thickness (not yet measured; the model assumes 0.15 mm) offsets the focu
 by that much. For handling, the rim's back edge and the ring's front edge, both Ø40 mm, have a 0.5 mm chamfer;
 the mating faces keep sharp edges.
 
-A variant replaces the paper with a Ø1 in ground-glass disc (Thorlabs DG10 series, catalog 2.0 ± 0.2 mm thick).
+A variant replaces the paper with a Ø1 in ground-glass disc (Thorlabs DG10-600, 2.0 mm thick).
 The printed fixture is the same; only the retaining ring differs. The disc sits in a Ø25.7 mm pocket in the ring's
 rear face, ground face toward the source, lying on the rim face as the paper does, so the imaging surface is the
 blades' edge plane whatever the glass thickness (the paper's own thickness aside). A gasket cut from 1/16 in
 Durometer 30A neoprene sheet, between the glass's front face and the pocket ceiling, pushes the glass back onto
-the rim and absorbs the thickness spread. The disc has a 0.2 mm × 45° bevel on both edges (Thorlabs model; the
+the rim and absorbs any spread in its thickness. The disc has a 0.2 mm × 45° bevel on both edges (Thorlabs model; the
 drawing does not dimension it), so its flat faces are Ø25.0 mm, and the gasket is cut to that. The ring is
 4.65 mm thick (3.15 mm pocket, 1.5 mm lip) with a 1 mm × 45° bevel on the window, and takes the same M3 × 10 mm
 screws. The glass is set on the rim, then the gasket, then the ring over both; the flat seats on 2.5 mm of the
@@ -287,7 +287,10 @@ model is `src/schlieren/parts/field_lens.py` (`uv run field-lens`, with `--show`
 the tube's thread end, and its convex face toward the mirror. The SM1RR retaining ring supplied with the tube
 holds it from the open end; seat the ring with the optical spanner wrench. The tube is clamped by its full-diameter
 section in a Thorlabs SM1RC/M split ring on a TR50/M post on the common shoe, the same stack as every other
-station, so the lens is at the 22.1 mm post-top to axis dimension of the common post stack.
+station, so the lens is at the 22.1 mm post-top to axis dimension of the common post stack. The lens's object-side
+principal plane lies 2.0 mm inside its plano face (the catalog focal length less the back focal length; the
+drawing's 3.1 mm center thickness over the index of 1.52 agrees), the plane the iris distance of
+[§6.3](06-light-source.md#63-condenser-optics) is measured to.
 
 **Position.** The tube's thread end stands 0.5 mm above the tops of the blades' folds, between the toe fingers, whose
 slit-side faces stand 1 mm clear of the tube's body ([§7.4](#74-blade-clamping)). The lens's plano face is

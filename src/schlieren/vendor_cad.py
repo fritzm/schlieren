@@ -168,7 +168,9 @@ THORLABS_DG10_DIAMETER = 25.4
 THORLABS_DG10_THICKNESS = 2.0
 THORLABS_DG10_BEVEL = 0.2
 LA1433_A_DIAMETER = 25.4
-LA1433_A_CENTER_THICKNESS = 3.05  # The vendor model; the drawing rounds it to 3.1 mm.
+# The vendor model's 0.12 in; the drawing gives 3.1 ± 0.1 mm. With R77.3 it keeps the drawing's 2.0 mm edge
+# thickness, and the object-side principal plane (thickness over the index) at the catalog 2.0 mm.
+LA1433_A_CENTER_THICKNESS = 3.05
 LA1433_A_RADIUS = 77.26  # Convex face, from the vendor model (drawing: R77.3).
 # McMaster 91292A114 model (M3 × 12, no threads): axis +Z through the origin, centered on its 15 mm overall
 # length (12 mm under the head plus the head), Ø5.5 mm head of 3 mm at +Z, Ø3 mm plain shank to -Z.
