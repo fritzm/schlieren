@@ -7,7 +7,7 @@ hanging from it. Two separate rail fixtures:
   cylindrical section and the fore one at the front of the long section, just behind the focus ring. Each
   collar rests on a pair of ball-tip screws at ±45° in a yoke; each pair sets x and z of the lens axis at its
   station, so together they set position, pitch, and yaw. The yokes are printed separately and bolted to one
-  shoe straddling the rail. Three screw tips bear on flat bearing inserts; the aft left one sits between two
+  shoe straddling the rail. Three screw tips bear on flat bearing inserts; the aft right one sits between two
   short dowel pins on its collar pad, which fixes the lens fore/aft. An endless elastic band around the barrel
   beside each yoke, hooked on a peg on the yoke, holds each pad pair down;
 - the phone rest, specific to the phone. The phone is carried by its lens mount and is not gripped, but it
@@ -155,6 +155,11 @@ class CameraSupportParameters:
     # other, as on the common rail shoe (whose split and ear thicknesses it takes).
     clamp_screw_above_ring: float = 4.25  # Screw axis above the ring top; the head clears the root fillet.
     ear_top_above_ring: float = 8.75
+    # The collars are printed with the clamp screw's thin ear on -x (`ear_screw_side`) and the aft collar's groove
+    # pad on the -x pad. They are installed turned half a turn about the vertical axis through the lens axis, so
+    # the screw head faces outboard (+x on the imaging rail) for the hex key, and the groove pad is on the
+    # outboard adjuster.
+    collars_turned: bool = True
     clamp_head_diameter: float = 5.5  # Screw head, which the ear must clear.
     # Pad pockets: each bearing surface sits in a pocket whose rim stands above it, so a ball end that wanders
     # reaches a wall instead of the edge of the pad. The rim stays below the screw's end face, which is 1.2 mm
@@ -339,8 +344,28 @@ class CameraSupportParameters:
         )
 
     @property
+    def collar_x_sign(self) -> int:
+        """The sign a collar's printed x takes as installed."""
+        return -1 if self.collars_turned else 1
+
+    @property
+    def installed_ear_screw_side(self) -> float:
+        """Outer face of the screw ear as installed, on the outboard side."""
+        return self.collar_x_sign * self.ear_screw_side
+
+    @property
+    def installed_ear_nut_side(self) -> float:
+        """Outer face of the nut ear as installed."""
+        return self.collar_x_sign * self.ear_nut_side
+
+    @property
+    def groove_side(self) -> int:
+        """The side (-1 left, +1 right, as `screw_location`) of the aft collar's groove-rod pad as installed."""
+        return -self.collar_x_sign
+
+    @property
     def ear_screw_side(self) -> float:
-        """Outer face of the screw ear, across the rail from the split."""
+        """Outer face of the screw ear, across the rail from the split, as printed."""
         return -(self.rail_shoe.split_gap / 2 + self.rail_shoe.screw_ear_thickness)
 
     @property
@@ -924,13 +949,21 @@ def _joint_hardware(p: CameraSupportParameters, station: float) -> list[Part]:
     ]
 
 
+def _collar_installation(p: CameraSupportParameters, station: float) -> Location:
+    """The collar as printed (its frame at the station) to as installed: turned about the vertical axis through
+    the lens axis when `collars_turned`."""
+    return Pos(0, station, 0) * Rot(Z=180 if p.collars_turned else 0) * Pos(0, -station, 0)
+
+
 def _collar_clamp_hardware(p: CameraSupportParameters, station: float) -> list[Part]:
     """The collar's M3 × 12 clamp screw and hex nut: head on the outer face of the screw ear, nut seated on
-    the floor of its pocket in the other ear with its flats up and down."""
+    the floor of its pocket in the other ear with its flats up and down, turned with the collar."""
     screw_z = p.optical_height + p.collar_radius + p.clamp_screw_above_ring
-    screw_loc = Location(along_x((p.ear_screw_side, station, screw_z)))
+    installed = _collar_installation(p, station)
+    screw_loc = installed * Location(along_x((p.ear_screw_side, station, screw_z)))
     nut_seat = p.ear_nut_side - p.rail_shoe.nut_pocket_depth
-    nut_loc = Location(along_x((nut_seat, station, screw_z))) * Rot(Z=90)  # Corners along the lens axis.
+    # Corners along the lens axis.
+    nut_loc = installed * Location(along_x((nut_seat, station, screw_z))) * Rot(Z=90)
     return [
         labeled(mcmaster_91292a114(), "Clamp screw", METAL, screw_loc),
         labeled(mcmaster_91828a211(), "Clamp nut", METAL, nut_loc),
@@ -1007,22 +1040,27 @@ def _collar_assembly(p: CameraSupportParameters, where: str, station: float) -> 
     Left and right are as seen from the collar looking toward the other one (see `build_yoke_assembly`), so
     each pad has the label of the adjuster that bears on it.
     """
-    rod_side = -1 if where == "Aft" else None  # The aft left pad carries the groove rods.
+    rod_side = -1 if where == "Aft" else None  # The printed aft collar's -x pad carries the groove rods.
     children = [
-        labeled(build_collar(p, station, rod_side), "Collar", PRINTED_GREEN),
+        labeled(
+            moved(build_collar(p, station, rod_side), _collar_installation(p, station)),
+            "Collar",
+            PRINTED_GREEN,
+        ),
         *_collar_clamp_hardware(p, station),
     ]
     # Pads lie with their 10 mm length across the rail: each pad slides that way by the travel of the other
     # screw of its pair, and only slightly along the rail.
     pad = floor_box(p.magnet_length, p.magnet_width, p.magnet_thickness)
     for label, side in (("Left", -p.toward_other(station)), ("Right", p.toward_other(station))):
-        if (where, side) == ("Aft", -1):
+        if (where, side) == ("Aft", p.groove_side):
             continue  # This screw sits in the rod groove below, not on a magnet.
         children.append(labeled(pad, f"{label} bearing insert", STEEL, screw_location(p, side, station)))
     if where == "Aft":
-        # Fore/aft stop: in place of a magnet, the aft left collar pad carries two rods lying across the rail,
-        # and the screw's ball nests in the groove between them. The ball can still slide along the rods.
-        groove = screw_location(p, -1, station)
+        # Fore/aft stop: in place of a magnet, the aft collar's groove pad (installed on the outboard adjuster)
+        # carries two rods lying across the rail, and the screw's ball nests in the groove between them. The
+        # ball can still slide along the rods.
+        groove = screw_location(p, p.groove_side, station)
         half_spacing, rod_height = rod_layout(p)
         for offset in (-1, 1):
             rod = moved(

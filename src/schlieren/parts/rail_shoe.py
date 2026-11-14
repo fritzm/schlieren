@@ -2,7 +2,8 @@
 
 Coordinates: a §3.4 rail frame, +x across the rail (right, seen from above with the mirror ahead), +y along it
 toward the mirror, z up; rail top is z=0. The post is at x=y=0. Both ears point toward +x: nut at +y, screw at
--y. Envelope, hole layout, and fabrication allowances are fit-tested on printed shoes. No PLA lies between the
+-y; `post_stack` turns the shoe half a turn about its post on the source rail, so its ears point outboard there
+too. Envelope, hole layout, and fabrication allowances are fit-tested on printed shoes. No PLA lies between the
 post bottom and the metal datum shim.
 """
 
@@ -40,6 +41,7 @@ from schlieren.parts.rail import build_rail
 from schlieren.standards import (
     DATUM_SHIM_DIAMETER,
     DATUM_SHIM_THICKNESS,
+    IMAGING_SIDE,
     NUT_POCKET_ACROSS_FLATS_CLEARANCE,
     OPTICAL_HEIGHT,
     POST_DIAMETER,
@@ -368,6 +370,7 @@ def post_stack(
     p: RailShoeParameters | None = None,
     optical_height: float = OPTICAL_HEIGHT,
     datum_thickness: float = DATUM_SHIM_THICKNESS,
+    side: int = IMAGING_SIDE,
 ) -> list[Part]:
     """The common post stack as shown in assemblies, for the post at rail station y, moved by loc.
 
@@ -380,18 +383,27 @@ def post_stack(
     Returns labeled children in the frame of loc (the §3.4 rail frame when loc is omitted). The hardware is
     labeled "Shoe ...", clear of any screws the fixture itself has. shoe is built when not given, and p gives
     the shoe's parameters.
+
+    side is the rail's: the shoe's ears point toward +x, and its ring's locking screw head is on +x, so both
+    face outboard on the right (imaging) rail; on the left (source) rail they are turned half a turn about the
+    post, to face outboard there too, for reaching them with a hex key.
     """
     on_rail = Location() if loc is None else loc
     at_post = on_rail * Pos(0, y, 0)
+    turn = Rot(Z=0 if side > 0 else 180)
     parts = []
     if ring:
-        ring_seat = on_rail * Pos(0, y - SM1RC_M_THICKNESS / 2, optical_height)
+        # Turned about the post axis, the ring's center staying on it.
+        ring_seat = on_rail * Pos(0, y, optical_height) * turn * Pos(0, -SM1RC_M_THICKNESS / 2, 0)
         parts.append(labeled(thorlabs_sm1rc_m(), "SM1RC M ring", BLACK_ANODIZED, ring_seat))
     parts.append(labeled(thorlabs_tr50_m(), "TR50 M post", METAL, at_post * Pos(0, 0, datum_thickness)))
-    parts.append(labeled(build_rail_shoe(p) if shoe is None else shoe, "Rail shoe", PRINTED_ORANGE, at_post))
+    shoe_seat = at_post * turn
+    parts.append(
+        labeled(build_rail_shoe(p) if shoe is None else shoe, "Rail shoe", PRINTED_ORANGE, shoe_seat)
+    )
     hardware = split_clamp_hardware(p) if clamp_hardware else []
     hardware += side_clamp_hardware(p) if side_screws else []
-    parts.extend(labeled(part, f"Shoe {part.label.lower()}", METAL, at_post) for part in hardware)
+    parts.extend(labeled(part, f"Shoe {part.label.lower()}", METAL, shoe_seat) for part in hardware)
     return parts
 
 

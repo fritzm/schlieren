@@ -8,7 +8,14 @@ from build123d import Cylinder, GeomType, Plane, RegularPolygon, extrude, sectio
 
 from schlieren.cad import ON_FLOOR, along_y, intersect
 from schlieren.parts.rail import RailProfile
-from schlieren.parts.rail_shoe import RailShoeParameters, build_rail_shoe, reference_parts, viewer_assembly
+from schlieren.parts.rail_shoe import (
+    RailShoeParameters,
+    build_rail_shoe,
+    post_stack,
+    reference_parts,
+    viewer_assembly,
+)
+from schlieren.standards import IMAGING_SIDE, SOURCE_SIDE
 from schlieren.vendor_cad import MCMASTER_91292A114_HEAD_HEIGHT, MCMASTER_92290A_HEAD_HEIGHT
 
 # The TR50/M STEP model is rounded to inches (0.499 in diameter), so it differs slightly from the nominal.
@@ -175,6 +182,28 @@ class RailShoeTests(unittest.TestCase):
         self.assertGreater(screw.max.Y, nut.max.Y)
         for label in ("Shoe clamp screw", "Shoe clamp nut"):
             self.assertLess(intersect(self.shoe, parts[label]).volume, 1e-6)
+
+    def test_ears_and_ring_screw_face_outboard_on_either_rail(self):
+        """The ears, the clamp screw's head, and the SM1RC/M's locking screw head all point outboard (away from
+        the other rail): +x on the imaging rail, -x on the source rail, whose stack is turned half a turn
+        about the post."""
+        p = self.p
+        for side in (IMAGING_SIDE, SOURCE_SIDE):
+            with self.subTest(side=side):
+                stack = {part.label: part for part in post_stack(shoe=self.shoe, ring=True, side=side, p=p)}
+                shoe = stack["Rail shoe"].bounding_box()
+                ears_x = p.clamp_axis_x * side
+                for label in ("Shoe clamp screw", "Shoe clamp nut"):
+                    self.assertAlmostEqual(stack[label].bounding_box().center().X, ears_x, places=4)
+                # The shoe's ears make its envelope extend farther outboard of the post than inboard.
+                self.assertGreater((shoe.max.X + shoe.min.X) * side, 0.0)
+                # The ring stays centered on the post, and its locking screw (the vendor model's smallest
+                # solid, with its head) is on the outboard side.
+                ring = stack["SM1RC M ring"].bounding_box()
+                self.assertAlmostEqual(ring.center().X, 0.0, places=3)
+                self.assertAlmostEqual(ring.center().Y, 0.0, places=3)
+                locking_screw = min(stack["SM1RC M ring"].solids(), key=lambda s: s.volume).bounding_box()
+                self.assertGreater(locking_screw.center().X * side, 0.0)
 
     def test_viewer_post_is_vendor_model_seated_on_datum_shim(self):
         p = self.p

@@ -35,9 +35,8 @@ from schlieren.parts.light_source import (
     build_light_source_assembly,
 )
 from schlieren.parts.slit_stage import SlitStageParameters, build_slit_stage_assembly, head_location
+from schlieren.standards import IMAGING_SIDE, SOURCE_SIDE
 
-SOURCE_SIDE = -1  # Left rail (§3.4).
-IMAGING_SIDE = 1  # Right rail.
 # Parts of the camera support's stand-alone model that exist only to stand it alone; the head has the frame's
 # rails.
 STAND_ALONE_LABELS = ("Rail", "Optical axis")

@@ -1,5 +1,5 @@
 """Build/export the ring reticle half (print two of it; design §9.9); optionally display the snapped tube in
-the cutoff post's ring on the camera support in OCP CAD Viewer."""
+the cutoff post's ring, with the post and shoe, in OCP CAD Viewer."""
 
 import argparse
 
@@ -15,7 +15,7 @@ from schlieren.parts.ring_reticle import (
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     add_show_option(
-        parser, "Display the reticle in the cutoff post's ring, on the camera support, in OCP CAD Viewer"
+        parser, "Display the reticle in the cutoff post's ring, with the post and shoe, in OCP CAD Viewer"
     )
     add_output_option(parser)
     args = parser.parse_args()

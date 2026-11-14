@@ -33,7 +33,14 @@ from schlieren.parts.light_source_holes import (
     HoleLayoutParameters,
 )
 from schlieren.parts.rail_shoe import REFERENCE_HARDWARE_LABEL, post_stack
-from schlieren.standards import DATUM_SHIM_THICKNESS, INCH, OPTICAL_HEIGHT, POST_DIAMETER, POST_LENGTH
+from schlieren.standards import (
+    DATUM_SHIM_THICKNESS,
+    INCH,
+    OPTICAL_HEIGHT,
+    POST_DIAMETER,
+    POST_LENGTH,
+    SOURCE_SIDE,
+)
 from schlieren.validation import require_positive_dimensions
 from schlieren.vendor_cad import (
     MCMASTER_91292A111_HEAD_HEIGHT,
@@ -60,6 +67,11 @@ BOARD_WASHER_LABEL = "M2 board washer"  # One under each board screw head, numbe
 LED_MODULE_LABEL = "LED module"  # The heatsink, cap, star board, LED package, and their fasteners.
 WHOLE_IN_SECTION = (LED_MODULE_LABEL, "ACL2520U-A condenser")  # Shown entire in light_source_section.
 SECTION_BOX_SIZE = 1000.0  # Cutting box for light_source_section; larger than the module.
+# The LED image's shoulder, measured on the wall with the iris open and the slit removed (§6.3): its half-extent
+# and the vertex-to-slit distance of the conjugates it was measured at. **Provisional**, to be recalibrated from
+# a dimmed image.
+LIT_SHOULDER_MEASURED_HALF_LENGTH = 7.5
+LIT_SHOULDER_MEASURED_LENS_TO_SLIT = 153.0
 
 
 @dataclass(frozen=True)
@@ -159,8 +171,9 @@ class LightSourceParameters:
     # face when its inner edge meets the convex surface (contact at 4.29 mm).
     lens_retaining_ring_seat: float = 4.30
     # Setup value: rear principal plane (convex vertex) to slit. The iris-to-slit distance follows from it
-    # (`iris_to_slit`), about 9.4 mm less.
-    lens_to_slit: float = 153.0
+    # (`iris_to_slit`), about 9.4 mm less; it is the distance at which the field lens images the iris onto the
+    # mirror (§6.3, `FieldLensParameters.aimed_iris_to_slit`), which sets the condenser's conjugates.
+    lens_to_slit: float = 159.0
     # Alpha CN40-40B (diameter +0/-0.5; use the maximum).
     heatsink_diameter: float = 40.0
     heatsink_height: float = 40.0
@@ -261,6 +274,13 @@ class LightSourceParameters:
     @property
     def magnification(self):
         return self.lens_to_slit / (self.optimum_gap + self.lens_efl - self.lens_bfl)
+
+    @property
+    def lit_half_length(self):
+        """Half-extent along the slit of the LED image, to the soft edge of its shoulder: the wall measurement,
+        scaled from the conjugates it was taken at to the present ones (the image scales with magnification)."""
+        measured = LightSourceParameters(lens_to_slit=LIT_SHOULDER_MEASURED_LENS_TO_SLIT).magnification
+        return LIT_SHOULDER_MEASURED_HALF_LENGTH * self.magnification / measured
 
     def focus_engagement(self, board, gap=None):
         gap = self.optimum_gap if gap is None else gap
@@ -372,7 +392,9 @@ def build_light_source_assembly(p=None, board=GREEN, engagement=None, side_screw
         "SM1L03 tube": (thorlabs_sm1l03(), p.open_end_u(engagement)),
         "SM1D12 iris": (iris, iris_seat),
     }
-    reference = post_stack(y=post_y, datum_thickness=p.datum_thickness, side_screws=side_screws)
+    reference = post_stack(
+        y=post_y, datum_thickness=p.datum_thickness, side_screws=side_screws, side=SOURCE_SIDE
+    )
     children = [assembly(REFERENCE_HARDWARE_LABEL, reference)]
     children += [
         labeled(part, name, BLACK_ANODIZED, Pos(0, u, z)) for name, (part, u) in vendor_parts.items()

@@ -6,6 +6,11 @@ allowances stay with their part.
 
 INCH = 25.4  # mm.
 
+# The two rails, as the sign of x in a §3.4 rail frame toward which a fixture's outboard side lies (away from
+# the other rail): the source rail is the left one, the imaging rail the right one.
+SOURCE_SIDE = -1
+IMAGING_SIDE = 1
+
 # Frozen project datum (§3.4): the optical axis above the rail top.
 OPTICAL_HEIGHT = 72.35
 

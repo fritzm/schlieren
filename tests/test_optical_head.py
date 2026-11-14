@@ -5,14 +5,13 @@ from math import pi
 
 from schlieren.cad import box_between, children_by_label, intersect, leaves, moved
 from schlieren.parts.optical_head import (
-    IMAGING_SIDE,
     OpticalHeadParameters,
     assemble_optical_head,
     build_imaging_fixtures,
     build_optical_head,
     build_source_fixtures,
 )
-from schlieren.standards import DATUM_SHIM_THICKNESS, POST_LENGTH
+from schlieren.standards import DATUM_SHIM_THICKNESS, IMAGING_SIDE, POST_LENGTH, SOURCE_SIDE
 from schlieren.testing import loose_box, near_pairs, slow
 
 POST_TOP = DATUM_SHIM_THICKNESS + POST_LENGTH  # Datum shim plus TR50/M, above the rail top (§3.4).
@@ -59,6 +58,26 @@ class OpticalHeadTests(unittest.TestCase):
         cls.imaging = build_imaging_fixtures(cls.h)
         cls.head = assemble_optical_head(cls.h, cls.source, cls.imaging)
         cls.groups = children_by_label(cls.head)
+
+    def test_shoe_ears_and_ring_screws_face_outboard_on_both_rails(self):
+        """Ears and locking-screw heads point away from the other rail, for reaching them: -x on the source
+        rail (the three shoes and the two split rings), +x on the imaging rail (the cutoff's)."""
+        for group, side, shoes, rings in (
+            (self.source, SOURCE_SIDE, 3, 2),
+            (self.imaging, IMAGING_SIDE, 1, 1),
+        ):
+            with self.subTest(side=side):
+                shoe_boxes = [leaf.bounding_box() for leaf in by_label(group, "Rail shoe")]
+                self.assertEqual(len(shoe_boxes), shoes)
+                for box in shoe_boxes:
+                    self.assertGreater((box.max.X + box.min.X) * side, 0.0)
+                ring_screws = [
+                    min(leaf.solids(), key=lambda s: s.volume).bounding_box()
+                    for leaf in by_label(group, "SM1RC M ring")
+                ]
+                self.assertEqual(len(ring_screws), rings)
+                for box in ring_screws:
+                    self.assertGreater(box.center().X * side, 0.0)
 
     def test_stations_stand_on_the_rails(self):
         self.h.validate()

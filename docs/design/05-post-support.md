@@ -38,6 +38,12 @@ split gap are designed around the clamping setup:
 
 M3 socket-head screw → clearance through one ear → captured M3 hex nut in the opposite ear
 
+The shoe's ears point outboard, away from the other rail, so the clamp is reached from the side of the
+apparatus: toward the right on the imaging rail, and (the shoe turned half a turn about its post) toward the
+left on the source rail. The SM1RC/M split rings on the source rail's posts (the slit head's and the field
+lens's) are turned the same way, with their locking screw heads outboard. The cutoff carriage's ring and the
+lens cradle's collar clamps face outboard on the imaging rail.
+
 Hardware:
 
 - McMaster 91292A114, M3 × 12 fully threaded 18-8 SS socket-head screw

@@ -88,25 +88,27 @@ passes through it, then spreads again at the ±1.82° cone angle
 ([§3.2](01-context-and-layout.md#32-source-cone)). The values below are calculated. **Provisional:** they rest
 on assumed values, namely a barrel front about 42 mm behind the cutoff plane (a 10 mm gap to the cutoff split
 ring's rear face, which lies about 32 mm behind the cassette front face; the front glass is then about 55 mm
-behind the plane), a 10 mm bright slit image (its shoulder reaches about 15 mm, [§6.3](06-light-source.md#63-condenser-optics), which
-would cut the along-slit centering margin to about ±1.5 mm for the shoulder's full extent), and a Main-camera pupil of about 3.7 mm (6 mm focal length at
-f/1.6). The telephoto's front clear aperture is measured at 0.845 in / 21.5 mm. The distance is not critical:
+behind the plane), an 11 mm bright slit image (the 10.4 mm lit length of
+[§6.3](06-light-source.md#63-condenser-optics), enlarged about 5 % by the field lens,
+[§7.9](07-source-slit.md#79-field-lens); its shoulder reaches about 16.5 mm, which would cut the along-slit
+centering margin to about ±0.75 mm for the shoulder's full extent), and a Main-camera pupil of about 3.7 mm (6 mm
+focal length at f/1.6). The telephoto's front clear aperture is measured at 0.845 in / 21.5 mm. The distance is not critical:
 the cone footprint grows by only about 0.06 mm per mm of distance, so a 10 mm shorter gap would add about 0.3
 mm to the along-slit centering margin.
 
 | Quantity                                        | Value                   |
 | ----------------------------------------------- | ----------------------- |
 | Beam cone at the front glass                    | about 3.5 mm diameter   |
-| Beam footprint at the front glass               | about 3.5 × 13.5 mm     |
-| Slit image at the phone, reduced 7× by the lens | about 1.4 mm long       |
+| Beam footprint at the front glass               | about 3.5 × 14.5 mm     |
+| Slit image at the phone, reduced 7× by the lens | about 1.6 mm long       |
 | Frame at 1×, 4K 16:9, through the lens          | about 9.9° × 6.1°       |
 | Mirror in the frame                             | 3.6° of the 6.1° height |
 
 The resulting tolerances on the camera and lens as one body:
 
-- centering on the beam: about ±4 mm along the slit direction and ±7 mm across it, before the beam footprint
+- centering on the beam: about ±3.5 mm along the slit direction and ±7 mm across it, before the beam footprint
   reaches the edge of the front aperture (calculated from the 21.5 mm clear aperture). The phone pupil
-  allows more, about ±8 mm and ±13 mm, before the reduced slit image leaves it;
+  allows more, about ±7.5 mm and ±13 mm, before the reduced slit image leaves it;
 - pitch: about ±1.2°, the spare frame height either side of the mirror;
 - yaw: about ±3°.
 
@@ -179,15 +181,18 @@ Each collar is a thin ring on the barrel with a clamp ear on top and a flat pad 
   allowance, so a collar is 43.3 mm across. The wall is thin because the pad platforms carry the local
   thickness; the pad loads are a few newtons, so stiffness is not limiting;
 - the ear takes the common M3 split-clamp hardware ([§5.2](05-post-support.md#52-rail-shoe)) with the
-  rail shoe's split and ear thicknesses: the screw passes through the thin ear on the left, and the hex nut is
-  captured in a pocket in the thicker ear on the right, open to the outside, with a roof of at least 1.5 mm
-  over it. The screw axis stands 4.25 mm above the ring top, so the screw head clears the ear's root fillet;
+  rail shoe's split and ear thicknesses: the screw passes through the thin ear, and the hex nut is captured in
+  a pocket in the thicker ear across the split, open to the outside, with a roof of at least 1.5 mm over it. The
+  screw axis stands 4.25 mm above the ring top, so the screw head clears the ear's root fillet. The printed
+  collar has the thin ear on its left, seen from the aft end looking forward; each collar is installed turned
+  half a turn about the vertical axis, which puts the screw ear and head on the outboard (right) side, facing
+  away from the source rail for the hex key;
 - inside corners, the ear and pad platform roots, are filleted at 2 mm for stress control; the outside
   corners and the outer edges of both ring ends at 1 mm, for the fingers. The faces of the split stay sharp so
   that the gap stays fixed.
 
-The two collars are the same part except that the aft collar's left pad is a rod seat in place of a flat
-bearing insert (below).
+The two collars are the same part except that the aft collar's printed left pad is a rod seat in place of a
+flat bearing insert (below). Installed turned half a turn, it is the aft collar's right, outboard pad.
 
 #### Pads and pockets
 
@@ -200,7 +205,7 @@ pad:
   ([§8.3](08-cutoff.md#83-fine-adjustment)), set with the 10 mm side across the rail, bonded with
   low-viscosity CA wicked in, into pockets 0.2 mm larger across each dimension (0.1 mm per side, the allowance
   every printed bearing-insert pocket in the design uses);
-- the fourth, at the aft left screw, is a groove between two dowel pins of 3 mm diameter and 10 mm length,
+- the fourth, at the aft right (outboard) screw, is a groove between two dowel pins of 3 mm diameter and 10 mm length,
   lying across the rail on the pocket floor. The ball sits between them, free to slide across the rail but not
   along it. A printed rib 1.0 mm high and about 1.7 mm wide runs between the pins along the pocket, and each
   pin lies against its top corner: the rib sets the pins' spacing (4.5 mm between axes) and keeps them
@@ -378,7 +383,7 @@ The sequence:
    loose.
 2. Slide the shoe along the rail to put the lens front at the 10 mm gap assumed in
    [§9.3](#93-alignment-requirements) from the split ring's rear face, then snug the clamp screws. The groove
-   at the aft left screw fixes the lens fore/aft on the cradle, so nothing later moves it.
+   at the aft right screw fixes the lens fore/aft on the cradle, so nothing later moves it.
 3. Center the barrel at each collar mechanically, aft first, and re-measure the other collar after each
    change. Height: from the shoe deck, beside the yoke, up to the barrel top, whose target is 72.35 + 18.5 − 5
    = about 85.85 mm (the deck top is 5 mm above the rail top; the barrel diameters of 37.01 and 37.06 mm

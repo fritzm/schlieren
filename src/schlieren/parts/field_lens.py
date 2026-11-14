@@ -1,11 +1,12 @@
 """Field lens station (design §7.9): a lens ahead of the source slit, on a post of its own.
 
-The cone from each slit point is centered on the chief ray from the center of the iris, about 144 mm behind
-the slit (the condenser stack's, `LightSourceParameters.iris_to_slit`), so without a field lens the cones from points along the slit land displaced on the mirror, by about
-112 mm at the lit end against the mirror's 101.5 mm radius (§6.3). A positive lens just ahead of the slit
-whose focal length is close to the iris-to-lens distance images the iris onto the mirror instead, so every
-cone lands centered on it. The lens is a Thorlabs LA1433-A (Ø1 in, N-BK7, plano-convex, f = 149.5 mm); on the
-mirror side of the slit it leaves the condenser's conjugates, the lit length, and the focus target alone.
+The cone from each slit point is centered on the chief ray from the center of the iris, about 150 mm behind
+the slit (the condenser stack's, `LightSourceParameters.iris_to_slit`), so without a field lens the cones from
+points along the slit land displaced on the mirror, by more than the mirror's 101.5 mm radius at the lit end
+(§6.3). A positive lens just ahead of the slit images the iris onto the mirror instead, so every cone lands
+centered on it. The lens is a Thorlabs LA1433-A (Ø1 in, N-BK7, plano-convex, f = 149.5 mm), and the slit is
+placed at the iris-to-slit distance its focal length needs (`aimed_iris_to_slit`); on the mirror side of the
+slit it leaves the condenser's conjugates, the lit length, and the focus target alone.
 
 Parts:
 
@@ -36,7 +37,7 @@ from schlieren.palette import BLACK_ANODIZED, GLASS
 from schlieren.parts.light_source import LightSourceParameters
 from schlieren.parts.rail_shoe import RailShoeParameters, post_stack
 from schlieren.parts.slit_stage import SlitStageParameters, build_slit_stage_assembly, head_location
-from schlieren.standards import POST_DIAMETER
+from schlieren.standards import POST_DIAMETER, SOURCE_SIDE
 from schlieren.vendor_cad import (
     LA1433_A_CENTER_THICKNESS,
     LA1433_A_DIAMETER,
@@ -182,6 +183,14 @@ class FieldLensParameters:
         return 2 * self.iris_to_slit * tan(radians(self.fill_cone_half_angle))
 
     @property
+    def aimed_iris_to_slit(self):
+        """The iris-to-slit distance at which this lens, at its position, images the iris onto the mirror, so
+        every slit point's cone centers there; the condenser's `lens_to_slit` is set to it (§6.3)."""
+        h_object, h_image = self.principal_planes
+        v = self.slit_to_mirror - self.lens_plano_y - h_image
+        return 1 / (1 / self.lens_focal_length - 1 / v) - self.lens_plano_y - h_object
+
+    @property
     def ideal_focal_length(self):
         """The focal length that images the iris onto the mirror from the lens's position."""
         h_object, h_image = self.principal_planes
@@ -252,6 +261,7 @@ def build_field_lens_station(p=None, side_screws=False):
         optical_height=s.optical_height,
         datum_thickness=s.datum_thickness,
         side_screws=side_screws,
+        side=SOURCE_SIDE,
     )
     children.append(assembly(FIELD_LENS_HARDWARE_LABEL, stack))
     return assembly("Field lens station", children)

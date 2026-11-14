@@ -1,6 +1,7 @@
 """Field lens station: lens seating and placement, clearances to the slit head, the beam through the tube, and
 the optics that set the lens (design §§6.3, 7.9)."""
 
+import math
 import unittest
 from dataclasses import replace
 
@@ -126,21 +127,26 @@ class FieldLensTests(unittest.TestCase):
 
     def test_optics_rest_on_the_light_source_geometry(self):
         p = self.p
-        # The iris leaves sit about 144 mm behind the slit (§6.3): the condenser stack puts them about 9.4 mm
+        # The iris leaves sit about 150 mm behind the slit (§6.3): the condenser stack puts them about 9.4 mm
         # ahead of the lens's convex vertex.
         self.assertAlmostEqual(p.iris_to_slit, LightSourceParameters().iris_to_slit, delta=1e-9)
-        self.assertAlmostEqual(p.iris_to_slit, 143.6, delta=0.1)
+        self.assertAlmostEqual(p.iris_to_slit, 149.6, delta=0.1)
+
+    def test_slit_is_placed_where_the_lens_images_the_iris_onto_the_mirror(self):
+        """The condenser's lens-to-slit setup value puts the iris at the distance the stock focal length needs."""
+        p = self.p
+        self.assertAlmostEqual(p.iris_to_slit, p.aimed_iris_to_slit, delta=0.1)
+        self.assertAlmostEqual(p.lens_focal_length, p.ideal_focal_length, delta=0.001 * p.ideal_focal_length)
+        # Moving the slit off that distance mis-aims the cones.
+        for shift in (-5.0, 5.0):
+            self.assertGreater(abs(replace(p, iris_to_slit=p.iris_to_slit + shift).chief_ray_shift()), 1.0)
 
     def test_lens_centers_every_cone_on_the_mirror(self):
         p = self.p
-        # Without it the lit end's cone lands more than the mirror's radius off center; with it, a small fraction
-        # of that (the stock focal length is about 4 % above the one that matches the stack's iris-to-slit
-        # distance, and the residual grows with the lit half-length).
+        # Without it the lit end's cone lands more than the mirror's radius off center; with it, on the center.
         self.assertGreater(p.unlensed_shift, p.mirror_half_aperture)
-        self.assertLess(abs(p.chief_ray_shift()), 0.1 * p.unlensed_shift)
-        self.assertLess(abs(p.chief_ray_shift(3.0)), abs(p.chief_ray_shift()))
-        # The stock focal length is within a few percent of the one that images the iris onto the mirror.
-        self.assertAlmostEqual(p.lens_focal_length, p.ideal_focal_length, delta=0.05 * p.ideal_focal_length)
+        for h in (3.0, p.stage.lit_half_length):
+            self.assertLess(abs(p.chief_ray_shift(h)), 0.5)
 
     def test_lens_narrows_each_cone_slightly_and_the_iris_makes_up_for_it(self):
         p = self.p
@@ -151,6 +157,12 @@ class FieldLensTests(unittest.TestCase):
         )
         self.assertLess(p.fill_iris_diameter, SM1D12_MAX_DIAMETER)  # The iris opens far enough.
         self.assertLess(p.fill_iris_diameter, 10.5)  # Within the iris setting the condenser was sized for.
+        # With every cone centered, the iris that fills the mirror from the lit end fills it from every point.
+        self.assertAlmostEqual(
+            p.fill_cone_half_angle,
+            math.degrees(math.atan(p.mirror_half_aperture / (p.slit_to_mirror * p.cone_scale))),
+            delta=0.01,
+        )
 
     def test_axial_position_is_not_critical(self):
         """The tube slides in its ring: a couple of millimeters either way moves the lit end's cone little."""

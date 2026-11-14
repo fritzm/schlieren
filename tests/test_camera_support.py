@@ -15,6 +15,7 @@ from schlieren.parts.camera_support import (
     band_leg_angle,
     band_path,
     build_camera_support_assembly,
+    build_collar,
     build_cradle_shoe,
     build_cradle_yoke,
     build_phone_rest,
@@ -35,7 +36,11 @@ from schlieren.vendor_cad import (
 CONTACT = 1e-3  # mm
 ADJUSTERS = tuple(f"{where} {side}" for where in ("Aft", "Fore") for side in ("left", "right"))
 NUT_CHAMFER = 0.5  # mm, on the thumb nut's knurled head; its plain envelope has square corners.
-MAGNET_PADS = ("Fore left", "Fore right", "Aft right")  # The aft left screw sits in the rod groove.
+MAGNET_PADS = (
+    "Fore left",
+    "Fore right",
+    "Aft left",
+)  # The aft right (outboard) screw sits in the rod groove.
 
 
 def _other_side(where, side):
@@ -159,8 +164,8 @@ class LensCradleTests(unittest.TestCase):
             with self.subTest(pad=station):
                 self.assertLess(screw.distance_to(pad), CONTACT)
                 self.assertLess(intersect(screw, pad).volume, CONTACT)
-        self.assertNotIn("Aft left bearing insert", self.parts)
-        screw = self.parts["Aft left screw"]
+        self.assertNotIn("Aft right bearing insert", self.parts)
+        screw = self.parts["Aft right screw"]
         for rod in ("Groove rod -1", "Groove rod +1"):
             with self.subTest(rod=rod):
                 self.assertLess(screw.distance_to(self.parts[rod]), CONTACT)
@@ -252,11 +257,45 @@ class LensCradleTests(unittest.TestCase):
                 screw = self.parts[f"{where} collar clamp screw"].bounding_box()
                 nut = self.parts[f"{where} collar clamp nut"].bounding_box()
                 # The head bears on the outer face of the screw ear; the nut seats on its pocket floor.
-                self.assertAlmostEqual(screw.max.X - 12.0, p.ear_screw_side, places=3)
-                self.assertAlmostEqual(nut.min.X, p.ear_nut_side - p.rail_shoe.nut_pocket_depth, places=3)
+                # Turned half a turn about the vertical axis from the printed collar, the head is on +x.
+                self.assertAlmostEqual(screw.min.X + 12.0, p.installed_ear_screw_side, places=3)
+                self.assertAlmostEqual(
+                    nut.max.X, p.installed_ear_nut_side + p.rail_shoe.nut_pocket_depth, places=3
+                )
                 for box in (screw, nut):
                     self.assertAlmostEqual((box.min.Y + box.max.Y) / 2, station, places=3)
                     self.assertAlmostEqual((box.min.Z + box.max.Z) / 2, zc, places=3)
+
+    def test_installed_collars_face_their_clamp_screws_outboard(self):
+        """The printed collar has its screw ear on -x; installed turned half a turn about the vertical axis, the
+        screw head is on +x, away from the source rail, and the aft collar's groove pad is on the outboard
+        adjuster."""
+        p = self.p
+        self.assertLess(p.ear_screw_side, 0)  # As printed.
+        self.assertGreater(p.installed_ear_screw_side, 0)
+        self.assertLess(p.installed_ear_nut_side, 0)
+        self.assertEqual(p.groove_side, 1)
+        for where in ("Aft", "Fore"):
+            screw = self.parts[f"{where} collar clamp screw"].bounding_box()
+            nut = self.parts[f"{where} collar clamp nut"].bounding_box()
+            self.assertGreater(screw.center().X, nut.center().X, where)
+        for rod in ("Groove rod -1", "Groove rod +1"):
+            self.assertGreater(self.parts[rod].bounding_box().center().X, 0, rod)
+
+    def test_installed_collar_is_the_printed_one_turned_half_a_turn(self):
+        """The same cached printed solid as built by `build_collar`, turned about the vertical axis through the
+        lens axis (the printed part is not mirrored)."""
+        p = self.p
+        printed = build_collar(p, p.aft_station, -1).solids()[0]
+        installed = self.parts["Aft collar"]
+        self.assertAlmostEqual(installed.volume, printed.volume, places=3)
+        zc = p.optical_height
+        # Probe the clamp ear's screw hole, 1 mm in from the screw ear's outer face along the hole axis.
+        screw_z = zc + p.collar_radius + p.clamp_screw_above_ring
+        self.assertFalse(printed.is_inside((p.ear_screw_side + 1, p.aft_station, screw_z)))
+        self.assertFalse(installed.is_inside((-p.ear_screw_side - 1, p.aft_station, screw_z)))
+        self.assertTrue(printed.is_inside((p.ear_screw_side + 1, p.aft_station + 2.0, screw_z)))
+        self.assertTrue(installed.is_inside((-p.ear_screw_side - 1, p.aft_station - 2.0, screw_z)))
 
     def test_collar_is_a_thin_filleted_split_ring(self):
         p, r = self.p, self.p.rail_shoe
@@ -280,7 +319,7 @@ class LensCradleTests(unittest.TestCase):
                 for side in (-1, 1):
                     self.assertTrue(collar.is_inside((side * (r.split_gap / 2 + 0.1), station, top)))
                 # Inside corner at each ear root is filled by the fillet, the ring end edge rounded.
-                for x in (p.ear_screw_side, p.ear_nut_side):
+                for x in (p.installed_ear_screw_side, p.installed_ear_nut_side):
                     root = zc + sqrt(p.collar_radius**2 - x**2)
                     side = 1 if x > 0 else -1
                     self.assertTrue(collar.is_inside((x + side * 0.15, station, root + 0.25)))
@@ -295,16 +334,24 @@ class LensCradleTests(unittest.TestCase):
             with self.subTest(collar=where):
                 self.assertGreaterEqual(p.ear_top_wall, 1.5)
                 hole = r.m3_clearance_diameter / 2
-                self.assertFalse(collar.is_inside((p.ear_screw_side + 1, station, screw_z)))
+                # From the screw ear's outer face toward the split, installed.
+                inward = -1 if p.installed_ear_screw_side > 0 else 1
+                self.assertFalse(collar.is_inside((p.installed_ear_screw_side + inward, station, screw_z)))
                 self.assertFalse(collar.is_inside((-0.8, station, screw_z)))
-                self.assertTrue(collar.is_inside((p.ear_screw_side + 1, station + hole + 0.2, screw_z)))
+                self.assertTrue(
+                    collar.is_inside((p.installed_ear_screw_side + inward, station + hole + 0.2, screw_z))
+                )
                 # Hex nut pocket in the nut ear, open to the outside, flats up and down, walled behind.
                 flats = (r.clamp_nut_across_flats + r.nut_across_flats_clearance) / 2
-                pocket_back = p.ear_nut_side - r.nut_pocket_depth
-                self.assertFalse(collar.is_inside((p.ear_nut_side - 0.5, station, screw_z + flats - 0.1)))
-                self.assertTrue(collar.is_inside((p.ear_nut_side - 0.5, station, screw_z + flats + 0.1)))
-                self.assertTrue(collar.is_inside((pocket_back - 0.4, station + hole + 0.3, screw_z)))
-                self.assertFalse(collar.is_inside((pocket_back + 0.4, station, screw_z)))
+                outward = inward  # The nut ear's outer face is across the split from the screw ear's.
+                nut_face = p.installed_ear_nut_side
+                pocket_back = nut_face - outward * r.nut_pocket_depth
+                self.assertFalse(collar.is_inside((nut_face - outward * 0.5, station, screw_z + flats - 0.1)))
+                self.assertTrue(collar.is_inside((nut_face - outward * 0.5, station, screw_z + flats + 0.1)))
+                self.assertTrue(
+                    collar.is_inside((pocket_back - outward * 0.4, station + hole + 0.3, screw_z))
+                )
+                self.assertFalse(collar.is_inside((pocket_back + outward * 0.4, station, screw_z)))
 
     def test_pad_pockets_hold_the_bearing_surfaces_with_a_rim(self):
         p = self.p
@@ -312,7 +359,7 @@ class LensCradleTests(unittest.TestCase):
             collar = self.parts[f"{where} collar"]
             for name, side in (("left", -1), ("right", 1)):
                 loc = screw_location(p, side, station)
-                rods = (where, side) == ("Aft", -1)
+                rods = (where, side) == ("Aft", p.groove_side)
                 across, along = _pad_pocket(p, rods)
                 with self.subTest(pad=(where, name)):
 
@@ -342,7 +389,7 @@ class LensCradleTests(unittest.TestCase):
     def test_groove_rib_locates_both_rods_and_clears_the_ball(self):
         p = self.p
         collar = self.parts["Aft collar"]
-        loc = screw_location(p, -1, p.aft_station)
+        loc = screw_location(p, p.groove_side, p.aft_station)
         width, height = rod_rib(p)
         floor = p.magnet_thickness
         self.assertAlmostEqual(height, 1.0, places=6)
@@ -355,7 +402,7 @@ class LensCradleTests(unittest.TestCase):
             with self.subTest(rod=rod):
                 self.assertLess(self.parts[rod].distance_to(collar), CONTACT)
                 self.assertLess(intersect(self.parts[rod], collar).volume, 0.01)
-        ball = self.parts["Aft left screw"]
+        ball = self.parts["Aft right screw"]
         self.assertGreater(ball.distance_to(collar), p.groove_rib_height / 2)  # The rib stays clear of it.
 
     def test_ball_end_is_stopped_by_the_pocket_rim_before_the_pad_edge(self):

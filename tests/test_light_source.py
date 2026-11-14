@@ -9,6 +9,8 @@ from build123d import Box, Pos
 from schlieren.cad import FROM_CORNER, children_by_label, intersect, leaves, moved
 from schlieren.parts.light_source import (
     GREEN,
+    LIT_SHOULDER_MEASURED_HALF_LENGTH,
+    LIT_SHOULDER_MEASURED_LENS_TO_SLIT,
     MODULES,
     WHITE,
     WHOLE_IN_SECTION,
@@ -71,8 +73,20 @@ class LightSourceTests(unittest.TestCase):
         self.assertAlmostEqual(p.post_top + p.smr1_axis_above_post_top, p.optical_height, delta=0.01)
 
     def test_optimum_gap_images_emitter_onto_slit(self):
-        self.assertAlmostEqual(self.p.optimum_gap, 15.0, delta=0.2)
-        self.assertAlmostEqual(self.p.magnification, 6.6, delta=0.2)
+        self.assertAlmostEqual(self.p.optimum_gap, 14.9, delta=0.2)
+        self.assertAlmostEqual(self.p.magnification, 6.9, delta=0.2)
+
+    def test_lit_length_scales_with_magnification(self):
+        """The measured shoulder is rescaled to the present conjugates, and the lit length stays near the 10 mm
+        the brightest portion needs (about 1.5 mm of apparent emitter times the magnification, §6.3)."""
+        p = self.p
+        measured = replace(p, lens_to_slit=LIT_SHOULDER_MEASURED_LENS_TO_SLIT)
+        self.assertAlmostEqual(measured.lit_half_length, LIT_SHOULDER_MEASURED_HALF_LENGTH, delta=1e-9)
+        self.assertAlmostEqual(
+            p.lit_half_length / measured.lit_half_length, p.magnification / measured.magnification, delta=1e-9
+        )
+        self.assertGreaterEqual(1.5 * p.magnification, 10.0)
+        self.assertLess(p.lit_half_length, 8.5)
 
     def test_measured_board_thicknesses(self):
         self.assertAlmostEqual(GREEN.thickness, 1.59, places=2)
@@ -307,7 +321,7 @@ class LightSourceTests(unittest.TestCase):
         leaf_plane += SM1D12_LEAF_MIDPLANE_FROM_SHOULDER
         self.assertAlmostEqual(leaf_plane - vertex, p.vertex_to_iris, delta=MODEL_MATCH)
         self.assertAlmostEqual(p.iris_to_slit, p.lens_to_slit - p.vertex_to_iris, delta=1e-9)
-        self.assertAlmostEqual(p.iris_to_slit, 143.6, delta=0.1)
+        self.assertAlmostEqual(p.iris_to_slit, 149.6, delta=0.1)
 
     def test_cap_and_heatsink_are_drilled_through(self):
         """Each part loses exactly its §6.4 through holes: the cap seven, the heatsink base five."""

@@ -76,6 +76,7 @@ from schlieren.palette import (
     RUBBER,
 )
 from schlieren.parts.baffle import BaffleParameters, build_baffle_assembly
+from schlieren.parts.light_source import LightSourceParameters
 from schlieren.parts.rail_shoe import REFERENCE_HARDWARE_LABEL, post_stack
 from schlieren.parts.razor_blade import RazorBladeParameters, build_razor_blade, flat_seated_blade_location
 from schlieren.standards import (
@@ -87,6 +88,7 @@ from schlieren.standards import (
     POST_LENGTH,
     SM1_TUBE_DIAMETER,
     SM1RC_M_BORE,
+    SOURCE_SIDE,
     SPIGOT_SHOULDER_DIAMETER,
 )
 from schlieren.vendor_cad import (
@@ -183,9 +185,9 @@ class SlitStageParameters:
     # Beam: the source cone about the chief ray (§3.2), the lit slit length (§6.6), and the margin the stage
     # and pedestal edges keep from the cone.
     cone_half_angle: float = 2.0  # Degrees.
-    # Half-extent of the lit length along the slit, to the soft edge of the shoulder: the brightest portion is about
-    # 10 mm long (§6.3). Wall measurement with the iris open; **provisional**, to be recalibrated from a dimmed image.
-    lit_half_length: float = 7.5
+    # Half-extent of the lit length along the slit, to the soft edge of the shoulder (§6.3): the condenser's LED
+    # image, from the wall measurement scaled to its magnification (`LightSourceParameters.lit_half_length`).
+    lit_half_length: float = field(default_factory=lambda: LightSourceParameters().lit_half_length)
     beam_margin: float = 0.5
 
     # Table and pedestal edges, and the stage.
@@ -613,6 +615,7 @@ def build_slit_stage_assembly(p=None, rotation=0.0, include_support=True, side_s
             optical_height=p.optical_height,
             datum_thickness=p.datum_thickness,
             side_screws=side_screws,
+            side=SOURCE_SIDE,
         )
         children.append(assembly(REFERENCE_HARDWARE_LABEL, reference))
     return assembly("Slit stage head (experiment)", children)

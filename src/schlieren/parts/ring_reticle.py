@@ -16,8 +16,8 @@ ring's clamp holds the tube together in any case.
 
 Half frame: the axis is the y axis (x = z = 0) and the crosshair end face is the plane y = 0, which is the print
 bed: the half prints hair end down, without supports, and is exported as it prints. Quadrants are in the x-z
-plane. The assembly is in the camera support's frame (y = 0 at the back of the phone, along the rail toward the
-mirror, the axis at the optical height), where the lens front and the cutoff post stand.
+plane. The assembly is in the post's frame: the origin is where the post's axis meets the optical axis, y runs
+along the rail toward the mirror and z is up, so the rail's top is OPTICAL_HEIGHT below the origin.
 
 **Provisional:** the snap (ridge height, groove depth and clearances, set from a print of one half), the Ø25.5
 mm bore, which leaves 1.14 mm shells, and the tube's position along the axis, which the ring's clamp sets by
@@ -27,24 +27,26 @@ eye. §9.9 does not describe this part yet.
 from dataclasses import dataclass
 from functools import cache
 
-from build123d import Axis, Compound, Face, Pos, Rot, Solid, Vector, Wire
+from build123d import Axis, Compound, Face, Pos, Rot, Solid, Torus, Vector, Wire
 
 from schlieren.cad import CUT_OVERRUN, assembly, box_between, intersect, labeled, y_cylinder
 from schlieren.palette import PRINTED_WHITE
-from schlieren.parts.camera_support import (
-    LENS_TO_SPLIT_RING,
-    CameraSupportParameters,
-    build_camera_support_assembly,
-    cutoff_post_station,
-)
-from schlieren.parts.carriage import CarriageParameters
+from schlieren.parts.camera_support import LENS_TO_SPLIT_RING
 from schlieren.parts.rail_shoe import post_stack
-from schlieren.standards import SM1_TUBE_DIAMETER
+from schlieren.standards import OPTICAL_HEIGHT, SM1_TUBE_DIAMETER
 from schlieren.validation import require_positive_dimensions
 from schlieren.vendor_cad import SM1RC_M_THICKNESS
 
 HALF_LABEL = "Reticle half"
+# The layer grid of the 0.15 mm STRUCTURAL print profile: a first layer of 0.2 mm, then 0.15 mm layers. The
+# slicer cuts each layer at its mid-height, so a plane between grid heights prints up to half a layer off. The
+# half's axial planes (the arms' roots and tips, the crosshair's top) sit on the grid.
+PRINT_FIRST_LAYER = 0.2
+PRINT_LAYER_HEIGHT = 0.15
 RIDGE_EMBED = 0.1  # Ridge base sunk into the arm so that it fuses to it.
+FILLET_INTO_WALL = (
+    0.3  # A fin, and the hair strips it is cut to, reach this far into the wall, so that they fuse.
+)
 GROOVE_LEAD_IN = 0.1  # The groove cutter starts this far inside the lap interface, clear of the arm's face.
 
 # Quadrants in the x-z plane, as (sign of x, sign of z). The arms alternate: a half's outer arms and the other
@@ -59,11 +61,13 @@ class RingReticleParameters:
     # Wide enough to keep the 21.5 mm front glass in view when it is a few mm off center, and thin enough to
     # leave two printed shells a wall each.
     bore: float = 25.5
-    body_length: float = 6.0  # Crosshair end to the arms' roots: full wall.
-    arm_length: float = 7.0
-    arm_slack: float = 0.1  # Arm tip to the other half's root face, when snapped.
+    # Crosshair end to the arms' roots (full wall), and the arms' length: roots at layer 39 (0.2 + 38 * 0.15), tips
+    # at layer 86, both on the layer grid.
+    body_length: float = 6.05
+    arm_length: float = 6.9
+    arm_slack: float = 0.05  # Arm tip to the other half's root face, when snapped.
     lap_radial_clearance: float = 0.1  # Per side of the interface radius between an outer and an inner arm.
-    arm_side_clearance: float = 0.15  # Per side of each axis plane, between neighboring arms.
+    arm_side_clearance: float = 0.10  # Per side of each axis plane, between neighboring arms.
     # Snap: a ridge on each inner arm, a groove in each outer arm.
     ridge_height: float = 0.4  # Above the inner arm's outer face; the arms deflect height - 2 * clearance.
     ridge_return: float = 0.4  # Axial length of the steep face on the root side; 45 degrees at the height.
@@ -71,12 +75,20 @@ class RingReticleParameters:
     ridge_lead: float = 1.2  # Gentle lead-in toward the arm's tip.
     ridge_from_root: float = 3.3  # Root-side foot, from the arm's own root face.
     groove_depth: float = 0.4  # Beyond the outer arm's inner face.
-    groove_axial_clearance: float = 0.15  # Per side.
+    groove_axial_clearance: float = 0.10  # Per side.
     hair_width: float = 0.5
-    hair_thickness: float = 0.4  # Two layers.
+    hair_layers: int = 4  # Of the print: the first, then three more.
+    # A fillet "fin" where each hair meets the bore wall, on the hair's open face only (its other face is flush
+    # with the end of the tube): as wide as the hair, rising this far along the wall, parallel to the axis.
+    hair_top_fillet_radius: float = 1.0
     circle_diameter: float = 21.5  # The telephoto's front glass (§9.2): an aid for judging centering.
     min_wall_under_groove: float = 0.6
     min_groove_root_margin: float = 0.5
+
+    @property
+    def hair_thickness(self):
+        """From the crosshair end face, on the layer grid."""
+        return PRINT_FIRST_LAYER + (self.hair_layers - 1) * PRINT_LAYER_HEIGHT
 
     @property
     def outer_radius(self):
@@ -139,6 +151,9 @@ class RingReticleParameters:
             raise ValueError("The bore must be inside the tube")
         if self.circle_diameter >= self.bore:
             raise ValueError("The bore must pass the circle aid")
+        clear = self.bore_radius - self.circle_diameter / 2 - self.hair_width
+        if self.hair_top_fillet_radius >= clear:
+            raise ValueError("The hair fillets must stay clear of the circle aid")
         if self.interference <= 0:
             raise ValueError("The ridge must stand proud of the facing arm")
         if self.ridge_from_root + self.ridge_extent > self.arm_length:
@@ -172,6 +187,23 @@ def _revolved(points):
     """Solid of revolution about the y axis of the polygon through the (radius, y) points."""
     wire = Wire.make_polygon([Vector(r, y, 0) for r, y in points], close=True)
     return Solid.revolve(Face(wire), 360, Axis.Y)
+
+
+def _hair_footprint(p, thickness):
+    """The crosshair's arms, each as wide as a hair, as a prism standing thickness tall from y = 0."""
+    reach = p.bore_radius + FILLET_INTO_WALL
+    hair_x = box_between(-reach, reach, 0, thickness, -p.hair_width / 2, p.hair_width / 2)
+    hair_z = box_between(-p.hair_width / 2, p.hair_width / 2, 0, thickness, -reach, reach)
+    return hair_x + hair_z
+
+
+def _hair_top_fillets(p):
+    """The fins: one-sided fillets on the hairs' open face (y = hair thickness), where each meets the bore wall.
+    Each is the concave quarter-round between the face and the wall, cut from a ring to the arm's width."""
+    r, h, rb = p.hair_top_fillet_radius, p.hair_thickness, p.bore_radius
+    ring = _tube(rb - r, rb + FILLET_INTO_WALL, h - FILLET_INTO_WALL, h + r)
+    torus = Pos(0, h + r, 0) * Rot(X=90) * Torus(rb - r, r)  # The round tangent to the face and the wall.
+    return intersect(ring - torus, _hair_footprint(p, h + r))
 
 
 def _ridge_ring(p, root):
@@ -245,6 +277,7 @@ def build_reticle_half(p: RingReticleParameters | None = None):
     )
     for hair in (hair_x, hair_z, circle):
         body += intersect(hair, y_cylinder(p.tube_diameter, 0, 0, 0, p.hair_thickness))
+    body += _hair_top_fillets(p)
     return body.clean()
 
 
@@ -276,25 +309,22 @@ def lens_clearance(p: RingReticleParameters, offset: float = 0.0):
     return LENS_TO_SPLIT_RING + SM1RC_M_THICKNESS / 2 - p.unit_length / 2 + offset
 
 
-def build_ring_reticle_assembly(
-    p: RingReticleParameters | None = None, offset: float = 0.0, include_support: bool = True
-) -> Compound:
-    """The snapped reticle centered in the cutoff post's SM1RC/M ring, in the camera support's frame, moved
-    ahead by offset (its position along the axis is free). include_support adds the lens cradle, phone and
-    lens, the rail, and the post stack with its ring."""
+def build_ring_reticle_assembly(p: RingReticleParameters | None = None, offset: float = 0.0) -> Compound:
+    """The snapped reticle centered in the SM1RC/M ring on its post, with the ring, the post and the rail shoe, in
+    the post's frame (origin where the post axis meets the optical axis). offset moves the reticle ahead (+y)
+    of the ring's mid-plane, as its position along the axis is free."""
     p = p or RingReticleParameters()
     p.validate()
-    camera = CameraSupportParameters()
-    post_y = cutoff_post_station(camera, CarriageParameters())
-    aft, fore = snapped_locations(p, post_y + offset, camera.optical_height)
+    aft, fore = snapped_locations(p, offset)
     half = build_reticle_half(p)
-    children = [
-        labeled(half, f"{HALF_LABEL}, aft", PRINTED_WHITE, aft),
-        labeled(half, f"{HALF_LABEL}, fore", PRINTED_WHITE, fore),
-    ]
-    if include_support:
-        children.append(build_camera_support_assembly(camera, include_cutoff=False, side_screws=True))
-        children.extend(
-            post_stack(y=post_y, ring=True, optical_height=camera.optical_height, side_screws=True)
-        )
-    return assembly("Ring reticle in the cutoff ring", children)
+    stack = post_stack(
+        Pos(0, 0, -OPTICAL_HEIGHT), ring=True, optical_height=OPTICAL_HEIGHT, clamp_hardware=False
+    )
+    return assembly(
+        "Ring reticle in the post's ring",
+        [
+            labeled(half, f"{HALF_LABEL}, aft", PRINTED_WHITE, aft),
+            labeled(half, f"{HALF_LABEL}, fore", PRINTED_WHITE, fore),
+            *stack,
+        ],
+    )

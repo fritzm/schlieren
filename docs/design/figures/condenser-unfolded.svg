@@ -14,9 +14,9 @@ text { font-family: Menlo, Consolas, "DejaVu Sans Mono", monospace; font-size: 1
 </style>
 <rect class="bg" width="1000" height="296"/>
 <line class="ax" x1="60" y1="150" x2="940" y2="150"/>
-<polygon class="b-edge" points="100,148 162,135.3 580,163 162,164.7"/>
-<polygon class="b-edge" points="100,152 162,164.7 580,137 162,135.3"/>
-<polygon class="b-axis" points="100,150 162,135.3 580,150 162,164.7"/>
+<polygon class="b-edge" points="100,148 162,135.3 596,163.8 162,164.7"/>
+<polygon class="b-edge" points="100,152 162,164.7 596,136.2 162,135.3"/>
+<polygon class="b-axis" points="100,150 162,135.3 596,150 162,164.7"/>
 <rect class="part" x="84" y="124" width="16" height="52"/>
 <line class="obj" x1="100" y1="148" x2="100" y2="152"/>
 <text x="100" y="116" text-anchor="middle">LED + dome</text>
@@ -29,32 +29,32 @@ text { font-family: Menlo, Consolas, "DejaVu Sans Mono", monospace; font-size: 1
 <line class="part" x1="197" y1="163.5" x2="197" y2="178"/>
 <line class="part" x1="193" y1="122" x2="201" y2="122"/>
 <line class="part" x1="193" y1="178" x2="201" y2="178"/>
-<text x="210" y="92">SM1D12 iris, set Ø9–10 (range 1–12)</text>
+<text x="210" y="92">SM1D12 iris, set Ø10 (range 1–12)</text>
 <line class="dim" x1="197" y1="96" x2="197" y2="116"/>
 <line class="dim" x1="167" y1="96" x2="167" y2="110"/>
-<line class="ax" x1="580" y1="112" x2="580" y2="188"/>
-<line class="img" x1="580" y1="137" x2="580" y2="163"/>
-<text x="580" y="92" text-anchor="middle">source slit</text>
-<text x="592" y="132" class="m">image ≈ 10 mm</text>
-<text x="592" y="170" class="m">(6.6 × emitter)</text>
+<line class="ax" x1="596" y1="112" x2="596" y2="188"/>
+<line class="img" x1="596" y1="136.2" x2="596" y2="163.8"/>
+<text x="596" y="92" text-anchor="middle">source slit</text>
+<text x="608" y="132" class="m">image ≈ 10.4 mm</text>
+<text x="608" y="170" class="m">(6.9 × emitter)</text>
 <text x="104" y="76" class="m">object side: ±13°</text>
-<text x="330" y="196" class="m">image side: ±1.8–2.0° at each slit point</text>
-<line class="cone" x1="580" y1="150" x2="900" y2="62"/>
-<line class="cone" x1="580" y1="150" x2="900" y2="238"/>
+<text x="330" y="196" class="m">image side: ±1.9° at each slit point</text>
+<line class="cone" x1="596" y1="150" x2="900" y2="62"/>
+<line class="cone" x1="596" y1="150" x2="900" y2="238"/>
 <line stroke="#1b2127" stroke-width="3" x1="920" y1="50" x2="920" y2="250"/>
 <text x="930" y="46" text-anchor="end">mirror Ø203</text>
 <text x="740" y="108" class="m" transform="rotate(-15 740 108)">cone exaggerated</text>
 <g class="dim">
 <line x1="100" y1="222" x2="162" y2="222"/><line x1="100" y1="216" x2="100" y2="228"/><line x1="162" y1="216" x2="162" y2="228"/>
-<line x1="172" y1="222" x2="580" y2="222"/><line x1="172" y1="216" x2="172" y2="228"/><line x1="580" y1="216" x2="580" y2="228"/>
-<line x1="580" y1="222" x2="920" y2="222" stroke-dasharray="2 4"/><line x1="920" y1="216" x2="920" y2="228"/>
+<line x1="172" y1="222" x2="596" y2="222"/><line x1="172" y1="216" x2="172" y2="228"/><line x1="596" y1="216" x2="596" y2="228"/>
+<line x1="596" y1="222" x2="920" y2="222" stroke-dasharray="2 4"/><line x1="920" y1="216" x2="920" y2="228"/>
 <line x1="100" y1="252" x2="140" y2="252"/><line x1="140" y1="246" x2="140" y2="258"/><line x1="100" y1="246" x2="100" y2="258"/>
-<line x1="197" y1="252" x2="580" y2="252"/><line x1="197" y1="246" x2="197" y2="258"/><line x1="580" y1="246" x2="580" y2="258"/>
+<line x1="197" y1="252" x2="596" y2="252"/><line x1="197" y1="246" x2="197" y2="258"/><line x1="596" y1="246" x2="596" y2="258"/>
 </g>
-<text x="131" y="240" text-anchor="middle">u 23.14</text>
-<text x="376" y="240" text-anchor="middle">v ≈ 153, H′ (vertex) to slit</text>
-<text x="750" y="240" text-anchor="middle">2f ≈ 3200 mm, not to scale</text>
-<text x="120" y="270" text-anchor="middle">g = 15.04</text>
+<text x="131" y="240" text-anchor="middle">u 23.01</text>
+<text x="384" y="240" text-anchor="middle">v ≈ 159, H′ (vertex) to slit</text>
+<text x="758" y="240" text-anchor="middle">2f ≈ 3200 mm, not to scale</text>
+<text x="120" y="270" text-anchor="middle">g = 14.91</text>
 <text x="120" y="284" text-anchor="middle">LED to plano face</text>
-<text x="389" y="270" text-anchor="middle">L ≈ 143.6, iris leaves to slit</text>
+<text x="397" y="270" text-anchor="middle">L ≈ 149.6, iris leaves to slit</text>
 </svg>
