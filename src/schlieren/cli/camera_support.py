@@ -1,4 +1,4 @@
-"""Show or render the lens cradle and phone rest model (design §§9.4-9.8)."""
+"""Show or render the lens cradle and phone rest model (design §§10.4-10.8)."""
 
 import argparse
 from pathlib import Path

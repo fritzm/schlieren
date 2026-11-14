@@ -1,7 +1,7 @@
-"""Preliminary five-piece cutoff carriage, design §8.
+"""Preliminary five-piece cutoff carriage, design §9.
 
 Local XY is the cassette plane, +Y points toward the FAS100, +Z is the cassette-loading side, which faces the
-mirror (§8.1). Z=0 is the plate back, not the rail-height datum. The rear shouldered spigot, clamped directly
+mirror (§9.1). Z=0 is the plate back, not the rail-height datum. The rear shouldered spigot, clamped directly
 by the SM1RC/M, is integral with the base. Dimensions beyond explicit baseline interfaces are provisional
 first-print targets; no purchased threads are modeled. The base and guide frame are one stock body split at
 the top of the deck; `build_print_layout` gives the parts as exported, with the base flipped spigot-up and the
@@ -193,7 +193,7 @@ class CarriageParameters:
     )
     thumb_tab_root_fillet: float = 0.5  # Where the tab rises from the plunger top.
     thumb_tab_bead_radius: float = 0.8  # Grip bead along the inner (thumb-side) top edge; prints unsupported.
-    # McMaster 98625A950 manufacturer drawing, canonical baseline §8.3.
+    # McMaster 98625A950 manufacturer drawing, canonical baseline §9.3.
     insert_body_diameter: float = INSERT_98625A950_BODY_DIAMETER
     insert_drill_diameter: float = INSERT_98625A950_BODY_DIAMETER
     insert_overall_length: float = INSERT_98625A950_LENGTH
@@ -596,7 +596,7 @@ def support_location(p=None, rotation=0.0):
     at x=y=0) -> local carriage frame, with the carriage rotated by `rotation` degrees about the optical axis.
 
     The cassette-loading side (+Z) faces the mirror, so rail +y is local +Z and rail +x is local -X; the
-    spigot, split ring, and post are aft of the plate. Rotation 0 is the nominal zero of §8.1: fine adjuster
+    spigot, split ring, and post are aft of the plate. Rotation 0 is the nominal zero of §9.1: fine adjuster
     (+Y) up.
     """
     p = p or CarriageParameters()
@@ -923,7 +923,7 @@ def build_carriage(
     `include_support` adds the SM1RC/M, TR50/M post, and rail shoe as references; `include_hardware` adds the
     FAS100 (vendor model), its 98625A950 bushing, the flat bearing insert, and the 2006N292 spring (a display
     helix); `side_screws` adds the shoe's side-channel screws and washers to the support; `include_cassette`
-    seats the cassette assembly (§8.6) on the datum pins and travels with the driven plunger.
+    seats the cassette assembly (§9.6) on the datum pins and travels with the driven plunger.
 
     Spring solid height is unverified: the loading pose checks printed geometry, not whether the purchased
     spring can safely reach that compression.

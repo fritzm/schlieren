@@ -1,4 +1,4 @@
-"""Show or render the mirror cell model, or write the base-plate drilling layout (design §10)."""
+"""Show or render the mirror cell model, or write the base-plate drilling layout (design §11)."""
 
 import argparse
 from pathlib import Path

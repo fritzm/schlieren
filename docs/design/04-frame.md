@@ -25,7 +25,7 @@ roll-in/drop-in M5 T-nuts (Amazon B0DP6JBX4Y).
 
 Sighting toward the mirror, the source rail is on the left (negative x in the pivot frame) and the imaging
 rail is on the right. This is dictated by fact that the iPhone extends well to the right of its camera axis
-when sighting along that axis toward the mirror ([§9.1](09-camera-telephoto.md#91-camera)); placing that
+when sighting along that axis toward the mirror ([§10.1](10-camera-telephoto.md#101-camera)); placing that
 overhang toward the outside of the optical head keeps the phone clear of the source rail and its fixtures.
 
 ### 4.2 Front pivot plate

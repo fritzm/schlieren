@@ -189,7 +189,7 @@ The image's brightest portion is about 10.4 mm long, as calculated, with a weake
 ±7.8 mm. The shoulder was measured at ±7.5 mm from the wall image (iris open, slit removed) at 6.6×, 153 mm from
 the lens vertex to the slit, and the model scales it to the present magnification
 (`LightSourceParameters.lit_half_length`). The clearances of the slit head and field lens
-([§7.2](07-source-slit.md#72-architecture), [§7.9](07-source-slit.md#79-field-lens)) use that extent.
+([§7.2](07-source-slit.md#72-architecture), [§8](08-field-lens.md#8-field-lens)) use that extent.
 
 **Field lens.** A slit point's cone is centered on the chief ray from the center of the iris to that point, not on
 the mirror. The iris leaves are about 150 mm behind the slit (the 159 mm from the lens's convex vertex less the
@@ -199,11 +199,11 @@ h (1 + 3200/150) ≈ 22 h: 116 mm at the end of the brightest portion of the sli
 edge of the shoulder (h = 7.8 mm), more than the mirror's 101.5 mm radius. Each slit point lights a mirror-sized
 disk, but the disks' centers are spread along the slit, so without a correction the illumination falls along the
 slit to about 55 % of its central value at the mirror's edge. A field lens just ahead of the slit removes the
-spread ([§7.9](07-source-slit.md#79-field-lens)): it images the iris onto the mirror, which aims every chief ray
+spread ([§8](08-field-lens.md#8-field-lens)): it images the iris onto the mirror, which aims every chief ray
 at the mirror's center, so the cones from all slit points overlap there.
 
 The lens is the Thorlabs LA1433-A (f = 149.5 mm), and the slit's distance from the condenser is chosen for it.
-With the lens at the position of §7.9, its focal length images onto the mirror an iris about 157 mm behind its
+With the lens at the position of §8, its focal length images onto the mirror an iris about 157 mm behind its
 object-side principal plane, which puts the iris leaves about 150 mm behind the slit. The condenser's conjugates
 follow from that distance (below), and in turn the gap that focuses the emitter on the slit. Every cone then
 centers on the mirror (paraxially, within 0.1 mm, from any point of the lit slit). A lens ahead of the slit leaves
@@ -249,7 +249,7 @@ The prescription, with the basis of each value:
 | SM1D12 iris                       | Ø1–12 range; ≈ Ø10.0 set                        | Catalog range; setting calculated as D = 2 · L · tan θ at L = 149.6 mm, θ = 1.91°, the cone that the field lens converges onto the mirror's ±1.82° from every point of the lit slit |
 | Iris leaves to slit               | 149.6 mm (leaves 9.4 mm ahead of the vertex)    | The distance at which the field lens images the iris onto the mirror; the leaves' place in the stack: vertex 0.7 mm inside the SM1V05 open end, SM1L03 8.38 mm, leaf midplane 0.36 mm past the SM1D12 shoulder (vendor model); 159 mm vertex-to-slit |
 | Source slit                       | 0.10–0.30 wide, 10.4 mm lit length              | [§7](07-source-slit.md)                                                                                            |
-| Field lens                        | LA1433-A, Ø1 in, f 149.5; plano face ≈ 5 mm ahead of the slit | Catalog; the slit is placed for this focal length to image the iris onto the mirror (above); [§7.9](07-source-slit.md#79-field-lens) |
+| Field lens                        | LA1433-A, Ø1 in, f 149.5; plano face ≈ 5 mm ahead of the slit | Catalog; the slit is placed for this focal length to image the iris onto the mirror (above); [§8](08-field-lens.md#8-field-lens) |
 | Mirror                            | f 1600; slit at 2f = 3200 mm, ±101.5 mm, ±1.82° | Catalog D203F1600; slit at the center of curvature ([§3.2](01-context-and-layout.md#32-source-cone)); ±2.0° gives slight overfill     |
 
 Each emitter point sends a cone of about ±13° into the lens, and its image point receives a cone of about
@@ -296,7 +296,7 @@ instead shorten the gap and make the shortfall worse.
 To set up, thread the SM1V05 in to the engagement above for the module in use, set the iris to about Ø10.0 mm,
 and place the slit head about 150 mm from the iris leaves (159 mm from the lens vertex). The blades of the stage-based slit head cannot be seen, so
 swap the printed focus target in for the head ([§7.7](07-source-slit.md#77-slit-focus-target)), with the field
-lens station slid clear ([§7.9](07-source-slit.md#79-field-lens)), turn the SM1V05 until the emitter image on
+lens station slid clear ([§8](08-field-lens.md#8-field-lens)), turn the SM1V05 until the emitter image on
 the target is sharp and centered, then lock the SM1NT, restore the slit head and the field lens, and open the
 slit. The two modules focus about 0.2 mm apart in engagement, about one-third of a turn of the SM1
 thread; an index mark per module on the SM1V05 is optional.

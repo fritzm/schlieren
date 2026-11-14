@@ -231,7 +231,7 @@ class LightSourceParameters:
 
     @property
     def iris_to_slit(self):
-        """The iris leaves to the slit, which the iris setting and the field lens (§6.3, §7.9) rest on."""
+        """The iris leaves to the slit, which the iris setting and the field lens (§6.3, §8) rest on."""
         return self.lens_to_slit - self.vertex_to_iris
 
     # Axial positions (u) of the parts that move with the SM1V05 focus engagement.

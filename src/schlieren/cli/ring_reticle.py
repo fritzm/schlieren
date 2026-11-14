@@ -1,4 +1,4 @@
-"""Build/export the ring reticle half (print two of it; design §9.9); optionally display the snapped tube in
+"""Build/export the ring reticle half (print two of it; design §10.9); optionally display the snapped tube in
 the cutoff post's ring, with the post and shoe, in OCP CAD Viewer."""
 
 import argparse

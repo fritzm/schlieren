@@ -1,5 +1,5 @@
 """Field lens station: lens seating and placement, clearances to the slit head, the beam through the tube, and
-the optics that set the lens (design §§6.3, 7.9)."""
+the optics that set the lens (design §§6.3, 8)."""
 
 import math
 import unittest

@@ -1,4 +1,4 @@
-"""Lens cradle and phone rest, design §§9.4-9.9.
+"""Lens cradle and phone rest, design §§10.4-10.9.
 
 The phone and the lens threaded onto its case are one rigid body, held by the lens barrel with the phone
 hanging from it. Two separate rail fixtures:
@@ -19,8 +19,8 @@ hanging from it. Two separate rail fixtures:
 The cradle parts are modeled in detail: fillets, pad pockets, clamp ear, insert holes, joint, and pegs. The
 hardware is envelopes, except the McMaster screws, thumb nuts, inserts, dowel pins, and the collar clamp
 screws and nuts, which are vendor models. The side-channel rail screws of the cradle shoe and the phone rest
-are drawn by default (`side_screws`). The phone is modeled in `parts/phone.py` from the §9.1 measurements and
-Apple's drawing, and the lens in `parts/lens.py` from the §9.2 measurements (the focus-ring diameter is
+are drawn by default (`side_screws`). The phone is modeled in `parts/phone.py` from the §10.1 measurements and
+Apple's drawing, and the lens in `parts/lens.py` from the §10.2 measurements (the focus-ring diameter is
 assumed). The lens aft end, the end of its thread boss, is taken to be at the phone's back.
 
 Coordinates: the §3.4 imaging rail frame, +x right, +y along the rail toward the mirror, z up from the rail
@@ -110,7 +110,7 @@ STAND_ALONE_RAIL_PAST_LENS = 80.0  # Rail beyond the lens front, toward the mirr
 AXIS_MARKER_DIAMETER = 0.8
 AXIS_MARKER_BEHIND_PHONE = 60.0
 AXIS_MARKER_PAST_LENS = 90.0
-LENS_TO_SPLIT_RING = 10.0  # Assumed gap, lens front to the cutoff split ring's rear face (§8.1).
+LENS_TO_SPLIT_RING = 10.0  # Assumed gap, lens front to the cutoff split ring's rear face (§9.1).
 
 
 @dataclass(frozen=True)
@@ -118,14 +118,14 @@ class CameraSupportParameters:
     optical_height: float = OPTICAL_HEIGHT  # §3.4.
     rail_size: float = 20.0
 
-    # Phone in its case, landscape, screen aft (§9.1), Main camera (the lower aperture in portrait) on the
+    # Phone in its case, landscape, screen aft (§10.1), Main camera (the lower aperture in portrait) on the
     # axis.
     phone: PhoneParameters = field(default_factory=PhoneParameters)
 
-    # Telephoto (§9.2): boss, shoulder, barrel, and focus ring, measured from the aft end.
+    # Telephoto (§10.2): boss, shoulder, barrel, and focus ring, measured from the aft end.
     lens: LensParameters = field(default_factory=LensParameters)
 
-    # Adjusters (§9.7): McMaster 93339A252 ball-tip screw in a 94459A797 heat-set insert, with a 92815A202
+    # Adjusters (§10.7): McMaster 93339A252 ball-tip screw in a 94459A797 heat-set insert, with a 92815A202
     # thumb nut locked mid-screw.
     screw_length: float = MCMASTER_93339A252_LENGTH  # Overall, hex-socket end to ball apex.
     ball_diameter: float = MCMASTER_93339A252_BALL_DIAMETER
@@ -171,12 +171,12 @@ class CameraSupportParameters:
     )
     pad_edge_margin: float = 1.0  # A ball apex can reach to within this of the pad edge (the rim stops it).
     min_collar_wall: float = 2.5
-    # Retaining band (§9.5 hold-down): an endless elastic band around the bare barrel beside each collar, on
+    # Retaining band (§10.5 hold-down): an endless elastic band around the bare barrel beside each collar, on
     # the side toward the other collar, with its legs running down inboard of the thumb nuts to a peg on the
     # centre of the yoke's crossbar face. Its pull acts on the barrel, which the collar's clamp carries to the
     # pads; no groove is needed on the collar.
     band_section_diameter: float = 2.0
-    band_hold_down: float = 5.0  # N at each pad pair, §9.5, from the two bands together.
+    band_hold_down: float = 5.0  # N at each pad pair, §10.5, from the two bands together.
     horn_diameter: float = 4.0  # The peg's stem.
     horn_stem_length: float = 6.0
     horn_lip_diameter: float = 6.0

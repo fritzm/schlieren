@@ -50,7 +50,7 @@ class OpticalHeadParameters:
     carriage: CarriageParameters = field(default_factory=CarriageParameters)
     camera: CameraSupportParameters = field(default_factory=CameraSupportParameters)
     board: LEDBoard = GREEN
-    # The field lens station ahead of the slit (§7.9). False leaves it out, to run the apparatus without it.
+    # The field lens station ahead of the slit (§8). False leaves it out, to run the apparatus without it.
     field_lens: bool = True
 
     # Setup values (§3.3). Station is y along the rail from its pivot, so negative.

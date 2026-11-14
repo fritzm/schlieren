@@ -23,7 +23,7 @@ from schlieren.standards import DATUM_SHIM_THICKNESS, INCH, OPTICAL_HEIGHT, SM1_
 from schlieren.testing import shared
 from schlieren.vendor_cad import SM1RC_M_THICKNESS
 
-MEASURED_FRONT_CLEAR_APERTURE = 0.845 * INCH  # §9.2.
+MEASURED_FRONT_CLEAR_APERTURE = 0.845 * INCH  # §10.2.
 
 
 def arm_point(angle_deg, radius, y, across=0.0):
@@ -111,7 +111,7 @@ class RingReticleTests(unittest.TestCase):
 
     def test_circle_aid_is_the_front_glass_and_the_bore_passes_it(self):
         p = self.p
-        # The measured clear aperture of the front glass, §9.2 (the lens model's 0.82 in is the glass at the
+        # The measured clear aperture of the front glass, §10.2 (the lens model's 0.82 in is the glass at the
         # bottom of the recess, a little smaller).
         self.assertAlmostEqual(p.circle_diameter, MEASURED_FRONT_CLEAR_APERTURE, delta=0.05)
         self.assertGreater(p.bore, p.circle_diameter)

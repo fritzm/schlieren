@@ -6,7 +6,7 @@ or history document.
 When updating it:
 
 - Preserve established terminology.
-- State settled design plainly; mark open or evolving areas **Provisional** and keep the §11 rollup in step.
+- State settled design plainly; mark open or evolving areas **Provisional** and keep the §12 rollup in step.
 - When a decision changes, rewrite the affected text to describe the new design; do not narrate what it
   replaced ("previously", "no longer", "superseded").
 - Retain rationale that explains a non-obvious current decision.

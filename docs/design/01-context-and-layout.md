@@ -14,7 +14,7 @@ durable context for AI assistants to reason about the design, as well as being a
   settled.
 - **Provisional** marks a design area, dimension, or method that is still open or evolving, typically pending
   a physical fit check, measurement, or further design. Provisional areas are rolled up with next steps in
-  [§11](11-open-work.md#11-provisional-areas-and-next-steps).
+  [§12](12-open-work.md#12-provisional-areas-and-next-steps).
 - Measured values, manufacturer specifications, and calculated values are identified as such where the
   distinction matters; a measured value takes precedence over a catalog value.
 - Quantities, vendors, part numbers beyond those needed to define the design, procurement state, and the CAD
@@ -66,7 +66,7 @@ The source rail contains, in optical order:
 
 1. light source (with interchangeable threaded LED modules, condenser lens, and adjustable iris)
 2. adjustable slit fixture
-3. field lens, on a post of its own just ahead of the slit ([§7.9](07-source-slit.md#79-field-lens))
+3. field lens, on a post of its own just ahead of the slit ([§8](08-field-lens.md#8-field-lens))
 
 The slit is the effective optical source, with the LED illuminating it through the condenser and iris. The
 imaging rail contains, in optical order:

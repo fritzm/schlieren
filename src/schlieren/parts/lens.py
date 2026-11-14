@@ -1,4 +1,4 @@
-"""The iOgrapher proSnap 7x telephoto lens, design §9.2.
+"""The iOgrapher proSnap 7x telephoto lens, design §10.2.
 
 Frame: the lens axis is the y axis through the origin, y = 0 is the aft end of the threaded boss, and +y runs
 toward the front of the lens (toward the mirror, as mounted). Place it with its axis on the optical axis.
@@ -34,7 +34,7 @@ from schlieren.validation import require_positive_dimensions
 
 @dataclass(frozen=True)
 class LensParameters:
-    # Measured, §9.2.
+    # Measured, §10.2.
     thread_diameter: float = 17.0  # Major diameter of the 17 mm camera-standard thread.
     boss_length: float = 0.10 * INCH
     glass_inset: float = 0.05 * INCH  # Aft end of the boss to the glass optic's aft face.

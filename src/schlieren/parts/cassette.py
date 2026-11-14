@@ -1,7 +1,7 @@
-"""Preliminary common cassette blank, design §8.6.
+"""Preliminary common cassette blank, design §9.6.
 
 XY is the cassette plane; z=0 is the rear sliding datum. The front is +Z. Bevel dimensions match the
-carriage (§8.4). Integral cleats and rear countersinks are on every cassette; two removable clamp bars and
+carriage (§9.4). Integral cleats and rear countersinks are on every cassette; two removable clamp bars and
 hardware references are available as an assembly.
 """
 
@@ -131,7 +131,7 @@ class ClampBarParameters:
     end_width: float = 8.0
     inner_edge_y: float = 12.5  # Clear the Ø24 opening by 0.5 mm.
     outer_edge_y: float = (
-        17.5  # Provisional: 7 mm fold of a blade with its edge on the axis is under the bar (§8.7).
+        17.5  # Provisional: 7 mm fold of a blade with its edge on the axis is under the bar (§9.7).
     )
     bridge_half_length: float = 20.0
     end_relief_start_x: float = 21.0

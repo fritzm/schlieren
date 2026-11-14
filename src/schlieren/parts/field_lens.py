@@ -1,4 +1,4 @@
-"""Field lens station (design §7.9): a lens ahead of the source slit, on a post of its own.
+"""Field lens station (design §8): a lens ahead of the source slit, on a post of its own.
 
 The cone from each slit point is centered on the chief ray from the center of the iris, about 150 mm behind
 the slit (the condenser stack's, `LightSourceParameters.iris_to_slit`), so without a field lens the cones from

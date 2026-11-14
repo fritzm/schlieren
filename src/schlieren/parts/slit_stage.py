@@ -16,7 +16,7 @@ Parts:
 - toe bars: one printed bar on the table and one on the pedestal, each screwed down at its two ends into the M3
   holes of the table's second row (the stage's tapped holes) or into heat-set M3 inserts in the pedestal. The bar's
   finger runs the length of the blade and presses the rear of the blade's fold through a strip of EPDM; it stops
-  short of the field-lens tube that stands over the axis (§7.9). No blade is drilled.
+  short of the field-lens tube that stands over the axis (§8). No blade is drilled.
 
 The blade lies on its fold, flat on the seat (razor_blade.flat_seated_blade_location): the fold's outer layer is on
 the table or pedestal, and the plate, which the fold stands proud of, is parallel to the seat and clear of its edge,
@@ -165,7 +165,7 @@ class SlitStageParameters:
     toe_pad_edge_margin: float = 0.25  # Pad edge to the fold's rear edge, at least.
     toe_pad_squeeze: float = 0.3  # EPDM pad compression under the finger, provisional.
     toe_pad_inset: float = 1.0  # EPDM pad end inset from the bar end.
-    # The fingers' slit-side faces stand this far, radially, beyond the body of the field-lens tube (§7.9), which
+    # The fingers' slit-side faces stand this far, radially, beyond the body of the field-lens tube (§8), which
     # is concentric with the optical axis; the head turns about that axis.
     toe_finger_tube_clearance: float = 1.0
     epdm_thickness: float = INCH / 32  # McMaster 9852N37, uncompressed.

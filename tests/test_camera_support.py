@@ -1,4 +1,4 @@
-"""Engineering invariants for the lens cradle and phone rest (design §§9.4-9.7)."""
+"""Engineering invariants for the lens cradle and phone rest (design §§10.4-10.7)."""
 
 import unittest
 from dataclasses import replace
@@ -150,8 +150,8 @@ class LensCradleTests(unittest.TestCase):
         self.assertAlmostEqual((lens.min.Z + lens.max.Z) / 2, OPTICAL_HEIGHT, places=4)
         self.assertAlmostEqual((lens.min.X + lens.max.X) / 2, 0.0, places=4)
         phone = self.parts["Case"].bounding_box()
-        self.assertAlmostEqual(OPTICAL_HEIGHT - phone.min.Z, 60.6, places=4)  # Measured, §9.1.
-        self.assertAlmostEqual(-phone.min.X, 34.3, places=4)  # Measured, §9.1.
+        self.assertAlmostEqual(OPTICAL_HEIGHT - phone.min.Z, 60.6, places=4)  # Measured, §10.1.
+        self.assertAlmostEqual(-phone.min.X, 34.3, places=4)  # Measured, §10.1.
         self.assertGreater(phone.max.X, -phone.min.X)  # The body hangs outboard, toward +x.
         # The lens reaches through the camera opening to the camera glass: the ridge top, the case's rearmost
         # point, stands the glass recess ahead of the lens aft end.
