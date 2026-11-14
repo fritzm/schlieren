@@ -53,9 +53,9 @@ class FocusTargetTests(unittest.TestCase):
             head_location(p.stage).position.Y + p.stage.seated_blade_y(0, 0), rim_from_post, places=9
         )
 
-    def test_paper_plane_is_the_stage_blades_edge_plane_not_the_flexure_heads(self):
+    def test_paper_plane_is_the_stage_blades_edge_plane(self):
         p = self.p
-        self.assertIsInstance(p.stage, SlitStageParameters)  # 2.9 mm overhang, not the flexure head's 1.5 mm.
+        self.assertIsInstance(p.stage, SlitStageParameters)  # 2.9 mm blade overhang.
         # The stage's blades lie flat on their folds, so their cutting edges' mid-plane is half the fold's
         # thickness above the seat plane. The paper's rear face is that plane.
         edge_plane = p.stage.seated_blade_y(0, 0)
