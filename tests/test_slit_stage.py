@@ -223,7 +223,7 @@ class SlitStageTests(unittest.TestCase):
         box = baffle.bounding_box()
         self.assertAlmostEqual(box.max.Y, -ring_face, places=6)
         self.assertAlmostEqual(box.min.Y, -ring_face - p.baffle.length, places=6)
-        self.assertAlmostEqual(box.min.Z, p.optical_height - p.baffle.clamp_diameter / 2, places=6)
+        self.assertAlmostEqual(box.min.Z, p.optical_height - p.baffle.rib_diameter / 2, places=6)
         self.assertAlmostEqual(box.max.Z, p.optical_height + p.baffle.ear_top_z, places=6)  # Ears up.
         plate = moved(self.plate, head_location(p))
         self.assertAlmostEqual(overlap_volume(plate, baffle), 0, places=6)
@@ -298,7 +298,6 @@ class SlitStageTests(unittest.TestCase):
         for change in (
             {"cone_half_angle": 10.0},  # Cone reaches the stage edge.
             {"baffle": replace(BaffleParameters(), spigot_bore=20.0)},  # Baffle for a different spigot.
-            {"baffle": replace(BaffleParameters(), vane_depth=9.0)},  # Vanes narrow the bore past the beam.
             {"toe_thickness": 4.0},  # Screw would bottom in the tapped hole.
             {"toe_pad_width": 9.0},  # Pad runs off the fold's rear edge.
             {"toe_finger_tube_clearance": 0.0},  # Fingers touch the field-lens tube.

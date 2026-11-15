@@ -1,5 +1,5 @@
 """Slit baffle (§6.8): a printed clamp ring on the stage plate's extended spigot, continuing rearward as a
-non-clamping "net" tube that carries a matte black foil wrap.
+non-clamping "net" of crossed helical vanes that carries a matte black foil wrap.
 
 Frame: the optical axis is the y axis (x = z = 0), z up, and y = 0 is the SM1RC/M's source-side face, which the
 clamp's front face butts; the baffle extends toward -y (the light source). The clamp's split and ears are at +z,
@@ -9,31 +9,32 @@ One printed part, printed on end (clamp end down), without supports:
 
 - clamp: a split ring on the spigot's protruding end, one M3 screw through ears at the split, as the rail
   shoe's collar;
-- collar: solid ring behind the clamp bore. The slit ends in a round relief hole inside it. A shoulder in the
-  bore stops short of the spigot end;
-- net: a tube whose wall is cut by staggered diamond windows, so its ligaments run as 45° vanes. The vanes
-  stand into the bore (painted flat black), and the foil wraps the net's outside, between the collars, matte
-  side in;
-- far collar: solid ring that closes the net's end.
+- rib: a short solid ring behind the clamp, proud of the outside, the foil's near stop. The slit runs through
+  it and opens into the net's first cell, so the net's vanes take the clamp's closing;
+- net: crossed helical vanes, six of each hand, added to the ribs with no tube behind them: each vane is a
+  triangle in section, its base on the clamp's outside diameter (the foil's seat) and its apex at the bore, swept
+  along a helix whose pitch gives 45° at the wall's mid radius. Where the hands cross they simply merge: the
+  crossing's top is the patch of the outside cylinder bounded by the four edge helices. The vanes line the bore
+  (painted flat black), and the foil wraps the net's outside, between the ribs, matte side in;
+- far rib: solid ring that closes the net's end and stops the foil there.
 """
 
 from dataclasses import dataclass
 from functools import cache
-from math import pi, sqrt
+from math import cos, degrees, pi, radians, sin, sqrt
+from typing import cast
 
-from build123d import Compound, Part, Pos, Rot
+from build123d import Compound, Face, Helix, Part, Pos, Rot, Solid, Vector, Wire, sweep
 
 from schlieren.cad import (
     CUT_OVERRUN,
     assembly,
     box_between,
-    centered_box,
     intersect,
     labeled,
     moved,
     x_cylinder,
     y_cylinder,
-    z_cylinder,
     z_hex,
 )
 from schlieren.hardware import M3_CLEARANCE_DIAMETER, M3_NUT_ACROSS_FLATS, M3_NUT_THICKNESS
@@ -53,7 +54,7 @@ class BaffleParameters:
     spigot_diameter: float = SM1_TUBE_DIAMETER
     spigot_bore: float = 24.0
     spigot_extension: float = 12.0  # Spigot end beyond the ring's source face.
-    spigot_end_gap: float = 0.5  # Spigot end to the clamp bore's shoulder, axial.
+    spigot_end_gap: float = 0.5  # Spigot end to where the bore starts to narrow, axial.
     length: float = 81.0  # Ring face to the far end.
 
     # Clamp, PLA fabrication allowances and geometry, as the rail shoe's collar (fit-test pending).
@@ -69,16 +70,14 @@ class BaffleParameters:
     nut_thickness: float = M3_NUT_THICKNESS
     nut_across_flats_clearance: float = NUT_POCKET_ACROSS_FLATS_CLEARANCE
     nut_axial_clearance: float = 0.30
-    relief_diameter: float = 3.5
-    relief_center_past_bore: float = 2.0  # Relief hole's center behind the clamp bore's shoulder.
-    collar_length: float = 4.0
 
-    # Net: outside diameter fixed (the foil wraps it); vane_depth is the ligaments' radial depth into the bore.
-    net_diameter: float = 31.0
-    vane_depth: float = 3.0
-    windows_per_row_pair: int = 3  # Each window cutter passes both walls: twice this many around.
-    window_ligament: float = 1.4  # Width of the 45° ligaments between windows, measured on the unrolled tube.
-    far_collar_length: float = 3.0
+    # Net: vanes in the clamp's bore and outside diameter, which the foil wraps between two ribs.
+    rib_length: float = 2.0  # The near rib, behind the clamp.
+    rib_height: float = 1.0  # Rib and far-rib radial height above the net's outside.
+    vanes_per_hand: int = 6
+    vane_width: float = 2.0  # Circumferential, on the outside; the apex is a line along the bore.
+    vane_apex_clearance: float = 0.02  # Apex above the bore, so no vane edge lies on the ribs' bore surface.
+    far_rib_length: float = 3.0
     foil_thickness: float = 0.1  # One layer, as shown; the wrap may overlap itself.
 
     # --- clamp -------------------------------------------------------------------------------------------
@@ -96,7 +95,7 @@ class BaffleParameters:
 
     @property
     def shoulder_y(self):
-        """The clamp bore's end, a little short of the spigot's."""
+        """The clamp bore's cylindrical end, a little short of the spigot's."""
         return self.spigot_end_y - self.spigot_end_gap
 
     @property
@@ -127,14 +126,24 @@ class BaffleParameters:
     def nut_pocket_depth(self):
         return self.nut_thickness + self.nut_axial_clearance
 
-    # --- collar and net ----------------------------------------------------------------------------------
+    # --- rib and net ------------------------------------------------------------------------------------
     @property
-    def collar_back_y(self):
-        return self.shoulder_y - self.collar_length
+    def net_diameter(self):
+        return self.clamp_diameter
 
     @property
-    def relief_y(self):
-        return self.shoulder_y - self.relief_center_past_bore
+    def vane_depth(self):
+        """The ligaments' radial depth: the clamp's wall."""
+        return self.clamp_wall
+
+    @property
+    def rib_diameter(self):
+        return self.net_diameter + 2 * self.rib_height
+
+    @property
+    def rib_back_y(self):
+        """The near rib's rear face, where the net begins."""
+        return self.shoulder_y - self.rib_length
 
     @property
     def far_y(self):
@@ -142,35 +151,43 @@ class BaffleParameters:
 
     @property
     def net_end_y(self):
-        return self.far_y + self.far_collar_length
+        return self.far_y + self.far_rib_length
 
     @property
     def net_length(self):
-        return self.collar_back_y - self.net_end_y
+        return self.rib_back_y - self.net_end_y
 
     @property
     def net_bore(self):
-        return self.net_diameter - 2 * self.vane_depth
+        return self.clamp_bore
 
     @property
-    def window_pitch_degrees(self):
-        return 180.0 / self.windows_per_row_pair
+    def mean_radius(self):
+        return (self.net_diameter + self.net_bore) / 4
 
     @property
-    def row_count(self):
-        """Rows of windows, the first and last centered on the collar faces so they are clipped to triangles."""
-        mean_radius = (self.net_diameter - self.vane_depth) / 2
-        nominal_pitch = mean_radius * pi / (2 * self.windows_per_row_pair)  # Half the circumferential pitch.
-        return round(self.net_length / nominal_pitch) + 1
+    def vane_pitch_degrees(self):
+        return 360.0 / self.vanes_per_hand
 
     @property
-    def row_pitch(self):
-        return self.net_length / (self.row_count - 1)
+    def vane_lead(self):
+        """Axial advance per turn: 45° to the axis at the mean radius."""
+        return 2 * pi * self.mean_radius
 
     @property
-    def window_half_diagonal(self):
-        """Neighboring windows are offset by (half the window pitch, one row pitch), at 45°."""
-        return self.row_pitch - self.window_ligament / sqrt(2)
+    def node_pitch(self):
+        """Axial distance between rows of crossings: a hand's vane turns half a vane pitch."""
+        return self.mean_radius * pi / 180 * self.vane_pitch_degrees / 2
+
+    @property
+    def node_depths(self):
+        """Depths behind the near rib's rear face of the rows of crossings (the first on the rib itself)."""
+        return [m * self.node_pitch for m in range(int(self.net_length // self.node_pitch) + 1)]
+
+    @property
+    def vane_phase_degrees(self):
+        """Azimuth where both hands start at the near rib: the cells (and the slit) lie between them."""
+        return self.vane_pitch_degrees / 2
 
     @property
     def foil_diameter(self):
@@ -180,22 +197,16 @@ class BaffleParameters:
         require_positive_dimensions(self)
         if self.clamp_bore <= self.spigot_diameter:
             raise ValueError("Clamp bore must slip over the spigot")
-        if self.net_bore < self.spigot_bore:
-            raise ValueError("Net bore must pass the spigot's light bore")
-        if self.net_bore >= self.clamp_bore or self.net_diameter >= self.clamp_diameter:
-            raise ValueError(
-                "The net must be inside the clamp's bore and outside diameter, leaving a shoulder"
-            )
-        if (self.clamp_diameter - self.foil_diameter) / 2 < 1.0:
-            raise ValueError("The collars must stand clear of the foil wrap")
-        radius = self.relief_diameter / 2
-        if (
-            self.relief_center_past_bore - radius < 0.2
-            or self.relief_center_past_bore + radius > self.collar_length - 0.2
-        ):
-            raise ValueError("The relief hole must lie inside the collar, clear of its faces")
-        if self.relief_diameter <= self.split_gap:
-            raise ValueError("Relief hole must be wider than the split")
+        if (self.rib_diameter - self.foil_diameter) / 2 < 0.5:
+            raise ValueError("The ribs must stand clear of the foil wrap")
+        chord = self.vane_pitch_degrees * pi / 180 * self.mean_radius  # Vane to vane at the rib face.
+        if self.split_gap >= chord - self.vane_width:
+            raise ValueError("The slit must open into the net's first cell, narrower than it")
+        crotch = self.vane_width / 2 / (self.net_diameter / 2) * self.mean_radius
+        if crotch >= self.node_pitch / 2:
+            raise ValueError("Each crossing must end before the mid-plane to the next row")
+        if self.vane_width >= chord / 2:
+            raise ValueError("The vanes must leave cells between them")
         if self.nut_pocket_depth >= self.nut_ear_thickness:
             raise ValueError("Nut pocket must leave an inner ear wall")
         corners = (self.nut_across_flats + self.nut_across_flats_clearance) / sqrt(3) * 2
@@ -203,10 +214,119 @@ class BaffleParameters:
             raise ValueError("Nut pocket must fit within the ear")
         if self.screw_clearance_diameter >= min(self.clamp_length, 2 * self.ear_height_above_screw):
             raise ValueError("Screw hole must fit within the ear")
-        if self.window_half_diagonal <= 1.0 or self.row_count < 3:
-            raise ValueError("The net needs windows and at least three rows")
-        if self.net_length <= 2 * self.row_pitch:
-            raise ValueError("The net is too short for its windows")
+        if self.net_length <= self.vane_lead / 4:
+            raise ValueError("The net is too short for its vanes")
+
+
+# The vane section's flanks run this far past the outside diameter before the cylinder trims them, and each
+# piece is swept this far past its ends before its cell's planes cut it (so every cap lies exactly on a plane).
+VANE_FLANK_OVERRUN = 0.5
+VANE_SWEEP_OVERRUN = 0.5
+
+
+def _vane_piece(
+    p: BaffleParameters,
+    azimuth_degrees: float,
+    hand: int,
+    depth0: float,
+    depth1: float,
+    cell: tuple[float, float],
+) -> Solid:
+    """One vane between two depths behind the near rib's rear face, within an angular cell (degrees).
+
+    The vane's section is a triangle with its apex vane_apex_clearance above the bore and its flanks through two
+    points on the outside diameter a vane_width apart; swept along its helix, it is trimmed to the outside
+    cylinder (the top face is exact) and cut by the cell: the transverse planes at depth0 and depth1 and the
+    axial planes at the cell's azimuths. hand +1 turns the azimuth toward +x going rearward, -1 toward -x;
+    `azimuth_degrees` is where the vane would be on the rib's face."""
+    r_out, r_apex = p.net_diameter / 2, p.net_bore / 2 + p.vane_apex_clearance
+    start = depth0 - VANE_SWEEP_OVERRUN
+    a0 = radians(azimuth_degrees) + hand * start / p.mean_radius
+    half_arc = p.vane_width / 2 / r_out
+    # Local frame: +z along the axis rearward (the helix's), +y up; the section lies in z = 0.
+    apex = Vector(r_apex * sin(a0), r_apex * cos(a0), 0)
+    corners = []
+    for side in (-1, 1):
+        through = Vector(r_out * sin(a0 + side * half_arc), r_out * cos(a0 + side * half_arc), 0) - apex
+        # The flank, apex + k * through, reaches r_out + VANE_FLANK_OVERRUN.
+        a, b = through.dot(through), 2 * apex.dot(through)
+        c = apex.dot(apex) - (r_out + VANE_FLANK_OVERRUN) ** 2
+        corners.append(apex + through * ((-b + sqrt(b * b - 4 * a * c)) / (2 * a)))
+    section = Face(Wire.make_polygon([corners[0], corners[1], apex], close=True))
+    path = Helix(p.vane_lead, depth1 + VANE_SWEEP_OVERRUN - start, p.mean_radius, lefthand=hand == 1)
+    vane = moved(
+        cast(Part, sweep(section, path=path, is_frenet=True)), Pos(0, p.rib_back_y - start, 0) * Rot(X=90)
+    )
+
+    y0, y1 = p.rib_back_y - depth0, p.rib_back_y - depth1
+    lo, hi = cell
+    reach = p.net_diameter  # Beyond the outside diameter.
+    outline = [Vector(0, y0, 0)] + [
+        Vector(reach * sin(radians(a)), y0, reach * cos(radians(a))) for a in (lo, (lo + hi) / 2, hi)
+    ]
+    wedge = Solid.extrude(Face(Wire.make_polygon(outline, close=True)), Vector(0, y1 - y0, 0))
+    return intersect(vane, intersect(wedge, y_cylinder(p.net_diameter, 0, 0, y1, y0))).solids()[0]
+
+
+def _crossing(
+    p: BaffleParameters, depth: float, azimuth_degrees: float, depth0: float, depth1: float
+) -> Solid | Compound:
+    """Both hands' vanes around one crossing (at depth, azimuth), between depth0 and depth1, as one solid.
+
+    Around a crossing the union of the two vanes divides exactly along the axial plane through it: behind the
+    crossing, the vane turning toward greater azimuth holds everything on that side and the other vane everything
+    on the other, and ahead of it the reverse. Each piece is that vane cut to its half-pitch cell, so the pieces
+    meet only on planes and the crossing is the vanes' exact union with no vane-to-vane boolean."""
+    half = p.vane_pitch_degrees / 2
+    turn = degrees(depth / p.mean_radius)
+    plus, minus = azimuth_degrees - turn, azimuth_degrees + turn  # Each hand's azimuth on the rib's face.
+    pieces = []
+    if depth0 < depth:  # Ahead: + on the lesser-azimuth side, - on the greater.
+        end = min(depth, depth1)
+        pieces += [
+            _vane_piece(p, plus, 1, depth0, end, (azimuth_degrees - half, azimuth_degrees)),
+            _vane_piece(p, minus, -1, depth0, end, (azimuth_degrees, azimuth_degrees + half)),
+        ]
+    if depth1 > depth:  # Behind: the reverse.
+        begin = max(depth, depth0)
+        pieces += [
+            _vane_piece(p, plus, 1, begin, depth1, (azimuth_degrees, azimuth_degrees + half)),
+            _vane_piece(p, minus, -1, begin, depth1, (azimuth_degrees - half, azimuth_degrees)),
+        ]
+    return pieces[0].fuse(*pieces[1:])
+
+
+def _standard_crossing(p: BaffleParameters) -> tuple[Solid | Compound, Solid | Compound]:
+    """The crossing unit, from the mid-plane ahead of a crossing to the mid-plane behind it, and the first row's
+    half unit (its crossings on the rib's face, so only the part behind them), both for the crossing at depth
+    half a node pitch and the vanes' starting azimuth. Every piece's caps are cut by planes, so neighboring
+    units' caps coincide exactly on the mid-planes, and every top face lies on the one outside cylinder."""
+    mid = p.node_pitch / 2
+    azimuth = p.vane_phase_degrees
+    return _crossing(p, mid, azimuth, 0.0, 2 * mid), _crossing(p, mid, azimuth, mid, 2 * mid)
+
+
+def build_net(p: BaffleParameters) -> list[Solid | Compound]:
+    """The net as crossing units, each one solid, spanning mid-plane to mid-plane between rows of crossings.
+
+    Units in a row do not touch; neighboring rows meet only on the mid-planes, where each vane is a single cut,
+    so the units fuse to one solid cheaply and exactly. Full units are placed copies of one, turned and moved
+    along the axis; the first row is the half unit, and units cut short by the far rib are built in place."""
+    half, mid = p.vane_pitch_degrees / 2, p.node_pitch / 2
+    unit, first = _standard_crossing(p)
+    units = []
+    for m in range(len(p.node_depths) + 1):  # One more row than the crossings: its leading half may fit.
+        depth = m * p.node_pitch
+        depth0, depth1 = depth - mid, depth + mid
+        if depth0 >= p.net_length:
+            break
+        if depth1 <= p.net_length:
+            placed = moved(first if m == 0 else unit, Pos(0, -(depth - mid), 0) * Rot(Y=half * m))
+        else:
+            azimuth = p.vane_phase_degrees + half * m
+            placed = _crossing(p, depth, azimuth, max(depth0, 0.0), p.net_length)
+        units += [moved(placed, Rot(Y=k * p.vane_pitch_degrees)) for k in range(p.vanes_per_hand)]
+    return units
 
 
 @cache
@@ -215,21 +335,32 @@ def build_baffle(p: BaffleParameters | None = None) -> Compound:
     p = p or BaffleParameters()
     p.validate()
     ear_end = p.shoulder_y
-    body = y_cylinder(p.clamp_diameter, 0, 0, p.collar_back_y, 0)
-    body += y_cylinder(p.net_diameter, 0, 0, p.net_end_y - CUT_OVERRUN, p.collar_back_y + CUT_OVERRUN)
-    body += y_cylinder(p.clamp_diameter, 0, 0, p.far_y, p.net_end_y)
-    body += box_between(p.split_gap / 2, p.nut_ear_outer_x, ear_end, 0, 0, p.ear_top_z)
-    body += box_between(p.screw_ear_outer_x, -p.split_gap / 2, ear_end, 0, 0, p.ear_top_z)
-    body -= y_cylinder(p.clamp_bore, 0, 0, p.shoulder_y, CUT_OVERRUN)
-    body -= y_cylinder(p.net_bore, 0, 0, p.far_y - CUT_OVERRUN, p.shoulder_y + CUT_OVERRUN)
+    near = y_cylinder(p.clamp_diameter, 0, 0, p.shoulder_y, 0)
+    near += y_cylinder(p.rib_diameter, 0, 0, p.rib_back_y, p.shoulder_y)
+    near += box_between(p.split_gap / 2, p.nut_ear_outer_x, ear_end, 0, 0, p.ear_top_z)
+    near += box_between(p.screw_ear_outer_x, -p.split_gap / 2, ear_end, 0, 0, p.ear_top_z)
+    far = y_cylinder(p.rib_diameter, 0, 0, p.far_y, p.net_end_y)
+    bore = y_cylinder(p.clamp_bore, 0, 0, p.far_y - CUT_OVERRUN, CUT_OVERRUN)
+    near, far = near - bore, far - bore
+    units = build_net(p)
+    body = near.fuse(far, *units)
+    # The pieces touch only on shared faces, so the union's volume is exactly the sum: a check that the fuse
+    # dropped nothing (a failed boolean can return a valid solid with material missing).
+    expected = near.volume + far.volume + sum(u.volume for u in units)
+    if len(body.solids()) != 1 or not body.is_valid or abs(body.volume - expected) > 1e-5 * expected:
+        raise ValueError("Baffle net did not fuse to one valid solid of the expected volume")
 
-    # The slit runs the clamp and ends in the round relief hole. Both start inside the bore's air, short of
-    # the wall; the hole stays clear of the shoulder plane (a tangent face would make an invalid solid).
+    # The slit runs the clamp and near rib and opens into the net's first cell at the top (azimuth 0, between
+    # the vanes that start either side of it). It starts inside the bore's air, short of the wall.
     inside_wall = p.net_bore / 4
     body -= box_between(
-        -p.split_gap / 2, p.split_gap / 2, p.relief_y, CUT_OVERRUN, inside_wall, p.ear_top_z + 1
+        -p.split_gap / 2,
+        p.split_gap / 2,
+        p.rib_back_y - CUT_OVERRUN,
+        CUT_OVERRUN,
+        inside_wall,
+        p.ear_top_z + 1,
     )
-    body -= z_cylinder(p.relief_diameter, 0, p.relief_y, inside_wall, p.ear_top_z + 1)
     body -= x_cylinder(
         p.screw_clearance_diameter,
         p.screw_y,
@@ -246,21 +377,6 @@ def build_baffle(p: BaffleParameters | None = None) -> Compound:
     )
     body -= moved(pocket, Pos(0, p.screw_y, p.screw_z) * Rot(Y=90))
 
-    # Windows: diamond prisms drilled radially through both walls, rows staggered by half a window pitch. The
-    # end rows are centered on the collar faces and clipped to the net's span, leaving triangles.
-    side = 2 * p.window_half_diagonal / sqrt(2)
-    prism = moved(centered_box(side, side, p.net_diameter + 2 * CUT_OVERRUN), Rot(Z=45))
-    net_span = box_between(
-        -p.net_diameter, p.net_diameter, p.net_end_y, p.collar_back_y, -p.net_diameter, p.net_diameter
-    )
-    cutters = []
-    for row in range(p.row_count):
-        for k in range(p.windows_per_row_pair):
-            azimuth = (k + (row % 2) / 2) * p.window_pitch_degrees
-            cutter = moved(prism, Pos(0, p.collar_back_y - row * p.row_pitch, 0) * Rot(Y=azimuth))
-            cutters.append(intersect(cutter, net_span) if row in (0, p.row_count - 1) else cutter)
-    body -= Compound(cutters)
-
     if len(body.solids()) != 1 or not body.is_valid:
         raise ValueError("Baffle did not produce one valid solid")
     return body
@@ -268,11 +384,11 @@ def build_baffle(p: BaffleParameters | None = None) -> Compound:
 
 @cache
 def build_baffle_foil(p: BaffleParameters | None = None) -> Compound:
-    """The foil wrap as one layer around the net, between the collars (shown; the real wrap overlaps itself)."""
+    """The foil wrap as one layer around the net, between the ribs (shown; the real wrap overlaps itself)."""
     p = p or BaffleParameters()
     p.validate()
-    return y_cylinder(p.foil_diameter, 0, 0, p.net_end_y, p.collar_back_y) - y_cylinder(
-        p.net_diameter, 0, 0, p.net_end_y - CUT_OVERRUN, p.collar_back_y + CUT_OVERRUN
+    return y_cylinder(p.foil_diameter, 0, 0, p.net_end_y, p.rib_back_y) - y_cylinder(
+        p.net_diameter, 0, 0, p.net_end_y - CUT_OVERRUN, p.rib_back_y + CUT_OVERRUN
     )
 
 

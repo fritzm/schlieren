@@ -19,7 +19,7 @@ from schlieren.parts.baffle import FOIL_LABEL, BaffleParameters, build_baffle, b
 from schlieren.vendor_cad import SM1RC_M_THICKNESS, thorlabs_sm1rc_m
 
 DEFAULT_FIGURE = Path("docs/design/figures/baffle.png")
-# From the source side, above and to the right: the clamp ears, the relief hole, and the net.
+# From the source side, above and to the right: the clamp ears, the slit into the first cell, and the net.
 FIGURE_VIEW_DIRECTION = (-0.9, -1.0, 0.7)
 
 
@@ -52,7 +52,7 @@ def main() -> None:
     p.validate()
     print(
         f"Clamp {p.clamp_length:.1f} mm on the spigot's last {p.spigot_extension} mm; net {p.net_length:.1f} mm, "
-        f"{p.row_count} window rows, bore Ø{p.net_bore:.1f} mm"
+        f"{p.vanes_per_hand} + {p.vanes_per_hand} helical vanes, bore Ø{p.net_bore:.1f} mm"
     )
     export_models({"baffle": build_baffle(p)}, args.output)
     if args.figure:
