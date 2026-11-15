@@ -25,7 +25,7 @@ from schlieren.parts.frame import (
 from schlieren.parts.frame_drawing import pivot_plate_drawing_svg
 
 DEFAULT_FIGURE = Path("docs/design/figures/frame.png")
-DRAWING_FIGURE_NAME = "frame-pivot-plate.svg"  # The §4.2 drilling drawing, written beside the figure.
+DRAWING_FIGURE_NAME = "frame-pivot-plate.svg"  # The §3.2 drilling drawing, written beside the figure.
 FIGURE_VIEW_DIRECTION = (
     1.0,
     0.8,

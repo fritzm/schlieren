@@ -1,9 +1,9 @@
-"""Generic 2020 T-slot rail for viewer assemblies and figures; design §4.1.
+"""Generic 2020 T-slot rail for viewer assemblies and figures; design §3.1.
 
 Visualization only: the slot is a nominal slot-6 profile, not the measured geometry of the project's extrusion
-(§4.1), so do not take fits or clearances from it.
+(§3.1), so do not take fits or clearances from it.
 
-Rail-assembly frame, as the rail shoe (a §3.4 rail frame): +x across the rail, +y along it toward the mirror,
+Rail-assembly frame, as the rail shoe (a §2.4 rail frame): +x across the rail, +y along it toward the mirror,
 z up; the rail top is z=0 and the rail is centered on x=y=0.
 """
 

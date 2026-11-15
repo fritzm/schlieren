@@ -1,4 +1,4 @@
-## 11. Mirror cell
+## 10. Mirror cell
 
 The mirror cell is fabricated from Baltic-birch plywood panels, and uses a three-point fine-adjustment
 architecture with compression springs and spherical washer interfaces.  The model is
@@ -13,7 +13,7 @@ architecture with compression springs and spherical washer interfaces.  The mode
     mirror, and angle brackets</em>
 </p>
 
-### 11.1 Plates and basic architecture
+### 10.1 Plates and basic architecture
 
 The mirror cell is constructed from three Baltic-birch plywood plates:
 
@@ -22,8 +22,8 @@ The mirror cell is constructed from three Baltic-birch plywood plates:
 - mirror plate: 3/4 in cut to the truncated-hex geometry below.
 
 The base plate provides the structural/tripod-support base and is joined to the stationary plate by angle
-brackets described in [§11.7](#117-angle-brackets). The stationary plate carries three fine-adjustment
-stations ([§11.2](#112-three-adjuster-stations)) which couple it to the mirror plate. The 3/4 in mirror plate
+brackets described in [§10.7](#107-angle-brackets). The stationary plate carries three fine-adjustment
+stations ([§10.2](#102-three-adjuster-stations)) which couple it to the mirror plate. The 3/4 in mirror plate
 carries the 203 mm mirror and moves relative to the stationary plate.
 
 The stationary plate is centered left/right on the 11.5 in-wide base. The rear face of the 1/2 in stationary
@@ -72,7 +72,7 @@ This truncated-hex geometry preserves the same approximately 0.701 in / 17.8 mm 
 the 8-1/8 in mirror aperture and the truncated bottom edge as exists between the aperture and each hexagon
 flat. It therefore improves base clearance without introducing a uniquely narrow section.
 
-### 11.2 Three adjuster stations
+### 10.2 Three adjuster stations
 
 There are three equivalent adjuster stations.
 
@@ -124,7 +124,7 @@ Mounting details:
 
 This arrangement adds no hardware thickness to the inter-plate gap.
 
-### 11.3 Compression springs and seat washers
+### 10.3 Compression springs and seat washers
 
 Components:
 
@@ -154,7 +154,7 @@ approximately flush with the plywood surfaces across their thickness tolerance. 
 McMaster 2022N186 springs and the 0.500 in nominal inter-plate gap, the springs operate at approximately 0.250
 in nominal compression before small washer-thickness and adjustment-position variations.
 
-### 11.4 Spherical washer interfaces
+### 10.4 Spherical washer interfaces
 
 Each of the three adjuster locations uses:
 
@@ -214,13 +214,13 @@ Keep the outside diameter and lower/load-transfer surfaces dry so the lower wash
 directly against the close-fit CA-hardened plywood counterbore. Keep grease away from plywood,
 adhesive-bonding areas, and RTV bonding surfaces. The grease is Dynatex NLGI Grade 2 white lithium grease.
 
-### 11.5 Mirror mounting
+### 10.5 Mirror mounting
 
 The mirror is compliantly supported in a plywood mirror plate by six radial silicone pads, which are cast and
 cured in place between the mirror edge and the inner surface of the mirror plate aperture.
 
 The 203 mm mirror is carried within the 3/4 in mirror-plate aperture. Its back surface is flush with the rear
-face of the plate, since both rest on the cure surface ([§11.6](#116-rtv-glue-up-cure-surface)) during
+face of the plate, since both rest on the cure surface ([§10.6](#106-rtv-glue-up-cure-surface)) during
 bonding; its front surface is therefore recessed about 1 mm below the front face of the plate.
 
 Six DOWSIL 737 RTV pads are placed radially between:
@@ -238,7 +238,7 @@ counterbores or pockets are specified for the RTV pads.
 **Provisional:** test adhesion to properly prepared Baltic birch before bonding, to decide whether an adhesion
 primer is necessary.
 
-### 11.6 RTV glue-up cure surface
+### 10.6 RTV glue-up cure surface
 
 For mirror-plate glue-up and bench-top cure, use a non-stick polyethylene-family release surface beneath the
 assembly.
@@ -252,7 +252,7 @@ This protects the workbench from accidental RTV creep or squeeze-out.
 
 The release sheet is a shop supply rather than part of the finished instrument.
 
-### 11.7 Angle brackets
+### 10.7 Angle brackets
 
 Hardware joining the 1/2 in stationary plate to the 1/2 in base plate:
 
@@ -278,9 +278,9 @@ engagement without excessive overhang under the base or behind the stationary pl
 
 The bracket attachments are through-bolted rather than relying on wood screws. The locknut stacks under the
 base lie near its side edges, well outside the quick-release screw pattern on the underside
-([§11.9](#119-tripod-interface)).
+([§10.9](#109-tripod-interface)).
 
-### 11.8 Mirror safety and transport retention
+### 10.8 Mirror safety and transport retention
 
 Front safety retention is intentionally non-stressing:
 
@@ -299,7 +299,7 @@ stays with the base plate and brackets.
   hole at each of the three adjuster-bushing centers. There is one cover on the front and one on the rear. The
   foam bears across the whole plate face, so the cover is supported over its area and needs no particular
   stiffness.
-- The mirror's back surface is flush with the rear face of the plate ([§11.5](#115-mirror-mounting)), so the
+- The mirror's back surface is flush with the rear face of the plate ([§10.5](#105-mirror-mounting)), so the
   rear cover carries a full-profile sheet of thin closed-cell foam, which bears evenly on the glass and the
   plywood.
 - The front glass is recessed about 1 mm below the plywood face, and the bushing flanges stand 0.254 mm proud
@@ -342,7 +342,7 @@ sandwich: the foam material and thickness (about 3 mm uniform, holding the felt 
 the through-bolt size and length, the sheath material and wall, and the nuts, including the felt's thickness
 in the clamp stack. Measure a bushing bore before choosing the bolt and sheath.
 
-### 11.9 Tripod interface
+### 10.9 Tripod interface
 
 The mirror cell mounts on the tripod through a CAMVATE Manfrotto-type quick-release assembly with sliding
 plate (Amazon B0B2WBC921) on a Sunwayfoto LB-68R leveling base, whose top mounting stud is 3/8 in-16. The
@@ -352,7 +352,7 @@ underside of the 1/2 in Baltic-birch mirror-cell base.
 The 130 g sliding plate is 7.00 in / 177.8 mm long, mounted flush with the front and rear edges of the 7.0
 in-deep base, so it spans 0–7.00 in / 0–177.8 mm aft of the front edge and its geometric center lies 3.50 in /
 88.9 mm aft of that edge. This is 0.5 in / 12.7 mm aft of the estimated mirror-cell center of gravity
-([§11.1](#111-plates-and-basic-architecture)), a small offset that the quick-release system's fore/aft sliding
+([§10.1](#101-plates-and-basic-architecture)), a small offset that the quick-release system's fore/aft sliding
 travel trims during final balancing.
 
 The plate is attached by four McMaster 92125A196 M4 × 0.7 × 18 mm 90° flat-head screws:

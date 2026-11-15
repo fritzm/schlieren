@@ -131,7 +131,7 @@ are blocked.
 ## Design document
 
 Describe the design as it stands, with rationale; not status or history. On a changed decision rewrite the
-text (no "previously"/"no longer"), mark open areas **Provisional** and keep the §12 rollup in step; leave
+text (no "previously"/"no longer"), mark open areas **Provisional** and keep the §11 rollup in step; leave
 procurement and CAD state to `bom/bom.csv`. Read `docs/agents/design-doc-style.md` before editing
 `docs/design/`.
 

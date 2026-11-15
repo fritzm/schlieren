@@ -1,4 +1,4 @@
-## 5. Rail-mounted posts
+## 4. Rail-mounted posts
 
 A common post design establishes fixtures accurately at the optical axis, and bridges between the
 commercial optomechanical and 2020 rail ecosystems. The model is `src/schlieren/parts/rail_shoe.py`.
@@ -8,10 +8,10 @@ commercial optomechanical and 2020 rail ecosystems. The model is `src/schlieren/
        alt="Common rail shoe on the rail and TR50/M post: saddle body, split clamping collar, and clamp ears
        with the captured-nut pocket">
   <br>
-  <em>Fig. 3. Common rail-mounted post design</em>
+  <em>Fig. 4. Common rail-mounted post design</em>
 </p>
 
-### 5.1 Post and shim
+### 4.1 Post and shim
 
 The chosen optical post is the Thorlabs TR50/M.  These are 303 stainless steel, 12.7 mm diameter, 50 mm long
 with an M4 setscrew at the top which accommodates various Thorlabs SM1 metric fixed mounts.
@@ -20,7 +20,7 @@ Each post rests on a stainless steel shim disk, which provides a consistent meta
 central slot in the 2020 rail.  The shims are McMaster 2895T62, 3/4 in OD discs × 0.010 in ±0.0005 in thick,
 full-hard 18-8 stainless steel.
 
-### 5.2 Rail shoe
+### 4.2 Rail shoe
 
 The shoe is a printed PLA U-shaped saddle that:
 
@@ -49,14 +49,14 @@ Hardware:
 - McMaster 91292A114, M3 × 12 fully threaded 18-8 SS socket-head screw
 - McMaster 91828A211, M3 18-8 SS hex nut
 
-### 5.3 Post-top mounts
+### 4.3 Post-top mounts
 
 Four fixtures use the common post/shoe architecture:
 
-1. light source ([§6](06-light-source.md#6-light-source));
-2. source-slit fixture ([§7](07-source-slit.md#7-source-slit));
-3. field lens tube ([§8](08-field-lens.md#8-field-lens));
-4. cutoff carriage ([§9](09-cutoff.md#9-cutoff)).
+1. light source ([§5](05-light-source.md#5-light-source));
+2. source-slit fixture ([§6](06-source-slit.md#6-source-slit));
+3. field lens tube ([§7](07-field-lens.md#7-field-lens));
+4. cutoff carriage ([§8](08-cutoff.md#8-cutoff)).
 
 The light source uses a Thorlabs SMR1/M internally threaded lens mount, and the source-slit,
 field-lens, and cutoff assemblies seat in Thorlabs SM1RC/M lens tube split slip rings. These mounts all preserve a 22.1 mm post-top

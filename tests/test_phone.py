@@ -1,4 +1,4 @@
-"""Engineering invariants for the cased iPhone 17 model (design §10.1)."""
+"""Engineering invariants for the cased iPhone 17 model (design §9.1)."""
 
 import unittest
 
@@ -45,8 +45,8 @@ class PhoneTests(unittest.TestCase):
 
     def test_case_outside_is_the_measured_cased_phone(self):
         p, box = self.p, self.case.bounding_box()
-        self.assertAlmostEqual(-box.min.X, 34.3, places=3)  # Main camera from the near edge, §10.1.
-        self.assertAlmostEqual(-box.min.Z, 60.6, places=3)  # Main camera above the lower edge, §10.1.
+        self.assertAlmostEqual(-box.min.X, 34.3, places=3)  # Main camera from the near edge, §9.1.
+        self.assertAlmostEqual(-box.min.Z, 60.6, places=3)  # Main camera above the lower edge, §9.1.
         # The back plane is the cover top: 0.080 in over the 1.78 mm plateau, over the back glass.
         flat_back = -(1.78 + 0.080 * 25.4 - 0.125 * 25.4)
         self.assertAlmostEqual(box.min.Y, flat_back - 0.540 * 25.4, places=3)  # Measured depth to the front.

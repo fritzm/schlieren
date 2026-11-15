@@ -2,13 +2,13 @@
 §2).
 
 An assembly of the other part models, for viewing and for checks that no single part model can make: that the
-fixtures keep clear of each other and of the rails, and that the optical conjugates fall where §3 puts them.
+fixtures keep clear of each other and of the rails, and that the optical conjugates fall where §2 puts them.
 Nothing is printed here and nothing is exported.
 
 Fixture stations along the rails are setup values, not design dimensions: the slit and the cutoff are slid
-along their rails to focus the system (§3.3). They are exposed as parameters of `OpticalHeadParameters`.
+along their rails to focus the system (§2.3). They are exposed as parameters of `OpticalHeadParameters`.
 
-Coordinates are the §3.4 pivot frame (the frame model's). Each fixture is built in its own rail frame, with
+Coordinates are the §2.4 pivot frame (the frame model's). Each fixture is built in its own rail frame, with
 the rail top at z=0 and the rail's pivot axis at the origin, then moved onto its rail by
 `FrameParameters.rail_location`. Rail stations are y in the rail frame, negative aft of the pivot.
 """
@@ -50,10 +50,10 @@ class OpticalHeadParameters:
     carriage: CarriageParameters = field(default_factory=CarriageParameters)
     camera: CameraSupportParameters = field(default_factory=CameraSupportParameters)
     board: LEDBoard = GREEN
-    # The field lens station ahead of the slit (§8). False leaves it out, to run the apparatus without it.
+    # The field lens station ahead of the slit (§7). False leaves it out, to run the apparatus without it.
     field_lens: bool = True
 
-    # Setup values (§3.3). Station is y along the rail from its pivot, so negative.
+    # Setup values (§2.3). Station is y along the rail from its pivot, so negative.
     slit_station: float = (
         -150.0
     )  # Slit blade plane. Its post shoe clears the yaw strap, 90 mm aft of the pivot.

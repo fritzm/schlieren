@@ -1,4 +1,4 @@
-"""Engineering invariants for the tabletop frame (design §4)."""
+"""Engineering invariants for the tabletop frame (design §3)."""
 
 import unittest
 import xml.etree.ElementTree as ET
@@ -24,7 +24,7 @@ from schlieren.vendor_cad import (
     vendor_step,
 )
 
-MAX_YAW = 3.0  # deg from nominal; the adjustment range §4.2 sizes the fixed yaw holes for.
+MAX_YAW = 3.0  # deg from nominal; the adjustment range §3.2 sizes the fixed yaw holes for.
 # mm^3. The foot-screw tips graze the slot-floor taper of the rail model, whose taper is nominal, not
 # measured.
 INTERFERENCE_TOLERANCE = 1e-3
@@ -292,7 +292,7 @@ class FrameTests(unittest.TestCase):
                 self.assertAlmostEqual(top + 150.0 - float(svg_attr(circle, "cy")), y, places=3)
                 self.assertAlmostEqual(float(svg_attr(circle, "r")), 2.75, places=3)
         figures = [e.text or "" for e in svg.iter(f"{ns}text")]
-        # x from the plate centerline, y from the aft edge, as in §4.2.
+        # x from the plate centerline, y from the aft edge, as in §3.2.
         x_figures = ("-90.0", "-68.8", "-47.5", "-28.8", "0 CL", "+28.8", "+47.5", "+68.8", "+90.0")
         for expected in (*x_figures, "0.0", "35.3", "125.0", "150.0"):
             self.assertIn(expected, figures)

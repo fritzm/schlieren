@@ -1,4 +1,4 @@
-"""Slit baffle (§7.8): a printed clamp ring on the stage plate's extended spigot, continuing rearward as a
+"""Slit baffle (§6.8): a printed clamp ring on the stage plate's extended spigot, continuing rearward as a
 non-clamping "net" tube that carries a matte black foil wrap.
 
 Frame: the optical axis is the y axis (x = z = 0), z up, and y = 0 is the SM1RC/M's source-side face, which the

@@ -1,4 +1,4 @@
-"""Build/export the slit baffle (§7.8); optionally write its design-doc figure or display it in OCP CAD Viewer."""
+"""Build/export the slit baffle (§6.8); optionally write its design-doc figure or display it in OCP CAD Viewer."""
 
 import argparse
 from pathlib import Path

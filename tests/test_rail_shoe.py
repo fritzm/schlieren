@@ -142,7 +142,7 @@ class RailShoeTests(unittest.TestCase):
         )
 
     def test_side_screws_seat_on_washers_at_the_side_holes_and_reach_the_t_nuts(self):
-        # Measured slot (design §4.1), not the generic profile.
+        # Measured slot (design §3.1), not the generic profile.
         p, rail = self.p, RailProfile(slot_depth=6.45, lip_thickness=1.65)
         parts = reference_children(self.shoe, p)
         for side, name in ((-1, "left"), (1, "right")):

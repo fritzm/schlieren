@@ -1,4 +1,4 @@
-"""Mirror cell, design §11: three plywood plates, three Kozak fine-adjustment stations, the mirror.
+"""Mirror cell, design §10: three plywood plates, three Kozak fine-adjustment stations, the mirror.
 
 The stationary plate (1/2 in) and the base plate (1/2 in) are joined by two angle brackets; the 3/4 in mirror
 plate, a truncated hexagon with a Ø8-1/8 in aperture, carries the mirror and is tilted against the stationary
@@ -19,7 +19,7 @@ dovetail section from caliper measurements, its length, thickness, through slot,
 seller's dimensioned image. Its screw hardware is removed in this application. Its four M4 screws are
 envelopes (catalog head and shank sizes) in countersunk base holes and tapped plate holes drawn at the nominal
 thread. Not drawn: the plate's pads, the RTV pad phasing (arbitrary: 0°, 60°, ...), the safety retainers and
-transport sandwich (§11.8, not yet designed), and the 1/8 in alignment guide holes (drilled out by the final
+transport sandwich (§10.8, not yet designed), and the 1/8 in alignment guide holes (drilled out by the final
 5/16 in hole).
 
 Coordinates: origin at the middle of the base's front edge, on its top surface. +x is right looking along +y,
@@ -115,7 +115,7 @@ STATIONS = {"top": 90.0, "left": 210.0, "right": 330.0}  # Adjuster axes, degree
 
 @dataclass(frozen=True)
 class MirrorCellParameters:
-    # §11.1 plates.
+    # §10.1 plates.
     plate_width: float = 11.5 * INCH
     stationary_plate_height: float = 11.0 * INCH
     stationary_plate_thickness: float = 0.5 * INCH
@@ -133,16 +133,16 @@ class MirrorCellParameters:
     aperture_diameter: float = 8.125 * INCH
     base_clearance: float = 0.375 * INCH  # Trimmed lower edge of the mirror plate above the base top.
 
-    # §11.2-§11.4 holes and sockets.
+    # §10.2-§10.4 holes and sockets.
     bushing_bore: float = 8.0
     stationary_hole_diameter: float = 5 / 16 * INCH
     seat_counterbore_diameter: float = 5 / 8 * INCH  # Forstner cutter.
     seat_counterbore_depth: float = 1 / 32 * INCH
-    # Close free fit: 1/2 in Forstner, lightly dressed with a file (§11.4); a nominal allowance.
+    # Close free fit: 1/2 in Forstner, lightly dressed with a file (§10.4); a nominal allowance.
     socket_diametral_clearance: float = 0.2
     socket_depth: float = 1 / 16 * INCH
 
-    # §11.3 springs and seat washers (McMaster 2022N186, 98017A199 catalog values).
+    # §10.3 springs and seat washers (McMaster 2022N186, 98017A199 catalog values).
     spring_od: float = 0.5 * INCH
     spring_id: float = 0.424 * INCH
     # Visualization only: the catalog gives no coil count. 4.3 turns is the 13 lbf/in rate worked back through
@@ -152,10 +152,10 @@ class MirrorCellParameters:
     seat_washer_id: float = 0.390 * INCH
     seat_washer_thickness: float = 0.032 * INCH  # Middle of the 0.028-0.036 in range.
 
-    # §11.7 bracket screws pass through the Ø8.33 mm bracket holes; the plywood holes are made the same size.
+    # §10.7 bracket screws pass through the Ø8.33 mm bracket holes; the plywood holes are made the same size.
     bracket_hole_diameter: float = MCMASTER_8681N11_HOLE_DIAMETER
 
-    # §11.9 CAMVATE sliding plate, roughly: the seller's dimensioned image gives the length, 12 mm thickness,
+    # §10.9 CAMVATE sliding plate, roughly: the seller's dimensioned image gives the length, 12 mm thickness,
     # and a through slot between the two end camera-screw positions 140 mm apart, and a V-notch in one end;
     # the dovetail section is caliper-measured. Its screw hardware is removed, and its pads and M4 holes are
     # not modeled. Provisional: the notch end (here the rear).
@@ -171,7 +171,7 @@ class MirrorCellParameters:
     qr_notch_width: float = 10.0
     qr_notch_depth: float = 4.0
 
-    # §11.9 plate screws: McMaster 92125A196, M4 × 0.7 × 18 mm, 90° flat-head screws (catalog head Ø8 mm), two
+    # §10.9 plate screws: McMaster 92125A196, M4 × 0.7 × 18 mm, 90° flat-head screws (catalog head Ø8 mm), two
     # stations 1.875 in from the nearer plate end and ±0.500 in from the centerline. Provisional: the base's
     # Ø4.5 mm clearance hole, the 0.2 mm the head sits below the surface, and the depth of the tapped holes
     # (drawn at the nominal Ø4 mm thread, not the 3.3 mm tap drill).
@@ -184,7 +184,7 @@ class MirrorCellParameters:
     qr_head_recess: float = 0.2
     qr_tapped_hole_depth: float = 8.0
 
-    # §11.5 mirror (Skyoptikst D203F1600): the 18 mm thickness is approximate and taken as the edge thickness.
+    # §10.5 mirror (Skyoptikst D203F1600): the 18 mm thickness is approximate and taken as the edge thickness.
     mirror_diameter: float = 203.0
     mirror_focal_length: float = 1600.0
     mirror_edge_thickness: float = 18.0

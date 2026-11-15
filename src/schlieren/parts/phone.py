@@ -1,14 +1,14 @@
-"""The cased iPhone 17, design §10.1.
+"""The cased iPhone 17, design §9.1.
 
-Frame: the §3.4 imaging-rail frame the phone is held in. The origin is the Main camera axis on the back plane
+Frame: the §2.4 imaging-rail frame the phone is held in. The origin is the Main camera axis on the back plane
 of the cased phone (y = 0): the top of the camera cover, which the lens aft end seats against; +x runs along
 the phone's length away from the near short edge, +y toward the mirror (out of the back), and z is up, across
 the phone's width, with the camera 27 mm from the upper long edge and the buttons' side below. So the phone is
-in landscape, screen aft, camera end toward the optical axis, as held in §10.1.
+in landscape, screen aft, camera end toward the optical axis, as held in §9.1.
 
 Three solids, and the assembly draws the flash and the camera glass rings in their own colors:
 
-- The bare phone, from Apple's drawing (docs/reference/Apple-iPhone-17.pdf) and the measurements in §10.1: the
+- The bare phone, from Apple's drawing (docs/reference/Apple-iPhone-17.pdf) and the measurements in §9.1: the
   149.61 x 71.45 x 7.95 mm body with the drawing's corner profile and glass edge; the camera plateau, 1.78 mm
   above the back glass, whose top face is blended into the glass by a concave fillet 2.62 mm wide (its foot is
   1.18 mm and 1.34 mm from the long and short edges); the two Ø16.00 camera glass rings, 3.45 mm above the back
@@ -136,7 +136,7 @@ class PhoneParameters:
     flash_diameter: float = 6.28
     flash_depth: float = 0.5  # Display only: the flash is flush with the back glass; this is its drawn disc.
 
-    # Measured in the case, §10.1.
+    # Measured in the case, §9.1.
     camera_height_above_edge: float = 60.6  # Main camera above the lower long edge.
     camera_inset_from_end: float = 34.3  # Main camera from the near short edge.
     case_depth: float = 0.540 * INCH  # Flat back of the case to its front.

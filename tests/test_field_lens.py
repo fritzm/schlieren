@@ -1,5 +1,5 @@
 """Field lens station: lens seating and placement, clearances to the slit head, the beam through the tube, and
-the optics that set the lens (design §§6.3, 8)."""
+the optics that set the lens (design §§2.6–2.7, 7)."""
 
 import math
 import unittest
@@ -127,7 +127,7 @@ class FieldLensTests(unittest.TestCase):
 
     def test_optics_rest_on_the_light_source_geometry(self):
         p = self.p
-        # The iris leaves sit about 150 mm behind the slit (§6.3): the condenser stack puts them about 9.4 mm
+        # The iris leaves sit about 150 mm behind the slit (§5.3): the condenser stack puts them about 9.4 mm
         # ahead of the lens's convex vertex.
         self.assertAlmostEqual(p.iris_to_slit, LightSourceParameters().iris_to_slit, delta=1e-9)
         self.assertAlmostEqual(p.iris_to_slit, 149.6, delta=0.1)
@@ -233,7 +233,7 @@ class FieldLensTests(unittest.TestCase):
         )
         ring = moved(thorlabs_sm1rc_m(), Pos(0, p.clamp_ring_y, s.optical_height))
         shoe = moved(build_rail_shoe(), Pos(0, p.post_y, 0))
-        # The project's clearance from rotating parts to a post and shoe (§7.5); the tube's own clearances over
+        # The project's clearance from rotating parts to a post and shoe (§6.5); the tube's own clearances over
         # the folds and from the fingers are the design clearances its position is set by.
         fixed = {
             "post": (post, s.post_clearance),

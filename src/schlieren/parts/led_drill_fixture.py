@@ -1,6 +1,6 @@
-"""Drilling fixture for the LED module's SM1CP2M cap and CN40-40B heatsink; canonical design §6.8.
+"""Drilling fixture for the LED module's SM1CP2M cap and CN40-40B heatsink; canonical design §5.2.
 
-One printed bushing plate carries the §6.4 hole layout in press-fit steel drill bushings. Two printed nests hold
+One printed bushing plate carries the §5.2 hole layout in press-fit steel drill bushings. Two printed nests hold
 the part under it: the cap nest holds the cap by its flange, and the heatsink nest holds the heatsink by the
 channels between its pins. The plate seats on the top of either nest, so one plate drills both parts and their
 M3 and lead holes agree by construction.
@@ -126,7 +126,7 @@ class Bushing:
     model: Callable[[], Compound]  # The vendor STEP model: z from 0 to length, chamfered end up.
 
 
-# One size per hole kind; each bore is the drill that makes the hole in the cap (§6.4).
+# One size per hole kind; each bore is the drill that makes the hole in the cap (§5.2).
 BUSHINGS = {
     "m2": Bushing(
         "96990A132",

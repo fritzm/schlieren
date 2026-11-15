@@ -1,19 +1,19 @@
-## 7. Source slit
+## 6. Source slit
 
 The source slit is a pair of razor blades, one on the table of a purchased 40 × 40 mm linear stage and one on a
 printed pedestal, with the stage's micrometer setting the slit width. The head is mounted for continuous
 rotation about the optical axis in an SM1RC/M on the common post and rail shoe
-([§5](05-post-support.md#5-rail-mounted-posts)). A baffle behind it on the source side is clamped on the
-head's spigot and turns with it ([§7.8](#78-baffle)), a field lens on a post of its own ahead of the blades
-makes the mirror illumination uniform ([§8](08-field-lens.md#8-field-lens)), and a printed focus target stands in for the
-head to focus the LED image ([§7.7](#77-slit-focus-target)).
+([§4](04-post-support.md#4-rail-mounted-posts)). A baffle behind it on the source side is clamped on the
+head's spigot and turns with it ([§6.8](#68-baffle)), a field lens on a post of its own ahead of the blades
+makes the mirror illumination uniform ([§7](07-field-lens.md#7-field-lens)), and a printed focus target stands in for the
+head to focus the LED image ([§6.7](#67-slit-focus-target)).
 
 The model is `src/schlieren/parts/slit_stage.py` (`uv run slit-stage`, with `--show` for the viewer assembly).
 
 The slit needs one adjustment, its width, and no interchangeable elements, so a purchased stage with a
-micrometer serves where the cutoff uses a carriage and cassettes ([§9](09-cutoff.md#9-cutoff)).
+micrometer serves where the cutoff uses a carriage and cassettes ([§8](08-cutoff.md#8-cutoff)).
 
-### 7.1 Blades and slit widths
+### 6.1 Blades and slit widths
 
 The slit uses two Stanley 11-515 backed single-edge scraper blades.
 
@@ -29,7 +29,7 @@ Measured physical blade dimensions:
 The blade has a slot at mid-length and a notch in each end, approximated in the CAD from a photograph (about
 ±0.3 mm); the slit and cassette fixtures do not rely on them. The CAD model is `parts/razor_blade.py`.
 
-Expected operating slit widths are 0.10–0.30 mm, starting around 0.15–0.20 mm.
+The working slit widths are in [§2.7](01-context-and-layout.md#27-slit-and-field-lens).
 
 Each blade lies on its fold, flat on its seat, the stage table or the pedestal, cutting edge toward the slit and
 overhanging the seat edge by 2.9 mm. The fold's outer layers stand 0.38 mm proud of the plate's faces, so with the
@@ -40,7 +40,7 @@ and seated alike, so their edges lie at the same height, collinear were the slit
 of the two folds' thicknesses. The 12.6 mm of plate in front of the fold is a stiff cantilever: calculated, its own
 weight deflects it by about 0.2 µm and its first resonance is about 1.3 kHz.
 
-### 7.2 Architecture
+### 6.2 Architecture
 
 The head is a stage plate carrying the stage and a pedestal:
 
@@ -57,7 +57,7 @@ of the plate front. In this section "front" and "back" refer to the head, not to
 The head's front faces the mirror. The light comes from the source side through the baffle and the plate's
 Ø24 mm bore and passes the stage's edge to reach the slit from behind, so the spigot, ring, and post are on the
 light-source side of the blades. The source cone is ±2° about the chief ray and the lit slit length extends to ±7.8 mm
-([§6.3](06-light-source.md#63-condenser-optics)); the stage and pedestal edges keep 1.65 mm from the cone.
+([§2.2](01-context-and-layout.md#22-source-cone), [§2.6](01-context-and-layout.md#26-condenser-and-iris)); the stage and pedestal edges keep 1.65 mm from the cone.
 
 <p align="center">
   <img src="figures/slit-stage.png" width="300" style="max-width: 90%"
@@ -69,44 +69,40 @@ light-source side of the blades. The source cone is ±2° about the chief ray an
     micrometer up</em>
 </p>
 
-### 7.3 Slit width
+### 6.3 Slit width
 
 - drive: the stage's micrometer, moving the table and so the movable blade; travel ±6.5 mm (manufacturer);
-- the slit is 0.2 mm in the model, within the 0.10–0.30 mm working range of [§7.1](#71-blades-and-slit-widths).
+- the slit is 0.2 mm in the model, within the working range of [§2.7](01-context-and-layout.md#27-slit-and-field-lens).
 
 There is no centering stage. Only the movable blade moves, so a width change shifts the slit center by half the
-change. The iris is about 150 mm before the slit, so moving the slit by d turns the illumination cone by d/150;
-at the mirror the beam moves about 22 × d. A 0.1 mm width change therefore moves the slit center 0.05 mm and
-the beam about 1 mm at the mirror, which needs no recentering (the cutoff is readjusted for any width change
-in any case). With the field lens ([§8](08-field-lens.md#8-field-lens)) in place, imaging the iris onto the mirror, the beam
-stays centered there.
+change; the effect on the illumination is in [§2.7](01-context-and-layout.md#27-slit-and-field-lens).
 
 Slit setup:
 
 1. with both toe bars loose, bring the movable blade to the pedestal blade with the micrometer;
-2. seat both blades and clamp them progressively ([§7.4](#74-blade-clamping));
+2. seat both blades and clamp them progressively ([§6.4](#64-blade-clamping));
 3. set the width against a true-metric feeler gauge between the cutting edges, pressing gently along their
    length;
 4. thereafter set the width with the micrometer from that reference. Re-check parallelism with the gauge after
    large width changes.
 
-### 7.4 Blade clamping
+### 6.4 Blade clamping
 
 Each blade is held on its seat by a printed PLA toe bar. One bar sits on the stage table and one on the
 pedestal; each is screwed down at its two ends into the stage's M3 table holes (second row, 16 mm pitch) or
 into M3 heat-set inserts (McMaster 97171A310) in the pedestal. The bar's finger runs the length of the blade and
 presses the rear 3 mm of the blade's fold flat onto the seat through a strip of 1/32 in EPDM (McMaster 9852N37,
-the stock of [§4.3](04-frame.md#43-pivot-and-yaw-hardware)). The finger does not touch the plate or the cutting
+the stock of [§3.3](03-frame.md#33-pivot-and-yaw-hardware)). The finger does not touch the plate or the cutting
 edge, and no blade is drilled.
 
 The clamp holds the blade only against its own weight and handling and alignment loads, a small force, and the
 fold is stiff. The toe's squeeze on the EPDM pad is 0.3 mm, which puts the finger's underside 1.51 mm above the
 seat plane: the fold's 1.02 mm plus the compressed pad. The finger's slit-side face stands 16.2 mm from the
-optical axis, 1 mm clear of the Ø30.5 mm body of the field-lens tube ([§8](08-field-lens.md#8-field-lens)), which stands
+optical axis, 1 mm clear of the Ø30.5 mm body of the field-lens tube ([§7](07-field-lens.md#7-field-lens)), which stands
 between the two fingers over the axis; the head turns about that axis, so the fingers clear the tube at every
 angle. The common McMaster 91292A114 M3 × 12 mm screw is used.
 
-### 7.5 Rotation mount and clearances
+### 6.5 Rotation mount and clearances
 
 The stage bolts to the plate front with four M3 screws on its 32 mm base-hole pitch, with captive M3 nuts (the
 common 91828A211) in pockets in the plate rear. The pedestal is screwed to the plate from the rear into two M3
@@ -119,20 +115,20 @@ Do not clamp the ring away from the shoulder. The nut pockets reach inside the s
 is restored behind the shoulder and roofs them, and the ring grips a full cylinder.
 
 The spigot runs the ring's full thickness and protrudes 12 mm past its source face, where the baffle's clamp
-([§7.8](#78-baffle)) grips it; the ring clamps nothing else. The SM1RC/M keeps the 22.1 mm
-post-top-to-axis dimension ([§5.1](05-post-support.md#51-post-and-shim)). Loosening the ring rotates the whole
+([§6.8](#68-baffle)) grips it; the ring clamps nothing else. The SM1RC/M keeps the 22.1 mm
+post-top-to-axis dimension ([§4.1](04-post-support.md#41-post-and-shim)). Loosening the ring rotates the whole
 head about the optical axis:
 
 - rotation 0: horizontal slit, micrometer up;
 - ±90°: vertical slit, micrometer sideways. With the micrometer toward the imaging rail it reaches the cutoff
   carriage's base plate unless the cutoff is staggered behind the slit by about 16 mm or more (the 30–40 mm
-  starting stagger of [§3.3](01-context-and-layout.md#33-sourceimager-offset) clears it by about 20 mm); turned outboard it clears at
+  starting stagger of [§2.3](01-context-and-layout.md#23-sourceimager-offset) clears it by about 20 mm); turned outboard it clears at
   any stagger;
 - small rotations: slit-to-cutoff parallelism trim.
 
 The rotation sweep clears the post, ring, and rail shoe in the tests.
 
-### 7.6 Fabrication and fit
+### 6.6 Fabrication and fit
 
 Printed parts: the stage plate, the pedestal, and two toe bars.
 
@@ -152,23 +148,23 @@ Hardware: the stage, 4 × M3 × 10 mm screws (91292A113, stage to plate), 4 × M
   flange thickness are to be measured, and the base mounting holes (four M3, counterbored) are assumed reachable
   from the table side.
 - The blade overhang and the toe bar's squeeze on the EPDM pad (0.3 mm) are first-print values, as is how flat
-  the stamped folds lie on the seats and under the pad ([§7.1](#71-blades-and-slit-widths),
-  [§7.4](#74-blade-clamping)).
+  the stamped folds lie on the seats and under the pad ([§6.1](#61-blades-and-slit-widths),
+  [§6.4](#64-blade-clamping)).
 - The M3 × 10 mm stage screws leave about 1 mm of thread behind the plate, 2.5 mm short of the ring face, with
   the thread still showing past the nut; the length rests on the stage's base flange thickness, which is not yet
   measured.
 
 
-### 7.7 Slit focus target
+### 6.7 Slit focus target
 
-The emitter image is focused on the slit plane ([§6.3](06-light-source.md#focus)), but
+The emitter image is focused on the slit plane ([§5.3](05-light-source.md#focus)), but
 the blades of the head sit deep in the stage and cannot be seen. A printed focus target swaps in for the
 stage plate on the same SM1RC/M ring: the same shoulder, ring gap, and spigot grip, then a hollow barrel that
 widens to a Ø40 mm rim whose face is the plane of the blades' cutting edges, 0.51 mm ahead of the blade-seat plane
-([§7.1](#71-blades-and-slit-widths)). The Ø24 mm bore tapers in at 45° to Ø20 mm at the
+([§6.1](#61-blades-and-slit-widths)). The Ø24 mm bore tapers in at 45° to Ø20 mm at the
 rim face, which gives the paper or glass a wide seat and the insert recesses a thicker wall; the beam there is
 about Ø11 mm. The target's spigot ends flush with the ring's source face, so the baffle
-([§7.8](#78-baffle)) is taken off the plate's spigot first: loosen its clamp screw and slide it off. The focus
+([§6.8](#68-baffle)) is taken off the plate's spigot first: loosen its clamp screw and slide it off. The focus
 models do not show it. The models are
 `src/schlieren/parts/slit_focus_target.py` (`uv run slit-focus-target`, with `--show` for the paper variant and
 `--show --glass` for the ground-glass one).
@@ -196,7 +192,7 @@ screws. The glass is set on the rim, then the gasket, then the ring over both; t
 rim, outside the Ø20 mm seat bore. **Provisional:** the pocket clearance is to be set from a printed coupon, and the grit
 (DG10-600 to start) is to be confirmed on the bench.
 
-### 7.8 Baffle
+### 6.8 Baffle
 
 A baffle sits on the source side of the slit head, on the optical axis: one printed part, a clamp ring on the
 plate's spigot followed by a lattice tube that carries a matte black foil wrap. It is built from the spigot out,
@@ -212,7 +208,7 @@ so the posts, shoes, and optical-mechanical rings of the other stations are not 
 </p>
 
 **Motivation.** The condenser focuses the LED image, about 10 mm across, on the blades
-([§6.3](06-light-source.md#63-condenser-optics)), and a slit of 0.10–0.30 mm passes only a small fraction of it.
+([§2.6](01-context-and-layout.md#26-condenser-and-iris)), and a slit of 0.10–0.30 mm passes only a small fraction of it.
 The blades return the remainder, and the head's lit surfaces scatter some of it. That light goes back toward
 the source as a broad cloud, strikes the bare post, the source hardware, and the table behind the head, and is
 forwarded by them, glossy surface to glossy surface, toward the mirror and the operator at the imaging
@@ -220,18 +216,16 @@ station. The cloud lights the room and adds veiling glare to the image. A tube i
 confines the return to the direction of the LED: it travels back through the bore toward the iris, and the
 rest meets the black walls and vanes.
 
-**Beam.** The baffle bounds the light but does not stop down the beam. The beam on the source side of the slit
-lies between the iris aperture (about Ø10 mm, [§6.3](06-light-source.md#63-condenser-optics))
-and the lit slit length (to ±7.8 mm), so it is about Ø16 mm over the whole baffle, with the ±2° cone about the chief
-ray inside that envelope. The Ø25 mm bore leaves about 4.5 mm of radius all around, and is no narrower than the plate's
-Ø24 mm spigot bore, so no alignment tolerance clips the beam, and the length is set by the clamp and the
-distance to the iris, not by the beam. It ends 81 mm from the ring's source face, about 21 mm short of the iris housing.
-At the slit end the beam is bounded by the head instead, not the baffle: the stage and pedestal edges keep 1.65
-mm from the cone ([§7.2](#72-architecture)).
+**Beam.** The baffle bounds the light but does not stop down the beam, which is about Ø16 mm over the whole baffle
+([§2.7](01-context-and-layout.md#27-slit-and-field-lens)). The Ø25 mm bore leaves about 4.5 mm of radius all around,
+and is no narrower than the plate's Ø24 mm spigot bore, so no alignment tolerance clips the beam, and the length is
+set by the clamp and the distance to the iris, not by the beam. It ends 81 mm from the ring's source face, about
+21 mm short of the iris housing. At the slit end the beam is bounded by the head instead, not the baffle: the stage
+and pedestal edges keep 1.65 mm from the cone ([§6.2](#62-architecture)).
 
 **Mount.** The plate's spigot protrudes 12 mm past the SM1RC/M's source face. The baffle's clamp ring, 12.5 mm
 long, fits over that end and butts the ring's face, which sets its axial position. The clamp is built as the
-rail shoe's collar is ([§5.2](05-post-support.md#52-rail-shoe)): a Ø30.68 mm bore (0.20 mm diametral clearance
+rail shoe's collar is ([§4.2](04-post-support.md#42-rail-shoe)): a Ø30.68 mm bore (0.20 mm diametral clearance
 on the spigot), a 1.5 mm split along the top, and ears with one M3 × 12 mm screw (91292A114) and a captured M3
 nut (91828A211), 3.5 mm ear on the screw side and 4.5 mm on the nut side. The slit ends in a Ø3.5 mm round
 relief hole in the solid collar behind the clamp bore, so the ring closes on the spigot without cracking at the

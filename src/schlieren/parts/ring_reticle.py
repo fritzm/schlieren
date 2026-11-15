@@ -1,5 +1,5 @@
 """Sighting reticle for the cutoff post's SM1RC/M ring: a printed tube with a crosshair at each end, used to
-center the telephoto's front glass on the optical axis with the cutoff carriage out (design §10.9).
+center the telephoto's front glass on the optical axis with the cutoff carriage out (design §9.9).
 
 The tube is two identical printed halves that snap together once. It slides into the ring from the front, in
 place of the carriage's spigot, and the ring clamps it wherever it is slid to: nothing locates it along the
@@ -21,7 +21,7 @@ along the rail toward the mirror and z is up, so the rail's top is OPTICAL_HEIGH
 
 **Provisional:** the snap (ridge height, groove depth and clearances, set from a print of one half), the Ø25.5
 mm bore, which leaves 1.14 mm shells, and the tube's position along the axis, which the ring's clamp sets by
-eye. §10.9 does not describe this part yet.
+eye. §9.9 does not describe this part yet.
 """
 
 from dataclasses import dataclass
@@ -81,7 +81,7 @@ class RingReticleParameters:
     # A fillet "fin" where each hair meets the bore wall, on the hair's open face only (its other face is flush
     # with the end of the tube): as wide as the hair, rising this far along the wall, parallel to the axis.
     hair_top_fillet_radius: float = 1.0
-    circle_diameter: float = 21.5  # The telephoto's front glass (§10.2): an aid for judging centering.
+    circle_diameter: float = 21.5  # The telephoto's front glass (§9.2): an aid for judging centering.
     min_wall_under_groove: float = 0.6
     min_groove_root_margin: float = 0.5
 
@@ -305,7 +305,7 @@ def build_ring_reticle(p: RingReticleParameters | None = None) -> Compound:
 
 def lens_clearance(p: RingReticleParameters, offset: float = 0.0):
     """From the aft crosshair to the lens front, with the tube centered on the ring and moved ahead by offset.
-    The lens front stands the assumed LENS_TO_SPLIT_RING behind the ring's rear face (§10.3)."""
+    The lens front stands the assumed LENS_TO_SPLIT_RING behind the ring's rear face (§2.9)."""
     return LENS_TO_SPLIT_RING + SM1RC_M_THICKNESS / 2 - p.unit_length / 2 + offset
 
 

@@ -1,13 +1,13 @@
-"""Tabletop optical frame; design §4.
+"""Tabletop optical frame; design §3.
 
 Two yaw-adjustable 2020 rails pivoted on the plywood front pivot plate, each with a pivot lug, a fixed yaw
 strap, and a rear rail-support block; three Sorbothane feet. Nothing here is printed: the plywood parts are
 cut and drilled, everything else is purchased.
 
-Coordinates: the §3.4 pivot frame. The origin is at the midpoint of the aft plate edge, +y toward the mirror
+Coordinates: the §2.4 pivot frame. The origin is at the midpoint of the aft plate edge, +y toward the mirror
 along the plate centerline, +x to the right seen from above with the mirror ahead, and z up with the rail top
 at z=0; the plate lies at positive y and the rails run aft of it to negative y. A rail has side -1 (left, x<0,
-the source rail) or +1 (right, the imaging rail). Each rail assembly is built in its §3.4 rail frame, the same
+the source rail) or +1 (right, the imaging rail). Each rail assembly is built in its §2.4 rail frame, the same
 senses with y along that rail and the origin at its pivot.
 
 The thumb nuts, feet, block screws, and block washers are the vendor models. Other fasteners, washers, and
@@ -49,7 +49,7 @@ SIDES = {"Left": -1, "Right": 1}
 # checks.
 M5_SHANK_DIAMETER = 5.0
 M5_WASHER_DIAMETER = 10.0
-# The block washers are from the general M5 assortment (§4.4), not a purchased McMaster part; the
+# The block washers are from the general M5 assortment (§3.4), not a purchased McMaster part; the
 # 93475A240 model stands in for them, and its 1.0 mm is the nominal thickness, not a measurement.
 M5_WASHER_THICKNESS = MCMASTER_93475A240_THICKNESS
 M5_NYLOC_HEIGHT = MCMASTER_93625A225_HEIGHT
@@ -57,7 +57,7 @@ M5_NYLOC_HEIGHT = MCMASTER_93625A225_HEIGHT
 
 @dataclass(frozen=True)
 class FrameParameters:
-    # Rails (§4.1); slot dimensions are the measured values.
+    # Rails (§3.1); slot dimensions are the measured values.
     rail_size: float = 20.0
     rail_length: float = 400.0
     rail_slot_mouth_width: float = 6.55
@@ -65,7 +65,7 @@ class FrameParameters:
     rail_slot_depth: float = 6.45
     rail_slot_lip_thickness: float = 1.65
 
-    # Front pivot plate (§§3.3, 4.2).
+    # Front pivot plate (§§2.3, 3.2).
     mirror_distance: float = 3200.0
     pivot_separation: float = 95.0
     pivot_setback: float = 25.0  # Pivot line (and front foot) aft of the mirror-facing edge.
@@ -75,7 +75,7 @@ class FrameParameters:
     yaw_station: float = 90.0  # Strap center aft of the pivot, along the nominal rail axis.
     m5_clearance_diameter: float = 5.5
 
-    # Pivot and yaw hardware (§4.3).
+    # Pivot and yaw hardware (§3.3).
     joining_plate_length: float = 60.0
     joining_plate_width: float = 18.0
     joining_plate_thickness: float = 4.0
@@ -89,7 +89,7 @@ class FrameParameters:
     friction_strip_thickness: float = INCH / 32
     friction_strip_length: float = 30.0
 
-    # Rear support and feet (§4.4).
+    # Rear support and feet (§3.4).
     rail_support_block_length: float = 75.0  # Along the rail.
     rail_support_block_width: float = 50.0
     block_screw_spacing: float = 50.0

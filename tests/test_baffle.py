@@ -1,4 +1,4 @@
-"""Slit baffle (§7.8): clamp, relief, collars, net windows, foil, and parameter invariants."""
+"""Slit baffle (§6.8): clamp, relief, collars, net windows, foil, and parameter invariants."""
 
 import unittest
 from dataclasses import replace

@@ -1,4 +1,4 @@
-"""Drilling layout drawing of the mirror-cell base plate; design §11.7 and §11.9.
+"""Drilling layout drawing of the mirror-cell base plate; design §10.7 and §10.9.
 
 A plan view from above as a full-scale SVG (one user unit is 1 mm), for laying out and drilling the plywood.
 The sheet is 11 × 17 in (tabloid), landscape. Hole positions are dimensioned as ordinates in the cell frame: x

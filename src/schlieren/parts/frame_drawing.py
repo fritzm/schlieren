@@ -1,7 +1,7 @@
-"""Drilling layout drawing of the front pivot plate; design §4.2.
+"""Drilling layout drawing of the front pivot plate; design §3.2.
 
 A plan view from above as a full-scale SVG (one user unit is 1 mm), for laying out and drilling the plywood.
-Hole positions are dimensioned as ordinates in the §4.2 plate coordinates (the §3.4 pivot frame): x from the
+Hole positions are dimensioned as ordinates in the §3.2 plate coordinates (the §2.4 pivot frame): x from the
 plate centerline and y from the aft edge.
 
 The sheet is drawn with the mirror-facing edge at the top, so +y runs up the sheet and +x to the right, as
@@ -117,7 +117,7 @@ def pivot_plate_drawing_svg(p: FrameParameters | None = None) -> str:
     )
     text(sx(p.plate_width - 2), sy(2), "aft edge", "end", SMALL_FONT_SIZE)
 
-    # Plate centerline, the x origin of the §4.2 plate coordinates.
+    # Plate centerline, the x origin of the §3.2 plate coordinates.
     center = p.plate_width / 2
     line(sx(center), PLATE_TOP - ORDINATE_GAP, sx(center), bottom + ORDINATE_GAP, "centerline")
     text(sx(center) + FONT_SIZE * 0.35, bottom + ORDINATE_GAP + TEXT_GAP, "0 CL", "end", turn=-90)

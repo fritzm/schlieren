@@ -1,4 +1,4 @@
-"""Export the stage-mounted slit head parts (§7); print its layout; optionally render or show it."""
+"""Export the stage-mounted slit head parts (§6); print its layout; optionally render or show it."""
 
 import argparse
 from pathlib import Path

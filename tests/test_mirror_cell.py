@@ -1,4 +1,4 @@
-"""Engineering invariants for the mirror cell model (design §11)."""
+"""Engineering invariants for the mirror cell model (design §10)."""
 
 import unittest
 import xml.etree.ElementTree as ET

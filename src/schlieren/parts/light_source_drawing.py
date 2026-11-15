@@ -1,4 +1,4 @@
-"""Drawing of the LED module hole layout; design §6.4.
+"""Drawing of the LED module hole layout; design §5.2.
 
 A full-scale SVG (one user unit is 1 mm) in the plan view from the LED side of
 `schlieren.parts.light_source_holes`: the design-doc figure of the layout, with heatsink pins, cap, star board,
