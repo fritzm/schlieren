@@ -1,4 +1,4 @@
-"""Light source stack-up: threaded LED module, condenser, and iris on one SMR1/M; canonical design §5.
+"""Light source stack-up: threaded LED module, condenser, and iris on one SMR1/M.
 
 The LED star board mounts on a Thorlabs SM1CP2M externally threaded end cap, which threads into the LED-side
 face of the SMR1/M and seats on its knurled flange. An Alpha CN40-40B pin-fin heatsink is bolted to the rear
@@ -7,11 +7,11 @@ is locked by its SM1NT ring; its thread engagement is the focus adjustment. The 
 SM1V05 open end and the SM1D12 iris into the SM1L03, so lens, tube, and iris move together with focus.
 
 Axial coordinate u (mm): u=0 at the LED-side face of the SMR1/M, +u toward the slit. Assembly coordinates: the
-§2.4 source rail frame, x transverse, +y along u (toward the mirror), z=0 at the rail top. Nothing here is
+source rail frame, x transverse, +y along u (toward the mirror), z=0 at the rail top. Nothing here is
 printed; the solids are vendor STEP models (Thorlabs TR50/M, SMR1/M, SM1CP2M, SM1V05, ACL2520U-A, SM1L03,
 SM1D12; Alpha CN40-40B) or, for the star board and LED package, representative solids built from the outline
 drawings, for viewing and clearance checks. The SM1L03's own retaining ring is not modeled: the iris thread
-occupies its place at the tube's open end. The cap and the heatsink base carry the §5.2 holes
+occupies its place at the tube's open end. The cap and the heatsink base carry the holes
 (`light_source_holes`), with the McMaster heatsink screws, board screws, and insulating washers as vendor
 models; the leads are not modeled. Dimension sources are noted per field: catalog values are from the drawings
 in docs/reference/.
@@ -67,7 +67,7 @@ BOARD_WASHER_LABEL = "M2 board washer"  # One under each board screw head, numbe
 LED_MODULE_LABEL = "LED module"  # The heatsink, cap, star board, LED package, and their fasteners.
 WHOLE_IN_SECTION = (LED_MODULE_LABEL, "ACL2520U-A condenser")  # Shown entire in light_source_section.
 SECTION_BOX_SIZE = 1000.0  # Cutting box for light_source_section; larger than the module.
-# The LED image's shoulder, measured on the wall with the iris open and the slit removed (§2.6): its half-extent
+# The LED image's shoulder, measured on the wall with the iris open and the slit removed: its half-extent
 # and the vertex-to-slit distance of the conjugates it was measured at. **Provisional**, to be recalibrated from
 # a dimmed image.
 LIT_SHOULDER_MEASURED_HALF_LENGTH = 7.5
@@ -136,7 +136,7 @@ MODULES = (GREEN, WHITE)
 
 @dataclass(frozen=True)
 class LightSourceParameters:
-    # Frozen project datum (§2.4).
+    # Frozen project datum.
     optical_height: float = OPTICAL_HEIGHT
     datum_thickness: float = DATUM_SHIM_THICKNESS
     # Thorlabs TR50/M: metric-primary; its STEP model is rounded to inches (1.969 in, 0.499 in), so the metric
@@ -172,16 +172,16 @@ class LightSourceParameters:
     lens_retaining_ring_seat: float = 4.30
     # Setup value: rear principal plane (convex vertex) to slit. The iris-to-slit distance follows from it
     # (`iris_to_slit`), about 9.4 mm less; it is the distance at which the field lens images the iris onto the
-    # mirror (§2.7, `FieldLensParameters.aimed_iris_to_slit`), which sets the condenser's conjugates.
+    # mirror (`FieldLensParameters.aimed_iris_to_slit`), which sets the condenser's conjugates.
     lens_to_slit: float = 159.0
     # Alpha CN40-40B (diameter +0/-0.5; use the maximum).
     heatsink_diameter: float = 40.0
     heatsink_height: float = 40.0
     heatsink_base: float = 3.0
-    # McMaster 91292A111 M3 × 6 mm socket-head heatsink screws; **provisional** length (§5.2).
+    # McMaster 91292A111 M3 × 6 mm socket-head heatsink screws; **provisional** length.
     heatsink_screw_length: float = MCMASTER_91292A111_LENGTH
     heatsink_screw_head_height: float = MCMASTER_91292A111_HEAD_HEIGHT
-    # McMaster 92095A453 M2 × 6 mm button-head board screws, each on a 91545A410 nylon washer (§5.2).
+    # McMaster 92095A453 M2 × 6 mm button-head board screws, each on a 91545A410 nylon washer.
     board_screw_length: float = MCMASTER_92095A453_LENGTH
     board_screw_head_height: float = MCMASTER_92095A453_HEAD_HEIGHT
     board_washer_thickness: float = MCMASTER_91545A410_THICKNESS
@@ -231,7 +231,7 @@ class LightSourceParameters:
 
     @property
     def iris_to_slit(self):
-        """The iris leaves to the slit, which the iris setting and the field lens (§2.7, §5.3) rest on."""
+        """The iris leaves to the slit, which the iris setting and the field lens rest on."""
         return self.lens_to_slit - self.vertex_to_iris
 
     # Axial positions (u) of the parts that move with the SM1V05 focus engagement.

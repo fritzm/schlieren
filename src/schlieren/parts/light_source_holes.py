@@ -1,4 +1,4 @@
-"""Hole layout of the LED module's SM1CP2M cap and CN40-40B heatsink base; canonical design §5.2.
+"""Hole layout of the LED module's SM1CP2M cap and CN40-40B heatsink base.
 
 Plan view from the LED side with the origin on the optical axis, +x to the right and +y up, in the frame of
 the heatsink's pin lattice. The cap, the star board, and the heatsink are all described in this one frame, so
@@ -28,7 +28,7 @@ STAR_NOTCH_COUNT = 6
 STAR_NOTCH_WIDTH = 0.125 * INCH  # The closed end is an arc of this diameter (a 1/8 in drill fits it).
 STAR_NOTCH_CENTER_RADIUS = 0.375 * INCH
 # The M2 screws sit inboard of the notch's arc center. The notch's closed end is at r = 7.93 to 7.98 mm on the
-# measured boards (§5.2), so the Ø2 shank keeps at least 0.3 mm of play for centering the emitter, while the
+# measured boards, so the Ø2 shank keeps at least 0.3 mm of play for centering the emitter, while the
 # washer's outer edge moves in from the cap's thread relief.
 M2_SCREW_RADIUS = 9.30
 # Measured with calipers (inches): across two opposite notches' closed ends, the mean of three readings per

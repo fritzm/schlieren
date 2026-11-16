@@ -1,4 +1,4 @@
-"""Print the field lens station's placement and optics (§7); optionally render or show it with the slit head."""
+"""Print the field lens station's placement and optics; optionally render or show it with the slit head."""
 
 import argparse
 from pathlib import Path

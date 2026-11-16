@@ -1,4 +1,4 @@
-"""Engineering invariants for the telephoto lens model (design §9.2)."""
+"""Engineering invariants for the telephoto lens model."""
 
 import unittest
 from itertools import pairwise
@@ -200,7 +200,7 @@ class LensTests(unittest.TestCase):
 
     def test_boss_is_a_ring_with_the_glass_inset_from_its_end(self):
         p, glass = self.p, self.glass.bounding_box()
-        self.assertAlmostEqual(glass.min.Y, 0.05 * INCH, delta=TOL)  # Measured, §9.2.
+        self.assertAlmostEqual(glass.min.Y, 0.05 * INCH, delta=TOL)  # Measured
         self.assertAlmostEqual(glass.size.X, p.thread_diameter - 2 * 0.10 * INCH, delta=TOL)  # Ring width.
         self.assertAlmostEqual(glass.size.X, p.boss_bore_diameter, delta=TOL)
 

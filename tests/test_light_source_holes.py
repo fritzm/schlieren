@@ -23,7 +23,7 @@ M2_MIN_CENTERING_PLAY = (
 )
 M2_MIN_HEAD_BEARING = 1.5  # mm², star board under the screw head.
 M2_MIN_WASHER_BEARING = 8.0  # mm², star board under the washer.
-M3_SCREW_LENGTH = 6.0  # §5.2, provisional.
+M3_SCREW_LENGTH = 6.0  # Provisional.
 HEATSINK_BASE = 3.0  # CN40 flat base; the M3 screws pass through it first.
 
 

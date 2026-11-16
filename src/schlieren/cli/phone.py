@@ -1,4 +1,4 @@
-"""Build/export the cased iPhone model (design §9.1); optionally display it in OCP CAD Viewer."""
+"""Build/export the cased iPhone model; optionally display it in OCP CAD Viewer."""
 
 import argparse
 

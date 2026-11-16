@@ -1,9 +1,9 @@
-"""Field lens station (design §7): a lens ahead of the source slit, on a post of its own.
+"""Field lens station: a lens ahead of the source slit, on a post of its own.
 
 The cone from each slit point is centered on the chief ray from the center of the iris, about 150 mm behind
 the slit (the condenser stack's, `LightSourceParameters.iris_to_slit`), so without a field lens the cones from
 points along the slit land displaced on the mirror, by more than the mirror's 101.5 mm radius at the lit end
-(§2.7). A positive lens just ahead of the slit images the iris onto the mirror instead, so every cone lands
+. A positive lens just ahead of the slit images the iris onto the mirror instead, so every cone lands
 centered on it. The lens is a Thorlabs LA1433-A (Ø1 in, N-BK7, plano-convex, f = 149.5 mm), and the slit is
 placed at the iris-to-slit distance its focal length needs (`aimed_iris_to_slit`); on the mirror side of the
 slit it leaves the condenser's conjugates, the lit length, and the focus target alone.
@@ -15,15 +15,15 @@ Parts:
   the mirror side. The tube's end stands just above the blades' folds, between the slit head's toe fingers,
   which stop short of its body (`slit_stage.toe_finger_face_z`); its internal lip sets the lens position and
   squares it;
-- SM1RC/M split ring on the common post stack (TR50/M on its datum shim in the printed rail shoe, §4),
+- SM1RC/M split ring on the common post stack (TR50/M on its datum shim in the printed rail shoe),
   clamping the tube's full-diameter section. The lens's alignment to the optical axis rests on the metal parts
   (post stack, ring, tube), not on a printed dimension, and the lens does not turn with the slit head.
 
-Frame: the §2.4 source rail frame as the other source fixtures, but with y = 0 at the slit's blade-seat plane
+Frame: the source rail frame as the other source fixtures, but with y = 0 at the slit's blade-seat plane
 (the slit head's local origin, `slit_stage.head_location`), +y toward the mirror: z = 0 at the rail top, the post
 on x = 0. `build_field_lens_head_assembly` shows it with the slit head.
 
-**Provisional:** the iris-to-slit distance the optics use (§2.7), the station along the rail (a setup value:
+**Provisional:** the iris-to-slit distance the optics use, the station along the rail (a setup value:
 the tube slides in its ring), and the iris setting, all to be confirmed from a flat-field photograph.
 """
 
@@ -72,7 +72,7 @@ class FieldLensParameters:
     lens_radius: float = LA1433_A_RADIUS
     lens_focal_length: float = LA1433_A_FOCAL_LENGTH
     lens_back_focal_length: float = LA1433_A_BACK_FOCAL_LENGTH
-    # What the lens works between (§2.7, §2.2): the iris behind the slit, the mirror ahead of it with the slit
+    # What the lens works between: the iris behind the slit, the mirror ahead of it with the slit
     # at its center of curvature, and the mirror's half-aperture.
     iris_to_slit: float = field(default_factory=lambda: LightSourceParameters().iris_to_slit)
     slit_to_mirror: float = 3200.0
@@ -185,7 +185,7 @@ class FieldLensParameters:
     @property
     def aimed_iris_to_slit(self):
         """The iris-to-slit distance at which this lens, at its position, images the iris onto the mirror, so
-        every slit point's cone centers there; the condenser's `lens_to_slit` is set to it (§2.6)."""
+        every slit point's cone centers there; the condenser's `lens_to_slit` is set to it."""
         h_object, h_image = self.principal_planes
         v = self.slit_to_mirror - self.lens_plano_y - h_image
         return 1 / (1 / self.lens_focal_length - 1 / v) - self.lens_plano_y - h_object

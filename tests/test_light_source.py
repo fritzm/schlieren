@@ -37,7 +37,7 @@ from schlieren.vendor_cad import (
     vendor_step,
 )
 
-USEFUL_GAP = (13.0, 17.0)  # §2.6: useful emitter-to-plano range
+USEFUL_GAP = (13.0, 17.0)  # Useful emitter-to-plano range
 # Required gap travel either side of the optimum. Relaxed from 1.0 mm: with exact Thorlabs dimensions the
 # white module has 0.93 mm on the long-gap side. Accepted pending the build; if the white module cannot reach
 # focus, space its cap flange off the SMR1/M face with a thin shim (moving the emitter away from the lens; a
@@ -78,7 +78,7 @@ class LightSourceTests(unittest.TestCase):
 
     def test_lit_length_scales_with_magnification(self):
         """The measured shoulder is rescaled to the present conjugates, and the lit length stays near the 10 mm
-        the brightest portion needs (about 1.5 mm of apparent emitter times the magnification, §2.6)."""
+        the brightest portion needs (about 1.5 mm of apparent emitter times the magnification)."""
         p = self.p
         measured = replace(p, lens_to_slit=LIT_SHOULDER_MEASURED_LENS_TO_SLIT)
         self.assertAlmostEqual(measured.lit_half_length, LIT_SHOULDER_MEASURED_HALF_LENGTH, delta=1e-9)
@@ -324,7 +324,7 @@ class LightSourceTests(unittest.TestCase):
         self.assertAlmostEqual(p.iris_to_slit, 149.6, delta=0.1)
 
     def test_cap_and_heatsink_are_drilled_through(self):
-        """Each part loses exactly its §5.2 through holes: the cap seven, the heatsink base five."""
+        """Each part loses exactly its through holes: the cap seven, the heatsink base five."""
         p, h = self.p, HoleLayoutParameters()
         kinds = [hole.kind for hole in h.holes()]
 

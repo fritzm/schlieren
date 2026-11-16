@@ -1,4 +1,4 @@
-"""LED-module drilling fixture: bushing plate, cap nest, and heatsink nest invariants (§5.2)."""
+"""LED-module drilling fixture: bushing plate, cap nest, and heatsink nest invariants."""
 
 import math
 import unittest

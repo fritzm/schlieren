@@ -1,4 +1,4 @@
-"""Engineering invariants for the assembled tabletop optical head (design §§2, 2)."""
+"""Engineering invariants for the assembled tabletop optical head."""
 
 import unittest
 from math import pi
@@ -14,7 +14,7 @@ from schlieren.parts.optical_head import (
 from schlieren.standards import DATUM_SHIM_THICKNESS, IMAGING_SIDE, POST_LENGTH, SOURCE_SIDE
 from schlieren.testing import loose_box, near_pairs, slow
 
-POST_TOP = DATUM_SHIM_THICKNESS + POST_LENGTH  # Datum shim plus TR50/M, above the rail top (§2.4).
+POST_TOP = DATUM_SHIM_THICKNESS + POST_LENGTH  # Datum shim plus TR50/M, above the rail top.
 TR50_MODEL_ROUNDING = 0.03  # The TR50/M STEP model is rounded to inches.
 INTERFERENCE_TOLERANCE = 1e-3  # mm^3.
 MIN_CLEARANCE = 1.0  # mm, between any source-side and imaging-side part.
@@ -22,8 +22,8 @@ MIN_CLEARANCE = 1.0  # mm, between any source-side and imaging-side part.
 # against a nominal envelope instead (see `nominal_envelope`).
 ENVELOPED_FASTENERS = ("Keeper nut", "Keeper screw")
 # (left rail yaw, right rail yaw, slit rotation, cutoff stagger): degrees outward from nominal, degrees, mm.
-# The frame's yaw range is +-3 degrees (§3.2), the slit turns through its working range, and the stagger
-# starting point is 30-40 mm (§2.3).
+# The frame's yaw range is +-3 degrees, the slit turns through its working range, and the stagger
+# starting point is 30-40 mm.
 EXTREME_POSES = (
     (-3.0, -3.0, 0.0, 0.0),  # Rails converged, slit and cutoff in the same plane: the closest approach.
     (-3.0, -3.0, 45.0, 35.0),
@@ -114,7 +114,7 @@ class OpticalHeadTests(unittest.TestCase):
     def test_condenser_is_the_design_distance_from_the_slit(self):
         (lens,) = by_label(self.source, "ACL2520U-A condenser")
         ls = self.h.light_source
-        vertex = lens.bounding_box().max.Y  # Plano face toward the LED, convex vertex toward the slit (§5).
+        vertex = lens.bounding_box().max.Y  # Plano face toward the LED, convex vertex toward the slit.
         self.assertAlmostEqual(self.h.slit_station - vertex, ls.lens_to_slit, delta=0.05)
 
     def test_field_lens_stands_ahead_of_the_slit_on_its_own_post(self):
@@ -176,7 +176,7 @@ class OpticalHeadTests(unittest.TestCase):
         """The head is clear in the poses that bring its parts closest, not only at nominal.
 
         With both rails yawed inward and the slit and cutoff un-staggered, the slit head passes the
-        cutoff carriage's keeper frame at only about 1.4 mm (the stagger of §2.3 is what gives margin); the
+        cutoff carriage's keeper frame at only about 1.4 mm (the stagger is what gives margin); the
         assertions keep that above MIN_CLEARANCE. The other poses cover opposite yaws, slit rotations, and the
         stagger at both signs.
         """

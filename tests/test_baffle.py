@@ -1,4 +1,4 @@
-"""Slit baffle (§6.8): clamp, slit, ribs, helical net vanes, foil, and parameter invariants."""
+"""Slit baffle: clamp, slit, ribs, helical net vanes, foil, and parameter invariants."""
 
 import unittest
 from dataclasses import replace

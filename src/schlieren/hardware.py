@@ -20,7 +20,7 @@ FAS100_THREAD_DIAMETER = 0.25 * INCH
 FAS100_THREAD_LENGTH = 1.00 * INCH
 FAS100_PITCH = INCH / 80
 
-# McMaster 98625A950 1/4 in-80 brass insert (manufacturer drawing, §8.3).
+# McMaster 98625A950 1/4 in-80 brass insert (manufacturer drawing).
 INSERT_98625A950_BODY_DIAMETER = 0.313 * INCH
 INSERT_98625A950_LENGTH = 0.313 * INCH  # Overall: the conservative thread-engagement envelope.
 INSERT_98625A950_BODY_LENGTH = 0.298 * INCH  # Under the flange.

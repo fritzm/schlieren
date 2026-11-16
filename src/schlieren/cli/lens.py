@@ -1,4 +1,4 @@
-"""Build/export the telephoto lens model (design §9.2); optionally display it in OCP CAD Viewer."""
+"""Build/export the telephoto lens model; optionally display it in OCP CAD Viewer."""
 
 import argparse
 

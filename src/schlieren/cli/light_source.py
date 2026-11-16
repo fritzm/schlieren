@@ -23,7 +23,7 @@ from schlieren.parts.light_source_drawing import layout_drawing_svg
 from schlieren.parts.light_source_holes import HoleLayoutParameters
 
 DEFAULT_FIGURE = Path("docs/design/figures/light-source.png")
-HOLES_FIGURE_NAME = "light-source-holes.svg"  # The §5.2 hole layout, written beside the figure.
+HOLES_FIGURE_NAME = "light-source-holes.svg"  # The hole layout, written beside the figure.
 FIGURE_VIEW_DIRECTION = (1.0, 0.75, 0.45)  # From the side, ahead and above: heatsink through the iris end.
 SECTION_VIEW_DIRECTION = (1.0, 0.3, 0.2)  # Square to the cut face, slightly ahead and above.
 

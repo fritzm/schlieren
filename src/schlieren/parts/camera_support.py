@@ -1,4 +1,4 @@
-"""Lens cradle and phone rest, design §§9.4-9.9.
+"""Lens cradle and phone rest.
 
 The phone and the lens threaded onto its case are one rigid body, held by the lens barrel with the phone
 hanging from it. Two separate rail fixtures:
@@ -19,11 +19,11 @@ hanging from it. Two separate rail fixtures:
 The cradle parts are modeled in detail: fillets, pad pockets, clamp ear, insert holes, joint, and pegs. The
 hardware is envelopes, except the McMaster screws, thumb nuts, inserts, dowel pins, and the collar clamp
 screws and nuts, which are vendor models. The side-channel rail screws of the cradle shoe and the phone rest
-are drawn by default (`side_screws`). The phone is modeled in `parts/phone.py` from the §9.1 measurements and
-Apple's drawing, and the lens in `parts/lens.py` from the §9.2 measurements (the focus-ring diameter is
+are drawn by default (`side_screws`). The phone is modeled in `parts/phone.py` from the measurements and
+Apple's drawing, and the lens in `parts/lens.py` from the measurements (the focus-ring diameter is
 assumed). The lens aft end, the end of its thread boss, is taken to be at the phone's back.
 
-Coordinates: the §2.4 imaging rail frame, +x right, +y along the rail toward the mirror, z up from the rail
+Coordinates: the imaging rail frame, +x right, +y along the rail toward the mirror, z up from the rail
 top. y=0 is the back of the cased phone.
 """
 
@@ -110,22 +110,22 @@ STAND_ALONE_RAIL_PAST_LENS = 80.0  # Rail beyond the lens front, toward the mirr
 AXIS_MARKER_DIAMETER = 0.8
 AXIS_MARKER_BEHIND_PHONE = 60.0
 AXIS_MARKER_PAST_LENS = 90.0
-LENS_TO_SPLIT_RING = 10.0  # Assumed gap, lens front to the cutoff split ring's rear face (§8.1).
+LENS_TO_SPLIT_RING = 10.0  # Assumed gap, lens front to the cutoff split ring's rear face.
 
 
 @dataclass(frozen=True)
 class CameraSupportParameters:
-    optical_height: float = OPTICAL_HEIGHT  # §2.4.
+    optical_height: float = OPTICAL_HEIGHT
     rail_size: float = 20.0
 
-    # Phone in its case, landscape, screen aft (§9.1), Main camera (the lower aperture in portrait) on the
+    # Phone in its case, landscape, screen aft, Main camera (the lower aperture in portrait) on the
     # axis.
     phone: PhoneParameters = field(default_factory=PhoneParameters)
 
-    # Telephoto (§9.2): boss, shoulder, barrel, and focus ring, measured from the aft end.
+    # Telephoto: boss, shoulder, barrel, and focus ring, measured from the aft end.
     lens: LensParameters = field(default_factory=LensParameters)
 
-    # Adjusters (§9.7): McMaster 93339A252 ball-tip screw in a 94459A797 heat-set insert, with a 92815A202
+    # Adjusters: McMaster 93339A252 ball-tip screw in a 94459A797 heat-set insert, with a 92815A202
     # thumb nut locked mid-screw.
     screw_length: float = MCMASTER_93339A252_LENGTH  # Overall, hex-socket end to ball apex.
     ball_diameter: float = MCMASTER_93339A252_BALL_DIAMETER
@@ -171,12 +171,12 @@ class CameraSupportParameters:
     )
     pad_edge_margin: float = 1.0  # A ball apex can reach to within this of the pad edge (the rim stops it).
     min_collar_wall: float = 2.5
-    # Retaining band (§9.5 hold-down): an endless elastic band around the bare barrel beside each collar, on
+    # Retaining band (hold-down): an endless elastic band around the bare barrel beside each collar, on
     # the side toward the other collar, with its legs running down inboard of the thumb nuts to a peg on the
     # centre of the yoke's crossbar face. Its pull acts on the barrel, which the collar's clamp carries to the
     # pads; no groove is needed on the collar.
     band_section_diameter: float = 2.0
-    band_hold_down: float = 5.0  # N at each pad pair, §9.5, from the two bands together.
+    band_hold_down: float = 5.0  # N at each pad pair, from the two bands together.
     horn_diameter: float = 4.0  # The peg's stem.
     horn_stem_length: float = 6.0
     horn_lip_diameter: float = 6.0
@@ -197,7 +197,7 @@ class CameraSupportParameters:
     yoke_root_fillet: float = 5.0  # Column to crossbar underside, inside corner.
     yoke_blend_fillet: float = 4.0  # Crossbar underside to arm back, and arm face to crossbar top.
     yoke_corner_fillet: float = 2.0  # Outboard corners of the arm.
-    # Lower clamp sections (saddle, skirts, side-channel holes) take the common rail shoe's dimensions, §4.2.
+    # Lower clamp sections (saddle, skirts, side-channel holes) take the common rail shoe's dimensions
     rail_shoe: RailShoeParameters = field(default_factory=RailShoeParameters)
     cradle_clamp_spacing: float = 36.0  # Between the two pairs of rail clamp screws on the cradle shoe.
     # Yoke-to-shoe joint: each yoke is printed separately and bolted up through the shoe deck with one
@@ -846,7 +846,7 @@ def _straddle(
     yoke_stations: tuple[float, ...] = (),
     square_sides: tuple[int, ...] = (),
 ) -> Shape:
-    """Saddle straddling the rail from y0 to y1, as the common rail shoe's lower section (§4.2).
+    """Saddle straddling the rail from y0 to y1, as the common rail shoe's lower section.
 
     Same rail opening, side walls, skirt depth, deck thickness, and rounded outside corners; an M5 clearance
     hole crosses the skirts at each clamp_ys station, at rail mid-height, for the side-channel screws. At each

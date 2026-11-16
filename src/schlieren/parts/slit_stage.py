@@ -1,4 +1,4 @@
-"""Source-slit head (§6) on an SF Technology SEMX40-AS linear stage.
+"""Source-slit head on an SF Technology SEMX40-AS linear stage.
 
 The movable blade rides on the stage table and the width is set by the stage's micrometer; the stationary
 blade sits on a printed pedestal at the same height. No flexure, spring, or centering stage.
@@ -7,7 +7,7 @@ Parts:
 
 - plate: flat printed plate with the SM1-tube-diameter spigot, a Ø34 mm shoulder the SM1RC/M seats against, and
   a Ø24 mm light bore. The spigot grips the whole SM1RC/M and protrudes past it, where the baffle's clamp ring
-  takes it (§6.8). The stage bolts to the plate's front with captive nuts at its rear; the pedestal is screwed
+  takes it. The stage bolts to the plate's front with captive nuts at its rear; the pedestal is screwed
   on from the plate's rear into heat-set M3 inserts;
 - stage: the stage on hand (Amazon B0B7RVW3SX), shown with Misumi's XCRS40 solid model (CADENAS PARTcommunity; the same
   table and base layout as the SF Technology SEMX40-AS, whose own STEP is surface-only). Its table top, 20 mm above its
@@ -16,7 +16,7 @@ Parts:
 - toe bars: one printed bar on the table and one on the pedestal, each screwed down at its two ends into the M3
   holes of the table's second row (the stage's tapped holes) or into heat-set M3 inserts in the pedestal. The bar's
   finger runs the length of the blade and presses the rear of the blade's fold through a strip of EPDM; it stops
-  short of the field-lens tube that stands over the axis (§7). No blade is drilled.
+  short of the field-lens tube that stands over the axis. No blade is drilled.
 
 The blade lies on its fold, flat on the seat (razor_blade.flat_seated_blade_location): the fold's outer layer is on
 the table or pedestal, and the plate, which the fold stands proud of, is parallel to the seat and clear of its edge,
@@ -24,10 +24,10 @@ with the cutting edge overhanging the seat edge. The toe presses the fold flat. 
 against its own weight and handling loads.
 
 Local frame, shown at rotation 0 (slit horizontal, micrometer up): x along the slit, z the adjustment axis (+z
-toward the micrometer), y the optical axis, +y out of the front toward the mirror, as §6.2. The origin
+toward the micrometer), y the optical axis, +y out of the front toward the mirror. The origin
 is the slit center on the blade-seat plane. The stage is at its mid-travel (its base flush with its table).
 
-Assembly frame is the §2.4 source rail frame, x transverse, +y along the rail toward the mirror,
+Assembly frame is the source rail frame, x transverse, +y along the rail toward the mirror,
 z=0 at the rail top, with the slit post at x=y=0. The light comes from the source side through the baffle
 and the plate's bore, passing the stage's edge to reach the slit from behind, so the spigot, ring, and post
 are on the light-source side of the blades.
@@ -125,7 +125,7 @@ class SlitStageParameters:
     post_diameter: float = POST_DIAMETER
     ring_thickness: float = SM1RC_M_THICKNESS
     ring_bore: float = SM1RC_M_BORE
-    # Stanley 11-515 blades, measured (§6.1).
+    # Stanley 11-515 blades, measured.
     blade: RazorBladeParameters = field(default_factory=RazorBladeParameters)
     slit_width: float = 0.20  # Display/setup value; the stage sets the width.
     # Blade edge beyond the table and pedestal edges. Chosen so the stage's end
@@ -165,7 +165,7 @@ class SlitStageParameters:
     toe_pad_edge_margin: float = 0.25  # Pad edge to the fold's rear edge, at least.
     toe_pad_squeeze: float = 0.3  # EPDM pad compression under the finger, provisional.
     toe_pad_inset: float = 1.0  # EPDM pad end inset from the bar end.
-    # The fingers' slit-side faces stand this far, radially, beyond the body of the field-lens tube (§7), which
+    # The fingers' slit-side faces stand this far, radially, beyond the body of the field-lens tube, which
     # is concentric with the optical axis; the head turns about that axis.
     toe_finger_tube_clearance: float = 1.0
     epdm_thickness: float = INCH / 32  # McMaster 9852N37, uncompressed.
@@ -180,12 +180,12 @@ class SlitStageParameters:
     insert_flange_recess_depth: float = M3_INSERT_FLANGE_RECESS_DEPTH
     insert_installed_length: float = M3_INSERT_INSTALLED_LENGTH
     pedestal_screw_hole_height: float = 10.0  # Plate front up to the end of the screw clearance holes.
-    # The baffle's clamp ring grips the spigot where it protrudes past the SM1RC/M (§6.8); it turns with the head.
+    # The baffle's clamp ring grips the spigot where it protrudes past the SM1RC/M; it turns with the head.
     baffle: BaffleParameters = field(default_factory=BaffleParameters)
-    # Beam: the source cone about the chief ray (§2.2), the lit slit length (§2.6), and the margin the stage
-    # and pedestal edges keep from the cone (§6.2).
+    # Beam: the source cone about the chief ray, the lit slit length, and the margin the stage
+    # and pedestal edges keep from the cone.
     cone_half_angle: float = 2.0  # Degrees.
-    # Half-extent of the lit length along the slit, to the soft edge of the shoulder (§2.6): the condenser's LED
+    # Half-extent of the lit length along the slit, to the soft edge of the shoulder: the condenser's LED
     # image, from the wall measurement scaled to its magnification (`LightSourceParameters.lit_half_length`).
     lit_half_length: float = field(default_factory=lambda: LightSourceParameters().lit_half_length)
     beam_margin: float = 0.5

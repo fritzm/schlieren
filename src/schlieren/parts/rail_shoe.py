@@ -1,6 +1,6 @@
-"""Common rail shoe; design §§2–4 (§4.2).
+"""Common rail shoe.
 
-Coordinates: a §2.4 rail frame, +x across the rail (right, seen from above with the mirror ahead), +y along it
+Coordinates: a rail frame, +x across the rail (right, seen from above with the mirror ahead), +y along it
 toward the mirror, z up; rail top is z=0. The post is at x=y=0. Both ears point toward +x: nut at +y, screw at
 -y; `post_stack` turns the shoe half a turn about its post on the source rail, so its ears point outboard there
 too. Envelope, hole layout, and fabrication allowances are fit-tested on printed shoes. No PLA lies between the
@@ -329,8 +329,7 @@ def side_clamp_hardware(p: RailShoeParameters | None = None, y: float = 0.0) -> 
     """The M5 × 12 side-channel screws with flat washers, one on each skirt, entering toward the rail at y.
 
     Each washer bears on its skirt's outer face and the screw on the washer; the screw axes are the side-hole
-    axis, at mid rail height. Each is a labeled vendor model. The washers are from the general M5 assortment
-    (§4.2); the 93475A240 model stands in for them.
+    axis, at mid rail height. Each is a labeled vendor model. The washers are from the general M5 assortment; the 93475A240 model stands in for them.
     """
     p = p or RailShoeParameters()
     parts = []
@@ -374,13 +373,13 @@ def post_stack(
 ) -> list[Part]:
     """The common post stack as shown in assemblies, for the post at rail station y, moved by loc.
 
-    Every fixture on a rail stands on this stack (§4): the TR50/M post on its datum shim and the printed rail
+    Every fixture on a rail stands on this stack: the TR50/M post on its datum shim and the printed rail
     shoe clamping the post foot, with the shoe's M3 split-clamp screw and nut. The side-channel M5 screws and
     washers that fix the shoe to the rail are added by side_screws, for the assemblies that show them. The
     slit head and cutoff carriage also hold their spigot in an SM1RC/M split ring on the post top, centered on
     the post axis at optical_height (ring); the light source's own SMR1/M plays that part.
 
-    Returns labeled children in the frame of loc (the §2.4 rail frame when loc is omitted). The hardware is
+    Returns labeled children in the frame of loc (the rail frame when loc is omitted). The hardware is
     labeled "Shoe ...", clear of any screws the fixture itself has. shoe is built when not given, and p gives
     the shoe's parameters.
 
