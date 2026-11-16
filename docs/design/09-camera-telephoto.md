@@ -1,16 +1,14 @@
 ## 9. Camera and telephoto support
 
-The camera and lens are described in [§9.1](#91-camera)–[9.2](#92-telephoto). Their support is a lens cradle
-and a phone rest ([§9.4](#94-support)–[9.8](#98-retaining-bands)), with an alignment procedure
-([§9.9](#99-lens-alignment)). **Provisional:** the alignment procedure
-([§11](11-open-work.md#11-provisional-areas-and-next-steps)).
+The camera and lens are described first. Their support is a lens cradle
+and a phone rest, with an alignment procedure. **Provisional:** the alignment procedure.
 
 ### 9.1 Camera
 
 - Apple iPhone 17, base model, in an OtterBox Commuter case
 - held in landscape, with the rear cameras toward the mirror and the camera end of the phone toward the
   optical axis
-- the Main camera is used, at 1× (or its 2× crop). It is the lower of the two rear apertures with the phone in
+- the Main camera is used, at 1× (or its 2× crop); it is the lower of the two rear apertures with the phone in
   portrait, "rear camera 2" on Apple's drawing (`docs/reference/Apple-iPhone-17.pdf`); the upper aperture is
   the Ultra Wide, used only at 0.5×
 - measured camera optical axis approximately 60.6 mm above the lower long edge, in the case
@@ -69,7 +67,7 @@ a clear aperture of 0.845 in / 21.5 mm at the bottom of a stepped recess. The fo
 at the working focus of about 3.2 m the ring is fully forward and the glass is 0.5 in / 12.7 mm behind the
 front of the barrel, 108.8 mm from the aft end.
 
-The lens's optics are described in [§2.9](01-context-and-layout.md#29-telephoto-and-camera-optics). With the
+The lens's optics are described in the telephoto and camera optics section of the optical layout. With the
 lens seated in its clamp, the center of the rear glass is 0.125 in / 3.18 mm from the camera cover.
 
 The lens is modeled in `src/schlieren/parts/lens.py`, for visualization only.
@@ -79,8 +77,7 @@ centering minimizes vignetting.
 
 ### 9.3 Alignment requirements
 
-The beam geometry at the telephoto, and the vignetting limit set by its rear glass, are in
-[§2.9](01-context-and-layout.md#29-telephoto-and-camera-optics). The resulting tolerances on the camera and lens
+The beam geometry at the telephoto, and the vignetting limit set by its rear glass, are in the telephoto and camera optics section of the optical layout. The resulting tolerances on the camera and lens
 as one body are calculated from it. **Provisional:** they rest on the assumed values listed there.
 
 - centering on the beam: about ±3.5 mm along the slit direction and ±7 mm across it, before the beam footprint
@@ -93,19 +90,15 @@ Pointing is therefore the governing adjustment, and centering is moderately forg
 favors centering well inside the vignetting limit.
 
 The rear glass also limits the field, which adds a further, smaller allowance for decentering between the phone
-and the lens axis ([§2.9](01-context-and-layout.md#29-telephoto-and-camera-optics)).
+and the lens axis.
 
 ### 9.4 Support
 
-The phone and the lens threaded onto its case are one rigid body. The lens barrel is its datum
-([§9.2](#92-telephoto)): the lens is held at two stations along its barrel, and the phone hangs from its lens
+The phone and the lens threaded onto its case are one rigid body. The lens barrel is its datum: the lens is held at two stations along its barrel, and the phone hangs from its lens
 mount. Two separate rail fixtures carry them:
 
-- the lens cradle, specific to the lens, holds the barrel at both stations on four adjusting screws
-  ([§9.5](#95-lens-cradle)), with two retaining bands holding the collars down on them
-  ([§9.8](#98-retaining-bands));
-- the phone rest, specific to the phone, supports the phone's lower edge at one point
-  ([§9.6](#96-phone-rest)). A different phone needs only this part redesigned.
+- the lens cradle, specific to the lens, holds the barrel at both stations on four adjusting screws, with two retaining bands holding the collars down on them;
+- the phone rest, specific to the phone, supports the phone's lower edge at one point, so a different phone needs only this part redesigned.
 
 <p align="center">
   <img src="figures/camera-support.png" width="500" style="max-width: 90%"
@@ -118,7 +111,7 @@ mount. Two separate rail fixtures carry them:
 
 The body is located by six contacts and no more, so adjusting one station does not strain the lens mount:
 
-- four screw tips, two at each station, fix the lens axis in x and z at both stations, and so its position,
+- four screw tips, two at each station, fix the lens axis in $x$ and $z$ at both stations, and so its position,
   pitch, and yaw;
 - one of those tips sits in a groove, fixing the lens fore/aft;
 - the phone rest fixes roll.
@@ -147,17 +140,17 @@ Each collar is a thin ring on the barrel with a clamp ear on top and a flat pad 
   of the phone; the fore collar centered about 96.5 mm from the aft end, with its front face about 3 mm behind
   the focus ring; about 72.5 mm between them;
 - 12 mm wide, with a 3 mm wall around a bore of 37.3 mm, the measured 37.0 mm barrel plus a 0.3 mm diametral
-  allowance, so a collar is 43.3 mm across. The wall is thin because the pad platforms carry the local
+  allowance, so a collar is 43.3 mm across; the wall is thin because the pad platforms carry the local
   thickness; the pad loads are a few newtons, so stiffness is not limiting;
-- the ear takes the common M3 split-clamp hardware ([§4.2](04-post-support.md#42-rail-shoe)) with the
+- the ear takes the common M3 split-clamp hardware with the
   rail shoe's split and ear thicknesses: the screw passes through the thin ear, and the hex nut is captured in
-  a pocket in the thicker ear across the split, open to the outside, with a roof of at least 1.5 mm over it. The
-  screw axis stands 4.25 mm above the ring top, so the screw head clears the ear's root fillet. The printed
+  a pocket in the thicker ear across the split, open to the outside, with a roof of at least 1.5 mm over it; the
+  screw axis stands 4.25 mm above the ring top, so the screw head clears the ear's root fillet; the printed
   collar has the thin ear on its left, seen from the aft end looking forward; each collar is installed turned
   half a turn about the vertical axis, which puts the screw ear and head on the outboard (right) side, facing
   away from the source rail for the hex key;
 - inside corners, the ear and pad platform roots, are filleted at 2 mm for stress control; the outside
-  corners and the outer edges of both ring ends at 1 mm, for the fingers. The faces of the split stay sharp so
+  corners and the outer edges of both ring ends at 1 mm, for the fingers; the faces of the split stay sharp so
   that the gap stays fixed.
 
 The two collars are the same part except that the aft collar's printed left pad is a rod seat in place of a
@@ -170,18 +163,17 @@ bearing-insert thickness outside the ring, and the pocket floor is tangent to th
 sits in a pocket with a rim around it, so a ball end that wanders reaches a wall instead of the edge of the
 pad:
 
-- three pads are flat bearing inserts, the 10 × 5 × 2 mm N52 bar magnets
-  ([§8.3](08-cutoff.md#83-fine-adjustment)), set with the 10 mm side across the rail, bonded with
+- Three pads are flat bearing inserts, the 10 × 5 × 2 mm N52 bar magnets, set with the 10 mm side across the rail, bonded with
   low-viscosity CA wicked in, into pockets 0.2 mm larger across each dimension (0.1 mm per side, the allowance
-  every printed bearing-insert pocket in the design uses);
-- the fourth, at the aft right (outboard) screw, is a groove between two dowel pins of 3 mm diameter and 10 mm length,
+  every printed bearing-insert pocket in the design uses).
+- The fourth, at the aft right (outboard) screw, is a groove between two dowel pins of 3 mm diameter and 10 mm length,
   lying across the rail on the pocket floor. The ball sits between them, free to slide across the rail but not
   along it. A printed rib 1.0 mm high and about 1.7 mm wide runs between the pins along the pocket, and each
   pin lies against its top corner: the rib sets the pins' spacing (4.5 mm between axes) and keeps them
-  parallel, so bonding them needs no spacer. The ball stays 1.0 mm clear of the rib;
-- the rim stands 0.8 mm above the pad face. The ball-tip screw's end face is 1.2 mm behind the ball apex, so
-  the rim stays below it;
-- above the pad face the pocket opens outward by 0.23 mm per side, so that the rim edge stops the ball apex 1
+  parallel, so bonding them needs no spacer. The ball stays 1.0 mm clear of the rib.
+- The rim stands 0.8 mm above the pad face. The ball-tip screw's end face is 1.2 mm behind the ball apex, so
+  the rim stays below it.
+- Above the pad face the pocket opens outward by 0.23 mm per side, so that the rim edge stops the ball apex 1
   mm short of the pad edge, the margin the travel limits below assume. The walls around the pockets are 1.5
   mm.
 
@@ -192,12 +184,12 @@ inside the pad edges, which the rim enforces:
 | Adjustment                           | Range                       |
 | ------------------------------------ | --------------------------- |
 | Each screw                           | about ±3 mm                 |
-| A station, in x or in z alone        | about ±4 mm                 |
+| A station, in $x$ or in $z$ alone        | about ±4 mm                 |
 | Lens tilt, pitch or yaw              | about ±2°                   |
 | One turn of both screws of a station | about 1.1 mm, or about 0.9° |
 
 The tilt limit comes from the 5 mm side of the pads, on the pads that slide along the rail as the lens yaws
-about the groove. These ranges cover the alignment tolerances ([§9.3](#93-alignment-requirements)) and the
+about the groove. These ranges cover the alignment tolerances and the
 expected build errors.
 
 #### Yokes
@@ -207,12 +199,12 @@ side, printed on its side so that every layer lies in the plane of the loads:
 
 - a column 20 mm wide, the width of the rail, rising from the shoe to a crossbar 10 mm thick whose top stands
   13 mm below the bottom of the collar, clear of the thumb nuts;
-- each arm is a slab 10.5 mm thick, square to its screw. Its lens-side face carries the insert and runs down
+- each arm is a slab 10.5 mm thick, square to its screw; its lens-side face carries the insert and runs down
   to the crossbar top; its back face runs down to the crossbar underside, so there is no stub or step;
 - fillets of 5 mm at the column root, 4 mm where the arm blends into the crossbar, and 2 mm around the outer
   arm corners;
-- each arm holds a heat-set insert ([§9.7](#97-adjuster-hardware)) in a 6.4 mm hole from the lens-side face
-  with the flange recessed flush. The wall around each insert and its flange recess is at least 2.9 mm, and a
+- each arm holds a heat-set insert in a 6.4 mm hole from the lens-side face
+  with the flange recessed flush; the wall around each insert and its flange recess is at least 2.9 mm, and a
   5.5 mm bore carries on through the back of the arm for the screw and its hex key.
 
 Under the adjuster reactions of about 8 N the crossbar root sees about 0.6 MPa and the arm tip moves about
@@ -221,7 +213,7 @@ limiting; the fillets are margin.
 
 #### Shoe and joint
 
-The shoe's lower section is that of the common rail shoe ([§4.2](04-post-support.md#42-rail-shoe)): a
+The shoe's lower section is that of the common rail shoe: a
 20.4 mm rail opening, 5 mm side walls, 18 mm skirts, a 5 mm deck, and 2 mm rounded outside corners. M5
 clearance holes cross the skirts at rail mid-height for the side-channel screws, two of them 36 mm apart
 midway between the collars. The shoe extends 9 mm beyond each collar face, so it is symmetric about the middle
@@ -231,18 +223,17 @@ without supports:
 - one 90° countersunk M5 screw from the underside of the deck, on the rail centerline, with its head flush
   with the underside, into a heat-set insert in the column foot, with the insert's flange bearing on the deck;
 - two straight walls on the deck across the rail, ahead of and behind the column, 1.6 mm thick and 3 mm high,
-  with 0.2 mm clearance to the column faces. They locate the yoke along the rail and stop it twisting;
+  with 0.2 mm clearance to the column faces; they locate the yoke along the rail and stop it twisting;
 - the screw ends inside the insert with about 5 mm of engagement.
 
-The fitting and removal sequence is set by the bands ([§9.8](#98-retaining-bands)).
+The fitting and removal sequence is set by the bands.
 
 ### 9.6 Phone rest
 
-The phone hangs from the lens with its body to the outboard side of the optical axis
-([§2.4](01-context-and-layout.md#24-optical-axis)). Its weight, centered about 43 mm from the
+The phone hangs from the lens with its body to the outboard side of the optical axis. Its weight, centered about 43 mm from the
 lens axis, would turn the lens in its collars. The phone rest stops that: the phone's lower long edge sits on
 one dowel pin lying along the rail, about 100 mm outboard of the axis, on the arm of a short printed shoe of
-its own. The shoe's lower section is that of the cradle shoe ([§9.5](#95-lens-cradle)), with a single pair of
+its own. The shoe's lower section is that of the cradle shoe, with a single pair of
 M5 clearance holes for the side-channel screw.
 
 - The shoe is 22 mm long and centered under the rod. The arm runs across the rail from the shoe's outboard
@@ -258,8 +249,7 @@ M5 clearance holes for the side-channel screw.
   root fillet stays at least 1 mm above the side-channel screw head on the outside of the skirt.
 
 - With the measured 60.6 mm camera-axis height, the phone's lower edge is about 11.75 mm above the rail top.
-- The rest carries about 1.0 N (calculated, same assumptions as the contact loads in
-  [§9.8](#98-retaining-bands)). It matters to the cradle, because it keeps the fore pad load from falling
+- The rest carries about 1.0 N (calculated, same assumptions as the contact loads on the retaining bands). It matters to the cradle, because it keeps the fore pad load from falling
   toward zero.
 - The rest is fixed. Raising or lowering the aft collar rolls the phone slightly about the lens axis, which
   does not matter; the phone is not gripped and slides on the rod.
@@ -278,11 +268,11 @@ Hardware:
   drawing `docs/reference/McMaster-93339A252.gif`)
 - McMaster 94459A797, M5 flanged heat-set inserts: 6.73 mm long overall, with a 7.92 mm flange 1.02 mm thick,
   a 7.11 mm knurled body, and a 6.32 mm pilot (drawing `docs/reference/McMaster-94459A797.gif`; vendor model
-  `cad/vendor/McMaster-94459A797.step`). The drawing calls for a 6.40 mm hole and at least 6.48 mm of
-  material. Each is set from the lens-side face of its arm, flange outward and recessed, so the screw's
-  reaction presses it into its hole. Two more are set in the yoke feet for the joint screws.
+  `cad/vendor/McMaster-94459A797.step`); the drawing calls for a 6.40 mm hole and at least 6.48 mm of
+  material; each is set from the lens-side face of its arm, flange outward and recessed, so the screw's
+  reaction presses it into its hole; two more are set in the yoke feet for the joint screws
 - McMaster 92125A208, M5 × 0.8 × 10 mm 18-8 stainless hex-drive flat-head screws (90°, 10 mm head), two for
-  the yoke joints ([§9.5](#95-lens-cradle))
+  the yoke joints
 - McMaster 92815A202, M5 thumb nuts used as threadlocked mid-screw handwheels
 - Loctite 271, McMaster 91458A160
 - McMaster 8915N111 heat-set insert installation tip set (M5 tip), on a Hakko iron
@@ -291,7 +281,7 @@ Hardware:
 - McMaster 91585A351, Ø3 × 10 mm 18-8 stainless dowel pins (ISO 2338 m6, chamfered ends), two for the groove
   at the fourth screw
 - McMaster 91585A457, Ø4 × 20 mm 18-8 stainless dowel pin, for the phone-rest rod
-- the common M3 split-clamp screw and nut ([§4.2](04-post-support.md#42-rail-shoe)), one pair per
+- the common M3 split-clamp screw and nut, one pair per
   collar
 
 ### 9.8 Retaining bands
@@ -302,7 +292,7 @@ measured 215 g lens and 238.6 g cased phone, with the lens balance point measure
 front (about 61.5 mm from the aft end), are
 
 - aft screw pair: about 2.9 N;
-- fore screw pair: about 0.5 N. The phone hangs behind the aft collar, so its weight pivots the lens about
+- fore screw pair: about 0.5 N; the phone hangs behind the aft collar, so its weight pivots the lens about
   the aft screws and unloads the fore pair, but it cannot lift it: the lens moment is the larger.
 
 A downward push on the phone, such as a screen tap, lifts the fore end when it exceeds roughly 2.5 times the
@@ -333,15 +323,15 @@ This is the alignment the cradle must make possible, kept here as a feasibility 
 **Provisional:** the procedure is untested, and its targets assume that the printed shoe seats fully on the
 rail top and the collars seat on their barrel sections.
 
-The tolerances ([§9.3](#93-alignment-requirements)) are loose compared with the adjuster resolution, so the
+The tolerances are loose compared with the adjuster resolution, so the
 alignment is mechanical first and then finished through the camera, with no laser.
 
 Each adjuster moves the lens axis along its own screw, so at one station, with the screws at ±45° and a thread
 pitch of 0.8 mm (calculated):
 
-- both screws turned the same way, n turns: z moves n × 1.13 mm;
-- the two turned in opposite directions, n turns each: x moves n × 1.13 mm;
-- one screw alone, one turn: x and z each move about 0.57 mm;
+- both screws turned the same way, n turns: $z$ moves n × 1.13 mm;
+- the two turned in opposite directions, n turns each: $x$ moves n × 1.13 mm;
+- one screw alone, one turn: $x$ and $z$ each move about 0.57 mm;
 - pitch and yaw come from setting the two stations 72.5 mm apart differently; 1 mm of difference is about
   0.8°.
 
@@ -350,8 +340,7 @@ The sequence:
 1. Fit both collars and the phone on the lens at their stations, set the four thumb nuts to equal exposed
    screw length (mid-travel), and note their positions. Put the cradle shoe on the rail with its clamp screws
    loose.
-2. Slide the shoe along the rail to put the lens front at the 10 mm gap assumed in
-   [§9.3](#93-alignment-requirements) from the split ring's rear face, then snug the clamp screws. The groove
+2. Slide the shoe along the rail to put the lens front at the 10 mm gap assumed in the alignment requirements from the split ring's rear face, then snug the clamp screws. The groove
    at the aft right screw fixes the lens fore/aft on the cradle, so nothing later moves it.
 3. Center the barrel at each collar mechanically, aft first, and re-measure the other collar after each
    change. Height: from the shoe deck, beside the yoke, up to the barrel top, whose target is 72.35 + 18.5 − 5
@@ -360,8 +349,8 @@ The sequence:
    mm lateral play, from the shoe's outer wall to the barrel side, whose target is 18.5 − 15.2 = about 3.3 mm.
    A ±0.5 mm error between the stations is about 0.4° of pitch or yaw, within tolerance.
 4. Finish through the camera, because the phone camera may not lie on the barrel axis in its mount and case.
-   With the source lit and the cutoff cleared, view the returned field at 1× and trim the aft screws in x and
-   z until the vignetting at the corners is even; a turn of one screw is only about 0.6 mm, so turn in small
+   With the source lit and the cutoff cleared, view the returned field at 1× and trim the aft screws in $x$ and
+   $z$ until the vignetting at the corners is even; a turn of one screw is only about 0.6 mm, so turn in small
    steps. The mirror should sit centered in the frame, which sets pitch and yaw to within the spare 1.2°.
 5. Check the roll: the phone-rest rod should just touch the phone's lower edge without lifting it, a paper
    strip sliding between them with light drag. A lower-edge height different from the model is taken up by

@@ -22,8 +22,8 @@ The mirror cell is constructed from three Baltic-birch plywood plates:
 - mirror plate: 3/4 in cut to the truncated-hex geometry below.
 
 The base plate provides the structural/tripod-support base and is joined to the stationary plate by angle
-brackets described in [§10.7](#107-angle-brackets). The stationary plate carries three fine-adjustment
-stations ([§10.2](#102-three-adjuster-stations)) which couple it to the mirror plate. The 3/4 in mirror plate
+brackets described under the angle brackets. The stationary plate carries three fine-adjustment
+stations which couple it to the mirror plate. The 3/4 in mirror plate
 carries the 203 mm mirror and moves relative to the stationary plate.
 
 The stationary plate is centered left/right on the 11.5 in-wide base. The rear face of the 1/2 in stationary
@@ -58,8 +58,8 @@ The mirror-plate geometry is:
 - the mirror aperture is 8-1/8 in / 206.38 mm diameter, providing approximately 1/16 in radial clearance
   around the nominal 203 mm mirror;
 - clip the unused bottom hex vertex with a horizontal chord whose midpoint is 4.7631 in / 120.98 mm below the
-  mirror center, matching the hexagon's apothem. This removes approximately 0.7369 in / 18.72 mm of the lower
-  vertex and produces a lower edge approximately 2.553 in / 64.8 mm long;
+  mirror center, matching the hexagon's apothem, removing approximately 0.7369 in / 18.72 mm of the lower
+  vertex and producing a lower edge approximately 2.553 in / 64.8 mm long;
 - the resulting trimmed mirror-plate height is approximately 10.263 in / 260.7 mm from the truncated lower
   edge to the top vertex.
 
@@ -119,7 +119,7 @@ Mounting details:
   internal 1/4 in-80 thread;
 - seat the flange fully against the outboard face, remove squeeze-out from both faces, and cure with the
   bushing axis held square to the plate;
-- the thin bushing flange is treated primarily as a seating/depth-stop feature. Structural retention is
+- the thin bushing flange is treated primarily as a seating/depth-stop feature; structural retention is
   provided by the full-barrel epoxy bond and cylindrical bearing of the bushing in the plywood.
 
 This arrangement adds no hardware thickness to the inter-plate gap.
@@ -159,7 +159,7 @@ in nominal compression before small washer-thickness and adjustment-position var
 Each of the three adjuster locations uses:
 
 - McMaster 91131A028 spherical washer set
-- one shallow close-fitting plywood socket/counterbore.
+- one shallow close-fitting plywood socket/counterbore
 
 Total:
 
@@ -220,7 +220,7 @@ The mirror is compliantly supported in a plywood mirror plate by six radial sili
 cured in place between the mirror edge and the inner surface of the mirror plate aperture.
 
 The 203 mm mirror is carried within the 3/4 in mirror-plate aperture. Its back surface is flush with the rear
-face of the plate, since both rest on the cure surface ([§10.6](#106-rtv-glue-up-cure-surface)) during
+face of the plate, since both rest on the cure surface during
 bonding; its front surface is therefore recessed about 1 mm below the front face of the plate.
 
 Six DOWSIL 737 RTV pads are placed radially between:
@@ -256,10 +256,10 @@ The release sheet is a shop supply rather than part of the finished instrument.
 
 Hardware joining the 1/2 in stationary plate to the 1/2 in base plate:
 
-- 2 × McMaster 8681N11 3 in-long aluminum angle brackets (3 in legs, 1/4 in thick, Ø8.33 mm holes);
-- 8 × McMaster 98164A527, 5/16 in-18 × 1-3/8 in 316 stainless button-head hex-drive screws;
-- 8 × McMaster 90099A030 5/16 in-18 18-8 stainless heavy-profile nylon-insert locknuts;
-- 8 × McMaster 96659A134 5/16 in stainless washers.
+- 2 × McMaster 8681N11 3 in-long aluminum angle brackets (3 in legs, 1/4 in thick, Ø8.33 mm holes)
+- 8 × McMaster 98164A527, 5/16 in-18 × 1-3/8 in 316 stainless button-head hex-drive screws
+- 8 × McMaster 90099A030 5/16 in-18 18-8 stainless heavy-profile nylon-insert locknuts
+- 8 × McMaster 96659A134 5/16 in stainless washers
 
 Each bracket is flush with a side edge of the plates, with its base leg on the base top extending forward and
 its upright leg against the front face of the stationary plate. Each leg has two holes, centered across the
@@ -277,8 +277,7 @@ in: the thread projects approximately 0.12 in, about 2 threads, beyond the lockn
 engagement without excessive overhang under the base or behind the stationary plate.
 
 The bracket attachments are through-bolted rather than relying on wood screws. The locknut stacks under the
-base lie near its side edges, well outside the quick-release screw pattern on the underside
-([§10.9](#109-tripod-interface)).
+base lie near its side edges, well outside the quick-release screw pattern on the underside.
 
 ### 10.8 Mirror safety and transport retention
 
@@ -299,7 +298,7 @@ stays with the base plate and brackets.
   hole at each of the three adjuster-bushing centers. There is one cover on the front and one on the rear. The
   foam bears across the whole plate face, so the cover is supported over its area and needs no particular
   stiffness.
-- The mirror's back surface is flush with the rear face of the plate ([§10.5](#105-mirror-mounting)), so the
+- The mirror's back surface is flush with the rear face of the plate, so the
   rear cover carries a full-profile sheet of thin closed-cell foam, which bears evenly on the glass and the
   plywood.
 - The front glass is recessed about 1 mm below the plywood face, and the bushing flanges stand 0.254 mm proud
@@ -351,8 +350,7 @@ underside of the 1/2 in Baltic-birch mirror-cell base.
 
 The 130 g sliding plate is 7.00 in / 177.8 mm long, mounted flush with the front and rear edges of the 7.0
 in-deep base, so it spans 0–7.00 in / 0–177.8 mm aft of the front edge and its geometric center lies 3.50 in /
-88.9 mm aft of that edge. This is 0.5 in / 12.7 mm aft of the estimated mirror-cell center of gravity
-([§10.1](#101-plates-and-basic-architecture)), a small offset that the quick-release system's fore/aft sliding
+88.9 mm aft of that edge. This is 0.5 in / 12.7 mm aft of the estimated mirror-cell center of gravity, a small offset that the quick-release system's fore/aft sliding
 travel trims during final balancing.
 
 The plate is attached by four McMaster 92125A196 M4 × 0.7 × 18 mm 90° flat-head screws:

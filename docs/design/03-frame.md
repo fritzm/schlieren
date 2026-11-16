@@ -23,9 +23,9 @@ and budget-conscious alternative to an optical bench or breadboard.  The model i
 Ordinary attachments use M5 × 0.8 socket-head hardware with flat washers in standard metric lengths and
 roll-in/drop-in M5 T-nuts (Amazon B0DP6JBX4Y).
 
-Sighting toward the mirror, the source rail is on the left (negative x in the pivot frame) and the imaging
+Sighting toward the mirror, the source rail is on the left (negative $x$ in the pivot frame) and the imaging
 rail is on the right. This is dictated by fact that the iPhone extends well to the right of its camera axis
-when sighting along that axis toward the mirror ([§9.1](09-camera-telephoto.md#91-camera)); placing that
+when sighting along that axis toward the mirror; placing that
 overhang toward the outside of the optical head keeps the phone clear of the source rail and its fixtures.
 
 ### 3.2 Front pivot plate
@@ -33,16 +33,16 @@ overhang toward the outside of the optical head keeps the phone clear of the sou
 The front pivot plate is a 180 × 150 mm Baltic-birch rectangle, with its long dimension is transverse to the
 rails.
 
-Plate coordinates are the pivot frame ([§2.5](01-context-and-layout.md#25-coordinate-frames)): the
-origin is at the midpoint of the aft edge, +y runs toward the mirror along the plate centerline, and +x runs
-to the right seen from above with the mirror ahead. The mirror-facing edge is at y = 150 mm, and the left rail
-is the one at negative x.
+Plate coordinates are the pivot frame: the
+origin is at the midpoint of the aft edge, $+y$ runs toward the mirror along the plate centerline, and $+x$ runs
+to the right seen from above with the mirror ahead. The mirror-facing edge is at $y = 150$ mm, and the left rail
+is the one at negative $x$.
 
 The pivot line is 25 mm behind the mirror-facing edge.  With a pivot separation of 95 mm, this gives pivot
 centers at:
 
 - left pivot: (-47.50, 125.00) mm;
-- right pivot: (+47.50, 125.00) mm;
+- right pivot: (+47.50, 125.00) mm.
 
 Each yaw-clamp station is 90 mm aft of its pivot along its rail axis.  At the nominal 0.85° splay, this gives
 yaw-strap centers at approximately:
@@ -85,7 +85,7 @@ Pivot and yaw hardware use commercially available 2020 three-hole joining plates
 - MOPFOL 2020 3-hole joining plate, Amazon B0G8DCS7VP
 - approximately 60 × 18 × 4 mm
 - 20 mm hole pitch
-- four in all: two as pivot lugs and two as yaw clamp straps.
+- four in all: two as pivot lugs and two as yaw clamp straps
 
 #### Pivot stack
 

@@ -1,9 +1,8 @@
 ## 5. Light source
 
-The light source is a single assembly utilizing the common post support
-([§4](04-post-support.md#4-rail-mounted-posts)). An internally threaded mount carries an interchangeable LED
+The light source is a single assembly utilizing the common post support. An internally threaded mount carries an interchangeable LED
 module on its rear face, and a condensing lens and iris on its forward face. The condenser images the LED
-emitter onto the source slit ([§6](06-source-slit.md#6-source-slit)) ahead, and the iris sets the angular size
+emitter onto the source slit ahead, and the iris sets the angular size
 of the illumination cone. The model is `src/schlieren/parts/light_source.py`.
 
 <p align="center">
@@ -92,7 +91,7 @@ pin columns.
 #### Cap and heatsink hole layout
 
 The drill and tap prescriptions for the cap and heatsink are as follows.  Coordinates are in millimeters from
-the optical axis, +x to the right and +y up as seen from the LED side, in the frame of the heatsink pin
+the optical axis, $+x$ to the right and $+y$ up as seen from the LED side, in the frame of the heatsink pin
 lattice:
 
 <p align="center">
@@ -163,10 +162,10 @@ heatsink's pins opposite the drilling surface.  Both of these measures restrain 
 rotation within their nests while drilling.
 
 The nests as modeled mount on the base of a Dremel 220 drill press, which has four diagonal keyhole slots.
-Each nest inself has two slotted ears, on its ±x faces.  The nests sit turned 45° on the drill press base so
-their x axis lies along one pair of base slots. One carriage bolt on each side extends upward through a drill
+Each nest inself has two slotted ears, on its $\pm x$ faces.  The nests sit turned 45° on the drill press base so
+their $x$ axis lies along one pair of base slots. One carriage bolt on each side extends upward through a drill
 press base slot, through a nest ear and a flat washer, and engages a flanged knurled thumb nut at the top of
-the stack. The fixture can thus be located in x along the base slots, and in y along the ear slots, enough to
+the stack. The fixture can thus be located in $x$ along the base slots, and in $y$ along the ear slots, enough to
 bring any bushing under the drill drill spindle.
 
 Both types of parts are drilled through the plate from the LED-side face. To move between holes, loosen the
@@ -181,12 +180,10 @@ The plate carries all seven bushings for both parts, but the M2 positions are no
 
 ### 5.3 Condenser stack and focus
 
-The condenser's optical design (conjugates, magnification, iris setting, and the prescription) is in
-[§2.6](01-context-and-layout.md#26-condenser-and-iris), and the field lens's in
-[§2.7](01-context-and-layout.md#27-slit-and-field-lens). This section holds the stack that fixes the iris-to-slit
+The condenser's optical design (conjugates, magnification, iris setting, and the prescription) is in the condenser and iris section of the optical layout, and the field lens's in its slit and field lens section. This section holds the stack that fixes the iris-to-slit
 distance and the focus adjustment.
 
-The iris-to-slit distance follows from the stack ([§5.1](#51-assembly-and-stack-order)): the leaves of the
+The iris-to-slit distance follows from the stack: the leaves of the
 SM1D12 lie 9.4 mm ahead of the lens's convex vertex. That is 0.7 mm for the vertex's depth inside the SM1V05's
 open end (the 12.0 mm lens in its 12.7 mm seat), 8.38 mm for the SM1L03 (the iris's thread shoulder seats on
 its open end), and 0.36 mm for the leaves' midplane past that shoulder. The last is from the vendor model,
@@ -195,7 +192,7 @@ With 159 mm from the vertex to the slit, the leaves are 149.6 mm from the slit.
 
 #### Focus
 
-The LED module seats against the rear face of the SMR1/M ([§5.1](#51-assembly-and-stack-order)), which fixes the
+The LED module seats against the rear face of the SMR1/M, which fixes the
 emitter, and the SM1V05 sets the lens position by how far it is threaded into the SMR1/M. Each millimeter of
 added engagement moves the lens a millimeter closer to the emitter, so the engagement range sets the range of
 reachable emitter-to-plano gaps. Engagement runs from the Thorlabs minimum of 2.79 mm to about 5.7–5.8 mm, where
@@ -223,8 +220,8 @@ instead shorten the gap and make the shortfall worse.
 
 To set up, thread the SM1V05 in to the engagement above for the module in use, set the iris to about Ø10.0 mm,
 and place the slit head about 150 mm from the iris leaves (159 mm from the lens vertex). The blades of the stage-based slit head cannot be seen, so
-swap the printed focus target in for the head ([§6.7](06-source-slit.md#67-slit-focus-target)), with the field
-lens station slid clear ([§7](07-field-lens.md#7-field-lens)), turn the SM1V05 until the emitter image on
+swap the printed focus target in for the head, with the field
+lens station slid clear, turn the SM1V05 until the emitter image on
 the target is sharp and centered, then lock the SM1NT, restore the slit head and the field lens, and open the
 slit. The two modules focus about 0.2 mm apart in engagement, about one-third of a turn of the SM1
 thread; an index mark per module on the SM1V05 is optional.

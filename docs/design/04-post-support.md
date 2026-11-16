@@ -53,10 +53,10 @@ Hardware:
 
 Four fixtures use the common post/shoe architecture:
 
-1. light source ([§5](05-light-source.md#5-light-source));
-2. source-slit fixture ([§6](06-source-slit.md#6-source-slit));
-3. field lens tube ([§7](07-field-lens.md#7-field-lens));
-4. cutoff carriage ([§8](08-cutoff.md#8-cutoff)).
+1. light source;
+2. source-slit fixture;
+3. field lens tube;
+4. cutoff carriage.
 
 The light source uses a Thorlabs SMR1/M internally threaded lens mount, and the source-slit,
 field-lens, and cutoff assemblies seat in Thorlabs SM1RC/M lens tube split slip rings. These mounts all preserve a 22.1 mm post-top

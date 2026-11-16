@@ -11,6 +11,11 @@ When updating it:
   replaced ("previously", "no longer", "superseded").
 - Retain rationale that explains a non-obvious current decision.
 - Leave procurement and CAD state, and detailed BOM data, to `bom/bom.csv`.
+- Punctuate each list one way throughout, bulleted or numbered alike:
+  - Items that are sentences (capitalized): end every item with a period.
+  - Items that finish the lead-in sentence (lowercase): end each with a semicolon and the last with a period.
+    Keep each item to one sentence; if one needs more, make the list a sentence list.
+  - Labelled values, part lists and other bare fragments: no terminal punctuation.
 
 ## Purpose and content
 
