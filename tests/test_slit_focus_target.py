@@ -1,5 +1,5 @@
-"""Experimental slit focus targets: the shared fixture (paper plane, ring interface, insert, seat bore) and the
-paper and ground-glass variants with their retaining rings."""
+"""Slit focus target: the fixture (rim plane, ring interface, inserts, seat bore) and the ground-glass screen with
+its pocketed retaining ring and gasket."""
 
 import unittest
 from dataclasses import replace
@@ -8,15 +8,11 @@ from build123d import Vector
 
 from schlieren.cad import children_by_label
 from schlieren.parts.slit_focus_target import (
-    FocusScreenParameters,
     FocusTargetParameters,
-    build_focus_screen_assembly,
     build_focus_target,
     build_focus_target_assembly,
     build_gasket,
     build_glass,
-    build_glass_retaining_ring,
-    build_paper,
     build_retaining_ring,
 )
 from schlieren.parts.slit_stage import SlitStageParameters, head_location
@@ -35,17 +31,18 @@ class FocusTargetTests(unittest.TestCase):
         cls.p.validate()
         cls.target = build_focus_target(cls.p)
         cls.ring = build_retaining_ring(cls.p)
-        cls.paper = build_paper(cls.p)
+        cls.glass = build_glass(cls.p)
+        cls.gasket = build_gasket(cls.p)
 
     def test_printed_parts_are_single_valid_solids(self):
-        for part in (self.target, self.ring, self.paper):
+        for part in (self.target, self.ring, self.glass, self.gasket):
             self.assertEqual(len(part.solids()), 1)
             self.assertTrue(part.is_valid)
 
     def test_rim_face_is_the_blades_edge_plane_the_stage_head_puts_ahead_of_the_post(self):
         p = self.p
         self.assertAlmostEqual(self.target.bounding_box().max.Y, 0, places=9)
-        self.assertAlmostEqual(self.paper.bounding_box().min.Y, 0, places=9)
+        self.assertAlmostEqual(self.glass.bounding_box().min.Y, 0, places=9)
         # The rim stands off the post axis as the stage head's blade edges do: the blade-seat plane's distance,
         # plus the edges' height above it.
         rim_from_post = SM1RC_M_THICKNESS / 2 + p.stage.ring_gap + p.barrel_length
@@ -53,16 +50,16 @@ class FocusTargetTests(unittest.TestCase):
             head_location(p.stage).position.Y + p.stage.seated_blade_y(0, 0), rim_from_post, places=9
         )
 
-    def test_paper_plane_is_the_stage_blades_edge_plane(self):
+    def test_ground_face_is_the_stage_blades_edge_plane(self):
         p = self.p
         self.assertIsInstance(p.stage, SlitStageParameters)  # 2.9 mm blade overhang.
         # The stage's blades lie flat on their folds, so their cutting edges' mid-plane is half the fold's
-        # thickness above the seat plane. The paper's rear face is that plane.
+        # thickness above the seat plane. The glass's ground face is that plane.
         edge_plane = p.stage.seated_blade_y(0, 0)
         self.assertAlmostEqual(edge_plane, p.stage.blade.fold_thickness / 2, places=9)
         self.assertAlmostEqual(p.rim_y, edge_plane, places=9)
-        paper = children_by_label(self.assembly)["Paper"].bounding_box()
-        self.assertAlmostEqual(paper.min.Y - head_location(p.stage).position.Y, edge_plane, places=9)
+        glass = children_by_label(self.assembly)["Ground glass"].bounding_box()
+        self.assertAlmostEqual(glass.min.Y - head_location(p.stage).position.Y, edge_plane, places=9)
 
     def test_assembly_has_no_baffle(self):
         self.assertNotIn("Baffle", children_by_label(self.assembly))
@@ -120,22 +117,22 @@ class FocusTargetTests(unittest.TestCase):
 
     def test_ring_window_passes_the_beam_and_ring_grips_the_rim(self):
         p = self.p
-        self.assertLessEqual(p.ring_window_diameter, p.stage.spigot_bore)
-        self.assertGreater(p.ring_window_diameter, 2 * p.stage.lit_half_length)
-        self.assertLess(p.ring_window_diameter, p.bore)
+        self.assertLessEqual(p.window_diameter, p.stage.spigot_bore)
+        self.assertGreater(p.window_diameter, 2 * p.stage.lit_half_length)
+        self.assertLess(p.window_diameter, p.bore)
         self.assertFalse(
-            self.ring.is_inside(Vector(p.ring_window_diameter / 2 - 0.2, p.ring_thickness / 2, 0))
+            self.ring.is_inside(Vector(p.window_diameter / 2 - 0.2, p.pocket_depth + p.land_min / 2, 0))
         )
         self.assertTrue(
-            self.ring.is_inside(Vector(p.ring_window_diameter / 2 + 0.2, p.ring_thickness / 2, 0))
+            self.ring.is_inside(Vector(p.window_diameter / 2 + 0.2, p.pocket_depth + p.land_min / 2, 0))
         )
 
     def test_window_is_beveled_on_the_mirror_side_only(self):
         p = self.p
-        c = p.ring_window_chamfer
-        r = p.ring_window_diameter / 2
+        c = p.window_chamfer
+        r = p.window_diameter / 2
         top = p.ring_thickness
-        # The paper-side land stays a cylinder; the bevel opens 45 degrees to the front face.
+        # The land behind the bevel stays a cylinder; the bevel opens 45 degrees to the front face.
         self.assertTrue(self.ring.is_inside(Vector(r + 0.2, top - c - 0.3, 0)))
         self.assertFalse(self.ring.is_inside(Vector(r + c - 0.2, top - 0.1, 0)))
         self.assertTrue(self.ring.is_inside(Vector(r + c + 0.2, top - 0.1, 0)))
@@ -147,18 +144,16 @@ class FocusTargetTests(unittest.TestCase):
 
     def test_validate_rejects_a_chamfer_that_eats_the_screw_heads(self):
         with self.assertRaises(ValueError):
-            replace(self.p, ring_window_chamfer=3.0).validate()
+            replace(self.p, window_chamfer=3.0).validate()
         with self.assertRaises(ValueError):
-            replace(self.p, ring_window_chamfer=self.p.ring_thickness).validate()
+            replace(self.p, window_chamfer=self.p.ring_thickness).validate()
 
     def test_outer_edges_are_broken_except_where_the_fixture_and_ring_mate(self):
         p = self.p
         c, r = p.edge_chamfer, p.rim_diameter / 2
-        glass_ring = build_glass_retaining_ring(FocusScreenParameters(target=p))
         for part, y_broken, y_mating, direction in (
             (self.target, -p.rim_length, 0.0, 1),
             (self.ring, p.ring_thickness, 0.0, -1),
-            (glass_ring, glass_ring.bounding_box().max.Y, 0.0, -1),
         ):
             inside = y_broken + direction * 0.05  # A hair inside the broken face, at its outer edge.
             self.assertFalse(part.is_inside(Vector(r - 0.05, inside, 0)))  # Chamfer removes the corner.
@@ -183,7 +178,6 @@ class FocusTargetTests(unittest.TestCase):
             self.assertTrue(
                 self.ring.is_inside(Vector(x + s.screw_clearance / 2 + 0.3, p.ring_thickness / 2, z))
             )
-            self.assertFalse(self.paper.is_inside(Vector(x, p.paper_thickness / 2, z)))
 
     def test_screws_run_through_the_inserts_without_bottoming(self):
         p = self.p
@@ -203,58 +197,23 @@ class FocusTargetTests(unittest.TestCase):
         self.assertAlmostEqual(
             overlap_volume(children["Retaining ring"], children["Focus target"]), 0, places=6
         )
-        self.assertAlmostEqual(overlap_volume(children["Paper"], children["Retaining ring"]), 0, places=6)
 
     def test_ring_window_is_the_seat_bore(self):
         p = self.p
-        self.assertEqual(p.ring_window_diameter, p.seat_bore_diameter)
+        self.assertEqual(p.window_diameter, p.seat_bore_diameter)
         # Ring and rim annuli meet: the ring clamps out to the edge of the opening in the rim face.
         self.assertFalse(
-            self.ring.is_inside(Vector(p.seat_bore_diameter / 2 - 0.05, p.ring_thickness / 2, 0))
+            self.ring.is_inside(Vector(p.seat_bore_diameter / 2 - 0.05, p.pocket_depth + p.land_min / 2, 0))
         )
-        self.assertTrue(self.ring.is_inside(Vector(p.seat_bore_diameter / 2 + 0.05, p.ring_thickness / 2, 0)))
+        self.assertTrue(
+            self.ring.is_inside(Vector(p.seat_bore_diameter / 2 + 0.05, p.pocket_depth + p.land_min / 2, 0))
+        )
         self.assertTrue(self.target.is_inside(Vector(p.seat_bore_diameter / 2 + 0.05, -0.05, 0)))
 
-
-class FocusScreenTests(unittest.TestCase):
-    @shared
-    def assembly(cls):
-        return build_focus_screen_assembly(cls.p, include_support=False)
-
-    @classmethod
-    def setUpClass(cls):
-        cls.p = FocusScreenParameters()
-        cls.p.validate()
-        cls.ring = build_glass_retaining_ring(cls.p)
-        cls.glass = build_glass(cls.p)
-        cls.gasket = build_gasket(cls.p)
-
-    def test_solids_are_single_and_valid(self):
-        for part in (self.ring, self.glass, self.gasket):
-            self.assertEqual(len(part.solids()), 1)
-            self.assertTrue(part.is_valid)
-
-    def test_fixture_is_the_paper_targets(self):
+    def test_fixture_has_no_paper_or_baffle_parts(self):
         children = children_by_label(self.assembly)
-        self.assertAlmostEqual(
-            children["Focus target"].volume, build_focus_target(self.p.target).volume, places=6
-        )
-        self.assertNotIn("Focus screen fixture", children)
-
-    def test_ground_face_is_the_stage_blades_edge_plane_on_the_rim_face(self):
-        # The glass lies on the rim face like the paper: its source-facing ground face is the y = 0 rim face
-        # at any glass thickness, and the rim face is the stage's blades' edge plane.
-        for thickness in (self.p.glass_thickness_min, self.p.glass_thickness_max):
-            glass = build_glass(self.p, thickness)
-            self.assertAlmostEqual(glass.bounding_box().min.Y, 0, places=9)
-        self.assertAlmostEqual(self.glass.bounding_box().min.Y, 0, places=9)  # The vendor model, nominal.
-        self.assertAlmostEqual(build_focus_target(self.p.target).bounding_box().max.Y, 0, places=9)
-        self.assertAlmostEqual(self.ring.bounding_box().min.Y, 0, places=9)
-        stage = self.p.target.stage
-        placed = children_by_label(self.assembly)["Ground glass"].bounding_box()
-        self.assertAlmostEqual(
-            placed.min.Y - head_location(stage).position.Y, stage.seated_blade_y(0, 0), places=9
-        )
+        self.assertNotIn("Paper", children)
+        self.assertNotIn("Baffle", children)
 
     def test_glass_is_the_vendor_model_and_the_parametric_disc_matches_it(self):
         p = self.p
@@ -268,14 +227,17 @@ class FocusScreenTests(unittest.TestCase):
             self.assertFalse(self.glass.is_inside(Vector(p.glass_diameter / 2 - 0.01, y, 0)))
             self.assertTrue(self.glass.is_inside(Vector(p.glass_flat_diameter / 2 - 0.1, y, 0)))
 
+    def test_ground_face_is_the_rim_face_at_any_glass_thickness(self):
+        p = self.p
+        for thickness in (p.glass_thickness_min, p.glass_thickness_max):
+            self.assertAlmostEqual(build_glass(p, thickness).bounding_box().min.Y, 0, places=9)
+        self.assertAlmostEqual(self.ring.bounding_box().min.Y, 0, places=9)
+
     def test_glass_seats_on_the_rim_outside_the_seat_bore_and_gasket_on_its_flat(self):
         p = self.p
         self.assertGreaterEqual(p.rim_seating_width, p.seating_min)
-        gasket = self.gasket.bounding_box()
-        self.assertAlmostEqual(gasket.max.X, p.glass_flat_diameter / 2, delta=1e-6)
-
-    def test_assembly_has_no_baffle(self):
-        self.assertNotIn("Baffle", children_by_label(self.assembly))
+        self.assertAlmostEqual(self.gasket.bounding_box().max.X, p.glass_flat_diameter / 2, delta=1e-6)
+        self.assertAlmostEqual(self.gasket.bounding_box().max.Y, p.pocket_depth, delta=1e-6)
 
     def test_pocket_clears_the_glass_and_lip_overlaps_it(self):
         p = self.p
@@ -283,21 +245,14 @@ class FocusScreenTests(unittest.TestCase):
         self.assertFalse(self.ring.is_inside(Vector(p.glass_diameter / 2 + 0.05, mid, 0)))
         self.assertTrue(self.ring.is_inside(Vector(p.pocket_diameter / 2 + 0.2, mid, 0)))
         lip = p.pocket_depth + 0.3
-        self.assertTrue(self.ring.is_inside(Vector(p.aperture_diameter / 2 + 0.3, lip, 0)))
-        self.assertFalse(self.ring.is_inside(Vector(p.aperture_diameter / 2 - 0.3, lip, 0)))
+        self.assertTrue(self.ring.is_inside(Vector(p.window_diameter / 2 + 0.3, lip, 0)))
+        self.assertFalse(self.ring.is_inside(Vector(p.window_diameter / 2 - 0.3, lip, 0)))
 
-    def test_window_is_beveled_with_a_land_under_the_bevel(self):
+    def test_ring_screws_reach_the_inserts(self):
         p = self.p
-        r, c, top = p.aperture_diameter / 2, p.window_chamfer, p.ring_thickness
-        self.assertTrue(self.ring.is_inside(Vector(r + 0.2, top - c - 0.2, 0)))
-        self.assertFalse(self.ring.is_inside(Vector(r + c - 0.2, top - 0.1, 0)))
-
-    def test_ring_screws_reach_the_inserts_with_the_thicker_ring(self):
-        p = self.p
-        t, s = p.target, p.target.stage
-        engagement = p.ring_target.screw_engagement
-        self.assertGreaterEqual(engagement, s.insert_installed_length - t.insert_engagement_margin)
-        self.assertLessEqual(engagement, s.insert_hole_depth)
+        s = p.stage
+        self.assertGreaterEqual(p.screw_engagement, s.insert_installed_length - p.insert_engagement_margin)
+        self.assertLessEqual(p.screw_engagement, s.insert_hole_depth)
 
     def test_gasket_is_lightly_loaded_across_the_glass_tolerance(self):
         p = self.p
@@ -321,7 +276,7 @@ class FocusScreenTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             replace(p, window_chamfer=1.4).validate()
         with self.assertRaises(ValueError):
-            replace(p, target=replace(p.target, seat_bore_diameter=22.0)).validate()  # No seat for the glass.
+            replace(p, seat_bore_diameter=22.0).validate()  # No seat for the glass.
 
 
 if __name__ == "__main__":
