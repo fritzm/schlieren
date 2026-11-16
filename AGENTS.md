@@ -11,6 +11,11 @@ the repository. Before substantive work, read the relevant `docs/design/` fragme
 - `docs/agents/testing.md`: writing or restructuring tests
 - `docs/agents/tooling.md`: CLI commands, Makefile, editor/type checker, hooks
 - `docs/agents/design-doc-style.md`: editing `docs/design/`
+- `docs/agents/printing.md`: slicing, validating and preparing a print (skill `/prepare-mini-print`)
+
+Write new reference docs as a general method first, with the values specific to this project (printer,
+folders, profile) in a closing "This project" section, so the rest can be reused elsewhere (`printing.md`
+does this; the older docs are not yet split).
 
 ## Sources of truth
 

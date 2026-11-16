@@ -33,6 +33,16 @@ options and the export, drawing, figure and viewer steps from `cli/_common.py` (
 `add_show_option`, `add_figure_option`, `export_models`, `write_text`, `render`, `show`). Keep geometry, such
 as a print layout, in the part module so it can be tested.
 
+## Print preparation
+
+`uv run make-bgcode` has subcommands `build` (STL to 3MF in a template's profile), `slice` (PrusaSlicer
+command line), `validate` (checks on the decoded bgcode against its 3MF), `thumbnails` (embed a rendered
+printer preview) and `prepare` (all four). The method, options and safeguards are in `printing.md`; the
+command is `cli/make_bgcode.py`, over `print_3mf.py`, `prusaslicer.py`, `bgcode.py`, `gcode_codecs.py`,
+`gcode_toolpath.py`, `print_checks.py`, `image_codecs.py` and `thumbnail.py`. The tests use a 10 mm cube
+fixture in `tests/data/` (3MF and sliced bgcode); regenerate it with `build` and `slice` if the profile
+changes (see `tests/print_helpers.py`). Tests that run the real slicer skip when it is not installed.
+
 ## Makefile
 
 Prefer `make` for rebuilding derived artifacts: it runs the commands above for whatever is out of date
