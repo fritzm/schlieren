@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="262.0mm" height="307.4mm" viewBox="0 0 262.0 307.4">
+<style>
+text { font-family: Helvetica, Arial, sans-serif; fill: #000; }
+.outline { fill: #f4ead6; stroke: #000; stroke-width: 0.5; }
+.hole { fill: #fff; stroke: #000; stroke-width: 0.35; }
+.mark { stroke: #000; stroke-width: 0.2; }
+.extension { stroke: #555; stroke-width: 0.15; }
+.centerline { stroke: #555; stroke-width: 0.2; stroke-dasharray: 8 1.5 1.5 1.5; }
+.hidden { fill: none; stroke: #555; stroke-width: 0.25; stroke-dasharray: 2 1.2; }
+</style>
+<rect width="262.0" height="307.4" fill="#fff"/>
+<polygon class="hidden" points="130.984,14.000 251.967,83.850 251.967,223.550 130.984,293.400 10.000,223.550 10.000,83.850"/>
+<circle class="hidden" cx="130.984" cy="153.700" r="120.650"/>
+<polygon class="outline" points="130.984,14.000 251.967,83.850 251.967,223.550 163.401,274.684 98.566,274.684 10.000,223.550 10.000,83.850"/>
+<circle class="hole" data-hole="aperture" cx="130.984" cy="153.700" r="103.188"/>
+<circle class="hidden" cx="130.984" cy="153.700" r="101.500"/>
+<text x="138.984" y="171.700" font-size="2.7" text-anchor="start">Ø203 mirror (dashed)</text>
+<line class="mark" x1="125.984" y1="153.700" x2="135.984" y2="153.700"/>
+<line class="mark" x1="130.984" y1="148.700" x2="130.984" y2="158.700"/>
+<circle class="hidden" cx="130.984" cy="33.050" r="7.938"/>
+<circle class="hole" data-hole="top adjuster" cx="130.984" cy="33.050" r="4.000"/>
+<line class="mark" x1="125.984" y1="33.050" x2="135.984" y2="33.050"/>
+<line class="mark" x1="130.984" y1="28.050" x2="130.984" y2="38.050"/>
+<text x="130.984" y="23.113" font-size="2.7" text-anchor="middle">top adjuster</text>
+<circle class="hidden" cx="26.498" cy="214.025" r="7.938"/>
+<circle class="hole" data-hole="left adjuster" cx="26.498" cy="214.025" r="4.000"/>
+<line class="mark" x1="21.498" y1="214.025" x2="31.498" y2="214.025"/>
+<line class="mark" x1="26.498" y1="209.025" x2="26.498" y2="219.025"/>
+<text x="26.498" y="204.088" font-size="2.7" text-anchor="middle">left adjuster</text>
+<circle class="hidden" cx="235.470" cy="214.025" r="7.938"/>
+<circle class="hole" data-hole="right adjuster" cx="235.470" cy="214.025" r="4.000"/>
+<line class="mark" x1="230.470" y1="214.025" x2="240.470" y2="214.025"/>
+<line class="mark" x1="235.470" y1="209.025" x2="235.470" y2="219.025"/>
+<text x="235.470" y="204.088" font-size="2.7" text-anchor="middle">right adjuster</text>
+<line class="centerline" x1="130.984" y1="153.700" x2="130.984" y2="10.000"/>
+<line class="centerline" x1="130.984" y1="153.700" x2="6.536" y2="225.550"/>
+<line class="centerline" x1="130.984" y1="153.700" x2="255.432" y2="225.550"/>
+<line class="centerline" x1="130.984" y1="153.700" x2="255.432" y2="81.850"/>
+<line class="centerline" x1="130.984" y1="153.700" x2="6.536" y2="81.850"/>
+<line class="centerline" x1="130.984" y1="153.700" x2="130.984" y2="297.400"/>
+<line class="mark" x1="133.984" y1="153.700" x2="127.984" y2="153.700"/>
+<line class="mark" x1="133.984" y1="33.050" x2="127.984" y2="33.050"/>
+<text x="132.484" y="93.375" font-size="3.4" text-anchor="middle" transform="rotate(90.0 132.484 93.375)">120.65</text>
+<line class="mark" x1="129.484" y1="156.298" x2="132.484" y2="151.102"/>
+<line class="mark" x1="24.998" y1="216.623" x2="27.998" y2="211.427"/>
+<text x="77.991" y="182.563" font-size="3.4" text-anchor="middle" transform="rotate(-30.0 77.991 182.563)">120.65</text>
+<line class="mark" x1="129.484" y1="151.102" x2="132.484" y2="156.298"/>
+<line class="mark" x1="233.970" y1="211.427" x2="236.970" y2="216.623"/>
+<text x="183.977" y="182.563" font-size="3.4" text-anchor="middle" transform="rotate(30.0 183.977 182.563)">120.65</text>
+<line class="mark" x1="132.484" y1="151.102" x2="129.484" y2="156.298"/>
+<line class="mark" x1="221.847" y1="99.508" x2="218.847" y2="104.704"/>
+<text x="174.915" y="126.604" font-size="3.4" text-anchor="middle" transform="rotate(330.0 174.915 126.604)">103.188 aperture radius</text>
+<line class="mark" x1="132.484" y1="156.298" x2="129.484" y2="151.102"/>
+<line class="mark" x1="11.500" y1="86.448" x2="8.500" y2="81.252"/>
+<text x="71.242" y="117.476" font-size="3.4" text-anchor="middle" transform="rotate(30.0 71.242 117.476)">139.7 to corner</text>
+<line class="mark" x1="127.984" y1="153.700" x2="133.984" y2="153.700"/>
+<line class="mark" x1="127.984" y1="274.684" x2="133.984" y2="274.684"/>
+<text x="132.484" y="214.192" font-size="3.4" text-anchor="middle" transform="rotate(90.0 132.484 214.192)">120.984 to trimmed edge</text>
+</svg>

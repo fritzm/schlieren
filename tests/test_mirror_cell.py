@@ -18,7 +18,11 @@ from schlieren.parts.mirror_cell import (
     build_stationary_plate,
     mirror_plate_outline,
 )
-from schlieren.parts.mirror_cell_drawing import base_plate_drawing_svg, base_plate_holes
+from schlieren.parts.mirror_cell_drawing import (
+    base_plate_drawing_svg,
+    base_plate_holes,
+    mirror_plate_drawing_svg,
+)
 from schlieren.testing import boxes_overlap, near_pairs_among, shared, slow, svg_attr
 from schlieren.vendor_cad import (
     KOZAK_TB250_FLANGE_THICKNESS,
@@ -206,6 +210,35 @@ class MirrorCellTests(unittest.TestCase):
             self.assertAlmostEqual(float(svg_attr(circle, "r")) * 2, diameter, delta=0.01)
         figures = [e.text for e in svg.iter(f"{ns}text")]
         for value in ("47.625", "130.175", "+12.7", "-12.7", "69.85", "31.75"):
+            self.assertIn(value, figures)
+
+    def test_mirror_plate_drawing_is_full_scale_and_places_the_adjusters(self):
+        p = self.p
+        svg = ET.fromstring(mirror_plate_drawing_svg(p))
+        ns = "{http://www.w3.org/2000/svg}"
+        _, _, width, height = (float(v) for v in svg_attr(svg, "viewBox").split())
+        self.assertEqual(svg.get("width"), f"{width:.1f}mm")  # One user unit is 1 mm.
+        self.assertGreater(width, 2 * p.apothem)  # Cropped to the plate.
+        self.assertGreater(height, p.hex_circumradius + p.apothem)
+        polygon = next(e for e in svg.iter(f"{ns}polygon") if e.get("class") == "outline")
+        points = [tuple(float(v) for v in pt.split(",")) for pt in svg_attr(polygon, "points").split()]
+        xs, ys = [x for x, _ in points], [y for _, y in points]
+        self.assertAlmostEqual(max(xs) - min(xs), 2 * p.apothem, delta=0.01)
+        self.assertAlmostEqual(max(ys) - min(ys), p.hex_circumradius + p.apothem, delta=0.01)
+        circles = {e.get("data-hole"): e for e in svg.iter(f"{ns}circle") if e.get("data-hole")}
+        self.assertEqual(set(circles), {"aperture", *(f"{name} adjuster" for name in STATIONS)})
+        aperture = circles["aperture"]
+        self.assertAlmostEqual(float(svg_attr(aperture, "r")) * 2, p.aperture_diameter, delta=0.01)
+        cx, cy = float(svg_attr(aperture, "cx")), float(svg_attr(aperture, "cy"))
+        self.assertAlmostEqual(cy - min(ys), p.hex_circumradius, delta=0.01)  # Top vertex above center.
+        for name in STATIONS:
+            x, z = p.station_center(name)
+            circle = circles[f"{name} adjuster"]
+            self.assertAlmostEqual(float(svg_attr(circle, "cx")) - cx, x, delta=0.01)
+            self.assertAlmostEqual(cy - float(svg_attr(circle, "cy")), z - p.mirror_center_z, delta=0.01)
+            self.assertAlmostEqual(float(svg_attr(circle, "r")) * 2, p.bushing_bore, delta=0.01)
+        figures = [e.text for e in svg.iter(f"{ns}text")]
+        for value in ("120.65", "103.188 aperture radius", "139.7 to corner", "120.984 to trimmed edge"):
             self.assertIn(value, figures)
 
     def test_inter_plate_gap_is_half_an_inch(self):

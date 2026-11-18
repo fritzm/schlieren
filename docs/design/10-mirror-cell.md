@@ -1,15 +1,15 @@
 ## 10. Mirror cell
 
-The mirror cell is fabricated from Baltic-birch plywood panels, and uses a three-point fine-adjustment
-architecture with compression springs and spherical washer interfaces.  The model is
-`src/schlieren/parts/mirror_cell.py`.
+The mirror cell is fabricated from Baltic-birch plywood panels, uses a three-point fine-adjustment
+architecture with compression springs and spherical washer interfaces and, attaches to a camera tripod with a
+quick-release bracket.  The model is `src/schlieren/parts/mirror_cell.py`.
 
 <p align="center">
   <img src="figures/mirror-cell.png" width="500" style="max-width: 90%"
        alt="Mirror cell seen from the front: the base plate, the stationary plate, the mirror plate
        with its 203 mm mirror and three adjuster tips, and the two angle brackets with their screws">
   <br>
-  <em>Fig. 15. Mirror cell from the mirror side: base plate, stationary plate, mirror plate and
+  <em>Fig. 15. Mirror cell from the mirror side: base plate, stationary plate, mirror plate with
     mirror, and angle brackets</em>
 </p>
 
@@ -21,32 +21,20 @@ The mirror cell is constructed from three Baltic-birch plywood plates:
 - stationary plate: 11.5 in wide × 11.0 in high × 1/2 in;
 - mirror plate: 3/4 in cut to the truncated-hex geometry below.
 
-The base plate provides the structural/tripod-support base and is joined to the stationary plate by angle
-brackets described under the angle brackets. The stationary plate carries three fine-adjustment
-stations which couple it to the mirror plate. The 3/4 in mirror plate
-carries the 203 mm mirror and moves relative to the stationary plate.
+The base plate provides structural support and the tripod interface, and is joined to the stationary plate by
+angle brackets. The stationary plate carries three fine-adjustment stations which couple it to the mirror
+plate. The 3/4 in mirror plate carries the mirror and moves relative to the stationary plate.
 
-The stationary plate is centered left/right on the 11.5 in-wide base. The rear face of the 1/2 in stationary
-plate is 4.000 in aft of the front edge of the 7.0 in-deep base, leaving 3.0 in of base behind it. Two
-McMaster 8681N11 angle brackets face forward, toward the mirror plate; their measured forward footprint is
-approximately 3.5 in from the stationary-plate rear face, leaving approximately 0.5 in of base margin at the
-front edge. This orientation places the brackets on the mirror side of the stationary plate so they directly
-resist the forward overturning moment of the mirror assembly.
+The front face of the 1/2 in stationary plate is 3.5 in aft of the front edge of the 7.0 in-deep base plate,
+leaving 3.0 in of base behind the plate. Two McMaster 8681N11 angle brackets face forward, on the mirror side
+of the stationary plate; their forward footprint is 3.0 in, leaving approximately 0.5 in of base margin at the
+front edge.
 
 Using measured masses of 1.56 kg for the approximately 18 mm-thick mirror, 840 g for the assembled stationary
-and mirror plates and adjuster hardware, about 318 g for the 11.5 × 7.0 × 1/2 in base plate, and 79 g each for
-the two aluminum brackets, the estimated completed mirror-cell fore/aft center of gravity is approximately 3.0
-in / 76 mm aft of the front edge of the base. A working uncertainty of approximately ±0.2 in / ±5 mm is
-conservative. This places the expected center of gravity approximately 1.0 in / 25 mm forward of the rear face
-of the stationary plate.
-
-The cell uses:
-
-- three fine-adjustment stations arranged at 120° intervals;
-- compression-spring preload at each station;
-- spherical washer interfaces for angular accommodation and gravity-load transfer;
-- tripod interface through the CAMVATE 577/501/504-compatible quick-release system and the Sunwayfoto LB-68R
-  leveling base.
+and mirror plates and adjuster hardware, 318 g for the 11.5 × 7.0 × 1/2 in base plate, and 79 g each for the
+two aluminum brackets, the estimated completed mirror-cell fore/aft center of gravity is approximately 3.0 in
+aft of the front edge of the base. A working uncertainty of approximately ±0.2 in is conservative. This places
+the expected center of gravity approximately 0.5 in forward of the stationary plate.
 
 The mirror-plate geometry is:
 
@@ -72,11 +60,25 @@ This truncated-hex geometry preserves the same approximately 0.701 in / 17.8 mm 
 the 8-1/8 in mirror aperture and the truncated bottom edge as exists between the aperture and each hexagon
 flat. It therefore improves base clearance without introducing a uniquely narrow section.
 
-### 10.2 Three adjuster stations
+Fig. 16 lays the plate out at full scale, seen from the front, in the order it is marked out: the mirror
+center; the six diagonals from the center through the hexagon corners, three of which carry the adjusters;
+the aperture radius along a diagonal; the adjuster centers at the adjuster radius along their diagonals; and
+the trimmed lower edge, marked at the apothem along the bottom diagonal and square to it. Every dimension is
+radial from the center; the trimmed edge is 64.835 mm long. The drawing is generated from the model at full
+scale. The dashed Ø15.875 mm circles around the bores are the spring-seat counterbores in the rear face.
 
-There are three equivalent adjuster stations.
+<p align="center">
+  <img src="figures/mirror-cell-mirror-plate.svg" width="480" style="max-width: 90%"
+       alt="Layout of the mirror plate seen from the front: the truncated hexagon with one vertex up, the
+       8-1/8 in aperture, and six corner diagonals from the mirror center with radial dimensions to the
+       adjuster bores, aperture, corner and trimmed edge">
+  <br>
+  <em>Fig. 16. Mirror-plate layout seen from the front, with radial dimensions along the corner diagonals (mm)</em>
+</p>
 
-The adjusters are Kozak parts:
+### 10.2 Adjuster stations
+
+There are three equivalent adjuster stations.  The adjusters are Kozak parts:
 
 - TS250-80-2500 1/4 in-80 adjuster
 - TB250-80-625 bushing
@@ -89,7 +91,7 @@ Use one adjuster, one bushing, and one knob at each of the three stations.
        alt="Section through one adjuster station: knob, spherical washer pair, stationary plate, spring
        between its seat washers, mirror plate with bushing, and the adjuster screw">
   <br>
-  <em>Fig. 16. Adjuster station, plywood and mirror cut away: knob, spherical washer pair, spring and seat
+  <em>Fig. 17. Adjuster station, plywood and mirror cut away: knob, spherical washer pair, spring and seat
     washers, bushing, and adjuster screw</em>
 </p>
 
@@ -350,8 +352,8 @@ underside of the 1/2 in Baltic-birch mirror-cell base.
 
 The 130 g sliding plate is 7.00 in / 177.8 mm long, mounted flush with the front and rear edges of the 7.0
 in-deep base, so it spans 0–7.00 in / 0–177.8 mm aft of the front edge and its geometric center lies 3.50 in /
-88.9 mm aft of that edge. This is 0.5 in / 12.7 mm aft of the estimated mirror-cell center of gravity, a small offset that the quick-release system's fore/aft sliding
-travel trims during final balancing.
+88.9 mm aft of that edge. This is 0.5 in / 12.7 mm aft of the estimated mirror-cell center of gravity, a small
+offset that the quick-release system's fore/aft sliding travel trims during final balancing.
 
 The plate is attached by four McMaster 92125A196 M4 × 0.7 × 18 mm 90° flat-head screws:
 
@@ -372,15 +374,6 @@ underside of the base. In the base, each screw has a Ø4.5 mm through hole, coun
 top surface, which seats the Ø8 mm head about 0.2 mm below the surface. The 18 mm screw then reaches about 5.5
 mm into the plate, roughly eight threads. The base is drilled from the layout below; the plate holes are then
 marked through the base holes with the plate held against the underside, and tapped.
-
-<p align="center">
-  <img src="figures/mirror-cell-below.png" width="500" style="max-width: 90%"
-       alt="Mirror cell seen from below and the front: the sliding plate against the underside of the base,
-       with the bracket locknuts near the base edges">
-  <br>
-  <em>Fig. 17. Mirror cell from below: the quick-release sliding plate on the underside of the base, and the
-    bracket locknuts</em>
-</p>
 
 <p align="center">
   <img src="figures/mirror-cell-base-plate.svg" width="640" style="max-width: 95%"

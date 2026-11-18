@@ -99,7 +99,7 @@ $(FIG)/led-drill-fixture.png: $(CLI)/led_drill_fixture.py $(PARTS)/led_drill_fix
 $(FIG)/mirror-cell.png: $(CLI)/mirror_cell.py $(PARTS)/mirror_cell.py $(PARTS)/mirror_cell_drawing.py \
     $(PARTS)/frame_drawing.py $(PARTS)/frame.py $(PARTS)/rail.py $(CORE)
 	uv run mirror-cell --figure --drawing
-$(foreach f,mirror-cell-below.png mirror-cell-adjuster.png mirror-cell-base-plate.svg,\
+$(foreach f,mirror-cell-below.png mirror-cell-adjuster.png mirror-cell-base-plate.svg mirror-cell-mirror-plate.svg,\
     $(eval $(call extra,$(FIG)/$(f),$(FIG)/mirror-cell.png)))
 
 # --- design document -------------------------------------------------------------------------------------

@@ -1,4 +1,8 @@
-"""Drilling layout drawing of the mirror-cell base plate.
+"""Drilling and layout drawings of the mirror-cell plywood plates.
+
+The base-plate drawing is described first; the mirror-plate layout follows it (see `mirror_plate_drawing_svg`).
+
+Drilling layout drawing of the mirror-cell base plate.
 
 A plan view from above as a full-scale SVG (one user unit is 1 mm), for laying out and drilling the plywood.
 The sheet is 11 × 17 in (tabloid), landscape. Hole positions are dimensioned as ordinates in the cell frame: x
@@ -9,6 +13,7 @@ right, as seen from above. The footprints of the sliding plate, the stationary p
 drawn dashed as an aid to checking the layout.
 """
 
+from math import cos, radians, sin
 from xml.sax.saxutils import escape
 
 from schlieren.parts.frame_drawing import (
@@ -20,7 +25,7 @@ from schlieren.parts.frame_drawing import (
     TEXT_GAP,
     TITLE_FONT_SIZE,
 )
-from schlieren.parts.mirror_cell import BRACKETS, MirrorCellParameters
+from schlieren.parts.mirror_cell import BRACKETS, STATIONS, MirrorCellParameters, mirror_plate_outline
 from schlieren.standards import INCH
 from schlieren.vendor_cad import MCMASTER_8681N11_WIDTH
 
@@ -198,6 +203,121 @@ def base_plate_drawing_svg(p: MirrorCellParameters | None = None) -> str:
         line(sx(x), sy(y) - CENTER_MARK, sx(x), sy(y) + CENTER_MARK, "mark")
         label_y = sy(y) + CENTER_MARK + SMALL_FONT_SIZE + 0.5
         text(sx(x), label_y, name, size=SMALL_FONT_SIZE)
+
+    out.append("</svg>")
+    return "\n".join(out) + "\n"
+
+
+MIRROR_PLATE_MARGIN = 10.0  # Around the plate and its diagonals.
+MIRROR_PLATE_TOP = MIRROR_PLATE_MARGIN + ORDINATE_GAP  # Sheet y of the plate's top vertex.
+
+
+def mirror_plate_drawing_svg(p: MirrorCellParameters | None = None) -> str:
+    """The dimensioned layout of the mirror plate, seen from the front (mirror side), as SVG text.
+
+    Full scale, one user unit 1 mm, cropped to the plate. Dimensions are radial, from the mirror
+    center along the six corner diagonals, the way the plate is marked out. The hexagon the plate is cut from,
+    the circle through the adjuster axes, the mirror and the spring-seat counterbores (in the rear face) are
+    dashed.
+    """
+    p = p or MirrorCellParameters()
+    p.validate()
+    outline = mirror_plate_outline(p)
+    radius, apothem = p.hex_circumradius, p.apothem
+    top = MIRROR_PLATE_TOP
+    page_width = 2 * apothem + 2 * MIRROR_PLATE_MARGIN
+    center_x = page_width / 2
+    center_y = top + radius  # Sheet y of the mirror center.
+    page_height = center_y + radius + ORDINATE_GAP + MIRROR_PLATE_MARGIN
+    out: list[str] = []
+
+    def sx(x: float) -> float:
+        return center_x + x
+
+    def sy(z: float) -> float:
+        return center_y - z
+
+    def line(x1: float, y1: float, x2: float, y2: float, css: str) -> None:
+        out.append(f'<line class="{css}" x1="{x1:.3f}" y1="{y1:.3f}" x2="{x2:.3f}" y2="{y2:.3f}"/>')
+
+    def text(
+        x: float, y: float, content: str, anchor: str = "middle", size: float = FONT_SIZE, turn=0
+    ) -> None:
+        rotate = f' transform="rotate({turn} {x:.3f} {y:.3f})"' if turn else ""
+        out.append(
+            f'<text x="{x:.3f}" y="{y:.3f}" font-size="{size}" text-anchor="{anchor}"{rotate}>'
+            f"{escape(content)}</text>"
+        )
+
+    def circle(css: str, x: float, z: float, diameter: float, name: str = "") -> None:
+        tag = f' data-hole="{escape(name)}"' if name else ""
+        out.append(f'<circle class="{css}"{tag} cx="{sx(x):.3f}" cy="{sy(z):.3f}" r="{diameter / 2:.3f}"/>')
+
+    def cross(x: float, z: float) -> None:
+        line(sx(x) - CENTER_MARK, sy(z), sx(x) + CENTER_MARK, sy(z), "mark")
+        line(sx(x), sy(z) - CENTER_MARK, sx(x), sy(z) + CENTER_MARK, "mark")
+
+    out.append(
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{page_width:.1f}mm" '
+        f'height="{page_height:.1f}mm" '
+        f'viewBox="0 0 {page_width:.1f} {page_height:.1f}">'
+    )
+    out.append(f"<style>{STYLE}</style>")
+    out.append(f'<rect width="{page_width:.1f}" height="{page_height:.1f}" fill="#fff"/>')
+
+    # Construction: the full hexagon, including the clipped tip, and the circle through the adjuster axes.
+    hexagon = [(0, radius), (apothem, radius / 2), (apothem, -radius / 2), (0, -radius)]
+    hexagon += [(-apothem, -radius / 2), (-apothem, radius / 2)]
+    points = " ".join(f"{sx(x):.3f},{sy(z):.3f}" for x, z in hexagon)
+    out.append(f'<polygon class="hidden" points="{points}"/>')
+    circle("hidden", 0.0, 0.0, 2 * p.adjuster_radius)
+
+    points = " ".join(f"{sx(x):.3f},{sy(z):.3f}" for x, z in outline)
+    out.append(f'<polygon class="outline" points="{points}"/>')
+    circle("hole", 0.0, 0.0, p.aperture_diameter, "aperture")
+    circle("hidden", 0.0, 0.0, p.mirror_diameter)
+    text(sx(8), sy(-18), f"Ø{p.mirror_diameter:g} mirror (dashed)", "start", SMALL_FONT_SIZE)
+    cross(0.0, 0.0)
+
+    stations = {name: p.station_center(name) for name in STATIONS}
+    for name, (x, z_abs) in stations.items():
+        z = z_abs - p.mirror_center_z  # From the mirror center.
+        circle("hidden", x, z, p.seat_counterbore_diameter)
+        circle("hole", x, z, p.bushing_bore, f"{name} adjuster")
+        cross(x, z)
+        text(sx(x), sy(z) - p.seat_counterbore_diameter / 2 - 2, f"{name} adjuster", size=SMALL_FONT_SIZE)
+
+    # The layout is marked radially: the six corner diagonals from the center, then distances along them.
+    def polar(angle: float, distance: float) -> tuple[float, float]:
+        """Sheet point at a distance from the mirror center along a diagonal (degrees counterclockwise from +x)."""
+        return sx(distance * cos(radians(angle))), sy(distance * sin(radians(angle)))
+
+    def radial(angle: float, distance: float, label: str) -> None:
+        """Dimension from the center to a distance along a diagonal: end ticks and a label along the line."""
+        x0, y0 = polar(angle, 0.0)
+        x1, y1 = polar(angle, distance)
+        nx, ny = -sin(radians(angle)), -cos(radians(angle))  # Perpendicular to the diagonal, on the sheet.
+        for tx, ty in ((x0, y0), (x1, y1)):
+            line(tx - nx * 3, ty + ny * 3, tx + nx * 3, ty - ny * 3, "mark")
+        turn = -angle % 360
+        if 90 < turn <= 270:
+            turn -= 180  # Keep the label upright.
+        above = 1.5  # Offset from the line, toward the top of the text.
+        text(
+            (x0 + x1) / 2 + above * sin(radians(turn)),
+            (y0 + y1) / 2 - above * cos(radians(turn)),
+            label,
+            turn=turn,
+        )
+
+    corner_angles = [STATIONS[name] for name in STATIONS] + [30.0, 150.0, 270.0]
+    for angle in corner_angles:
+        line(*polar(angle, 0.0), *polar(angle, radius + ORDINATE_GAP), "centerline")
+    for angle in STATIONS.values():
+        radial(angle, p.adjuster_radius, f"{figure(p.adjuster_radius)}")
+    radial(30.0, p.aperture_diameter / 2, f"{figure(p.aperture_diameter / 2)} aperture radius")
+    radial(150.0, radius, f"{figure(radius)} to corner")
+    radial(270.0, apothem, f"{figure(apothem)} to trimmed edge")
 
     out.append("</svg>")
     return "\n".join(out) + "\n"
