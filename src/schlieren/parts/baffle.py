@@ -59,7 +59,7 @@ class BaffleParameters:
 
     # Clamp, PLA fabrication allowances and geometry, as the rail shoe's collar (fit-test pending).
     clamp_bore_diametral_clearance: float = 0.20
-    clamp_wall: float = 2.0
+    clamp_wall: float = 3.0
     split_gap: float = 1.5
     nut_ear_thickness: float = 4.5
     screw_ear_thickness: float = 3.5
@@ -75,7 +75,7 @@ class BaffleParameters:
     rib_length: float = 2.0  # The near rib, behind the clamp.
     rib_height: float = 1.0  # Rib and far-rib radial height above the net's outside.
     vanes_per_hand: int = 6
-    vane_width: float = 2.0  # Circumferential, on the outside; the apex is a line along the bore.
+    vane_width: float = 3.5  # Circumferential, on the outside; the apex is a line along the bore.
     vane_apex_clearance: float = 0.02  # Apex above the bore, so no vane edge lies on the ribs' bore surface.
     far_rib_length: float = 3.0
     foil_thickness: float = 0.1  # One layer, as shown; the wrap may overlap itself.
@@ -194,7 +194,9 @@ class BaffleParameters:
         return self.net_diameter + 2 * self.foil_thickness
 
     def validate(self):
-        require_positive_dimensions(self)
+        require_positive_dimensions(self, allow_zero=True)
+        if self.vane_apex_clearance < 0:
+            raise ValueError("The vane apex must not lie inside the bore")
         if self.clamp_bore <= self.spigot_diameter:
             raise ValueError("Clamp bore must slip over the spigot")
         if (self.rib_diameter - self.foil_diameter) / 2 < 0.5:

@@ -101,7 +101,7 @@ class BaffleTests(unittest.TestCase):
 
     def test_vanes_are_triangles_with_the_apex_on_the_bore(self):
         p = self.p
-        depth = 10.0
+        depth = 1.5 * p.node_pitch  # Midway between two rows of crossings, where a vane stands alone.
         for hand in (1, -1):
             azimuth = self.vane_azimuth(p.vane_phase_degrees, hand, depth)
             y = p.rib_back_y - depth
