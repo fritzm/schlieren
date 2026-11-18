@@ -169,6 +169,17 @@ class SlitStageTests(unittest.TestCase):
                 self.assertFalse(bar.is_inside(Vector(x, p.toe_thickness / 2, sign * p.toe_z)))
                 self.assertTrue(bar.is_inside(Vector(x + 2.5, p.toe_thickness / 2, sign * p.toe_z)))
 
+    def test_assembled_toe_pads_are_cut_by_the_blades_at_any_rotation(self):
+        p = self.p
+        uncompressed = _toe_pad(p).volume
+        for rotation in (0.0, 30.0):
+            parts = leaves(build_slit_stage_assembly(p, rotation=rotation, include_support=False))
+            by_label = {part.label: part for part in parts}
+            for name in ("Movable", "Stationary"):
+                pad = by_label[f"{name} toe EPDM"]
+                self.assertAlmostEqual(overlap_volume(pad, by_label[f"{name} blade"]), 0, places=6)
+                self.assertLess(pad.volume, uncompressed - 1.0)  # The compression is taken out of it.
+
     def test_pedestal_takes_heat_set_inserts_for_toe_and_mounting_screws(self):
         p = self.p
         depth = p.insert_flange_recess_depth + p.insert_hole_depth

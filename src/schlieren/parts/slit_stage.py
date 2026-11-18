@@ -577,10 +577,11 @@ def build_slit_stage_assembly(p=None, rotation=0.0, include_support=True, side_s
     bar = build_toe_bar(p)
     pad = _toe_pad(p)
     for side, name, turn in ((1, "Movable", 0), (-1, "Stationary", 180)):
-        placed = loc * Pos(0, 0, side * p.toe_z) * Rot(Y=turn)
+        local = Pos(0, 0, side * p.toe_z) * Rot(Y=turn)  # Head frame -> bar frame, without the head's placement.
+        placed = loc * local
         children.append(labeled(bar, f"{name} toe bar", PRINTED_GREEN, placed))
         # The pad is compressed by the plate: shown with the blade's volume taken out of it.
-        pad_shown = pad - moved(blade(p, side), placed.inverse())
+        pad_shown = pad - moved(blade(p, side), local.inverse())
         children.append(labeled(pad_shown, f"{name} toe EPDM", RUBBER, placed))
         for i, x in enumerate(p.toe_x, 1):
             on_axis = loc * Pos(x, 0, side * p.toe_z) * Rot(X=90)
