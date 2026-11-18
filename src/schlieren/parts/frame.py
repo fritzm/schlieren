@@ -104,7 +104,8 @@ class FrameParameters:
     # Not fixed by the design document; model assumptions.
     rail_front_setback: float = 10.0  # Rail front end aft of the pivot, clearing the pivot spacer.
     lug_screw_length: float = 8.0  # Lug to rail top slot, at the two lug holes behind the pivot.
-    rail_support_block_rear_setback: float = 0.0  # Block rear edge forward of the rail rear end.
+    # The block overhangs the rail rear end, leaving its aft screw 6.5 mm from that end, still on the rail.
+    rail_support_block_rear_overhang: float = 6.0  # Block rear edge aft of the rail rear end.
 
     @property
     def half_angle(self) -> float:
@@ -136,7 +137,13 @@ class FrameParameters:
     def rail_support_block_center(self) -> float:
         """Block center aft of the pivot, along the rail."""
         rail_rear = self.rail_front_setback + self.rail_length
-        return rail_rear - self.rail_support_block_rear_setback - self.rail_support_block_length / 2
+        return rail_rear + self.rail_support_block_rear_overhang - self.rail_support_block_length / 2
+
+    @property
+    def aft_block_screw_rail_end_distance(self) -> float:
+        """Aft block screw center forward of the rail rear end."""
+        rail_rear = self.rail_front_setback + self.rail_length
+        return rail_rear - self.rail_support_block_center - self.block_screw_spacing / 2
 
     @property
     def pivot_bolt_protrusion(self) -> float:
@@ -235,6 +242,8 @@ class FrameParameters:
             raise ValueError("The yaw bolt must reach through its thumb nut")
         if self.block_screw_slot_entry <= self.rail_slot_lip_thickness:
             raise ValueError("The block screws must reach the T-nuts under the slot lips")
+        if self.aft_block_screw_rail_end_distance <= M5_SHANK_DIAMETER / 2:
+            raise ValueError("The aft block screw must land on the rail")
         if self.block_screw_slot_margin <= 0:
             raise ValueError("The block screws must not bottom in the rail slot")
         if self.lug_screw_length - self.joining_plate_thickness >= self.rail_slot_depth:

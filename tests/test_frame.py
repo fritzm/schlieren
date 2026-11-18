@@ -188,6 +188,15 @@ class FrameTests(unittest.TestCase):
                     places=4,
                 )
 
+    def test_rear_block_overhangs_rail_end_with_aft_screw_on_the_rail(self):
+        p = self.p
+        rail_rear = p.rail_front_setback + p.rail_length
+        block_rear = p.rail_support_block_center + p.rail_support_block_length / 2
+        self.assertAlmostEqual(block_rear - rail_rear, 6.0)
+        self.assertAlmostEqual(p.aft_block_screw_rail_end_distance, 6.5)
+        with self.assertRaises(ValueError):
+            replace(p, rail_support_block_rear_overhang=10.5).validate()
+
     def test_screw_stacks_have_thread_to_spare(self):
         p = self.p
         self.assertGreater(p.pivot_bolt_protrusion, 0)

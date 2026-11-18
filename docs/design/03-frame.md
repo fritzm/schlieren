@@ -25,18 +25,17 @@ roll-in/drop-in M5 T-nuts (Amazon B0DP6JBX4Y).
 
 Sighting toward the mirror, the source rail is on the left (negative $x$ in the pivot frame) and the imaging
 rail is on the right. This is dictated by fact that the iPhone extends well to the right of its camera axis
-when sighting along that axis toward the mirror; placing that
-overhang toward the outside of the optical head keeps the phone clear of the source rail and its fixtures.
+when sighting along that axis toward the mirror; placing that overhang toward the outside of the optical head
+keeps the phone clear of the source rail and its fixtures.
 
 ### 3.2 Front pivot plate
 
 The front pivot plate is a 180 × 150 mm Baltic-birch rectangle, with its long dimension is transverse to the
 rails.
 
-Plate coordinates are the pivot frame: the
-origin is at the midpoint of the aft edge, $+y$ runs toward the mirror along the plate centerline, and $+x$ runs
-to the right seen from above with the mirror ahead. The mirror-facing edge is at $y = 150$ mm, and the left rail
-is the one at negative $x$.
+Plate coordinates are the pivot frame: the origin is at the midpoint of the aft edge, $+y$ runs toward the
+mirror along the plate centerline, and $+x$ runs to the right seen from above with the mirror ahead. The
+mirror-facing edge is at $y = 150$ mm, and the left rail is the one at negative $x$.
 
 The pivot line is 25 mm behind the mirror-facing edge.  With a pivot separation of 95 mm, this gives pivot
 centers at:
@@ -67,8 +66,8 @@ bolt locations at approximately:
   <em>Fig. 3. Drilling template for the front pivot plate, in plate coordinates</em>
 </p>
 
-With 40 mm bolt spacing and 90 mm pivot-to-clamp distance, the achievable yaws adjustment range of each rail
-is slightly more than ±3°.
+With 40 mm bolt spacing and 90 mm pivot-to-clamp distance, the achievable yaw adjustment range of each rail is
+slightly more than ±3°.
 
 A front Sorbothane support foot is attached below the plate, centered at approximately (0, 125) mm, directly
 between the two rail pivots.  This keeps the support point on the pivot line and is clear of the pivot and yaw
