@@ -181,16 +181,16 @@ edge, both Ø40 mm, have a 0.5 mm chamfer; the mating faces keep sharp edges.
 ### 6.8 Baffle
 
 A baffle sits on the source side of the slit head, on the optical axis: one printed part, a clamp ring on the
-plate's spigot followed by a lattice tube that carries a matte black foil wrap. It is built from the spigot out,
+plate's spigot followed by a net of crossed helical vanes that carries a matte black foil wrap. It is built from the spigot out,
 so the posts, shoes, and optical-mechanical rings of the other stations are not needed.
 
 <p align="center">
   <img src="figures/baffle.png" width="300" style="max-width: 90%"
        alt="Baffle on the plate's spigot, seen from the source side: the split clamp ring with its ears and
-       screw, the relief hole, the diamond-window net tube, and the far collar, without the foil wrap">
+       screw, the slit through the near rib, the net of crossed vanes, and the far rib, without the foil wrap">
   <br>
   <em>Fig. 10. Baffle on the plate's spigot, seen from the source side, without its foil wrap: clamp ring,
-    slit relief hole, net, far collar</em>
+    near rib, net, far rib</em>
 </p>
 
 **Motivation.** The condenser focuses the LED image, about 10 mm across, on the blades, and a slit of 0.10–0.30 mm passes only a small fraction of it.
@@ -201,37 +201,41 @@ station. The cloud lights the room and adds veiling glare to the image. A tube i
 confines the return to the direction of the LED: it travels back through the bore toward the iris, and the
 rest meets the black walls and vanes.
 
-**Beam.** The baffle bounds the light but does not stop down the beam, which is about Ø16 mm over the whole baffle. The Ø25 mm bore leaves about 4.5 mm of radius all around,
-and is no narrower than the plate's Ø24 mm spigot bore, so no alignment tolerance clips the beam, and the length is
-set by the clamp and the distance to the iris, not by the beam. It ends 81 mm from the ring's source face, about
-21 mm short of the iris housing. At the slit end the beam is bounded by the head instead, not the baffle: the stage
-and pedestal edges keep 1.65 mm from the cone.
+**Beam.** The baffle bounds the light but does not stop down the beam, which is about Ø16 mm over the whole baffle. The bore is
+Ø30.68 mm, the clamp's, so it leaves about 7 mm of radius all around and is wider than the plate's Ø24 mm spigot bore;
+no alignment tolerance clips the beam, and the length is set by the clamp and the distance to the iris, not by the
+beam. It ends 81 mm from the ring's source face, about 21 mm short of the iris housing. At the slit end the beam
+is bounded by the head instead, not the baffle: the stage and pedestal edges keep 1.65 mm from the cone.
 
 **Mount.** The plate's spigot protrudes 12 mm past the SM1RC/M's source face. The baffle's clamp ring, 12.5 mm
 long, fits over that end and butts the ring's face, which sets its axial position. The clamp is built as the
 rail shoe's collar is: a Ø30.68 mm bore (0.20 mm diametral clearance
 on the spigot), a 1.5 mm split along the top, and ears with one M3 × 12 mm screw (91292A114) and a captured M3
-nut (91828A211), 3.5 mm ear on the screw side and 4.5 mm on the nut side. The slit ends in a Ø3.5 mm round
-relief hole in the solid collar behind the clamp bore, so the ring closes on the spigot without cracking at the
-slit's end. The bore stops at a shoulder 0.5 mm short of the spigot's end. The ears stand about 24 mm above the
+nut (91828A211), 3.5 mm ear on the screw side and 4.5 mm on the nut side. The split continues through the near
+rib behind the clamp and opens into the net's first cell, so the net's vanes, not a closed ring, take the clamp's
+closing. The bore stops at a shoulder 0.5 mm short of the spigot's end. The ears stand about 24 mm above the
 axis at rotation 0 and turn with the head, which they clear through its working range. The baffle needs no
 precision of its own: the spigot, held by the head's ring, sets its axis, and the bore's radial margin over the
 beam (above) absorbs the clearance of the two printed fits.
 
-**Net.** Behind the collar the baffle is a lattice tube, Ø31 mm outside, with staggered diamond windows cut
-through its wall so that the ligaments between them (1.4 mm wide) run at 45° to the axis. That lets it print on
-end without supports and be stiff enough to support its own length and the foil. The ligaments are 3 mm deep,
-standing into the bore as vanes, which leaves a Ø25 mm bore. A stray ray that strikes a vane's flank is
-trapped there, where it would otherwise slide along a bare wall. Six windows run around the tube, in nine rows
-staggered by half a window; the end rows are centered on the collars' faces, so they are triangles. A solid ring
-collar closes the net's far end.
+**Net.** Behind the clamp a 2 mm solid near rib and, at the far end, a 3 mm solid far rib stand 1 mm proud of the
+net's Ø36.68 mm outside diameter, which is the clamp's, so there is no step from the clamp to the net. Between
+them, 63.5 mm long, the net has no tube wall: it is six right-handed and six left-handed helical vanes, each a
+triangle in section whose base lies on the outside diameter, 3.5 mm wide, and whose apex stands just proud of
+the bore. A vane's helix gives 45° to the axis at the wall's mid radius, so the hands cross as a diamond lattice, and the
+vanes lean in 3 mm deep toward the bore. That lets the net print on end without supports and be stiff enough to
+support its own length and the foil. Where the hands cross they merge into one solid whose top lies on the outside cylinder.
+A stray ray that strikes a vane's flank is trapped there, where it would otherwise slide along a bare wall.
 
-**Foil and finish.** The net's inside is painted with flat black spray paint (a rattle can) before the foil goes
-on; the vanes' flanks and the bore's inside surface are the baffle's absorbing surfaces, and the clamp's bore
-and the spigot are kept free of paint. The foil is Rosco Photofoil matte black aluminum wrap (BOM SHP-022),
-wrapped once or twice around the outside of the net between the two collars, matte side in, so the windows show
-foil; a strip of tape across the seam holds it. The collars stand 1.8 mm above the net's surface, which guides
-the foil's edges and leaves it flush with them. Wrapping the outside avoids fitting a liner into the bore.
+**Foil and finish.** The vanes' flanks and the bore are the baffle's absorbing surfaces: they are painted with flat
+black spray paint (a rattle can, BOM SHP-040) before the foil goes on, and the clamp's bore and the spigot are
+kept free of paint. The foil is Rosco Photofoil matte black aluminum wrap (BOM SHP-022), matte on both sides,
+wrapped once or twice around the net's outside between the two ribs so that it covers the cells; a strip of
+tape across the seam holds it. The ribs stand about 0.9 mm proud of the foil and guide its edges. Cut the strip 64 mm wide,
+about 0.5 mm over the net's length, so that its edges butt against the ribs: a narrower strip leaves a gap
+at each rib through which light from the bore escapes through the first row of cells. Its length is one turn, about 116 mm
+(the circumference at the foil), plus about 5 mm of overlap for the seam, and about 116 mm more for a second turn.
+Wrapping the outside avoids fitting a liner into the bore.
 
 **Fabrication.** Print on end, clamp end down, in PLA, without supports; the ears and split lie along the
 layers. The model is `src/schlieren/parts/baffle.py` (`uv run baffle`, with `--show` for the viewer assembly),

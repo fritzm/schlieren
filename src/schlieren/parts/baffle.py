@@ -15,7 +15,7 @@ One printed part, printed on end (clamp end down), without supports:
   triangle in section, its base on the clamp's outside diameter (the foil's seat) and its apex at the bore, swept
   along a helix whose pitch gives 45° at the wall's mid radius. Where the hands cross they simply merge: the
   crossing's top is the patch of the outside cylinder bounded by the four edge helices. The vanes line the bore
-  (painted flat black), and the foil wraps the net's outside, between the ribs, matte side in;
+  (painted flat black), and the foil wraps the net's outside, between the ribs;
 - far rib: solid ring that closes the net's end and stops the foil there.
 """
 

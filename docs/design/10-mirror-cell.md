@@ -1,7 +1,7 @@
 ## 10. Mirror cell
 
-The mirror cell is fabricated from Baltic-birch plywood panels, uses a three-point fine-adjustment
-architecture with compression springs and spherical washer interfaces and, attaches to a camera tripod with a
+The mirror cell is fabricated from Baltic-birch plywood panels, and uses a three-point fine-adjustment
+architecture with compression springs and spherical washer interfaces. It attaches to a camera tripod with a
 quick-release bracket.  The model is `src/schlieren/parts/mirror_cell.py`.
 
 <p align="center">
@@ -30,15 +30,28 @@ leaving 3.0 in of base behind the plate. Two McMaster 8681N11 angle brackets fac
 of the stationary plate; their forward footprint is 3.0 in, leaving approximately 0.5 in of base margin at the
 front edge.
 
-Using measured masses of 1.56 kg for the approximately 18 mm-thick mirror, 840 g for the assembled stationary
-and mirror plates and adjuster hardware, 318 g for the 11.5 × 7.0 × 1/2 in base plate, and 79 g each for the
-two aluminum brackets, the estimated completed mirror-cell fore/aft center of gravity is approximately 3.0 in
-aft of the front edge of the base. A working uncertainty of approximately ±0.2 in is conservative. This places
-the expected center of gravity approximately 0.5 in forward of the stationary plate.
+<p align="center">
+  <img src="figures/mirror-cell-base-plate.svg" width="640" style="max-width: 95%"
+       alt="Drilling layout of the mirror-cell base plate seen from above: four countersunk quick-release
+       screw holes and four bracket-screw holes, dimensioned in x from the plate centerline and in y from the
+       front edge, with the front edge at the bottom">
+  <br>
+  <em>Fig. 18. Drilling layout of the base plate, seen from above, in cell coordinates (front edge at the
+    bottom)</em>
+</p>
 
-The mirror-plate geometry is:
+The mirror-plate is a truncated hexagonal ring, 11.000 in / 279.4 mm vertex-to-vertex, oriented with one
+vertex upward:
 
-- start from a regular hexagon 11.000 in / 279.4 mm vertex-to-vertex, oriented with one vertex upward;
+<p align="center">
+  <img src="figures/mirror-cell-mirror-plate.svg" width="480" style="max-width: 90%"
+       alt="Layout of the mirror plate seen from the front: the truncated hexagon with one vertex up, the
+       8-1/8 in aperture, and six corner diagonals from the mirror center with radial dimensions to the
+       adjuster bores, aperture, corner and trimmed edge">
+  <br>
+  <em>Fig. 16. Mirror-plate layout seen from the front, with radial dimensions along the corner diagonals (mm)</em>
+</p>
+
 - the corresponding normal flat radius / apothem is 4.7631 in / 120.98 mm;
 - three alternating vertices lie on the three 120° adjuster axes, with the top vertex occupied by one adjuster
   axis and the two lower-side occupied vertices by the other two;
@@ -67,14 +80,15 @@ the trimmed lower edge, marked at the apothem along the bottom diagonal and squa
 radial from the center; the trimmed edge is 64.835 mm long. The drawing is generated from the model at full
 scale. The dashed Ø15.875 mm circles around the bores are the spring-seat counterbores in the rear face.
 
-<p align="center">
-  <img src="figures/mirror-cell-mirror-plate.svg" width="480" style="max-width: 90%"
-       alt="Layout of the mirror plate seen from the front: the truncated hexagon with one vertex up, the
-       8-1/8 in aperture, and six corner diagonals from the mirror center with radial dimensions to the
-       adjuster bores, aperture, corner and trimmed edge">
-  <br>
-  <em>Fig. 16. Mirror-plate layout seen from the front, with radial dimensions along the corner diagonals (mm)</em>
-</p>
+
+Using measured masses of 1.56 kg for the approximately 18 mm-thick mirror, 840 g for the assembled stationary
+and mirror plates and adjuster hardware, 318 g for the 11.5 × 7.0 × 1/2 in base plate, and 79 g each for the
+two aluminum brackets, the estimated completed mirror-cell fore/aft center of gravity is approximately 3.0 in
+aft of the front edge of the base. A working uncertainty of approximately ±0.2 in is conservative. This places
+the expected center of gravity approximately 0.5 in forward of the stationary plate.
+
+
+
 
 ### 10.2 Adjuster stations
 
@@ -374,13 +388,3 @@ underside of the base. In the base, each screw has a Ø4.5 mm through hole, coun
 top surface, which seats the Ø8 mm head about 0.2 mm below the surface. The 18 mm screw then reaches about 5.5
 mm into the plate, roughly eight threads. The base is drilled from the layout below; the plate holes are then
 marked through the base holes with the plate held against the underside, and tapped.
-
-<p align="center">
-  <img src="figures/mirror-cell-base-plate.svg" width="640" style="max-width: 95%"
-       alt="Drilling layout of the mirror-cell base plate seen from above: four countersunk quick-release
-       screw holes and four bracket-screw holes, dimensioned in x from the plate centerline and in y from the
-       front edge, with the front edge at the bottom">
-  <br>
-  <em>Fig. 18. Drilling layout of the base plate, seen from above, in cell coordinates (front edge at the
-    bottom)</em>
-</p>
